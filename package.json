@@ -42,9 +42,10 @@
 		"whatwg-fetch": "^3.6.20"
 	},
 	"lint-staged": {
-		"*.{js,jsx,ts,tsx,json,css,scss,md}": [
+		"*.{ts,tsx}": [
 			"eslint --fix",
-			"prettier --write"
+			"prettier --write",
+      "jest"
 		]
 	}
 }
