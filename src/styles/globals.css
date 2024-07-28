@@ -2,6 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+	html {
+		font-family: "Manrope", system-ui, sans-serif;
+	}
+}
+
+@layer components {
+	.ta-primary {
+		@apply bg-[#1836b2];
+	}
+
+	.btn {
+		@apply transition focus: outline-none hover:opacity-95 active:opacity-95 focus:opacity-95 hover:scale-95 active:scale-95 focus:scale-95 disabled:bg-gray-400;
+	}
+}
+
+td {
+	text-align: center;
+}
+
+.wallets-balance-card {
+	@apply border-[#D1D7F0] py-4 px-2 gap-7 md: w-1/2 rounded-xl mt-5 md:mt-0 md:h-32;
+}
+
+.wallets-quickaction-tab {
+	@apply flex justify-start items-center bg-[#f8f8f8] rounded-md py-2 space-x-2 md: px-4 px-2 cursor-pointer;
+}
+
+.wallet-caption-container {
+	@apply mb-8 flex-col justify-start items-start gap-4 inline-flex;
+}
+
+.wallet-caption {
+	@apply sm: text-3xl text-2xl font-bold sm:leading-loose leading-normal text-[#08123B];
+}
+
+.wallet-description {
+	@apply text-neutral-700 text-sm font-normal sm: leading-none leading-snug;
+}
+
+.wallet-form-label {
+	@apply mb-1 text-sm text-[#08123B] font-semibold;
+}
+
+.wallet-select {
+	@apply bg-gray-50 border border-[#DEE3F6] text-gray-900 text-sm rounded-lg focus: ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+}
+
+.wallet-input {
+	@apply bg-white border-0 border-white text-[#08123B] text-sm rounded-2xl px-2 focus: ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+}
+
+.wallet-modal-btn-div {
+	@apply flex items-center justify-center pt-10 pb-5;
+}
+
+.wallet-modal-btn-div button {
+	@apply text-white bg-[#1836B2] rounded-lg text-sm px-5 h-[63px] py-3 text-center w-2/3;
+}
+
+.wallet-modal-btn-div .cancel {
+	@apply bg-white text-[#1836B2] rounded-lg text-sm px-5 h-[63px] py-3 text-center w-2/3;
+}
+
+.otp-box {
+	@apply bg-[#E1E6EF] p-2 w-8 h-8 rounded-lg flex items-center justify-center;
+}
+
+.trading-rules-box {
+	@apply border-[#DEE3F6] rounded-2xl border w-full focus: border-blue-500;
+}
+
+.textbox {
+	@apply outline-none border-[#DEE3F6] border-0 rounded-2xl text-[#808080] p-2.5 font-normal text-base w-full;
+}
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
