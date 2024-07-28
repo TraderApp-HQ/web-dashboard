@@ -9,7 +9,7 @@ beforeAll(() => {
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-test("displays mocked data", async () => {
+test("displays default mocked data", async () => {
 	render(<Component />);
 	const dataElement = await waitFor(() => screen.getByText("mocked data"));
 	expect(dataElement).toBeInTheDocument();
