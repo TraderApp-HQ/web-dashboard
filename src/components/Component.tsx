@@ -1,5 +1,5 @@
-import React from "react";
-import { useFetchData } from "../hooks/useFetchData";
+import React, { useState } from "react";
+import { useFetchData } from "~/hooks/useFetchData";
 
 const Component: React.FC = () => {
 	const { data, loading, error } = useFetchData("/api/data");

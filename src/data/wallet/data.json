@@ -1,0 +1,299 @@
+{
+  "transactions": [
+    {
+      "id": "1",
+      "transaction": "Withdraw",
+      "wallet": "Main Wallet",
+      "date": "2 July 2021 17:23",
+      "status": "PAUSED",
+      "curency": "Bitcoin",
+      "amount": "2832.98",
+      "shortName": "BTC",
+      "image": "/images/btc_round.png",
+      "address": "TADHdCYMgNXCEipe7mw9HiXUvkwMHrX2vE",
+      "network": "HFX Network",
+      "fee": "20.00"
+    },
+    {
+      "id": "2",
+      "transaction": "Deposit",
+      "wallet": "Spot Wallet",
+      "date": "2 July 2021 17:23",
+      "status": "ACTIVE",
+      "curency": "Tether",
+      "amount": "28.098",
+      "shortName": "USDT",
+      "image": "/images/usdt_round.png",
+      "address": "TADHdCYMgNXCEipe7mw9HiXUvkwMHrX2vE",
+      "network": "HFX Network"
+    },
+    {
+      "id": "3",
+      "transaction": "Transfer",
+      "wallet": "Main Wallet",
+      "date": "2 July 2021 17:23",
+      "status": "FAILED",
+      "curency": "Bitcoin",
+      "amount": "28.03",
+      "shortName": "BTC",
+      "image": "/images/btc_round.png",
+      "from": "Main Wallet",
+      "to": "Spot Wallet"
+    },
+    {
+      "id": "4",
+      "transaction": "Convert",
+      "wallet": "Main Wallet",
+      "date": "2 July 2021 17:23",
+      "status": "COMPLETED",
+      "curency": "Tether",
+      "amount": "28.098098",
+      "shortName": "USDT",
+      "image": "/images/usdt_round.png",
+      "percent": "+2.31",
+      "toShortName": "Btc"
+    },
+    {
+      "id": "5",
+      "transaction": "Withdraw",
+      "wallet": "Main Wallet",
+      "date": "2 July 2021 17:23",
+      "status": "PROCESSING",
+      "curency": "Bitcoin",
+      "amount": "2832.98",
+      "shortName": "BTC",
+      "image": "/images/btc_round.png",
+      "address": "TADHdCYMgNXCEipe7mw9HiXUvkwMHrX2vE",
+      "network": "HFX Network",
+      "fee": "20.00"
+    }
+  ],
+  "openTrades": [
+    {
+      "asset": {
+        "image": "/images/btc_round.png",
+        "shortName": "BTC",
+        "name": "Bitcoin",
+        "id": "1"
+      },
+      "pair": "USDT",
+      "price": "230.9092",
+      "profitLoss": "2.902",
+      "percent": "+2.31",
+      "holdings": "2.902",
+      "holdingComp": "10.00 Comp",
+      "date": "2 July 2021 17:23",
+      "avgBuy": "2348",
+      "entryPrice": "23760.000",
+      "positionAmount": "203.00 USDT",
+      "estimatedAmount": "0.000 USDT",
+      "id": "1"
+    },
+    {
+      "asset": {
+        "image": "/images/usdt_round.png",
+        "shortName": "USDT",
+        "name": "Tether",
+        "id": "2"
+      },
+      "pair": "BTC",
+      "price": "230.9092",
+      "profitLoss": "2.902",
+      "percent": "-2.31",
+      "holdings": "2.902",
+      "holdingComp": "10.00 Comp",
+      "date": "2 July 2021 17:23",
+      "avgBuy": "2348",
+      "entryPrice": "23760.000",
+      "positionAmount": "203.00 USDT",
+      "estimatedAmount": "0.000 USDT",
+      "id": "2"
+    }
+  ],
+  "tradeHistories": [
+    {
+      "type": "Buy",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    },
+    {
+      "type": "Sell",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    },
+    {
+      "type": "Buy",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    },
+    {
+      "type": "Sell",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    },
+    {
+      "type": "Buy",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    },
+    {
+      "type": "Sell",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    }
+  ],
+  "orders": [
+    {
+      "type": "Buy",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    },
+    {
+      "type": "Sell",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    },
+    {
+      "type": "Buy",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    },
+    {
+      "type": "Sell",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    },
+    {
+      "type": "Buy",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    },
+    {
+      "type": "Sell",
+      "price": "230.9092 USDT",
+      "units": "230.9092 BTC",
+      "total": "230.9092 USDT",
+      "date": "2 July 2021 7:40",
+      "fees": ""
+    }
+  ],
+  "currencies": [
+    {
+      "id": "1",
+      "currency": "Bitcoin",
+      "balance": "$28.098098.00",
+      "shortName": "BTC",
+      "logoUrl": "/images/btc_round.png"
+    },
+    {
+      "id": "2",
+      "currency": "Tether",
+      "balance": "$28.098098.00",
+      "shortName": "USDT",
+      "logoUrl": "/images/usdt_round.png"
+    },
+    {
+      "id": "3",
+      "currency": "Binance",
+      "balance": "$28.098098.00",
+      "shortName": "BUSD",
+      "logoUrl": "/images/binance_round.png"
+    }
+  ],
+  "wallet": {
+    "mainBalance": "11,021.490000",
+    "tradingBalance": "1,021.490000",
+    "totalBalance": "3,09039"
+  },
+  "signals": {
+    "totalActiveSignal": 24,
+    "totalCapital": 234,
+    "bestSignal": {
+      "name": "Bitcoin",
+      "image": "/images/btc.png",
+      "percentage": "+2.31%",
+      "amount": "$158.098098.00"
+    },
+    "worseSignal": {
+      "name": "Bitcoin",
+      "image": "/images/btc.png",
+      "percentage": "-2.31%",
+      "amount": "$28.098098.00"
+    }
+  },
+  "assets": [
+    {
+      "image": "/images/btc_round.png",
+      "shortName": "BTC",
+      "name": "Bitcoin",
+      "id": "1"
+    },
+    {
+      "image": "/images/usdt_round.png",
+      "shortName": "USDT",
+      "name": "Tether",
+      "id": "2"
+    }
+  ],
+  "wallets": [
+    {
+      "id": "1",
+      "name": "Main Wallet"
+    },
+    {
+      "id": "2",
+      "name": "Trading Wallet"
+    }
+  ],
+  "createdAtList": [
+    { "value": "5 sec ago", "text": "5 sec ago" },
+    { "value": "2 mins ago", "text": "2 mins ago" },
+    { "value": "past 24hrs", "text": "past 24hrs" }
+  ],
+
+  "timeList": [
+    { "value": "2:30pm", "text": "2:30pm" },
+    { "value": "4:00pm", "text": "4:00pm" },
+    { "value": "6:15pm", "text": "6:15pm" }
+  ],
+  "trans": {
+    "assets": [
+      { "value": "bitcoin", "text": "Bitcoin" },
+      { "value": "etherum", "text": "Etherum" },
+      { "value": "binance", "text": "Binance" }
+    ]
+  }
+}

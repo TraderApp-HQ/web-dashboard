@@ -1,0 +1,13 @@
+{
+  "assets": [
+    { "id": "", "value": "bitcoin", "name": "Bitcoin", "image": "/images/btc_round.png", "shortName": "BTC" },
+    { "id": "", "value": "etherum", "name": "Etherum", "image": "/images/btc_round.png", "shortName": "ETH" },
+    { "id": "", "value": "binance", "name": "Binance", "image": "/images/btc_round.png", "shortName": "BNB" }
+  ],
+
+  "timeFrame": [
+    { "id": "", "name": "Long/4hr", "shortName": "Long/4hr" },
+    { "id": "", "name": "Short/10mins", "shortName": "Short/10mins" },
+    { "id": "", "name": "Long/6hr", "shortName": "Long/6hr" }
+  ]
+}

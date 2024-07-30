@@ -1,0 +1,207 @@
+import { jwtDecode } from "jwt-decode";
+import { APIClient } from "~/apis/apiClient";
+import { getAccessToken, setAccessToken, removeAccessToken } from "~/utils/localStorage";
+import { VerificationType } from "./enums";
+import type {
+  ICountry,
+  IUserAuth,
+  IUserLoginInput,
+  IUserSignupInput,
+  IUserProfile,
+  IDecodedToken,
+  IVerifyOtp,
+  IGetUsersInput,
+  IResetPasswordInput,
+  ICreateUserInput,
+  IDisableUserInput,
+  IFetchAllUsers,
+} from "./interfaces";
+import type { IResponse } from "../interfaces";
+
+export class UsersService {
+  private apiClient: APIClient;
+
+  constructor() {
+    // this.apiClient = new APIClient("https://apis-dev.traderapp.finance:3000", this.refreshUserAccessToken.bind(this));
+    this.apiClient = new APIClient("http://localhost:8081", this.refreshUserAccessToken.bind(this));
+  }
+
+  public async loginUser({ email, password }: IUserLoginInput): Promise<IUserProfile> {
+    const response = await this.apiClient.post<IResponse>({
+      url: "/auth/login",
+      data: {
+        email,
+        password,
+      },
+    });
+
+    if (response.error) {
+      throw new Error(response.message || "Login failed");
+    }
+
+    const { data } = response;
+    return data as IUserProfile;
+  }
+
+  public async logoutUser() {
+    const response = await this.apiClient.delete<IResponse>({
+      url: "/auth/logout",
+      options: { credentials: "include" },
+    });
+
+    if (response.error && response.error.statusCode === 500) {
+      throw new Error(response.message || "Logout failed");
+    }
+    removeAccessToken();
+    window.location.href = "/auth/login";
+    return response.data;
+  }
+
+  public async signupUser(userData: IUserSignupInput): Promise<IUserProfile> {
+    const response = await this.apiClient.post<IResponse>({ url: "/auth/signup", data: userData });
+
+    if (response.error) {
+      throw new Error(response.message || "Signup failed");
+    }
+
+    const { data } = response;
+    return data as IUserProfile;
+  }
+
+  public async createNewUser(userData: ICreateUserInput): Promise<IUserProfile> {
+    const response = await this.apiClient.post<IResponse>({ url: "/auth/createuser", data: userData });
+
+    if (response.error) {
+      throw new Error(response.message || "User Creation failed");
+    }
+
+    const { data } = response;
+    return data as IUserProfile;
+  }
+
+  public getDataFromToken(): IDecodedToken {
+    const accessToken = getAccessToken();
+    if (!accessToken) {
+      window.location.href = "/auth/login";
+      throw new Error("Access token not found");
+    }
+    const decoded: IDecodedToken = jwtDecode(accessToken);
+    return decoded;
+  }
+
+  public async getUser(input?: { id?: string }): Promise<IUserProfile> {
+    const url = input?.id ? `/users/me?id=${input.id}` : "/users/me";
+    const response = await this.apiClient.get<IResponse>({ url });
+
+    if (response.error) {
+      throw new Error(response.message);
+    }
+
+    const { data } = response;
+    return data as IUserProfile;
+  }
+
+  public async getAllUsers({ size, page, searchKeyword }: IGetUsersInput): Promise<IFetchAllUsers> {
+    const response = await this.apiClient.get<IResponse>({
+      url: `/users/all?page=${page}&size=${size}&searchKeyword=${searchKeyword}`,
+    });
+    if (response.error) {
+      throw new Error(response.message);
+    }
+
+    const { data } = response;
+    return data as IFetchAllUsers;
+  }
+
+  public async refreshUserAccessToken(): Promise<string | null> {
+    try {
+      const response = await this.apiClient.post<IResponse>({
+        url: "/auth/refresh-token",
+        data: {},
+        options: { credentials: "include" },
+      });
+
+      if (response.error) {
+        throw new Error(response.message || "Token refresh failed");
+      }
+
+      const { data } = response;
+      setAccessToken(data?.accessToken);
+      return data?.accessToken || null;
+    } catch (error: any) {
+      // removeAccessToken();
+      // window.location.href = "/auth/login";
+      throw new Error(`Token refresh failed: ${error.message}`);
+    }
+  }
+
+  public async verifyOtp({ userId, data, verificationType }: IVerifyOtp): Promise<IUserAuth | void> {
+    const response = await this.apiClient.put<IResponse>({
+      url: "/auth/verify-otp",
+      data: {
+        userId,
+        data,
+        verificationType,
+      },
+      options: { credentials: "include" },
+    });
+
+    if (response.error) {
+      throw new Error(response.message || "Otp validation failed");
+    }
+
+    const { data: resData } = response;
+    if (verificationType?.includes(VerificationType.AUTHENTICATE)) {
+      setAccessToken(resData.accessToken);
+      return resData as IUserAuth;
+    }
+  }
+
+  public async getAllCountries(): Promise<ICountry[]> {
+    const response = await this.apiClient.get<IResponse>({ url: "/countries" });
+    if (response.error) {
+      throw new Error(response.message);
+    }
+
+    const { data } = response;
+    // Sort the countries by their name
+    const countries = data as ICountry[];
+    countries.sort((a, b) => a.name.localeCompare(b.name));
+    return countries;
+  }
+
+  public async sendPasswordResetLink(email: string): Promise<string> {
+    const response = await this.apiClient.post<IResponse>({ url: "/auth/password-reset-link", data: { email } });
+
+    if (response.error) {
+      throw new Error(response.message || "Password reset link failed");
+    }
+
+    return response.message;
+  }
+
+  public async resetUserPassword(data: IResetPasswordInput): Promise<string> {
+    const response = await this.apiClient.post<IResponse>({ url: "/auth/password-reset", data });
+
+    if (response.error) {
+      throw new Error(response.message || "Reset password failed");
+    }
+
+    return response.message;
+  }
+
+  public async toggleUserActivation(user: IDisableUserInput): Promise<IUserProfile> {
+    const response = await this.apiClient.patch<IResponse>({
+      url: `/users/toggle-activation?id=${user.userId}`,
+      data: "",
+    });
+
+    if (response.error) {
+      throw new Error(response.message || "Status update failed");
+    }
+    const { data } = response;
+    return data as IUserProfile;
+  }
+}
+
+export default new UsersService();

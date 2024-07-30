@@ -1,10 +1,16 @@
-// import Image from "next/image";
-// import { Inter } from "next/font/google";
+import { GetServerSideProps } from 'next';
 
-// const inter = Inter({ subsets: ["latin"] });
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    redirect: {
+      destination: '/auth/login',
+      permanent: false,
+    },
+  };
+};
 
-export default function Home() {
-  return (
-    <div>Test page</div>
-  );
-}
+const Home = () => {
+  return null;
+};
+
+export default Home;

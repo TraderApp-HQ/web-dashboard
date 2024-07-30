@@ -1,0 +1,161 @@
+import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { json } from "@remix-run/cloudflare";
+import { useLoaderData, useNavigate } from "@remix-run/react";
+import { useCallback, useEffect, useState } from "react";
+import { UsersService } from "~/apis/handlers/users";
+import type { IUserProfile } from "~/apis/handlers/users/interfaces";
+import Button from "~/components/AccountLayout/Button";
+import Card from "~/components/AccountLayout/Card";
+import UserTile from "~/components/AccountLayout/UserTile";
+import Modal from "~/components/Modal";
+import TickIcon from "~/components/icons/TickIcon";
+import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
+import { renderStatus } from "~/helpers";
+import { useFetch } from "~/hooks/useFetch";
+import { formattedDate } from "~/lib/utils";
+import ConfirmModal from "../../ConfirmModal";
+import { UserStatus } from "~/config/enum";
+
+export const loader = async ({ params }: LoaderFunctionArgs) => {
+  const { id } = params;
+  return json(id);
+};
+
+const UserDetails = () => {
+  const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState(true);
+
+  const id = useLoaderData<typeof loader>();
+  const usersService = new UsersService();
+
+  const fetchUser = useCallback(() => usersService.getUser({ id }), [id, usersService]);
+  const { data, error, isLoading, isSuccess, isError, refetch } = useFetch({
+    queryKey: [id],
+    queryFn: fetchUser,
+  });
+
+  const onClose = () => {
+    setOpenModal(false);
+    navigate(`${LAYOUT_ROUTES.admin}${ROUTES.usermanagement.homepage}`);
+  };
+
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  const handleDeactivateClick = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmModalClose = () => {
+    setIsConfirmModalOpen(false);
+    setOpenModal(false);
+    refetch();
+  };
+
+  return (
+    <Modal openModal={openModal} width="md:w-[807px]" onClose={onClose}>
+      {isError && <div className="text-red-400">{error.message}</div>}
+      {isLoading && <div>Loading.....</div>}
+      {isSuccess && (
+        <div className="flex flex-col items-center gap-y-6 mb-6">
+          <UserTile
+            bgColor="bg-blue-100"
+            textColor="text-blue-800"
+            size={{ width: "!w-[76px]", height: "!h-[77px]" }}
+            firstName={data?.firstName}
+            lastName={data?.lastName}
+          />
+          <h3>{`${data?.firstName ?? "First Name"} ${data?.lastName ?? "Last Name"}`}</h3>
+          <div className="flex gap-x-4">
+            <Button>Edit user details</Button>
+            <Button
+              bgColor="bg-white"
+              color="text-black"
+              innerClassName="!border-neutral-300"
+              onClick={handleDeactivateClick}
+            >
+              {data.status === UserStatus.ACTIVE ? "Deactivate User" : "Reactivate User"}
+            </Button>
+          </div>
+
+          <ConfirmModal user={data} isOpen={isConfirmModalOpen} onClose={handleConfirmModalClose} />
+          <UserRecord user={data} />
+          <UserRecordList user={data} />
+        </div>
+      )}
+    </Modal>
+  );
+};
+
+interface UserInfoItemProps {
+  label: string;
+  value?: string;
+  verify?: boolean;
+}
+interface IUserRecordProps {
+  user?: IUserProfile;
+}
+
+// Component to display individual user information item
+const UserInfoItem: React.FC<UserInfoItemProps> = ({ label, value, verify }) => {
+  return (
+    <div className="flex gap-x-6 justify-between items-center w-full px-3.5 py-5">
+      <h4 className="text-gray-500 text-sm font-bold">{label}</h4>
+      <div className={`text-slate-900 text-sm font-bold`}>
+        {label === "Status" ? renderStatus(value ?? "") : value}
+        {verify && (
+          <div className="px-2 py-1 bg-emerald-50 rounded-lg justify-center items-center gap-1 inline-flex">
+            <p className="text-green-600 text-xs font-semibold leading-3 flex gap-x-1">
+              Verified <TickIcon />
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Component to display user record
+export function UserRecord({ user }: IUserRecordProps) {
+  const UserData = [
+    { label: "User ID", value: user?.id },
+    { label: "Email Address", value: user?.email, verify: user?.isEmailVerified },
+  ];
+
+  return (
+    <Card className="p-3.5 !bg-slate-50 mb-4">
+      {UserData.map((detail, index) => (
+        <UserInfoItem
+          key={index}
+          label={detail.label}
+          value={detail.value?.length == 0 ? "N/A" : detail.value}
+          verify={detail.verify}
+        />
+      ))}
+    </Card>
+  );
+}
+
+export function UserRecordList({ user }: IUserRecordProps) {
+  const UserData = [
+    { label: "Position/Role", value: user?.role.join(", ") },
+    { label: "Country", value: user?.countryName },
+    { label: "Phone Number", value: user?.phone, verify: user?.isPhoneVerified },
+    { label: "Date/Time", value: user?.createdAt ? formattedDate(user?.createdAt) : "" },
+    { label: "Status", value: user?.status },
+  ];
+
+  return (
+    <Card className="p-3.5 !bg-slate-50 mb-4">
+      {UserData.map((detail, index) => (
+        <UserInfoItem
+          key={index}
+          label={detail.label}
+          value={detail.value?.length === 0 ? "N/A" : detail.value}
+          verify={detail.verify}
+        />
+      ))}
+    </Card>
+  );
+}
+
+export default UserDetails;

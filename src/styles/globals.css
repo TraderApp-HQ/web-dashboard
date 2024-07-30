@@ -14,7 +14,7 @@
 	}
 
 	.btn {
-		@apply transition focus: outline-none hover:opacity-95 active:opacity-95 focus:opacity-95 hover:scale-95 active:scale-95 focus:scale-95 disabled:bg-gray-400;
+		@apply transition focus:outline-none hover:opacity-95 active:opacity-95 focus:opacity-95 hover:scale-95 active:scale-95 focus:scale-95 disabled:bg-gray-400;
 	}
 }
 
@@ -23,11 +23,11 @@ td {
 }
 
 .wallets-balance-card {
-	@apply border-[#D1D7F0] py-4 px-2 gap-7 md: w-1/2 rounded-xl mt-5 md:mt-0 md:h-32;
+	@apply border-[#D1D7F0] py-4 px-2 gap-7 md:w-1/2 rounded-xl mt-5 md:mt-0 md:h-32;
 }
 
 .wallets-quickaction-tab {
-	@apply flex justify-start items-center bg-[#f8f8f8] rounded-md py-2 space-x-2 md: px-4 px-2 cursor-pointer;
+	@apply flex justify-start items-center bg-[#f8f8f8] rounded-md py-2 space-x-2 md:px-4 px-2 cursor-pointer;
 }
 
 .wallet-caption-container {
@@ -35,11 +35,11 @@ td {
 }
 
 .wallet-caption {
-	@apply sm: text-3xl text-2xl font-bold sm:leading-loose leading-normal text-[#08123B];
+	@apply sm:text-3xl text-2xl font-bold sm:leading-loose leading-normal text-[#08123B];
 }
 
 .wallet-description {
-	@apply text-neutral-700 text-sm font-normal sm: leading-none leading-snug;
+	@apply text-neutral-700 text-sm font-normal sm:leading-none leading-snug;
 }
 
 .wallet-form-label {
@@ -47,11 +47,11 @@ td {
 }
 
 .wallet-select {
-	@apply bg-gray-50 border border-[#DEE3F6] text-gray-900 text-sm rounded-lg focus: ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+	@apply bg-gray-50 border border-[#DEE3F6] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
 }
 
 .wallet-input {
-	@apply bg-white border-0 border-white text-[#08123B] text-sm rounded-2xl px-2 focus: ring-blue-500 focus:border-blue-500 block w-full p-2.5;
+	@apply bg-white border-0 border-white text-[#08123B] text-sm rounded-2xl px-2 focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5;
 }
 
 .wallet-modal-btn-div {
@@ -71,7 +71,7 @@ td {
 }
 
 .trading-rules-box {
-	@apply border-[#DEE3F6] rounded-2xl border w-full focus: border-blue-500;
+	@apply border-[#DEE3F6] rounded-2xl border w-full focus:border-blue-500;
 }
 
 .textbox {

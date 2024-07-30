@@ -1,0 +1,56 @@
+import React from "react";
+import { ColourTheme } from "~/config/enum";
+import { capitalizeFirstLetter } from "~/helpers";
+
+interface IOperationStatus {
+  status: string;
+  theme: ColourTheme;
+  style?: {
+    justify?: string;
+  };
+}
+
+const OperationStatus: React.FC<IOperationStatus> = ({
+  status,
+  theme,
+  style = { justify: "justify-end sm:justify-center" },
+}) => {
+  const statusText = capitalizeFirstLetter(status);
+  let roundedIconStyles: string;
+  let statusContainerStyles: string;
+
+  switch (theme) {
+    case ColourTheme.SUCCESS: {
+      roundedIconStyles = "bg-[#08875D]";
+      statusContainerStyles = "bg-[#EDFDF8] text-[#08875D]";
+      break;
+    }
+    case ColourTheme.WARNING: {
+      roundedIconStyles = "bg-[#B25E09]";
+      statusContainerStyles = "bg-[#FCE7CC] text-[#B25E09]";
+      break;
+    }
+    case ColourTheme.DANGER: {
+      roundedIconStyles = "bg-[#E02D3C]";
+      statusContainerStyles = "bg-[#FEF1F2] text-[#E02D3C]";
+      break;
+    }
+    default: {
+      roundedIconStyles = "";
+      statusContainerStyles = "";
+    }
+  }
+
+  return (
+    <div className={`flex ${style.justify}`}>
+      <div
+        className={`flex px-3 py-1.5 font-black rounded-lg justify-center items-center gap-2 ${statusContainerStyles}`}
+      >
+        <div className={`p-1 rounded-full ${roundedIconStyles}`}></div>
+        <div className="capitalize">{statusText}</div>
+      </div>
+    </div>
+  );
+};
+
+export default OperationStatus;

@@ -1,0 +1,14 @@
+{
+  "users": {
+    "users": [
+      {
+        "id": "1",
+        "firstName": "obafemi",
+        "lastName": "Oderanti",
+        "email": "thevetdoctor@gmail.com",
+        "role": "User",
+        "status": "ACTIVE"
+      }
+    ]
+  }
+}
