@@ -1,222 +1,251 @@
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import Modal from ".";
 import type { NotificationChannel, VerificationType } from "~/apis/handlers/users/enums";
 import { UsersService } from "~/apis/handlers/users";
 import { useCreate } from "~/hooks/useCreate";
 
 interface IVerificationModal {
-  openModal: boolean;
-  setOpenModal: (value: boolean) => void;
-  isSuccess?: boolean;
-  setIsSuccess?: (value: boolean) => void;
-  notificationChannel: NotificationChannel;
-  verificationType: VerificationType[];
-  redirectTo?: string;
+	openModal: boolean;
+	setOpenModal: (value: boolean) => void;
+	isSuccess?: boolean;
+	setIsSuccess?: (value: boolean) => void;
+	notificationChannel: NotificationChannel;
+	verificationType: VerificationType[];
+	redirectTo?: string;
 }
 
 const initialCountdownTime = 90; // 90 seconds
 
 export default function VerificationModal({
-  openModal,
-  setOpenModal,
-  // isSuccess,
-  setIsSuccess,
-  redirectTo,
-  notificationChannel,
-  verificationType,
+	openModal,
+	setOpenModal,
+	// isSuccess,
+	setIsSuccess,
+	redirectTo,
+	notificationChannel,
+	verificationType,
 }: IVerificationModal) {
-  const router = useRouter();
-  /* Initialize enteredInput state as an array of strings */
-  const [enteredInput, setEnteredInput] = useState(["", "", "", "", "", ""]);
-  const [countdown, setCountdown] = useState(initialCountdownTime);
-  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
-  const [searchParams, setSearchParams] = useState(new URLSearchParams(router.asPath.split('?')[1]));
-  const [isVerificationError, setIsVerificationError] = useState<boolean>(false);
+	const router = useRouter();
+	/* Initialize enteredInput state as an array of strings */
+	const [enteredInput, setEnteredInput] = useState(["", "", "", "", "", ""]);
+	const [countdown, setCountdown] = useState(initialCountdownTime);
+	const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+	const [searchParams, setSearchParams] = useState(
+		new URLSearchParams(router.asPath.split("?")[1]),
+	);
+	const [isVerificationError, setIsVerificationError] = useState<boolean>(false);
 
-  const usersService = new UsersService();
-  const userId = searchParams.get("userid");
-  const recipient = searchParams.get("recipient");
+	const usersService = new UsersService();
+	const userId = searchParams.get("userid");
+	const recipient = searchParams.get("recipient");
 
-  /* Handle input change */
-  const inputChangeHandler = (index: number, value: string) => {
-    value = value.trim();
-    // Remove error message when input changes
-    if (setIsSuccess) setIsSuccess(false);
+	/* Handle input change */
+	const inputChangeHandler = (index: number, value: string) => {
+		value = value.trim();
+		// Remove error message when input changes
+		if (setIsSuccess) setIsSuccess(false);
 
-    // Check if the value is a number
-    if (!isNaN(Number(value))) {
-      const newInput = [...enteredInput];
-      newInput[index] = value;
-      setEnteredInput(newInput);
-    }
-    // Move to next input if current field is filled
-    if (value !== "" && index < inputRefs.current.length - 1 && !isNaN(Number(value))) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
+		// Check if the value is a number
+		if (!isNaN(Number(value))) {
+			const newInput = [...enteredInput];
+			newInput[index] = value;
+			setEnteredInput(newInput);
+		}
+		// Move to next input if current field is filled
+		if (value !== "" && index < inputRefs.current.length - 1 && !isNaN(Number(value))) {
+			inputRefs.current[index + 1]?.focus();
+		}
+	};
 
-  // Handle Backspace key press
-  const handleKeyDown = (index: number, e: any) => {
-    if (e.key === "Backspace" && !enteredInput[index] && index > 0 && inputRefs.current[index - 1]) {
-      // Move focus to the previous input field on backspace
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
+	// Handle Backspace key press
+	const handleKeyDown = (index: number, e: any) => {
+		if (
+			e.key === "Backspace" &&
+			!enteredInput[index] &&
+			index > 0 &&
+			inputRefs.current[index - 1]
+		) {
+			// Move focus to the previous input field on backspace
+			inputRefs.current[index - 1]?.focus();
+		}
+	};
 
-  /* Check input if some have an empty string as a value */
-  const isInputsEmpty = enteredInput.some((value) => value === "");
+	/* Check input if some have an empty string as a value */
+	const isInputsEmpty = enteredInput.some((value) => value === "");
 
-  useEffect(() => {
-    // Initialize inputRefs
-    inputRefs.current = inputRefs.current.slice(0, enteredInput.length);
-  }, [enteredInput.length]);
+	useEffect(() => {
+		// Initialize inputRefs
+		inputRefs.current = inputRefs.current.slice(0, enteredInput.length);
+	}, [enteredInput.length]);
 
-  useEffect(() => {
-    // check query param. I.e first load
-    if (openModal && (!userId || !recipient)) {
-      router.push("/auth/login");
-    }
-    setCountdown(initialCountdownTime);
-  }, [openModal, userId, recipient]);
+	useEffect(() => {
+		// check query param. I.e first load
+		if (openModal && (!userId || !recipient)) {
+			router.push("/auth/login");
+		}
+		setCountdown(initialCountdownTime);
+	}, [openModal, userId, recipient]);
 
-  // check if otp is set on first load then open otp modal. This is typically used on page reload
-  useEffect(() => {
-    if (userId && recipient) {
-      setOpenModal(true);
-    }
-  }, []);
+	// check if otp is set on first load then open otp modal. This is typically used on page reload
+	useEffect(() => {
+		if (userId && recipient) {
+			setOpenModal(true);
+		}
+	}, []);
 
-  const restartCountdown = () => {
-    setCountdown(initialCountdownTime);
-  };
+	const restartCountdown = () => {
+		setCountdown(initialCountdownTime);
+	};
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (countdown > 0) {
-      timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-    }
+	useEffect(() => {
+		let timer: NodeJS.Timeout;
+		if (countdown > 0) {
+			timer = setInterval(() => {
+				setCountdown((prev) => prev - 1);
+			}, 1000);
+		}
 
-    return () => clearInterval(timer);
-  }, [countdown]);
+		return () => clearInterval(timer);
+	}, [countdown]);
 
-  const {
-    mutate: verifyOtp,
-    isError: isVerificationErrorFlag,
-    isPending,
-    error,
-    isSuccess: isVerificationSuccess,
-    data,
-  } = useCreate({
-    mutationFn: usersService.verifyOtp.bind(usersService),
-  });
+	const {
+		mutate: verifyOtp,
+		isError: isVerificationErrorFlag,
+		isPending,
+		error,
+		isSuccess: isVerificationSuccess,
+		data,
+	} = useCreate({
+		mutationFn: usersService.verifyOtp.bind(usersService),
+	});
 
-  const handleVerification = async () => {
-    // verify otp
-    const enteredOTP = enteredInput.join("");
-    verifyOtp({
-      userId: userId!,
-      verificationType,
-      data: [
-        {
-          otp: enteredOTP,
-          channel: notificationChannel,
-        },
-      ],
-    });
-  };
+	const handleVerification = async () => {
+		// verify otp
+		const enteredOTP = enteredInput.join("");
+		verifyOtp({
+			userId: userId!,
+			verificationType,
+			data: [
+				{
+					otp: enteredOTP,
+					channel: notificationChannel,
+				},
+			],
+		});
+	};
 
-  useEffect(() => {
-    if (isVerificationSuccess) {
-      setOpenModal(false);
-      if (setIsSuccess) setIsSuccess(true);
+	useEffect(() => {
+		const handleRedirect = async () => {
+		if (isVerificationSuccess) {
+			setOpenModal(false);
+			if (setIsSuccess) setIsSuccess(true);
 
-      // redirect
-      if (redirectTo) {
-        router.push(redirectTo);
-      }
-    }
-  }, [isVerificationSuccess]);
+			// Ensure the router is ready before redirecting
+			if (redirectTo) {
+				await router.push(redirectTo);
+				// window.location.replace(redirectTo)
+			}
+		}
+		};
 
-  useEffect(() => {
-    if (isVerificationErrorFlag) {
-      setIsVerificationError(true);
-      setTimeout(() => {
-        setIsVerificationError(false);
-      }, 10000);
-    }
-  }, [isVerificationErrorFlag]);
+		handleRedirect();
+  }, [isVerificationSuccess, redirectTo, router, setOpenModal, setIsSuccess]);
 
-  return (
-    <Modal open={openModal} setOpen={setOpenModal}>
-      <section>
-        <div>
-          <header className="flex flex-col items-center mb-[40px]">
-            <img src="/images/auth/pen.png" width={73} alt="pen" className="mb-[12px]" />
-            <p className="text-[32px] text-[#102477] font-extrabold">OTP verification</p>
-            <div className="flex items-center justify-center gap-x-[13px]">
-              <p className="font-bold text-[#08123B]">We sent a 6 digit OTP to {recipient}</p>
-            </div>
-          </header>
-          <div>
-            <p className="text-center text-[#01171F] font-bold">OTP</p>
-          </div>
-          <form className="space-y-[16px]">
-            {/* pin */}
-            <div className="flex justify-center gap-[8px]">
-              {enteredInput.map((value, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  placeholder=""
-                  max={1}
-                  maxLength={1}
-                  value={value}
-                  ref={(ref) => {
-                    inputRefs.current[index] = ref
-                  }}
-                  onChange={(e) => inputChangeHandler(index, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="placeholder-[#808080] w-[54px] h-[54px] text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[20px] outline-[1px] outline-[#6579CC]"
-                />
-              ))}
-            </div>
-            {/* action button */}
-            <div className="p-[16px] space-y-[16px] flex flex-col items-center">
-              <button
-                type="button"
-                className="max-w-[364px] rounded-2xl p-[10px] font-semibold w-full text-white"
-                style={isInputsEmpty || isPending ? { background: "#BFD3E0" } : { background: "#1836B2" }}
-                onClick={handleVerification}
-                disabled={isInputsEmpty || isPending}
-              >
-                Confirm
-              </button>
-              {isVerificationError && <p className="text-[red] flex justify-center">Otp could not be verfied</p>}
-              <div style={{ display: "flex" }}>
-                <div className="text-[#08123B] text-center">
-                  Didn’t receive your code?{" "}
-                  <strong
-                    className={`text-[#102477] font-bold ${countdown === 0 && "cursor-pointer"}`}
-                    onClick={() => countdown === 0 && restartCountdown()}
-                  >
-                    {countdown !== 0 ? "Retry in" : "Resend code."}
-                  </strong>
-                </div>
-                <div>
-                  {openModal && countdown !== 0 && (
-                    <p className="text-[#102477] font-bold ml-2">
-                      {Math.floor(countdown / 60)}:{countdown % 60}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </section>
-    </Modal>
-  );
+	useEffect(() => {
+		if (isVerificationErrorFlag) {
+			setIsVerificationError(true);
+			setTimeout(() => {
+				setIsVerificationError(false);
+			}, 10000);
+		}
+	}, [isVerificationErrorFlag]);
+
+	return (
+		<Modal open={openModal} setOpen={setOpenModal}>
+			<section>
+				<div>
+					<header className="flex flex-col items-center mb-[40px]">
+						<img
+							src="/images/auth/pen.png"
+							width={73}
+							alt="pen"
+							className="mb-[12px]"
+						/>
+						<p className="text-[32px] text-[#102477] font-extrabold">
+							OTP verification
+						</p>
+						<div className="flex items-center justify-center gap-x-[13px]">
+							<p className="font-bold text-[#08123B]">
+								We sent a 6 digit OTP to {recipient}
+							</p>
+						</div>
+					</header>
+					<div>
+						<p className="text-center text-[#01171F] font-bold">OTP</p>
+					</div>
+					<form className="space-y-[16px]">
+						{/* pin */}
+						<div className="flex justify-center gap-[8px]">
+							{enteredInput.map((value, index) => (
+								<input
+									key={index}
+									type="text"
+									placeholder=""
+									max={1}
+									maxLength={1}
+									value={value}
+									ref={(ref) => {
+										inputRefs.current[index] = ref;
+									}}
+									onChange={(e) => inputChangeHandler(index, e.target.value)}
+									onKeyDown={(e) => handleKeyDown(index, e)}
+									className="placeholder-[#808080] w-[54px] h-[54px] text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[20px] outline-[1px] outline-[#6579CC]"
+								/>
+							))}
+						</div>
+						{/* action button */}
+						<div className="p-[16px] space-y-[16px] flex flex-col items-center">
+							<button
+								type="button"
+								className="max-w-[364px] rounded-2xl p-[10px] font-semibold w-full text-white"
+								style={
+									isInputsEmpty || isPending
+										? { background: "#BFD3E0" }
+										: { background: "#1836B2" }
+								}
+								onClick={handleVerification}
+								disabled={isInputsEmpty || isPending}
+							>
+								Confirm
+							</button>
+							{isVerificationError && (
+								<p className="text-[red] flex justify-center">
+									Otp could not be verfied
+								</p>
+							)}
+							<div style={{ display: "flex" }}>
+								<div className="text-[#08123B] text-center">
+									Didn’t receive your code?{" "}
+									<strong
+										className={`text-[#102477] font-bold ${countdown === 0 && "cursor-pointer"}`}
+										onClick={() => countdown === 0 && restartCountdown()}
+									>
+										{countdown !== 0 ? "Retry in" : "Resend code."}
+									</strong>
+								</div>
+								<div>
+									{openModal && countdown !== 0 && (
+										<p className="text-[#102477] font-bold ml-2">
+											{Math.floor(countdown / 60)}:{countdown % 60}
+										</p>
+									)}
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</section>
+		</Modal>
+	);
 }

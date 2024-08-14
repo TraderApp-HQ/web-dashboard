@@ -1,4 +1,4 @@
 export const UsersQueryId = {
-  userProfile: "user-profile",
-  countries: "countries",
+	userProfile: "user-profile",
+	countries: "countries",
 };

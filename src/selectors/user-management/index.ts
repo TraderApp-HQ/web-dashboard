@@ -6,28 +6,28 @@ import { renderStatus } from "~/helpers";
 import EditIcon from "~/components/icons/EditIcon";
 
 export function usersDataTableSelector(users: IUserProfile[]) {
-  const tableHead = [...UsersTableHeadItems];
-  const tableBody: ITBody = {
-    tBodyRows: users.map((user) => ({
-      tBodyColumns: [
-        { displayItem: `${user.firstName} ${user.lastName}` },
-        { displayItem: user.email },
-        { displayItem: user.role },
-        { displayItem: renderStatus(user.status, { justify: "justify-start" }) },
-      ],
-      actions: [
-        {
-          label: "View",
-          url: `${user.id}${ROUTES.usermanagement.details}`,
-        },
-        {
-          label: "",
-          url: `${user.id}${ROUTES.usermanagement.edit}`,
-          icon: EditIcon,
-        },
-      ],
-    })),
-  };
+	const tableHead = [...UsersTableHeadItems];
+	const tableBody: ITBody = {
+		tBodyRows: users.map((user) => ({
+			tBodyColumns: [
+				{ displayItem: `${user.firstName} ${user.lastName}` },
+				{ displayItem: user.email },
+				{ displayItem: user.role },
+				{ displayItem: renderStatus(user.status, { justify: "justify-start" }) },
+			],
+			actions: [
+				{
+					label: "View",
+					url: `${user.id}${ROUTES.usermanagement.details}`,
+				},
+				{
+					label: "",
+					url: `${user.id}${ROUTES.usermanagement.edit}`,
+					icon: EditIcon,
+				},
+			],
+		})),
+	};
 
-  return { tableHead, tableBody };
+	return { tableHead, tableBody };
 }

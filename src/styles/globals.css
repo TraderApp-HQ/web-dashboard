@@ -78,6 +78,36 @@ td {
 	@apply outline-none border-[#DEE3F6] border-0 rounded-2xl text-[#808080] p-2.5 font-normal text-base w-full;
 }
 
+.active {
+	background-color: #1836b2;
+	/* padding: 8px; */
+	/* display: flex; */
+	/* width: 100%; */
+	/* border-radius: 8px; */
+}
+
+.active span {
+	color: #ffffff;
+}
+
+.inactive {
+	line-height: 1.25rem
+		/* 20px */
+	;
+}
+
+.no-spin-buttons {
+	-moz-appearance: textfield;
+	/* Firefox */
+}
+
+.no-spin-buttons::-webkit-outer-spin-button,
+.no-spin-buttons::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+	/* Safari and Chrome */
+}
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

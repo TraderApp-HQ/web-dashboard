@@ -12,84 +12,84 @@ import WalletIcon from "~/components/icons/WalletIcon";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 
 export interface SidenavLink {
-  icon?: any;
-  text: string;
-  path: string;
+	icon?: any;
+	text: string;
+	path: string;
 }
 
 export const NavLinks: SidenavLink[] = [
-  {
-    icon: DashboardIcon,
-    text: "Dashboard",
-    path: LAYOUT_ROUTES.account + ROUTES.dashboard.homepage,
-  },
-  {
-    icon: SignalsIcon,
-    text: "Signals",
-    path: LAYOUT_ROUTES.account + ROUTES.signals,
-  },
-  {
-    icon: PortfolioIcon,
-    text: "Portfolio",
-    path: LAYOUT_ROUTES.account + ROUTES.portfolio.homepage,
-  },
-  {
-    icon: WalletIcon,
-    text: "Wallet",
-    path: LAYOUT_ROUTES.account + ROUTES.wallet.homepage,
-  },
-  {
-    icon: ReferralsIcon,
-    text: "Referrals",
-    path: LAYOUT_ROUTES.account + ROUTES.referrals,
-  },
+	{
+		icon: DashboardIcon,
+		text: "Dashboard",
+		path: LAYOUT_ROUTES.account + ROUTES.dashboard.homepage,
+	},
+	{
+		icon: SignalsIcon,
+		text: "Signals",
+		path: LAYOUT_ROUTES.account + ROUTES.signals,
+	},
+	{
+		icon: PortfolioIcon,
+		text: "Portfolio",
+		path: LAYOUT_ROUTES.account + ROUTES.portfolio.homepage,
+	},
+	{
+		icon: WalletIcon,
+		text: "Wallet",
+		path: LAYOUT_ROUTES.account + ROUTES.wallet.homepage,
+	},
+	{
+		icon: ReferralsIcon,
+		text: "Referrals",
+		path: LAYOUT_ROUTES.account + ROUTES.referrals,
+	},
 ];
 
 export const NavLinksExtras: SidenavLink[] = [
-  {
-    icon: SettingIcon,
-    text: "Settings",
-    path: LAYOUT_ROUTES.account + ROUTES.settings,
-  },
+	{
+		icon: SettingIcon,
+		text: "Settings",
+		path: LAYOUT_ROUTES.account + ROUTES.settings,
+	},
 ];
 
 export const AdminNavLinks: SidenavLink[] = [
-  {
-    icon: DashboardIcon,
-    text: "Dashboard",
-    path: LAYOUT_ROUTES.admin + ROUTES.dashboard.homepage,
-  },
-  {
-    icon: FinanceIcon,
-    text: "Finance Model",
-    path: LAYOUT_ROUTES.admin + ROUTES.financemodel,
-  },
-  {
-    icon: UserIcon,
-    text: "User Management",
-    path: LAYOUT_ROUTES.admin + ROUTES.usermanagement.homepage,
-  },
-  {
-    icon: SignalManagementIcon,
-    text: "Signal Management",
-    path: LAYOUT_ROUTES.admin + ROUTES.signalmanagement,
-  },
-  {
-    icon: SystemManagementIcon,
-    text: "System Management",
-    path: LAYOUT_ROUTES.admin + ROUTES.systemmanagement,
-  },
-  {
-    icon: AggregateIcon,
-    text: "Aggregate View",
-    path: LAYOUT_ROUTES.admin + ROUTES.aggregateview,
-  },
+	{
+		icon: DashboardIcon,
+		text: "Dashboard",
+		path: LAYOUT_ROUTES.admin + ROUTES.dashboard.homepage,
+	},
+	{
+		icon: FinanceIcon,
+		text: "Finance Model",
+		path: LAYOUT_ROUTES.admin + ROUTES.financemodel,
+	},
+	{
+		icon: UserIcon,
+		text: "User Management",
+		path: LAYOUT_ROUTES.admin + ROUTES.usermanagement.homepage,
+	},
+	{
+		icon: SignalManagementIcon,
+		text: "Signal Management",
+		path: LAYOUT_ROUTES.admin + ROUTES.signalmanagement,
+	},
+	{
+		icon: SystemManagementIcon,
+		text: "System Management",
+		path: LAYOUT_ROUTES.admin + ROUTES.systemmanagement,
+	},
+	{
+		icon: AggregateIcon,
+		text: "Aggregate View",
+		path: LAYOUT_ROUTES.admin + ROUTES.aggregateview,
+	},
 ];
 
 export const AdminNavLinksExtras: SidenavLink[] = [
-  {
-    icon: SettingIcon,
-    text: "Setting",
-    path: LAYOUT_ROUTES.admin + ROUTES.settings,
-  },
+	{
+		icon: SettingIcon,
+		text: "Setting",
+		path: LAYOUT_ROUTES.admin + ROUTES.settings,
+	},
 ];

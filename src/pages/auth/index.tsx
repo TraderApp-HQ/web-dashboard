@@ -1,16 +1,16 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  return {
-    redirect: {
-      destination: '/auth/login',
-      permanent: false,
-    },
-  };
+	return {
+		redirect: {
+			destination: "/auth/login",
+			permanent: false,
+		},
+	};
 };
 
 const LoginHome = () => {
-  return null;
+	return null;
 };
 
 export default LoginHome;

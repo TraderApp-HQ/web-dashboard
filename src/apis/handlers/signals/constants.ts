@@ -1,3 +1,3 @@
 export const SignalsQueryId = {
-  signals: "all-signals",
+	signals: "all-signals",
 };

@@ -1,107 +1,107 @@
 {
-  "signals": {
-    "signals": [
-      {
-        "id": "1",
-        "asset": "Bitcoin",
-        "shortName": "BTC",
-        "currentPrice": 6.69,
-        "change": -6.69,
-        "targetProfits": [
-          { "price": 60000, "percent": 12, "isReached": true },
-          { "price": 65000, "percent": 18, "isReached": false },
-          { "price": 70000, "percent": 24, "isReached": false }
-        ],
-        "created": "2min ago",
-        "status": "ACTIVE",
-        "logoUrl": "/images/btc_round.png",
-        "currentTicker": "Long period / 5hrs",
-        "stopLostPrice": "$ 18.20",
-        "timeframe": "Long period / 5hrs",
-        "time": "Aus27th (9:32PM)",
-        "marketCap": "Aus27th (9:32PM)",
-        "maxGainSinceCall": "$ 188.94",
-        "risk": "Low",
-        "entryPrice": "$ 188.94",
-        "signalImage": "/images/signal_chart.png"
-      },
-      {
-        "id": "2",
-        "asset": "Tether",
-        "shortName": "USDT",
-        "currentPrice": 6.69,
-        "change": -6.69,
-        "targetProfits": [
-          { "price": 11, "percent": 8, "isReached": true },
-          { "price": 14, "percent": 12, "isReached": true },
-          { "price": 15, "percent": 18, "isReached": false },
-          { "price": 18, "percent": 25, "isReached": false }
-        ],
-        "created": "2hrs ago",
-        "status": "PAUSED",
-        "logoUrl": "/images/usdt_round.png",
-        "currentTicker": "short period / 1hrs",
-        "stopLostPrice": "$ 18.20",
-        "timeframe": "Long period / 5hrs",
-        "time": "Aus27th (9:32PM)",
-        "marketCap": "Aus27th (9:32PM)",
-        "maxGainSinceCall": "$ 188.94",
-        "risk": "Low",
-        "entryPrice": "$ 188.94",
-        "signalImage": "/images/signal_chart.png"
-      }
-    ],
-    "bestSignal": {
-      "name": "Bitcoin",
-      "image": "/images/btc_round.png",
-      "percentage": "25%"
-    },
-    "worstSignal": {
-      "name": "Tether",
-      "image": "/images/usdt_round.png",
-      "percentage": "25%"
-    },
-    "totalActiveSignal": 24,
-    "totalCapital": 234,
-    "percentage": "+2.31%"
-  },
+	"signals": {
+		"signals": [
+			{
+				"id": "1",
+				"asset": "Bitcoin",
+				"shortName": "BTC",
+				"currentPrice": 6.69,
+				"change": -6.69,
+				"targetProfits": [
+					{ "price": 60000, "percent": 12, "isReached": true },
+					{ "price": 65000, "percent": 18, "isReached": false },
+					{ "price": 70000, "percent": 24, "isReached": false }
+				],
+				"created": "2min ago",
+				"status": "ACTIVE",
+				"logoUrl": "/images/btc_round.png",
+				"currentTicker": "Long period / 5hrs",
+				"stopLostPrice": "$ 18.20",
+				"timeframe": "Long period / 5hrs",
+				"time": "Aus27th (9:32PM)",
+				"marketCap": "Aus27th (9:32PM)",
+				"maxGainSinceCall": "$ 188.94",
+				"risk": "Low",
+				"entryPrice": "$ 188.94",
+				"signalImage": "/images/signal_chart.png"
+			},
+			{
+				"id": "2",
+				"asset": "Tether",
+				"shortName": "USDT",
+				"currentPrice": 6.69,
+				"change": -6.69,
+				"targetProfits": [
+					{ "price": 11, "percent": 8, "isReached": true },
+					{ "price": 14, "percent": 12, "isReached": true },
+					{ "price": 15, "percent": 18, "isReached": false },
+					{ "price": 18, "percent": 25, "isReached": false }
+				],
+				"created": "2hrs ago",
+				"status": "PAUSED",
+				"logoUrl": "/images/usdt_round.png",
+				"currentTicker": "short period / 1hrs",
+				"stopLostPrice": "$ 18.20",
+				"timeframe": "Long period / 5hrs",
+				"time": "Aus27th (9:32PM)",
+				"marketCap": "Aus27th (9:32PM)",
+				"maxGainSinceCall": "$ 188.94",
+				"risk": "Low",
+				"entryPrice": "$ 188.94",
+				"signalImage": "/images/signal_chart.png"
+			}
+		],
+		"bestSignal": {
+			"name": "Bitcoin",
+			"image": "/images/btc_round.png",
+			"percentage": "25%"
+		},
+		"worstSignal": {
+			"name": "Tether",
+			"image": "/images/usdt_round.png",
+			"percentage": "25%"
+		},
+		"totalActiveSignal": 24,
+		"totalCapital": 234,
+		"percentage": "+2.31%"
+	},
 
-  "signalHistory": [
-    {
-      "id": "1",
-      "asset": "Bitcoin",
-      "shortName": "BTC",
-      "image": "/images/btc_round.png",
-      "winLoss": "188.94",
-      "startDate": "2nd may 2:30pm",
-      "endDate": "29 May 2:30 PM"
-    },
-    {
-      "id": "1",
-      "asset": "Tether",
-      "shortName": "USDT",
-      "image": "/images/usdt_round.png",
-      "winLoss": "188.94",
-      "startDate": "2nd may 2:30pm",
-      "endDate": "29 May 2:30 PM"
-    }
-  ],
+	"signalHistory": [
+		{
+			"id": "1",
+			"asset": "Bitcoin",
+			"shortName": "BTC",
+			"image": "/images/btc_round.png",
+			"winLoss": "188.94",
+			"startDate": "2nd may 2:30pm",
+			"endDate": "29 May 2:30 PM"
+		},
+		{
+			"id": "1",
+			"asset": "Tether",
+			"shortName": "USDT",
+			"image": "/images/usdt_round.png",
+			"winLoss": "188.94",
+			"startDate": "2nd may 2:30pm",
+			"endDate": "29 May 2:30 PM"
+		}
+	],
 
-  "assets": [
-    { "value": "bitcoin", "text": "Bitcoin" },
-    { "value": "etherum", "text": "Etherum" },
-    { "value": "binance", "text": "Binance" }
-  ],
+	"assets": [
+		{ "value": "bitcoin", "text": "Bitcoin" },
+		{ "value": "etherum", "text": "Etherum" },
+		{ "value": "binance", "text": "Binance" }
+	],
 
-  "createdAtList": [
-    { "value": "5 sec ago", "text": "5 sec ago" },
-    { "value": "2 mins ago", "text": "2 mins ago" },
-    { "value": "past 24hrs", "text": "past 24hrs" }
-  ],
+	"createdAtList": [
+		{ "value": "5 sec ago", "text": "5 sec ago" },
+		{ "value": "2 mins ago", "text": "2 mins ago" },
+		{ "value": "past 24hrs", "text": "past 24hrs" }
+	],
 
-  "timeList": [
-    { "value": "2:30pm", "text": "2:30pm" },
-    { "value": "4:00pm", "text": "4:00pm" },
-    { "value": "6:15pm", "text": "6:15pm" }
-  ]
+	"timeList": [
+		{ "value": "2:30pm", "text": "2:30pm" },
+		{ "value": "4:00pm", "text": "4:00pm" },
+		{ "value": "6:15pm", "text": "6:15pm" }
+	]
 }
