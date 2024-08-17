@@ -1,7 +1,6 @@
-// import { Outlet } from "@remix-run/react";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import SearchForm from "~/components/AccountLayout/SearchForm";
-import EmptySignal from "../EmptySignal";
+import EmptySignal from "../../../../components/AdminLayout/Signal/EmptySignal";
 import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import clsx from "clsx";
 import DropdownIcon from "~/components/icons/DropdownIcon";
@@ -9,7 +8,7 @@ import Date from "~/components/common/Date";
 import Button from "~/components/common/old/Button";
 import type { ChangeEvent } from "react";
 import { useState } from "react";
-import data from "~/pages/account/signals/data.json";
+import signalsData from "~/pages/account/signals/data.json";
 import type SignalsData from "~/lib/types";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import DeleteModal from "~/components/Modal/DeleteModal";
@@ -18,16 +17,32 @@ import { useFetchActiveSignals } from "~/apis/handlers/signals/hooks";
 import { ISignal } from "~/apis/handlers/signals/interfaces";
 import { activeSignalsPerfomanceSumary } from "~/selectors/signals";
 import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
+import { AdminNestedSignalsLayout } from "..";
+import { useCreate } from "~/hooks/useCreate";
+import { SignalsService } from "~/apis/handlers/signals";
+import { SignalStatus } from "~/apis/handlers/signals/enums";
+import Toast from "~/components/common/Toast";
 
+interface ActiveSignalProps {
+	signalResult: SignalsData;
+}
 
-function ActiveSignal() {
-	const signalResult: SignalsData = data;
+export const getServerSideProps = async () => {
+	// Replace with actual data fetching logic
+	return {
+		props: {
+			signalResult: signalsData,
+		},
+	};
+};
+
+function ActiveSignals({ signalResult }: ActiveSignalProps) {
 	const { signals } = signalResult;
-
+	const signalsService = new SignalsService();
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 	const router = useRouter();
-  	const { term } = router.query
-	const urlTerm = term as string | undefined
+	const { term } = router.query;
+	const urlTerm = term as string | undefined;
 
 	const [asset, setAsset] = useState<string>("");
 	const [createdAt, setCreatedAt] = useState<string>("");
@@ -35,7 +50,39 @@ function ActiveSignal() {
 	const [time, setTime] = useState<string>("");
 	const [searchterm, setSearchTerm] = useState<string>(urlTerm ?? "");
 	const [toggleDeleteModal, setToggleDeleteModal] = useState(false);
+	const [selectedSignalId, setSelectedSignalId] = useState<string | null>(null);
 	// const [isToggle, setToggle] = useState(false);
+
+	// Setup query to backend
+	const {
+		mutate: updateSignal,
+		isError,
+		isPending,
+		error,
+		isSuccess: isSignalUpdateSuccessful,
+		data,
+	} = useCreate({
+		mutationFn: signalsService.updateSignal.bind(signalsService),
+	});
+
+	const handleSetToggleDeleteModal = (id: string) => {
+		setSelectedSignalId(id);
+		setToggleDeleteModal(!toggleDeleteModal);
+	};
+
+	const handleDeleteModalConfirm = () => {
+		if (selectedSignalId) {
+			updateSignal({ id: selectedSignalId, status: SignalStatus.INACTIVE });
+			setToggleDeleteModal(false);
+			setSelectedSignalId(null);
+		}
+	};
+
+	const handleResumeSignal = (id: string, currentStatus: SignalStatus) => {
+		const newSignalStatus =
+			currentStatus === SignalStatus.ACTIVE ? SignalStatus.PAUSED : SignalStatus.ACTIVE;
+		updateSignal({ id, status: newSignalStatus });
+	};
 
 	const {
 		isLoading,
@@ -44,7 +91,11 @@ function ActiveSignal() {
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
-	} = useFetchActiveSignals();
+	} = useFetchActiveSignals({
+		isAdmin: true,
+		handleSetToggleDeleteModal,
+		handleResumeSignal,
+	});
 
 	const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setSelectedDate(event.target.value);
@@ -62,14 +113,9 @@ function ActiveSignal() {
 		console.log("searchterm::::::::::::::::::", searchterm);
 	};
 
-	const handleDeleteModalClose = () => {
-		setToggleDeleteModal(false);
-	};
-
-	const handleDeleteModalConfirm = () => {
-		// do something or initiate delete
-		handleDeleteModalClose();
-	};
+	if (isPending) {
+		return <div>updating signals status.....</div>;
+	}
 
 	return (
 		<>
@@ -102,7 +148,7 @@ function ActiveSignal() {
 							<Select
 								name="assets"
 								label="Assets"
-								options={data.assets}
+								options={signalsData.assets}
 								classNames={{
 									input: "cursor-pointer",
 								}}
@@ -112,7 +158,7 @@ function ActiveSignal() {
 							<Select
 								name="createdAt"
 								label="CreatedAt"
-								options={data.createdAtList}
+								options={signalsData.createdAtList}
 								classNames={{
 									input: "cursor-pointer",
 								}}
@@ -129,7 +175,7 @@ function ActiveSignal() {
 							<Select
 								name="time"
 								label="Time"
-								options={data.timeList}
+								options={signalsData.timeList}
 								classNames={{
 									input: "cursor-pointer",
 								}}
@@ -167,13 +213,32 @@ function ActiveSignal() {
 
 			<DeleteModal
 				title={"Delete signal"}
-				description={"Are you sure you want to delete this signal"}
+				description={"Are you sure you want to delete this signal?"}
 				btnConfirm={handleDeleteModalConfirm}
-				btnCancle={handleDeleteModalClose}
+				btnCancle={() => setToggleDeleteModal(false)}
 				openModal={toggleDeleteModal}
-				onClose={handleDeleteModalClose}
+				onClose={() => setToggleDeleteModal(false)}
 			/>
-			{/* <Outlet /> */}
+			{isError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Signal update Error"
+					message={error?.message ?? "Something went wrong!"}
+					autoVanish
+					autoVanishTimeout={10}
+				/>
+			)}
+			{data && isSignalUpdateSuccessful && (
+				<Toast
+					type="info"
+					variant="filled"
+					title="Signal successfully updated"
+					message="Successful!"
+					autoVanish
+					autoVanishTimeout={10}
+				/>
+			)}
 		</>
 	);
 }
@@ -252,4 +317,7 @@ const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
 //   );
 // }
 
-export default ActiveSignal;
+ActiveSignals.getLayout = (page: React.ReactElement) => (
+	<AdminNestedSignalsLayout>{page}</AdminNestedSignalsLayout>
+);
+export default ActiveSignals;

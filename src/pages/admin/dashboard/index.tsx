@@ -1,6 +1,7 @@
 import Card from "~/components/AccountLayout/Card";
+import AdminLayout from "~/components/AdminLayout/Layout";
 
-export default function Dashbaord() {
+const Dashbaord = () => {
 	return (
 		<div>
 			<h1 className="mb-8 text-xl font-bold leading-loose">Dashboard Overview</h1>
@@ -15,4 +16,7 @@ export default function Dashbaord() {
 			</div>
 		</div>
 	);
-}
+};
+
+Dashbaord.getLayout = (page: React.ReactElement) => <AdminLayout>{page}</AdminLayout>;
+export default Dashbaord;

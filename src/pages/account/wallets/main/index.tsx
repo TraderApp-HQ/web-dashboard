@@ -1,5 +1,4 @@
 import WalletBalanceCard from "~/components/Wallet/WalletBalanceCard";
-import WalletTabSection from "~/components/Wallet/WalletTabSection";
 import DepositIcon from "~/components/icons/DepositIcon";
 import TransferIcon from "~/components/icons/TransferIcon";
 import WithdrawIcon from "~/components/icons/WithdrawIcon";
@@ -35,7 +34,6 @@ const MainWallet = () => {
 
 	return (
 		<>
-			{/* <WalletTabSection /> */}
 			<WalletBalanceCard supportedOperations={supportedOperations} />
 			<Currencies />
 			<RecentTransactions />
@@ -43,5 +41,7 @@ const MainWallet = () => {
 	);
 };
 
-MainWallet.getLayout = (page: React.ReactElement) => <NestedWalletsLayout>{page}</NestedWalletsLayout>;
+MainWallet.getLayout = (page: React.ReactElement) => (
+	<NestedWalletsLayout>{page}</NestedWalletsLayout>
+);
 export default MainWallet;

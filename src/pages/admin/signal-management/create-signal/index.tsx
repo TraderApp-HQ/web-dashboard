@@ -13,8 +13,9 @@ import MessageModal from "~/components/Modal/MessageModal";
 import CustomSelect from "~/components/Wallet/CustomSelect";
 import SuccessIcon from "~/components/icons/SuccessIcon";
 import { handleKeyDown } from "~/lib/utils";
+import { AdminNestedSignalsLayout } from "..";
 
-export default function CreateSignal() {
+function CreateSignal() {
 	const [toggleSuccess, setToggleSuccess] = useState(false);
 	const [isOpen, setIsOpen] = useState(true);
 
@@ -74,11 +75,11 @@ export default function CreateSignal() {
 	};
 
 	function handleEntryPrice(value: string) {
-		setEntryPrice(value)
+		setEntryPrice(value);
 	}
 
 	function handleStopLoss(value: string) {
-		setStopLoss(value)
+		setStopLoss(value);
 	}
 
 	// Validation function to check if any state value is empty
@@ -192,7 +193,10 @@ export default function CreateSignal() {
 								className="no-spin-buttons"
 								onKeyDown={handleKeyDown}
 							/>
-							<label className="text-slate-900 text-sm font-normal leading-none">
+							<label
+								htmlFor="uploadButton"
+								className="text-slate-900 text-sm font-normal leading-none"
+							>
 								Upload signal image
 							</label>
 							<UploadButton
@@ -232,3 +236,8 @@ export default function CreateSignal() {
 		</>
 	);
 }
+
+CreateSignal.getLayout = (page: React.ReactElement) => (
+	<AdminNestedSignalsLayout>{page}</AdminNestedSignalsLayout>
+);
+export default CreateSignal;

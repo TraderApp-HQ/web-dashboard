@@ -2,13 +2,20 @@ import type { SignalHistoryItem } from "~/lib/types";
 import type {
 	ISignalPerformance,
 	ITBody,
+	ITableActions,
 	ITableMobile,
 } from "~/components/common/DataTable/config";
 import { ActiveSignalsTableHeadItems, SignalsHistoryTableHeadItems } from "./constants";
 import { renderDisplayItem, renderStatus, renderTargetProfits } from "~/helpers";
 import type { ISignal } from "~/apis/handlers/signals/interfaces";
+import { SignalStatus } from "~/apis/handlers/signals/enums";
 
-export function activeSignalsDataTableSelector(activeSignals: ISignal[]) {
+export function activeSignalsDataTableSelector(
+	activeSignals: ISignal[],
+	isAdmin: boolean,
+	handleSetToggleDeleteModal?: (id: string) => void,
+	handleResumeSignal?: (id: string, currentStatus: SignalStatus) => void,
+) {
 	const tableHead = [...ActiveSignalsTableHeadItems];
 	const tableBody: ITBody = {
 		tBodyRows: activeSignals.map((signal) => ({
@@ -36,7 +43,24 @@ export function activeSignalsDataTableSelector(activeSignals: ISignal[]) {
 					label: "View",
 					url: `active/${signal.id}/screenshot_chat`,
 				},
-			],
+				handleSetToggleDeleteModal && isAdmin
+					? {
+							label: "Delete signal",
+							onClick: () => handleSetToggleDeleteModal(signal.id),
+						}
+					: undefined,
+				handleResumeSignal
+					? {
+							label:
+								signal.status === SignalStatus.ACTIVE
+									? "Pause signal"
+									: "Resume signal",
+							isToggle: signal.status === SignalStatus.ACTIVE,
+							setToggle: () => handleResumeSignal(signal.id, signal.status),
+							id: signal.id,
+						}
+					: undefined,
+			].filter((action) => action !== undefined) as ITableActions[],
 		})),
 	};
 
@@ -56,7 +80,7 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 		actions: [
 			{
 				label: "View",
-				url: `${signal.id}/screenshot_chat`,
+				url: `active/${signal.id}/screenshot_chat`,
 			},
 		],
 		tBody: [

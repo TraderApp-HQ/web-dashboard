@@ -4,13 +4,10 @@ import type { SidenavLink } from "./config";
 import { AdminNavLinks, AdminNavLinksExtras, NavLinks, NavLinksExtras } from "./config";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import type { User } from "~/lib/types";
 import CancelIcon from "~/components/icons/CancelIcon";
 import LogoutIcon from "~/components/icons/LogoutIcon";
 import { UsersService } from "~/apis/handlers/users";
 import { useCreate } from "~/hooks/useCreate";
-import { removeAccessToken } from "~/utils/localStorage";
-import clsx from "clsx";
 
 export interface NavLinkItemProps {
 	navlink: SidenavLink;
@@ -26,9 +23,12 @@ const NavLinkItem = ({ navlink, toggleSideNav }: NavLinkItemProps) => {
 	const isActive = router.pathname.includes(navlink.path.replace("../", ""));
 	return (
 		<li onClick={() => toggleSideNav(false)}>
-			<Link href={navlink.path} className={`${isActive ? "active" : "inactive"} flex items-center space-x-4 font-bold text-[#414141] text-sm p-3.5 rounded-lg 2xl:text-base 2xl:p-3`}>
+			<Link
+				href={navlink.path}
+				className={`${isActive ? "active" : "inactive"} flex items-center space-x-4 font-bold text-[#414141] text-sm p-3.5 rounded-lg 2xl:text-base 2xl:p-3`}
+			>
 				<i>
-				<navlink.icon color={isActive ? "white" : "#414141"} />
+					<navlink.icon color={isActive ? "white" : "#414141"} />
 				</i>
 				<span>{navlink.text}</span>
 			</Link>

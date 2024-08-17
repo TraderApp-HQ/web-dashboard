@@ -8,12 +8,12 @@ import type { Asset, Wallet } from "~/lib/types";
 import { useState } from "react";
 import WalletType from "../../../../components/Wallet/WalletType";
 import Button from "~/components/AccountLayout/Button";
-import { useNavigate } from "react-router-dom";
 import RoundedTextDiv from "~/components/AccountLayout/RoundedTextDiv";
 import InputField from "~/components/common/InputField";
 import { handleKeyDown } from "~/lib/utils";
+import { NestedWalletsLayout } from "..";
 
-export default function () {
+const Transfer = () => {
 	const router = useRouter();
 
 	const assets: Asset[] = data.assets;
@@ -131,4 +131,9 @@ export default function () {
 			</Modal>
 		</>
 	);
-}
+};
+
+Transfer.getLayout = (page: React.ReactElement) => (
+	<NestedWalletsLayout>{page}</NestedWalletsLayout>
+);
+export default Transfer;

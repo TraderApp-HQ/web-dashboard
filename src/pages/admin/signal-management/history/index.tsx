@@ -1,12 +1,10 @@
 import SearchForm from "~/components/AccountLayout/SearchForm";
-import EmptySignal from "../EmptySignal";
+import EmptySignal from "../../../../components/AdminLayout/Signal/EmptySignal";
 import clsx from "clsx";
 import type { ChangeEvent } from "react";
 import { useState } from "react";
-import { json } from "@remix-run/cloudflare";
-import { Form, useLoaderData, useParams } from "@remix-run/react";
 import type { SignalHistoryData } from "~/lib/types";
-import data from "~/routes/account/signals/data.json";
+import data from "~/pages/account/signals/data.json";
 import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import Button from "~/components/common/old/Button";
 import DropdownIcon from "~/components/icons/DropdownIcon";
@@ -17,13 +15,11 @@ import {
 	signalsHistoryDataTableSelector,
 } from "~/selectors/signal-management";
 import Select from "~/components/AccountLayout/Select";
-
-export const loader = async () => {
-	return json(data.signalHistory);
-};
+import { AdminNestedSignalsLayout } from "..";
+import { useParams } from "react-router-dom";
 
 function SignalHistory() {
-	const signalHistory: SignalHistoryData = useLoaderData<typeof loader>();
+	const signalHistory: SignalHistoryData = data.signalHistory;
 
 	const { term: urlTerm } = useParams<{ term?: string }>();
 
@@ -79,35 +75,33 @@ function SignalHistory() {
 					position="left"
 				>
 					<DropdownMenuItem className="flex flex-col gap-y-2">
-						<Form onSubmit={onSubmit} method="post">
-							<Select
-								name="assets"
-								label="Assets"
-								options={data.assets}
-								classNames={{
-									input: "cursor-pointer",
-								}}
-								onChange={(e) => setAsset(e.target.value)}
-								selected={{ value: asset }}
-							/>
-							<Date
-								label="Start Date"
-								name="startDate"
-								value={startDate}
-								onChange={onStartDateChange}
-								required
-							/>
-							<Date
-								label="End Date"
-								name="endDate"
-								value={endDate}
-								onChange={onEndDateChange}
-								required
-							/>
-							<Button type="submit" onClick={() => {}} fluid className="mt-2">
-								Search
-							</Button>
-						</Form>
+						<Select
+							name="assets"
+							label="Assets"
+							options={data.assets}
+							classNames={{
+								input: "cursor-pointer",
+							}}
+							onChange={(e) => setAsset(e.target.value)}
+							selected={{ value: asset }}
+						/>
+						<Date
+							label="Start Date"
+							name="startDate"
+							value={startDate}
+							onChange={onStartDateChange}
+							required
+						/>
+						<Date
+							label="End Date"
+							name="endDate"
+							value={endDate}
+							onChange={onEndDateChange}
+							required
+						/>
+						<Button onClick={() => onSubmit} type="submit" fluid className="mt-2">
+							Search
+						</Button>
 					</DropdownMenuItem>
 				</DropdownMenu>
 			</div>
@@ -131,4 +125,7 @@ function SignalHistory() {
 	);
 }
 
+SignalHistory.getLayout = (page: React.ReactElement) => (
+	<AdminNestedSignalsLayout>{page}</AdminNestedSignalsLayout>
+);
 export default SignalHistory;

@@ -8,8 +8,18 @@ import {
 } from "~/selectors/signals";
 import type { ITBody, ITHead, ITableMobile } from "~/components/common/DataTable/config";
 import { ISignal } from "../interfaces";
+import { SignalStatus } from "../enums";
+interface UseFetchActiveSignalsProps {
+	handleSetToggleDeleteModal?: (id: string) => void;
+	handleResumeSignal?: (id: string, currentStatus: SignalStatus) => void;
+	isAdmin?: boolean;
+}
 
-export const useFetchActiveSignals = () => {
+export const useFetchActiveSignals = ({
+	isAdmin = false,
+	handleSetToggleDeleteModal,
+	handleResumeSignal,
+}: UseFetchActiveSignalsProps) => {
 	const signalsService = new SignalsService();
 	const [activeSignals, setActiveSignals] = useState<ISignal[]>([]);
 	const [signalsTableHead, setSignalsTableHead] = useState<ITHead[]>([]);
@@ -26,13 +36,19 @@ export const useFetchActiveSignals = () => {
 		isLoading,
 		isSuccess,
 		isError,
+		refetch,
 	} = useFetch({
 		queryKey: [SignalsQueryId.signals],
 		queryFn: fetchSignals,
 	});
 
 	useEffect(() => {
-		const { tableHead, tableBody } = activeSignalsDataTableSelector(allSignals?.signals ?? []);
+		const { tableHead, tableBody } = activeSignalsDataTableSelector(
+			allSignals?.signals ?? [],
+			isAdmin,
+			handleSetToggleDeleteModal,
+			handleResumeSignal,
+		);
 		const dataMobile = activeSignalsDataTableMobileSelector(allSignals?.signals ?? []);
 
 		setActiveSignals(allSignals?.signals ?? []);
@@ -40,6 +56,10 @@ export const useFetchActiveSignals = () => {
 		setSignalsTableBody(tableBody);
 		setSignalsMobileTableBody(dataMobile);
 	}, [isLoading, isSuccess, allSignals]);
+
+	useEffect(() => {
+		refetch();
+	}, [handleResumeSignal, handleSetToggleDeleteModal]);
 
 	// const { sendMessage, lastMessage, readyState, getWebSocket } = useWebSocket("ws://localhost:8080/stream/signals", {
 	//   onOpen: () => console.log("WebSocket opened"),

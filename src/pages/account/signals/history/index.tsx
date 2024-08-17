@@ -12,7 +12,7 @@ import {
 	signalsHistoryDataTableSelector,
 } from "~/selectors/signals";
 import Pagination from "~/components/Pagination";
-import { NestedSignalsLayout } from "../"
+import { NestedSignalsLayout } from "../";
 
 function SignalsHistory() {
 	const signalHistory: SignalHistoryItem[] = data.signalHistory;
@@ -78,7 +78,9 @@ function SignalsHistory() {
 			<div className={clsx("flex justify-between", signalHistory.length === 0 ? "mt-0" : "")}>
 				<SearchForm
 					// onChange={(e) => setSearchTerm(e.target.value)}
-					onChange={(e) => {}}
+					onChange={(e) => {
+						console.log(e.target.value);
+					}}
 					aria-label="search asset"
 					placeHolder="Search for asset name, status, etc..."
 					onSubmit={handleSearch}
@@ -125,5 +127,7 @@ function SignalsHistory() {
 	);
 }
 
-SignalsHistory.getLayout = (page: React.ReactElement) => <NestedSignalsLayout>{page}</NestedSignalsLayout>;
+SignalsHistory.getLayout = (page: React.ReactElement) => (
+	<NestedSignalsLayout>{page}</NestedSignalsLayout>
+);
 export default SignalsHistory;

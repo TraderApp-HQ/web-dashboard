@@ -6,6 +6,7 @@ import type { Asset } from "~/lib/types";
 import { useState } from "react";
 import ArrowSwap from "~/components/icons/ArrowSwap";
 import Button from "~/components/AccountLayout/Button";
+import { NestedWalletsLayout } from "..";
 
 const WalletConvert = () => {
 	const router = useRouter();
@@ -75,6 +76,9 @@ const WalletConvert = () => {
 			</Modal>
 		</>
 	);
-}
+};
 
+WalletConvert.getLayout = (page: React.ReactElement) => (
+	<NestedWalletsLayout>{page}</NestedWalletsLayout>
+);
 export default WalletConvert;
