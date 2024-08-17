@@ -1,7 +1,7 @@
 import { APIClient } from "~/apis/apiClient";
 import type { IResponse } from "../interfaces";
 import { UsersService } from "../users";
-import type { IFetchSignals, ISignal } from "./interfaces";
+import type { IFetchSignals, ISignal, ISignalUpdateInput } from "./interfaces";
 import { SignalStatus } from "./enums";
 
 export class SignalsService {
@@ -15,7 +15,7 @@ export class SignalsService {
 		//   this.usersService.refreshUserAccessToken.bind(this),
 		// );
 		this.apiClient = new APIClient(
-			"http://localhost:8080",
+			"http://localhost:8081",
 			this.usersService.refreshUserAccessToken.bind(this.usersService),
 		);
 	}
@@ -36,6 +36,19 @@ export class SignalsService {
 
 		const { data } = response;
 		return data as ISignal;
+	}
+
+	public async updateSignal(signal: ISignalUpdateInput): Promise<string> {
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/signals/update/${signal.id}`,
+			data: { status: signal.status },
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to update signal");
+		}
+
+		return response.message;
 	}
 
 	public async getSignal(): Promise<ISignal> {

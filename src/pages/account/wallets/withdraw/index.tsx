@@ -9,8 +9,9 @@ import Button from "~/components/AccountLayout/Button";
 import RoundedTextDiv from "~/components/AccountLayout/RoundedTextDiv";
 import InputField from "~/components/common/InputField";
 import { handleKeyDown } from "~/lib/utils";
+import { NestedWalletsLayout } from "..";
 
-export default function () {
+const Withdraw = () => {
 	const router = useRouter();
 	const [openOTP, setOpenOTP] = useState(false);
 	const [openModal, setOpenModal] = useState(true);
@@ -54,7 +55,9 @@ export default function () {
 				<div className="space-y-5 text-left">
 					<div className="w-full py-4 px-4 rounded-3xl bg-[#F4F5FA] flex-col space-y-5">
 						<div>
-							<label className="wallet-form-label">Select Coin</label>
+							<label htmlFor="select-coin" className="wallet-form-label">
+								Select Coin
+							</label>
 							<CustomSelect
 								assets={assets}
 								selectedDefault={fromAsset}
@@ -72,7 +75,9 @@ export default function () {
 							/>
 						</div>
 						<div>
-							<label className="wallet-form-label">Network</label>
+							<label htmlFor="network" className="wallet-form-label">
+								Network
+							</label>
 							<CustomSelect
 								assets={assets}
 								selectedDefault={toAsset}
@@ -123,4 +128,9 @@ export default function () {
 			<Otp openModal={openOTP} onClose={handleOtpClose} />
 		</>
 	);
-}
+};
+
+Withdraw.getLayout = (page: React.ReactElement) => (
+	<NestedWalletsLayout>{page}</NestedWalletsLayout>
+);
+export default Withdraw;

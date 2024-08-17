@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { UsersService } from "~/apis/handlers/users";
@@ -12,17 +12,18 @@ import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { renderStatus } from "~/helpers";
 import { useFetch } from "~/hooks/useFetch";
 import { formattedDate } from "~/lib/utils";
-import ConfirmModal from "../../ConfirmModal";
+import ConfirmModal from "../../../../../components/AdminLayout/User/ConfirmModal";
 import { UserStatus } from "~/config/enum";
+import AdminLayout from "~/components/AdminLayout/Layout";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.params!;
-  return {
-    props: {
-      id,
-    },
-  }
-}
+	const { id } = context.params!;
+	return {
+		props: {
+			id,
+		},
+	};
+};
 
 const UserDetails = ({ id }: { id: string }) => {
 	const router = useRouter();
@@ -165,4 +166,5 @@ export function UserRecordList({ user }: IUserRecordProps) {
 	);
 }
 
+UserDetails.getLayout = (page: React.ReactElement) => <AdminLayout>{page}</AdminLayout>;
 export default UserDetails;

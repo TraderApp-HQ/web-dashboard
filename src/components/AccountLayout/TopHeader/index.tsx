@@ -35,12 +35,12 @@ const TopHeader: React.FC<ITopHeaderProps> = ({ clientApp }) => {
 							{clientApp === "ADMIN_DASHBOARD" ? (
 								<Link
 									className="text-slate-900 text-base font-bold leading-normal"
-									href={`..${LAYOUT_ROUTES.account}`}
+									href={`${LAYOUT_ROUTES.account}`}
 								>
 									User Dashboard
 								</Link>
 							) : (
-								<Link href={`..${LAYOUT_ROUTES.admin}`}>Admin Dashboard</Link>
+								<Link href={`${LAYOUT_ROUTES.admin}`}>Admin Dashboard</Link>
 							)}
 							<RightArrowIcon />
 						</div>

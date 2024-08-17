@@ -15,10 +15,10 @@ import Pagination from "~/components/Pagination";
 import { useFetchActiveSignals } from "~/apis/handlers/signals/hooks";
 import { ISignal } from "~/apis/handlers/signals/interfaces";
 import { activeSignalsPerfomanceSumary } from "~/selectors/signals";
-import { NestedSignalsLayout } from "../"
+import { NestedSignalsLayout } from "../";
 
 const ActiveSignals = () => {
-	const signalResult: SignalsData = data
+	const signalResult: SignalsData = data;
 	const { signals } = signalResult;
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 
@@ -35,7 +35,7 @@ const ActiveSignals = () => {
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
-	} = useFetchActiveSignals();
+	} = useFetchActiveSignals({});
 	const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setSelectedDate(event.target.value);
 	};
@@ -83,7 +83,9 @@ const ActiveSignals = () => {
 			>
 				<SearchForm
 					// onChange={(e) => setSearchTerm(e.target.value)}
-					onChange={(e) => {}}
+					onChange={(e) => {
+						console.log(e);
+					}}
 					aria-label="search asset"
 					placeHolder="Search for asset name, status, etc..."
 					onSubmit={handleSearch}
@@ -185,7 +187,7 @@ const ActiveSignals = () => {
 			{/* <Outlet /> */}
 		</>
 	);
-}
+};
 
 const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
 	const signalPerformer = activeSignalsPerfomanceSumary(signals);
@@ -200,5 +202,7 @@ const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
 	);
 };
 
-ActiveSignals.getLayout = (page: React.ReactElement) => <NestedSignalsLayout>{page}</NestedSignalsLayout>;
+ActiveSignals.getLayout = (page: React.ReactElement) => (
+	<NestedSignalsLayout>{page}</NestedSignalsLayout>
+);
 export default ActiveSignals;

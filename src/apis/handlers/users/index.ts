@@ -24,7 +24,7 @@ export class UsersService {
 	constructor() {
 		// this.apiClient = new APIClient("https://apis-dev.traderapp.finance:3000", this.refreshUserAccessToken.bind(this));
 		this.apiClient = new APIClient(
-			"http://localhost:8081",
+			"http://localhost:8080",
 			this.refreshUserAccessToken.bind(this),
 		);
 	}

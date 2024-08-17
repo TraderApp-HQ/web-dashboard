@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image"
+import Image from "next/image";
 import Modal from "~/components/Modal";
 import CopyIcon from "~/components/icons/CopyIcon";
 import CustomSelect from "../../../../components/Wallet/CustomSelect";
 import data from "~/data/wallet/data.json";
 import type { Asset } from "~/lib/types";
 import Button from "~/components/AccountLayout/Button";
+import { NestedWalletsLayout } from "..";
 
-export default function () {
+const Deposit = () => {
 	const router = useRouter();
 	const assets: Asset[] = data.assets;
 	const [fromAsset, setFromAsset] = useState(
@@ -42,7 +43,9 @@ export default function () {
 				<div className="space-y-5 text-left">
 					<div className="w-full py-4 px-4 rounded-2xl bg-[#F4F5FA] flex-col space-y-5">
 						<div>
-							<label className="wallet-form-label">Select Coin</label>
+							<label htmlFor="selec-coin" className="wallet-form-label">
+								Select Coin
+							</label>
 							<CustomSelect
 								assets={assets}
 								selectedDefault={fromAsset}
@@ -52,7 +55,9 @@ export default function () {
 						</div>
 
 						<div>
-							<label className="wallet-form-label">Network</label>
+							<label htmlFor="network" className="wallet-form-label">
+								Network
+							</label>
 							<CustomSelect
 								assets={assets}
 								selectedDefault={toAsset}
@@ -105,7 +110,13 @@ export default function () {
 								<span className="text-[#E02D3C]">TRON (TRC20)</span>
 							</h3>
 						</div>
-						<img src="/images/qrcode.png" alt="qr-code" className="self-start" />
+						<Image
+							width={"209"}
+							height={"189"}
+							src="/images/qrcode.png"
+							alt="qr-code"
+							className="self-start"
+						/>
 					</div>
 
 					<div className="wallet-modal-btn-div">
@@ -115,4 +126,7 @@ export default function () {
 			</Modal>
 		</>
 	);
-}
+};
+
+Deposit.getLayout = (page: React.ReactElement) => <NestedWalletsLayout>{page}</NestedWalletsLayout>;
+export default Deposit;

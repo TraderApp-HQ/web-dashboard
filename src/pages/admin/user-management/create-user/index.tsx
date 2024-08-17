@@ -11,8 +11,9 @@ import { useFetch } from "~/hooks/useFetch";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
 import SelectBox from "~/components/common/SelectBox";
 import { UserRole } from "~/apis/handlers/users/enums";
+import AdminLayout from "~/components/AdminLayout/Layout";
 
-export default function CreateUser() {
+function CreateUser() {
 	const [isOpen, setIsOpen] = useState(true);
 
 	const router = useRouter();
@@ -56,7 +57,7 @@ export default function CreateUser() {
 	};
 
 	const handleModalClose = () => {
-		router.push("..");
+		router.push(".");
 		setIsOpen(false);
 	};
 	// Validation function to check if any state value is empty
@@ -100,9 +101,7 @@ export default function CreateUser() {
 	// user creation successful. Display success toast
 	useEffect(() => {
 		if (isSuccess && data) {
-			setTimeout(() => {
-				setIsOpen(false);
-			}, 8000);
+			setIsOpen(false);
 		}
 	}, [isSuccess, data]);
 
@@ -221,3 +220,6 @@ export default function CreateUser() {
 		</>
 	);
 }
+
+CreateUser.getLayout = (page: React.ReactElement) => <AdminLayout>{page}</AdminLayout>;
+export default CreateUser;

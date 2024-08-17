@@ -1,13 +1,11 @@
-import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { json } from "@remix-run/cloudflare";
-import { useLoaderData } from "@remix-run/react";
+import { GetServerSideProps } from "next";
+import { useState } from "react";
+import { useRouter } from "next/router";
 import data from "~/data/wallet/data.json";
-import type { IRecentTransactions } from "~/lib/types";
+import { IRecentTransactions } from "~/lib/types";
 import { getTransaction } from "~/lib/utils";
 
 import Modal from "~/components/Modal";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import TransactionDetailsCard from "~/components/Wallet/RecentTransactions/TransactionDetailsCard";
 import {
 	ConvertTransactionsRecord,
@@ -15,22 +13,27 @@ import {
 	TransferTransactionsRecord,
 	WithdrawalTransactionsRecord,
 } from "~/components/Wallet/RecentTransactions/TransactionsRecord";
+import { NestedWalletsLayout } from "../..";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
-	const { id } = params;
-	const transaction = await getTransaction(id, data.transactions);
-	return json(transaction);
+interface TransactionDetailsProps {
+	transaction: IRecentTransactions;
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const { id } = context.params!;
+	const transaction = await getTransaction(id as string, data.transactions);
+	return {
+		props: { transaction },
+	};
 };
 
-export default function TransactionDetails() {
-	const transaction: IRecentTransactions = useLoaderData<typeof loader>();
-
-	const navigate = useNavigate();
+function TransactionDetails({ transaction }: TransactionDetailsProps) {
+	const router = useRouter();
 	const [openModal, setOpenModal] = useState(true);
 
 	const onClose = () => {
 		setOpenModal(false);
-		navigate(-1);
+		router.back();
 	};
 
 	const renderContent = () => {
@@ -58,3 +61,8 @@ export default function TransactionDetails() {
 		</Modal>
 	);
 }
+
+TransactionDetails.getLayout = (page: React.ReactElement) => (
+	<NestedWalletsLayout>{page}</NestedWalletsLayout>
+);
+export default TransactionDetails;

@@ -18,11 +18,11 @@ export function usersDataTableSelector(users: IUserProfile[]) {
 			actions: [
 				{
 					label: "View",
-					url: `${user.id}${ROUTES.usermanagement.details}`,
+					url: `user-management/${user.id}${ROUTES.usermanagement.details}`,
 				},
 				{
 					label: "",
-					url: `${user.id}${ROUTES.usermanagement.edit}`,
+					url: `user-management/${user.id}${ROUTES.usermanagement.edit}`,
 					icon: EditIcon,
 				},
 			],

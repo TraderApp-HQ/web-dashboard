@@ -49,3 +49,8 @@ export interface IFetchSignals {
 	totalPages: number;
 	totalRecords: number;
 }
+
+export interface ISignalUpdateInput {
+	id: string;
+	status: SignalStatus;
+}

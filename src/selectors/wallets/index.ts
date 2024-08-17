@@ -25,7 +25,7 @@ export function recentTransactionsDataTableSelector(recentTransactions: IRecentT
 			actions: [
 				{
 					label: "View",
-					url: `../${item.id}/${ROUTES.wallet.transactionDetails}`,
+					url: `${item.id}/${ROUTES.wallet.transactionDetails}`,
 				},
 			],
 		})),
@@ -49,7 +49,7 @@ export function recentTransactionsDataTableMobileSelector(
 		actions: [
 			{
 				label: "View",
-				url: `../${item.id}/${ROUTES.wallet.transactionDetails}`,
+				url: `${item.id}/${ROUTES.wallet.transactionDetails}`,
 			},
 		],
 		tBody: [

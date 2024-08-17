@@ -8,11 +8,11 @@ const WalletsHome = () => {
 	useEffect(() => {
 		router.push("wallets/main");
 	}, []);
-}
+};
 
 type IProps = {
-	children: ReactNode
-}
+	children: ReactNode;
+};
 
 const WalletsLayout: React.FC<IProps> = ({ children }) => {
 	const tabs = [
@@ -32,9 +32,9 @@ const WalletsLayout: React.FC<IProps> = ({ children }) => {
 };
 
 export const NestedWalletsLayout: React.FC<IProps> = ({ children }) => (
-  <AccountLayout>
-    <WalletsLayout>{children}</WalletsLayout>
-  </AccountLayout>
+	<AccountLayout>
+		<WalletsLayout>{children}</WalletsLayout>
+	</AccountLayout>
 );
 
 export default WalletsHome;

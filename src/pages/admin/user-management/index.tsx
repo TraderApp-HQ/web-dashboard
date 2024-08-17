@@ -1,4 +1,3 @@
-import { Outlet, useNavigate, useSearchParams } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import Button from "~/components/common/Button";
 import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
@@ -7,24 +6,27 @@ import Pagination from "~/components/Pagination";
 import { DataTable } from "~/components/common/DataTable";
 import DropdownIcon from "~/components/icons/DropdownIcon";
 import { usersDataTableSelector } from "~/selectors/user-management";
-import EmptyUser from "./EmptyUser";
 import useUsers from "~/hooks/useUsers";
-import { ROUTES } from "~/config/constants";
+import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
+import AdminLayout from "~/components/AdminLayout/Layout";
+import { useRouter } from "next/router";
+import EmptyUser from "~/components/AdminLayout/User/EmptyUser";
 
 const UserManagement = () => {
-	const [searchParams, setSearchParams] = useSearchParams(); // Using useSearchParams hook to get and set search parameters
-	const [searchKeyword, setSearchKeyword] = useState(() => searchParams.get("query") ?? ""); // Initializing searchKeyword state with query parameter
-	const [currentPage, setCurrentPage] = useState(() => Number(searchParams.get("page")) ?? "");
-	const [rowsPerPage, setRowsPerPage] = useState(() => Number(searchParams.get("rows")) ?? "");
-
-	const navgiate = useNavigate();
+	const router = useRouter();
+	const searchKeywordInitial = Array.isArray(router.query.query)
+		? router.query.query[0]
+		: router.query.query || "";
 	const params = new URLSearchParams();
-	const initialRowNumber = rowsPerPage === 0 ? 10 : rowsPerPage;
-	const initialPageNumber = currentPage === 0 ? 1 : currentPage;
+
+	const [searchKeyword, setSearchKeyword] = useState(searchKeywordInitial);
+	const [currentPage, setCurrentPage] = useState(Number(router.query.page) || 1);
+	const [rowsPerPage, setRowsPerPage] = useState(Number(router.query.rows) || 10);
+
 	const { data, refetch, error, isLoading, isSuccess, isError } = useUsers({
 		searchKeyword,
-		currentPage: initialPageNumber,
-		rowsPerPage: initialRowNumber,
+		currentPage,
+		rowsPerPage,
 	});
 
 	useEffect(() => {
@@ -37,14 +39,17 @@ const UserManagement = () => {
 		if (searchKeyword) {
 			params.set("query", searchKeyword);
 		}
-		setSearchParams(params);
-	}, [currentPage, rowsPerPage]);
+	}, [currentPage, rowsPerPage, searchKeyword]);
 
 	const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
 		if (searchKeyword) {
 			params.set("query", searchKeyword);
 		}
-		setSearchParams(params);
+		router.push({
+			pathname: router.pathname,
+			query: params.toString(),
+		});
+
 		e.preventDefault();
 		refetch();
 	};
@@ -66,7 +71,11 @@ const UserManagement = () => {
 				<h3>All users</h3>
 				{users.length !== 0 && (
 					<Button
-						onClick={() => navgiate(ROUTES.usermanagement.create)}
+						onClick={() =>
+							router.push(
+								`${LAYOUT_ROUTES.admin}/${ROUTES.usermanagement.homepage}/${ROUTES.usermanagement.create}`,
+							)
+						}
 						labelText="Create new user"
 					/>
 				)}
@@ -130,9 +139,9 @@ const UserManagement = () => {
 					</div>
 				</>
 			)}
-			<Outlet />
 		</div>
 	);
 };
 
+UserManagement.getLayout = (page: React.ReactElement) => <AdminLayout>{page}</AdminLayout>;
 export default UserManagement;
