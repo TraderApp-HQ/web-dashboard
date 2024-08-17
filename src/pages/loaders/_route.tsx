@@ -1,4 +1,3 @@
-import { Form } from "@remix-run/react";
 import React from "react";
 import Button from "~/components/AccountLayout/Button";
 import Date from "~/components/AccountLayout/Date";
@@ -19,94 +18,90 @@ const Loader = () => {
 					<DropdownMenu trigger={<span>Open Menu</span>}>
 						<DropdownMenuItem component="text">Search anything</DropdownMenuItem>
 						<DropdownMenuItem component="text">
-							<Form onSubmit={() => {}} method="post">
-								<SelectBox
-									placeholder="Select trade"
-									labelText="Trade"
-									options={[
-										{ displayText: "BTC", value: "btc" },
-										{ displayText: "ETH", value: "eth" },
-									]}
-								/>
-								<SelectBox
-									placeholder="Select trade"
-									labelText="Trade"
-									options={[
-										{ displayText: "BTC", value: "btc" },
-										{ displayText: "ETH", value: "eth" },
-									]}
-								/>
-								<Date
-									label="Date"
-									name="selectedDate"
-									value={""}
-									onChange={() => {}}
-									required
-								/>
-								<SelectBox
-									placeholder="Select trade"
-									labelText="Trade"
-									options={[
-										{ displayText: "BTC", value: "btc" },
-										{ displayText: "ETH", value: "eth" },
-									]}
-								/>
-								<Button type="submit" onClick={() => {}} fluid className="mt-2">
-									Search
-								</Button>
-							</Form>
+							<SelectBox
+								placeholder="Select trade"
+								labelText="Trade"
+								options={[
+									{ displayText: "BTC", value: "btc" },
+									{ displayText: "ETH", value: "eth" },
+								]}
+							/>
+							<SelectBox
+								placeholder="Select trade"
+								labelText="Trade"
+								options={[
+									{ displayText: "BTC", value: "btc" },
+									{ displayText: "ETH", value: "eth" },
+								]}
+							/>
+							<Date
+								label="Date"
+								name="selectedDate"
+								value={""}
+								onChange={() => {}}
+								required
+							/>
+							<SelectBox
+								placeholder="Select trade"
+								labelText="Trade"
+								options={[
+									{ displayText: "BTC", value: "btc" },
+									{ displayText: "ETH", value: "eth" },
+								]}
+							/>
+							<Button type="submit" onClick={() => {}} fluid className="mt-2">
+								Search
+							</Button>
 						</DropdownMenuItem>
 					</DropdownMenu>
 					<DropdownMenu trigger={<span>Open Menu</span>}>
 						<DropdownMenuItem component="text">Search anything</DropdownMenuItem>
 						<DropdownMenuItem component="text">
-							<Form onSubmit={() => {}} method="post">
-								<SelectBox
-									placeholder="Select trade"
-									labelText="Trade"
-									options={[
-										{ displayText: "BTC", value: "btc" },
-										{ displayText: "ETH", value: "eth" },
-									]}
-								/>
-								<Select
-									name="createdAt"
-									label="CreatedAt"
-									options={[
-										{ value: "BTC", text: "BTC" },
-										{ value: "ETH", text: "ETH" },
-									]}
-									classNames={{
-										input: "cursor-pointer",
-									}}
-									onChange={() => {}}
-									selected={{ value: "BTC" }}
-								/>
-								<Date
-									label="Date"
-									name="selectedDate"
-									value={""}
-									onChange={() => {}}
-									required
-								/>
+							<SelectBox
+								placeholder="Select trade"
+								labelText="Trade"
+								options={[
+									{ displayText: "BTC", value: "btc" },
+									{ displayText: "ETH", value: "eth" },
+								]}
+							/>
+							<Select
+								name="createdAt"
+								label="CreatedAt"
+								options={[
+									{ value: "BTC", text: "BTC" },
+									{ value: "ETH", text: "ETH" },
+								]}
+								classNames={{
+									input: "cursor-pointer",
+								}}
+								onChange={() => {}}
+								selected={{ value: "BTC" }}
+							/>
+							<Date
+								label="Date"
+								name="selectedDate"
+								value={""}
+								onChange={() => {}}
+								required
+							/>
 
-								<Select
-									name="time"
-									label="Time"
-									options={[
-										{ value: "BTC", text: "BTC" },
-										{ value: "ETH", text: "ETH" },
-									]}
-									classNames={{
-										input: "cursor-pointer",
-									}}
-									onChange={() => {}}
-									selected={{ value: "BTC" }}
-								/>
-								<Button type="submit" onClick={() => {}} fluid className="mt-2">
-									Search
-								</Button>
-							</Form>
+							<Select
+								name="time"
+								label="Time"
+								options={[
+									{ value: "BTC", text: "BTC" },
+									{ value: "ETH", text: "ETH" },
+								]}
+								classNames={{
+									input: "cursor-pointer",
+								}}
+								onChange={() => {}}
+								selected={{ value: "BTC" }}
+							/>
+							<Button type="submit" onClick={() => {}} fluid className="mt-2">
+								Search
+							</Button>
 						</DropdownMenuItem>
 					</DropdownMenu>
 				</div>

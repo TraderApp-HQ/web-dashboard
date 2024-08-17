@@ -20,11 +20,11 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 	const getLayout = Component.getLayout ?? ((page) => page);
 
 	const LayoutWrapper = ({ children }: { children: ReactNode }) => {
-		if (Component.name.startsWith('Account')) {
-		return <AccountLayout>{children}</AccountLayout>;
+		if (Component.name.startsWith("Account")) {
+			return <AccountLayout>{children}</AccountLayout>;
 		}
-		if (Component.name.startsWith('Auth')) {
-		return <AuthLayout>{children}</AuthLayout>;
+		if (Component.name.startsWith("Auth")) {
+			return <AuthLayout>{children}</AuthLayout>;
 		}
 		// if (Component.name.startsWith('Admin')) {
 		// return <AdminRootLayout>{children}</AdminRootLayout>;
