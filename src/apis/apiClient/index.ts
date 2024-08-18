@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getAccessToken, setAccessToken } from "~/utils/localStorage";
 import type { IResponse } from "../handlers/interfaces";
 

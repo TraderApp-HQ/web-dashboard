@@ -57,5 +57,7 @@ const SystemsSettings = () => {
 	);
 };
 
-SystemsSettings.getLayout = (page: React.ReactElement) => <NestedSettingsLayout>{page}</NestedSettingsLayout>;
+SystemsSettings.getLayout = (page: React.ReactElement) => (
+	<NestedSettingsLayout>{page}</NestedSettingsLayout>
+);
 export default SystemsSettings;

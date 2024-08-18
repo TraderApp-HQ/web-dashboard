@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Modal from ".";
 import { useRouter } from "next/router";
 
@@ -13,9 +14,10 @@ export default function VerificationSuccessModal({ open, setOpen }: ISuccessModa
 			<section>
 				<div>
 					<header className="flex flex-col items-center mb-[20px]">
-						<img
+						<Image
 							src="/images/auth/thumbs.png"
 							width={73}
+							height={73}
 							alt="thumbs"
 							className="mb-[12px]"
 						/>

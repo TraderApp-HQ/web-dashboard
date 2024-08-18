@@ -2,7 +2,7 @@
 import useWebSocket from "react-use-websocket";
 import { useEffect, useState } from "react";
 
-function useCustomWebSocket<T = undefined>(url: string) {
+function useCustomWebSocket(url: string) {
 	const [data, setData] = useState<string | null>(null);
 	const { sendMessage, lastMessage, readyState, getWebSocket } = useWebSocket(url, {
 		onOpen: () => console.log("WebSocket opened"),

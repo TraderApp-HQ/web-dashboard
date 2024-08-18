@@ -1,7 +1,7 @@
 import ChartOverview from "~/components/Chart/ChartOverview";
 import PortfolioAllocation from "~/components/Chart/PortfolioAllocation";
 
-export default function () {
+const PortfolioOverview = () => {
 	return (
 		<div className="my-6">
 			<h2 className="text-[#08123B] font-bold py-3">Portfolio</h2>
@@ -11,4 +11,6 @@ export default function () {
 			</div>
 		</div>
 	);
-}
+};
+
+export default PortfolioOverview;

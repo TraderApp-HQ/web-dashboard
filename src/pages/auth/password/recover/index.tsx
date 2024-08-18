@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image"
+import Image from "next/image";
 import { UsersService } from "~/apis/handlers/users";
 import Button from "~/components/common/Button";
 import InputField from "~/components/common/InputField";
@@ -57,6 +57,7 @@ const RecoverPassword = () => {
 						<Image
 							src="/images/auth/padlock.png"
 							width={73}
+							height={73}
 							alt="padlock"
 							className="mb-[12px]"
 						/>

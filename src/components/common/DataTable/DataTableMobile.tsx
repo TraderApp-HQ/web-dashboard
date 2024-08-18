@@ -1,7 +1,6 @@
 import type { FC } from "react";
 import React from "react";
 import type { ITableMobile } from "./config";
-import { ITHead } from "./config";
 import TableMenuDropdown from "./TableMenuDropdown";
 
 interface IDataTableMobile {

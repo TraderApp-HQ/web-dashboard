@@ -1,7 +1,7 @@
 import PageTab from "~/components/AccountLayout/Tabs";
 import { ROUTES } from "~/config/constants";
 
-export default function () {
+const WalletTabSection = () => {
 	const tabs = [
 		{ title: "Main", href: ROUTES.wallet.wallets },
 		{ title: "Spot", href: ROUTES.wallet.spot },
@@ -13,4 +13,6 @@ export default function () {
 			<PageTab tabs={tabs} />
 		</div>
 	);
-}
+};
+
+export default WalletTabSection;

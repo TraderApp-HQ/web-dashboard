@@ -1,5 +1,5 @@
 import type { MutationFunction, UseMutationResult } from "@tanstack/react-query";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 interface MutationOptions<T, Variables = void> {
 	mutationFn: MutationFunction<T, Variables>;

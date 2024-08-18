@@ -111,8 +111,8 @@ const Deposit = () => {
 							</h3>
 						</div>
 						<Image
-							width={"209"}
-							height={"189"}
+							width={209}
+							height={189}
 							src="/images/qrcode.png"
 							alt="qr-code"
 							className="self-start"

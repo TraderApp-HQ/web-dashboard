@@ -1,6 +1,7 @@
 import Card from "~/components/AccountLayout/Card";
 import type { IRecentTransactions } from "~/lib/types";
 import { renderStatus } from "~/helpers";
+import Image from "next/image";
 
 interface ITransactionDetailsCardProps {
 	transaction: IRecentTransactions;
@@ -13,7 +14,12 @@ export default function TransactionDetailsCard({ transaction }: ITransactionDeta
 				<div className="flex justify-between w-full">
 					<div className="flex flex-col gap-y-2">
 						<div className="flex gap-2">
-							<img src={transaction.image} width={25} alt={transaction.image} />
+							<Image
+								src={transaction.image}
+								width={25}
+								height={25}
+								alt={transaction.image}
+							/>
 							<p>{transaction.curency}</p>
 						</div>
 						<div className="flex gap-2">

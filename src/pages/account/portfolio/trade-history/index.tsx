@@ -37,7 +37,9 @@ const TradeHistory = () => {
 		setCurrentPage(1);
 	}, [rowsPerPage]);
 
-	const { tableHead, tableBody } = tradeHistoryDataTableSelector(paginatedItems ?? [] /** items */);
+	const { tableHead, tableBody } = tradeHistoryDataTableSelector(
+		paginatedItems ?? [] /** items */,
+	);
 	const dataMobile = tradeHistoryDataTableMobileSelector(paginatedItems /** items */);
 
 	return (
@@ -74,7 +76,9 @@ const TradeHistory = () => {
 			</div>
 		</div>
 	);
-}
+};
 
-TradeHistory.getLayout = (page: React.ReactElement) => <NestedPortfolioLayout>{page}</NestedPortfolioLayout>;
+TradeHistory.getLayout = (page: React.ReactElement) => (
+	<NestedPortfolioLayout>{page}</NestedPortfolioLayout>
+);
 export default TradeHistory;

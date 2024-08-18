@@ -1,4 +1,4 @@
-export default function () {
+const ArrowDownSlim = () => {
 	return (
 		<svg
 			width="16"
@@ -15,4 +15,5 @@ export default function () {
 			/>
 		</svg>
 	);
-}
+};
+export default ArrowDownSlim;

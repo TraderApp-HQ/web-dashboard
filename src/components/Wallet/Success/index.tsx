@@ -8,7 +8,7 @@ interface SuccessParam {
 	message?: string;
 }
 
-export default function ({ openModal, message, onClose }: SuccessParam) {
+const WalletSuccess: React.FC<SuccessParam> = ({ openModal, message, onClose }) => {
 	const handleClose = () => {
 		if (onClose) {
 			onClose();
@@ -26,4 +26,6 @@ export default function ({ openModal, message, onClose }: SuccessParam) {
 			</div>
 		</Modal>
 	);
-}
+};
+
+export default WalletSuccess;

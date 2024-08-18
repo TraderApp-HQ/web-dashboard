@@ -12,16 +12,15 @@ const ManageTrade = () => {
 
 	const router = useRouter();
 	const id = router.query.id as string;
-	const [trade, setTrade] = useState<OpenTrade>()
+	const [trade, setTrade] = useState<OpenTrade>();
 
 	useEffect(() => {
 		async function fetchData() {
 			const resObj = await getTrade("1", data.openTrades);
-			setTrade(resObj)
+			setTrade(resObj);
 		}
-		fetchData()
-		
-	}, [id])
+		fetchData();
+	}, [id]);
 
 	const onClose = () => {
 		setOpenModal(false);
@@ -96,5 +95,7 @@ const ManageTrade = () => {
 	);
 };
 
-ManageTrade.getLayout = (page: React.ReactElement) => <NestedPortfolioLayout>{page}</NestedPortfolioLayout>;
+ManageTrade.getLayout = (page: React.ReactElement) => (
+	<NestedPortfolioLayout>{page}</NestedPortfolioLayout>
+);
 export default ManageTrade;

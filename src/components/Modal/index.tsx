@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
 import CancelIcon from "../icons/CancelIcon";
@@ -11,14 +12,14 @@ export interface ModalOptions {
 	description?: string;
 }
 
-export default function ({
+const Modal: React.FC<ModalOptions> = ({
 	children,
 	openModal,
 	onClose,
 	width,
 	title,
 	description,
-}: ModalOptions) {
+}) => {
 	function close() {
 		if (onClose) {
 			onClose();
@@ -62,4 +63,6 @@ export default function ({
 			</div>
 		</div>
 	);
-}
+};
+
+export default Modal;

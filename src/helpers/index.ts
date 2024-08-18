@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import React from "react";
-import { GetServerSidePropsResult } from 'next';
+import { GetServerSidePropsResult } from "next";
 import StatusPill from "~/components/common/StatusPill";
 import { ColourTheme, HTMLElements, OperationStatus, UserStatus } from "~/config/enum";
 import TargetPill from "~/components/common/TargetPill";
@@ -64,10 +65,10 @@ export function renderStatus(status: string, style?: { justify?: string }) {
 }
 
 export const serverRedirect = (destination: string): GetServerSidePropsResult<{}> => {
-  return {
-    redirect: {
-      destination,
-      permanent: false,
-    },
-  };
-}
+	return {
+		redirect: {
+			destination,
+			permanent: false,
+		},
+	};
+};

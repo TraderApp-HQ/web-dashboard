@@ -2,7 +2,7 @@ import { APIClient } from "~/apis/apiClient";
 import type { IResponse } from "../interfaces";
 import { UsersService } from "../users";
 import type { IFetchSignals, ISignal, ISignalUpdateInput } from "./interfaces";
-import { SignalStatus } from "./enums";
+// import { SignalStatus } from "./enums";
 
 export class SignalsService {
 	private apiClient: APIClient;
@@ -10,19 +10,13 @@ export class SignalsService {
 
 	constructor() {
 		this.usersService = new UsersService();
-		// this.apiClient = new APIClient(
-		//   "https://apis-dev.traderapp.finance:3001",
-		//   this.usersService.refreshUserAccessToken.bind(this),
-		// );
+		if (!process.env.NEXT_PUBLIC_ASSETS_SERVICE_API_URL)
+			throw Error("Signals service backend url not found");
 		this.apiClient = new APIClient(
-			"http://localhost:8081",
+			process.env.NEXT_PUBLIC_ASSETS_SERVICE_API_URL,
 			this.usersService.refreshUserAccessToken.bind(this.usersService),
 		);
 	}
-
-	//   public async refreshUserAccessToken(): Promise<string | null> {
-	//     return this.usersService.refreshUserAccessToken.bind(this);
-	//   }
 
 	public async createSignal(): Promise<ISignal> {
 		const response = await this.apiClient.post<IResponse>({
@@ -77,4 +71,4 @@ export class SignalsService {
 	}
 }
 
-export default new SignalsService();
+// export default new SignalsService();

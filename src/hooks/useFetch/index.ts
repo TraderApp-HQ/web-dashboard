@@ -1,15 +1,4 @@
-// import { useQuery, QueryFunction, QueryKey, useQueryClient } from "@tanstack/react-query";
-
-// interface QueryOptions<T> {
-//   queryKey: QueryKey;
-//   queryFn: QueryFunction<T>;
-//   dependencies?: any[];
-// }
-
-// export const useFetch = <T>({ queryKey, queryFn }: QueryOptions<T>) => {
-//   return useQuery<T>({ queryKey, queryFn });
-// };
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
 	QueryFunction,
 	QueryKey,

@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import type { Asset } from "~/lib/types";
 import ArrowDown from "~/components/icons/ArrowDown";
+import Image from "next/image";
 
 interface CustomSelectParam {
 	label?: string;
@@ -12,14 +14,14 @@ interface CustomSelectParam {
 	onSelected: (asset: Asset) => void;
 }
 
-export default function CustomSelect({
+const CustomSelect: React.FC<CustomSelectParam> = ({
 	label,
 	className,
 	assets,
 	selectedItemCss,
 	selectedDefault,
 	onSelected,
-}: CustomSelectParam) {
+}) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const handleClick = () => {
 		setIsOpen(!isOpen);
@@ -58,10 +60,12 @@ export default function CustomSelect({
 			>
 				<div className="flex ml-2 space-x-2 items-center bg-slate-50">
 					{selectedDefault?.image && (
-						<img
+						<Image
 							src={selectedDefault?.image}
 							alt={selectedDefault.name}
 							className="w-6 h-6"
+							width={24}
+							height={24}
 						/>
 					)}
 					<span className="text-slate-900 text-base">{selectedDefault?.shortName}</span>
@@ -86,10 +90,12 @@ export default function CustomSelect({
 									>
 										<div className="inline-flex items-center">
 											{item?.image && (
-												<img
+												<Image
 													src={item?.image}
 													alt={item.name}
 													className="w-6 h-6 mr-2"
+													width={24}
+													height={24}
 												/>
 											)}
 											{item?.name}
@@ -102,4 +108,6 @@ export default function CustomSelect({
 			</div>
 		</div>
 	);
-}
+};
+
+export default CustomSelect;

@@ -1,4 +1,4 @@
-export default function () {
+const AtIcon = () => {
 	return (
 		<svg
 			width="78"
@@ -14,4 +14,5 @@ export default function () {
 			/>
 		</svg>
 	);
-}
+};
+export default AtIcon;

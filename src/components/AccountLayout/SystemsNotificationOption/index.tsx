@@ -3,7 +3,7 @@ import { useState } from "react";
 
 type SystemsNotificationOptionProps = { optionLabel?: string; checked?: boolean };
 
-const SystemsNotificationOption = ({ optionLabel, checked }: SystemsNotificationOptionProps) => {
+const SystemsNotificationOption = ({ optionLabel }: SystemsNotificationOptionProps) => {
 	const [isChecked, setIsChecked] = useState<boolean | undefined>(false);
 
 	const handleOptionChecked = (event: ChangeEvent<HTMLInputElement>) => {

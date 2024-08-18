@@ -17,7 +17,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 	classNames,
 	className,
 }) => {
-	const { isOpen, toggle, ref, positionRef, position } = useDropdownMenu();
+	const { isOpen, toggle, ref, position } = useDropdownMenu();
 
 	return (
 		<div ref={ref} className={clsx("ml-3 relative", className, classNames?.rootClass)}>

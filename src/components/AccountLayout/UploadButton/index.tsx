@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 import type { DropzoneInputProps, DropzoneRootProps } from "react-dropzone";
 import CloudIcon from "~/components/icons/CloudIcon";
@@ -23,12 +24,12 @@ const UploadButton: React.FC<Props> = ({ acceptedFiles, getRootProps, getInputPr
 
 			{/* Displaying the uploaded file if available */}
 			{acceptedFiles.length > 0 ? (
-				<img
+				<Image
 					src={acceptedFiles}
 					alt={acceptedFiles}
 					className="max-w-[650px] max-h-[400px]"
-					width="650px"
-					height="400px"
+					width={650}
+					height={450}
 				/>
 			) : (
 				/* Prompt to drag or choose a file */

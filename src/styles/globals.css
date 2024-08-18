@@ -91,9 +91,7 @@ td {
 }
 
 .inactive {
-	line-height: 1.25rem
-		/* 20px */
-	;
+	line-height: 1.25rem /* 20px */;
 }
 
 .no-spin-buttons {

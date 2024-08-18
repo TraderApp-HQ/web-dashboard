@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import Modal from ".";
 import type { NotificationChannel, VerificationType } from "~/apis/handlers/users/enums";
 import { UsersService } from "~/apis/handlers/users";
 import { useCreate } from "~/hooks/useCreate";
+import Image from "next/image";
 
 interface IVerificationModal {
 	openModal: boolean;
@@ -31,9 +33,7 @@ export default function VerificationModal({
 	const [enteredInput, setEnteredInput] = useState(["", "", "", "", "", ""]);
 	const [countdown, setCountdown] = useState(initialCountdownTime);
 	const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
-	const [searchParams, setSearchParams] = useState(
-		new URLSearchParams(router.asPath.split("?")[1]),
-	);
+	const [searchParams] = useState(new URLSearchParams(router.asPath.split("?")[1]));
 	const [isVerificationError, setIsVerificationError] = useState<boolean>(false);
 
 	const usersService = new UsersService();
@@ -94,6 +94,13 @@ export default function VerificationModal({
 		}
 	}, []);
 
+	useEffect(() => {
+		// Focus on the first input field when the component loads
+		if (inputRefs.current[0]) {
+			inputRefs.current[0].focus();
+		}
+	}, [inputRefs.current[0]]);
+
 	const restartCountdown = () => {
 		setCountdown(initialCountdownTime);
 	};
@@ -113,9 +120,7 @@ export default function VerificationModal({
 		mutate: verifyOtp,
 		isError: isVerificationErrorFlag,
 		isPending,
-		error,
 		isSuccess: isVerificationSuccess,
-		data,
 	} = useCreate({
 		mutationFn: usersService.verifyOtp.bind(usersService),
 	});
@@ -137,20 +142,20 @@ export default function VerificationModal({
 
 	useEffect(() => {
 		const handleRedirect = async () => {
-		if (isVerificationSuccess) {
-			setOpenModal(false);
-			if (setIsSuccess) setIsSuccess(true);
+			if (isVerificationSuccess) {
+				setOpenModal(false);
+				if (setIsSuccess) setIsSuccess(true);
 
-			// Ensure the router is ready before redirecting
-			if (redirectTo) {
-				await router.push(redirectTo);
-				// window.location.replace(redirectTo)
+				// Ensure the router is ready before redirecting
+				if (redirectTo) {
+					await router.push(redirectTo);
+					// window.location.replace(redirectTo)
+				}
 			}
-		}
 		};
 
 		handleRedirect();
-  }, [isVerificationSuccess, redirectTo, router, setOpenModal, setIsSuccess]);
+	}, [isVerificationSuccess, redirectTo, router, setOpenModal, setIsSuccess]);
 
 	useEffect(() => {
 		if (isVerificationErrorFlag) {
@@ -166,11 +171,12 @@ export default function VerificationModal({
 			<section>
 				<div>
 					<header className="flex flex-col items-center mb-[40px]">
-						<img
+						<Image
 							src="/images/auth/pen.png"
 							width={73}
+							height={73}
 							alt="pen"
-							className="mb-[12px]"
+							className="mb-[12px] w-[73px] h-[73px]"
 						/>
 						<p className="text-[32px] text-[#102477] font-extrabold">
 							OTP verification

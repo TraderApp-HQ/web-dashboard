@@ -6,7 +6,7 @@ import EmptyTransaction from "~/components/Wallet/EmptyTransaction";
 import Modal from "~/components/Modal";
 import { useState } from "react";
 import InfoIcon from "~/components/icons/InfoIcon";
-import PortfolioTabSection from "~/components/Portfolio/PortfolioTabSection";
+// import PortfolioTabSection from "~/components/Portfolio/PortfolioTabSection";
 import PortfolioOverview from "~/components/Portfolio/PortfolioOverview";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 
@@ -15,6 +15,7 @@ import {
 	openTradesDataTableMobileSelector,
 } from "~/selectors/portfolio";
 import { NestedPortfolioLayout } from "..";
+import Image from "next/image";
 
 interface ConfirmParam {
 	openModal?: boolean;
@@ -39,48 +40,48 @@ const OpenTrades = () => {
 	function onCancel() {
 		setOpenConfirm(false);
 	}
-	const openTrades = [
-		{
-			asset: {
-				image: "/images/btc_round.png",
-				shortName: "BTC",
-				name: "Bitcoin",
-				id: "1"
-			},
-			pair: "USDT",
-			price: "230.9092",
-			profitLoss: "2.902",
-			percent: "+2.31",
-			holdings: "2.902",
-			holdingComp: "10.00 Comp",
-			date: "2 July 2021 17:23",
-			avgBuy: "2348",
-			entryPrice: "23760.000",
-			positionAmount: "203.00 USDT",
-			estimatedAmount: "0.000 USDT",
-			id: "1"
-		},
-		{
-			asset: {
-				image: "/images/usdt_round.png",
-				shortName: "USDT",
-				name: "Tether",
-				id: "2"
-			},
-			pair: "BTC",
-			price: "230.9092",
-			profitLoss: "2.902",
-			percent: "-2.31",
-			holdings: "2.902",
-			holdingComp: "10.00 Comp",
-			date: "2 July 2021 17:23",
-			avgBuy: "2348",
-			entryPrice: "23760.000",
-			positionAmount: "203.00 USDT",
-			estimatedAmount: "0.000 USDT",
-			id: "2"
-		}
-	]
+	// const openTrades = [
+	// 	{
+	// 		asset: {
+	// 			image: "/images/btc_round.png",
+	// 			shortName: "BTC",
+	// 			name: "Bitcoin",
+	// 			id: "1"
+	// 		},
+	// 		pair: "USDT",
+	// 		price: "230.9092",
+	// 		profitLoss: "2.902",
+	// 		percent: "+2.31",
+	// 		holdings: "2.902",
+	// 		holdingComp: "10.00 Comp",
+	// 		date: "2 July 2021 17:23",
+	// 		avgBuy: "2348",
+	// 		entryPrice: "23760.000",
+	// 		positionAmount: "203.00 USDT",
+	// 		estimatedAmount: "0.000 USDT",
+	// 		id: "1"
+	// 	},
+	// 	{
+	// 		asset: {
+	// 			image: "/images/usdt_round.png",
+	// 			shortName: "USDT",
+	// 			name: "Tether",
+	// 			id: "2"
+	// 		},
+	// 		pair: "BTC",
+	// 		price: "230.9092",
+	// 		profitLoss: "2.902",
+	// 		percent: "-2.31",
+	// 		holdings: "2.902",
+	// 		holdingComp: "10.00 Comp",
+	// 		date: "2 July 2021 17:23",
+	// 		avgBuy: "2348",
+	// 		entryPrice: "23760.000",
+	// 		positionAmount: "203.00 USDT",
+	// 		estimatedAmount: "0.000 USDT",
+	// 		id: "2"
+	// 	}
+	// ]
 	return (
 		<div>
 			<OpenTradeStats />
@@ -96,7 +97,7 @@ const OpenTrades = () => {
 			</div>
 		</div>
 	);
-}
+};
 
 function SectionTwo({ data }: { data: PortfolioStats }) {
 	return (
@@ -134,10 +135,12 @@ function SectionTwo({ data }: { data: PortfolioStats }) {
 							</h3>
 							<div className="justify-start items-center gap-12 inline-flex">
 								<div className="justify-start items-center gap-2 flex">
-									<img
+									<Image
 										src={data.bestSignal?.image}
 										alt={data.bestSignal?.name}
 										className="w-6 h-6 relative"
+										width={24}
+										height={24}
 									/>
 									<p className="text-slate-900 text-xs font-semibold leading-none">
 										{data.bestSignal?.name}
@@ -162,10 +165,12 @@ function SectionTwo({ data }: { data: PortfolioStats }) {
 							</h3>
 							<div className="justify-start items-center gap-12 inline-flex">
 								<div className="justify-start items-center gap-2 flex">
-									<img
+									<Image
 										src={data.worseSignal?.image}
 										alt={data.worseSignal?.name}
 										className="w-6 h-6 relative"
+										width={24}
+										height={24}
 									/>
 									<p className="text-slate-900 text-xs font-semibold leading-none">
 										{data.worseSignal?.name}
@@ -301,5 +306,7 @@ function ConfirmCloseTradeValidate({ openModal, onConfirm, onCancel }: ConfirmPa
 	);
 }
 
-OpenTrades.getLayout = (page: React.ReactElement) => <NestedPortfolioLayout>{page}</NestedPortfolioLayout>;
-export default OpenTrades
+OpenTrades.getLayout = (page: React.ReactElement) => (
+	<NestedPortfolioLayout>{page}</NestedPortfolioLayout>
+);
+export default OpenTrades;

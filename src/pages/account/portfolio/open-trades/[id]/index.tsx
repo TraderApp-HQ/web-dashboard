@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { OpenTrade, Orders } from "~/lib/types";
 import data from "~/data/wallet/data.json";
 import EmptyTransaction from "~/components/Wallet/EmptyTransaction";
@@ -8,36 +9,26 @@ import LeftArrowIcon from "~/components/icons/LeftArrowIcon";
 import IconButton from "~/components/AccountLayout/IconButton";
 import { ROUTES } from "~/config/constants";
 import OverlayContainer from "~/components/AccountLayout/OverlayContainer";
-import { useNavigate } from "react-router-dom";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import { orderDataTableMobileSelector, orderDataTableSelector } from "~/selectors/portfolio";
 import WalletBalanceCard from "~/components/Wallet/WalletBalanceCard";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { NestedPortfolioLayout } from "../..";
-
-// export const loader = async ({ params }: LoaderFunctionArgs) => {
-// 	const { id } = params;
-// 	const trade = await getTrade(id, data.openTrades);
-// 	return json({ data: data, trade: trade });
-// };
+import Image from "next/image";
 
 const TradeBreakdown = () => {
-	// const res = useLoaderData<typeof loader>();
-	// const navigate = useNavigate();
-
 	const router = useRouter();
 	const id = router.query.id as string;
-	const [tradeData, setTradeData] = useState<any | null>(null)
+	const [tradeData, setTradeData] = useState<any | null>(null);
 
 	useEffect(() => {
 		async function fetchData() {
 			const resObj: any | null = await getTrade("1", data.openTrades);
-			setTradeData(resObj)
+			setTradeData(resObj);
 		}
-		fetchData()
-		
-	}, [id])
+		fetchData();
+	}, [id]);
 
 	return (
 		<OverlayContainer subClass="bg-blue-50" className="md:left-[16%] left-0 pr-0 md:pr-[16%]">
@@ -54,7 +45,7 @@ const TradeBreakdown = () => {
 			{/* <Outlet /> */}
 		</OverlayContainer>
 	);
-}
+};
 
 const TradeDetails: React.FC<{ trade: OpenTrade }> = ({ trade }) => {
 	const router = useRouter();
@@ -63,11 +54,12 @@ const TradeDetails: React.FC<{ trade: OpenTrade }> = ({ trade }) => {
 		<div>
 			<div className="flex justify-between mb-9">
 				<div className="flex items-center space-x-3">
-					<img
-						src={trade?.asset?.image}
+					<Image
+						src={trade?.asset?.image ?? ""}
 						alt={trade?.asset?.name}
-						width={"30px"}
-						height={"30px"}
+						className="w-[30px] h-[30px]"
+						width={30}
+						height={30}
 					/>
 					<div>
 						<h3 className="text-[#1E1E1E] text-base font-semibold">
@@ -77,7 +69,9 @@ const TradeDetails: React.FC<{ trade: OpenTrade }> = ({ trade }) => {
 						<h4> {trade?.asset?.shortName}</h4>
 					</div>
 				</div>
-				<Button onClick={() => router.push(`${trade.id}/${ROUTES.portfolio.manageTrade}`)}>Manage Tradessss</Button>
+				<Button onClick={() => router.push(`${trade.id}/${ROUTES.portfolio.manageTrade}`)}>
+					Manage Tradessss
+				</Button>
 			</div>
 			<WalletBalanceCard
 				padding="-2.5"
@@ -157,5 +151,7 @@ const OrdersListTable: React.FC<{ orders: Orders[] }> = ({ orders }) => {
 	);
 };
 
-TradeBreakdown.getLayout = (page: React.ReactElement) => <NestedPortfolioLayout>{page}</NestedPortfolioLayout>;
-export default TradeBreakdown
+TradeBreakdown.getLayout = (page: React.ReactElement) => (
+	<NestedPortfolioLayout>{page}</NestedPortfolioLayout>
+);
+export default TradeBreakdown;

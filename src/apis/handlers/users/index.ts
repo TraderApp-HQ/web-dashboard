@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { jwtDecode } from "jwt-decode";
 import { APIClient } from "~/apis/apiClient";
 import { getAccessToken, setAccessToken, removeAccessToken } from "~/utils/localStorage";
@@ -22,9 +23,10 @@ export class UsersService {
 	private apiClient: APIClient;
 
 	constructor() {
-		// this.apiClient = new APIClient("https://apis-dev.traderapp.finance:3000", this.refreshUserAccessToken.bind(this));
+		if (!process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL)
+			throw Error("Users service backend url not found");
 		this.apiClient = new APIClient(
-			"http://localhost:8080",
+			process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL,
 			this.refreshUserAccessToken.bind(this),
 		);
 	}
@@ -90,7 +92,7 @@ export class UsersService {
 
 	public getDataFromToken(): IDecodedToken | null {
 		const accessToken = getAccessToken();
-		if (!accessToken) return null
+		if (!accessToken) return null;
 
 		const decoded: IDecodedToken = jwtDecode(accessToken);
 		return decoded;
@@ -225,4 +227,4 @@ export class UsersService {
 	}
 }
 
-export default new UsersService();
+// export default new UsersService();

@@ -5,7 +5,7 @@ interface IProps {
 	height?: string;
 }
 
-const NotificationIcon: React.FC<IProps> = ({ width, height }) => {
+const NotificationIcon: React.FC<IProps> = () => {
 	return (
 		<svg
 			width="24"

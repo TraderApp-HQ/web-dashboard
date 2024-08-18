@@ -1,7 +1,8 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import InputField from "~/components/common/InputField";
 import { NestedPortfolioLayout } from "..";
 
-const TradingRules  = () => {
+const TradingRules = () => {
 	return (
 		<div>
 			<div className="space-y-4 md:w-9/11">
@@ -100,7 +101,9 @@ const TradingRules  = () => {
 			</div>
 		</div>
 	);
-}
+};
 
-TradingRules.getLayout = (page: React.ReactElement) => <NestedPortfolioLayout>{page}</NestedPortfolioLayout>;
+TradingRules.getLayout = (page: React.ReactElement) => (
+	<NestedPortfolioLayout>{page}</NestedPortfolioLayout>
+);
 export default TradingRules;

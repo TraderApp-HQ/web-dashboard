@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-export default function ({ className }: { className?: string }) {
+const TetherIcon = ({ className }: { className?: string }) => {
 	return (
 		<svg
 			className={clsx(className === undefined ? "w-9 h-9" : className)}
@@ -27,4 +27,6 @@ export default function ({ className }: { className?: string }) {
 			</defs>
 		</svg>
 	);
-}
+};
+
+export default TetherIcon;

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useRouter } from "next/router";
 import Button from "~/components/AccountLayout/Button";
 import RightArrowIcon from "~/components/icons/RightArrowIcon";
@@ -21,12 +22,12 @@ export default function NotFound() {
 				</p>
 			</div>
 			<div className="w-full mx-auto max-w-md">
-				<img
+				<Image
 					loading="eager"
 					src="/images/not-found.png"
 					alt="not found"
-					width={"50%"}
 					className="object-contain w-full"
+					layout="fill"
 				/>
 			</div>
 

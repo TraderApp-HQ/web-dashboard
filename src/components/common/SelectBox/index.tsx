@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import SearchIcon from "../../icons/SearchIcon";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import type { ISelectBoxOption } from "~/components/interfaces";
+import Image from "next/image";
 
 /**
  * Represents the props for the SelectBox component.
@@ -164,7 +165,13 @@ const SelectBoxOption: React.FC<ISelectBoxOptionProps> = ({
 	return (
 		<div className="flex items-center space-x-2">
 			{imgUrl && (
-				<img src={imgUrl} alt={alt ?? displayText} className={`w-5 h-5 ${className}`} />
+				<Image
+					src={imgUrl}
+					alt={alt ?? displayText}
+					className={`w-5 h-5 ${className}`}
+					width={20}
+					height={20}
+				/>
 			)}
 			<span>{displayText}</span>
 		</div>

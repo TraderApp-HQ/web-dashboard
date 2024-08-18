@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import AggregateIcon from "~/components/icons/AggregateIcon";
 import DashboardIcon from "~/components/icons/DashboardIcon";
 import FinanceIcon from "~/components/icons/FinanceIcon";

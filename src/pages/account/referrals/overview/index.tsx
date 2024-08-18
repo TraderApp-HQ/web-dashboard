@@ -1,12 +1,14 @@
 import { NestedReferralsLayout } from "..";
 
-const ReferralsOverview  = () => {
+const ReferralsOverview = () => {
 	return (
 		<div>
-            <h1>Referrals Overview</h1>
+			<h1>Referrals Overview</h1>
 		</div>
 	);
-}
+};
 
-ReferralsOverview.getLayout = (page: React.ReactElement) => <NestedReferralsLayout>{page}</NestedReferralsLayout>;
+ReferralsOverview.getLayout = (page: React.ReactElement) => (
+	<NestedReferralsLayout>{page}</NestedReferralsLayout>
+);
 export default ReferralsOverview;

@@ -1,7 +1,11 @@
-export default function () {
+import Image from "next/image";
+
+const PortfolioAllocation = () => {
 	return (
 		<div className="p2 shadow-md rounded-md w-[442] h-[382]">
-			<img src="/images/allocation.png" />
+			<Image src="/images/allocation.png" alt="" width={442} height={382} />
 		</div>
 	);
-}
+};
+
+export default PortfolioAllocation;

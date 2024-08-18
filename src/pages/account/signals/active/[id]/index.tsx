@@ -1,5 +1,5 @@
-import React, { useState, useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/router';
+import React, { useState, useEffect, ReactNode } from "react";
+import { useRouter } from "next/router";
 import IconButton from "~/components/AccountLayout/IconButton";
 import LeftArrowIcon from "~/components/icons/LeftArrowIcon";
 import data from "../../data.json";
@@ -8,30 +8,30 @@ import { getAsset } from "~/lib/utils";
 import type { Signal } from "~/lib/types";
 import { renderStatus, renderTargetProfits } from "~/helpers";
 import OverlayContainer from "~/components/AccountLayout/OverlayContainer";
-import { LAYOUT_ROUTES, ROUTES } from '~/config/constants';
+import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
+import Image from "next/image";
 
 interface IProps {
-	children: ReactNode
+	children: ReactNode;
 }
 
 const AssetBreakdown: React.FC<IProps> = ({ children }) => {
 	const router = useRouter();
 	const id = router.query.id as string;
-	const [asset, setAsset] = useState<Signal | null>(null)
+	const [asset, setAsset] = useState<Signal | null>(null);
 
 	useEffect(() => {
 		async function fetchData() {
 			const asset: Signal | null = await getAsset("1", data);
-			setAsset(asset)
+			setAsset(asset);
 		}
-		fetchData()
-		
-	}, [id])
+		fetchData();
+	}, [id]);
 	const tabs = [
 		// { title: "Live Chart", href: `/${LAYOUT_ROUTES.account}/${ROUTES.signals}/active/${id}/live_chart` },
 		// { title: "Screenshot Chart", href: `/${LAYOUT_ROUTES.account}/${ROUTES.signals}/active/${id}/screenshot_chat` },
 		{ title: "Live Chart", href: `/account/signals/active/${id}/live_chart` },
-    	{ title: "Screenshot Chart", href: `/account/signals/active/${id}/screenshot_chat` }
+		{ title: "Screenshot Chart", href: `/account/signals/active/${id}/screenshot_chat` },
 	];
 
 	return (
@@ -39,7 +39,9 @@ const AssetBreakdown: React.FC<IProps> = ({ children }) => {
 			<div className="grid grid-flow-col justify-center ">
 				<div className="">
 					<IconButton
-						onClick={() => router.push(`/${LAYOUT_ROUTES.account}/${ROUTES.signals}/active`)}
+						onClick={() =>
+							router.push(`/${LAYOUT_ROUTES.account}/${ROUTES.signals}/active`)
+						}
 						Icon={LeftArrowIcon}
 						aria-label="back button"
 					>
@@ -47,7 +49,13 @@ const AssetBreakdown: React.FC<IProps> = ({ children }) => {
 					</IconButton>
 
 					<div className="flex gap-2 items-center my-6">
-						<img src={asset?.logoUrl} alt={asset?.asset} width={"40px"} height={"40px"} />
+						<Image
+							src={asset?.logoUrl ?? ""}
+							alt={asset?.asset ?? ""}
+							className="w-[40px] h-[40px]"
+							width={40}
+							height={40}
+						/>
 						<h2>
 							Bitcoin<span>(BTC)</span>
 						</h2>
@@ -59,7 +67,7 @@ const AssetBreakdown: React.FC<IProps> = ({ children }) => {
 
 					{/* TODO: Refactor this pieces of data to use the DataTable component */}
 					<div className="sm:px-0 px-2 mb-24">
-						{children}
+						<div>{children}</div>
 						{/* Status */}
 						<div className="lg:w-[35%] mt-10">
 							<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center px-4 py-3 bg-blue-200 bg-opacity-10">
@@ -191,6 +199,6 @@ const AssetBreakdown: React.FC<IProps> = ({ children }) => {
 			</div>
 		</OverlayContainer>
 	);
-}
+};
 
 export default AssetBreakdown;

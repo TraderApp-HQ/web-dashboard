@@ -1,7 +1,7 @@
 import PageTab from "~/components/AccountLayout/Tabs";
 import { ROUTES } from "~/config/constants";
 
-export default function () {
+const PortfolioTabSection = () => {
 	const tabs = [
 		{ title: "Open Trades", href: ROUTES.portfolio.openTrade },
 		{ title: "Trade History", href: ROUTES.portfolio.tradeHistory },
@@ -16,4 +16,5 @@ export default function () {
 			<div className="mt-6" />
 		</div>
 	);
-}
+};
+export default PortfolioTabSection;

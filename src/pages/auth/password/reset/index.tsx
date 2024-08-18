@@ -13,9 +13,7 @@ import AuthLayout from "../../layout";
 const ResetPassword = () => {
 	const router = useRouter();
 	const usersService = new UsersService();
-	const [searchParams] = useState(
-		new URLSearchParams(router.asPath.split("?")[1]),
-	);
+	const [searchParams] = useState(new URLSearchParams(router.asPath.split("?")[1]));
 	const [canSubmit, setCanSubmit] = useState(true);
 	const [showHints, setShowHints] = useState(false);
 	const [passwordValid, setPasswordValid] = useState(false);
@@ -151,9 +149,10 @@ const ResetPassword = () => {
 		<section className="py-[100px] h-full md:px-[20px] flex items-center max-[768px]:justify-center max-[768px]:pt-[0px]">
 			<div className="max-w-[419px] w-full">
 				<header className="flex flex-col items-center mb-[40px]">
-					<img
+					<Image
 						src="/images/auth/padlock.png"
 						width={73}
+						height={73}
 						alt="padlock"
 						className="mb-[12px]"
 					/>
@@ -227,7 +226,12 @@ const ResetPassword = () => {
 								className="text-[#08123B] flex justify-center items-center gap-x-[11px] cursor-pointer"
 								onClick={() => router.push(LAYOUT_ROUTES.auth + ROUTES.login)}
 							>
-								<Image src="/icons/arrow-left.svg" alt="arrow-left" width={24} />
+								<Image
+									src="/icons/arrow-left.svg"
+									alt="arrow-left"
+									width={24}
+									height={24}
+								/>
 								Back to Login
 							</div>
 						)}

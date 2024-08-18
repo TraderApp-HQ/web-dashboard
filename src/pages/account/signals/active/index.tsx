@@ -63,11 +63,11 @@ const ActiveSignals = () => {
 	const totalPages = Math.ceil(totalRecord / rowsPerPage);
 
 	// Calculate the rows to display
-	const startIndex = (currentPage - 1) * rowsPerPage;
+	// const startIndex = (currentPage - 1) * rowsPerPage;
 
 	//===================================================================
 	// paginatedActiveSignal is the data to be displayed on the current page
-	const paginatedActiveSignal = paginatedData.slice(startIndex, startIndex + rowsPerPage);
+	// const paginatedActiveSignal = paginatedData.slice(startIndex, startIndex + rowsPerPage);
 	//===================================================================
 
 	React.useEffect(() => {

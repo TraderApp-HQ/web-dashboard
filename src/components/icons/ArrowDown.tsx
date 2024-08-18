@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-export default function ({ className }: { className?: string }) {
+const ArrowDown = ({ className }: { className?: string }) => {
 	return (
 		<svg
 			className={clsx(className === undefined ? "w-5 h-5" : className)}
@@ -14,4 +14,6 @@ export default function ({ className }: { className?: string }) {
 			/>
 		</svg>
 	);
-}
+};
+
+export default ArrowDown;

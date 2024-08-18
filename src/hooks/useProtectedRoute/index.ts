@@ -15,8 +15,8 @@ const useProtectedRoute = ({ path, roles }: IUseProtectedRoute) => {
 		const usersService = new UsersService();
 		const userData = usersService.getDataFromToken();
 		if (!userData) {
-		  router.push(`${LAYOUT_ROUTES.auth}${ROUTES.login}`);
-		  return;
+			router.push(`${LAYOUT_ROUTES.auth}${ROUTES.login}`);
+			return;
 		}
 
 		// check if the user role has any of the specified allowed roles

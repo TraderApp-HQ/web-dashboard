@@ -1,4 +1,4 @@
-export default function () {
+const SuccessIcon = () => {
 	return (
 		<svg
 			width="114"
@@ -77,4 +77,6 @@ export default function () {
 			</defs>
 		</svg>
 	);
-}
+};
+
+export default SuccessIcon;

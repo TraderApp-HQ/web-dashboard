@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ArrowDown from "~/components/icons/ArrowDown";
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
@@ -10,12 +11,12 @@ interface CustomWalletTypeParam {
 	onSelected?: (wallett: Wallet) => void;
 }
 
-export default function ({
+const WalletType: React.FC<CustomWalletTypeParam> = ({
 	className,
 	wallets,
 	selectedDefault,
 	onSelected,
-}: CustomWalletTypeParam) {
+}) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [, setSelectedWallet] = useState(selectedDefault);
 	const handleClick = () => {
@@ -62,7 +63,7 @@ export default function ({
 				<ul className="py-2 text-sm text-gray-700 ">
 					{wallets &&
 						wallets.map((item) => (
-							<li onClick={() => handleSelect(item)}>
+							<li key={item.id} onClick={() => handleSelect(item)}>
 								<button
 									type="button"
 									className="inline-flex w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
@@ -75,4 +76,6 @@ export default function ({
 			</div>
 		</div>
 	);
-}
+};
+
+export default WalletType;

@@ -19,6 +19,7 @@ type DropdownMenuItemProps = TextProps | LinkProps | LinkButtonProps;
 
 export const DropdownMenuItem: React.FC<DropdownMenuItemProps> = (props) => {
 	const { children, className, ...rest } = props;
+	const { href, ...linkRest } = rest as LinkProps;
 
 	switch (props.component) {
 		case "button":
@@ -37,7 +38,6 @@ export const DropdownMenuItem: React.FC<DropdownMenuItemProps> = (props) => {
 			);
 
 		case "link":
-			const { href, ...linkRest } = rest as LinkProps;
 			return (
 				<Link href={href}>
 					<a

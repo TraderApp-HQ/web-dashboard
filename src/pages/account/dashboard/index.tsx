@@ -26,6 +26,7 @@ import { UsersQueryId } from "~/apis/handlers/users/constants";
 import { Line } from "~/components/Loaders";
 import Link from "next/link";
 import AccountLayout from "~/components/AccountLayout/Layout";
+import Image from "next/image";
 
 const Dashbaord = () => {
 	const router = useRouter();
@@ -84,7 +85,7 @@ const Dashbaord = () => {
 							<h3 className="text-[#102477] font-bold text-3xl">
 								Hello {userProfile.firstName} !
 							</h3>
-							<h5 className="text-base">Welcome back to your account,</h5>
+							<h5 className="text-base">Welcome back to your account</h5>
 						</div>
 					)}
 					<div
@@ -118,7 +119,7 @@ const Dashbaord = () => {
 					</div>
 				</div>
 				<div className="h-40 w-40 mr-16 md:block hidden">
-					<img src="/images/dashboard_image.png" />
+					<Image src="/images/dashboard_image.png" alt="" width={160} height={160} />
 				</div>
 			</Card>
 
@@ -177,14 +178,15 @@ const Dashbaord = () => {
 				</THead>
 				<TBody>
 					{transactionsResult?.transactions.map((item) => (
-						<TBodyRow>
+						<TBodyRow key={item.id}>
 							<TBodyData>
 								<div className="flex gap-3 items-start justify-start">
-									<img
+									<Image
 										src={item.image}
 										alt={item.shortName}
-										width={"30px"}
-										height={"30px"}
+										className="w-[30px] h-[30px]"
+										width={30}
+										height={30}
 									/>
 									<div className="space-y-1 flex flex-col items-start text-[#1E1E1E] ">
 										<span className="text-base font-semibold">

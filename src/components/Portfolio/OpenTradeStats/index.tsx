@@ -3,7 +3,7 @@ import HidenBalance from "~/components/Wallet/HidenBalance";
 import data from "~/data/wallet/data.json";
 import { useState } from "react";
 
-export default function () {
+const OpenTradeStats = () => {
 	const [showBalance, handleShowBalance] = useState(true);
 	// const data = useLoaderData<typeof loader>();
 	return (
@@ -24,4 +24,6 @@ export default function () {
 			</h3>
 		</div>
 	);
-}
+};
+
+export default OpenTradeStats;

@@ -16,6 +16,7 @@ const TargetPill: React.FC<ITargetPill> = ({ target, theme, styles }) => {
 		}
 		case ColourTheme.SECONDARY: {
 			pillStyles = "border-stone-300";
+			break;
 		}
 		default:
 			pillStyles = "";

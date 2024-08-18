@@ -1,4 +1,4 @@
-export default function () {
+const CopyIcon = () => {
 	return (
 		<svg
 			width="24"
@@ -15,4 +15,6 @@ export default function () {
 			/>
 		</svg>
 	);
-}
+};
+
+export default CopyIcon;

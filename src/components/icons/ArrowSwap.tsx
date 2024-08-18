@@ -1,4 +1,4 @@
-export default function () {
+const ArrowSwap = () => {
 	return (
 		<svg
 			width="24"
@@ -13,4 +13,6 @@ export default function () {
 			/>
 		</svg>
 	);
-}
+};
+
+export default ArrowSwap;

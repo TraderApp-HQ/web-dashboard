@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect, ReactNode  } from "react";
+import React, { useEffect, ReactNode } from "react";
 import PageTab from "~/components/AccountLayout/Tabs";
 import AccountLayout from "~/components/AccountLayout/Layout";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
@@ -9,11 +9,11 @@ const SettingsHome = () => {
 	useEffect(() => {
 		router.push(`/${LAYOUT_ROUTES.account}/${ROUTES.settings}/profile`);
 	}, []);
-}
+};
 
 type IProps = {
-	children: ReactNode
-}
+	children: ReactNode;
+};
 
 const SettingsLayout = ({ children }: IProps) => {
 	const tabs = [
@@ -32,9 +32,9 @@ const SettingsLayout = ({ children }: IProps) => {
 };
 
 export const NestedSettingsLayout: React.FC<IProps> = ({ children }) => (
-  <AccountLayout>
-    <SettingsLayout>{children}</SettingsLayout>
-  </AccountLayout>
+	<AccountLayout>
+		<SettingsLayout>{children}</SettingsLayout>
+	</AccountLayout>
 );
 
 export default SettingsHome;

@@ -1,4 +1,3 @@
-import type { JSXElementConstructor } from "react";
 import React from "react";
 import type { ITBody, ITHead } from "./config";
 import TableMenuDropdown from "./TableMenuDropdown";

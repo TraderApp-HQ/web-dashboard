@@ -42,5 +42,7 @@ const ProfileSettings = () => {
 	);
 };
 
-ProfileSettings.getLayout = (page: React.ReactElement) => <NestedSettingsLayout>{page}</NestedSettingsLayout>;
+ProfileSettings.getLayout = (page: React.ReactElement) => (
+	<NestedSettingsLayout>{page}</NestedSettingsLayout>
+);
 export default ProfileSettings;

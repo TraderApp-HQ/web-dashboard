@@ -8,10 +8,8 @@ interface OtpParam {
 	openModal?: boolean;
 	onClose?: () => void;
 }
-export default function ({ openModal, onClose }: OtpParam) {
-	const [message, setMessage] = useState(
-		"You have successfully withdraw $20.00 form your main account.",
-	);
+const WalletOtp: React.FC<OtpParam> = ({ openModal, onClose }) => {
+	const [message] = useState("You have successfully withdraw $20.00 form your main account.");
 	const [isSuccess, setIsSuccess] = useState(false);
 	const handleClose = () => {
 		if (onClose) {
@@ -52,4 +50,6 @@ export default function ({ openModal, onClose }: OtpParam) {
 			</Modal>
 		</>
 	);
-}
+};
+
+export default WalletOtp;

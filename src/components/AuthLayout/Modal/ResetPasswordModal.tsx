@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Modal from ".";
 
 interface IResetModal {
@@ -11,11 +12,12 @@ export default function ResetPasswordModal({ open, setOpen }: IResetModal) {
 			<section>
 				<div>
 					<header className="flex flex-col items-center mb-[40px]">
-						<img
+						<Image
 							src="/images/auth/pen.png"
 							width={73}
+							height={73}
 							alt="pen"
-							className="mb-[12px]"
+							className="mb-[12px] w-[73px] h-[73px]"
 						/>
 						<p className="text-[32px] text-[#102477] font-extrabold">
 							Reset your password

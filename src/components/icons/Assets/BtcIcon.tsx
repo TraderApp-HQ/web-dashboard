@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-export default function ({ className }: { className?: string }) {
+const BitcoinIcon = ({ className }: { className?: string }) => {
 	return (
 		<svg
 			className={clsx(className === undefined ? "w-9 h-9" : className)}
@@ -18,4 +18,6 @@ export default function ({ className }: { className?: string }) {
 			/>
 		</svg>
 	);
-}
+};
+
+export default BitcoinIcon;

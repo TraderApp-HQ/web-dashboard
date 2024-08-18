@@ -210,7 +210,12 @@ const Signup = () => {
 							<p className="font-bold text-[#B25E09]">
 								Create your Trader app account{" "}
 							</p>
-							<Image src="/images/auth/coins.png" alt="coins" width={54} />
+							<Image
+								src="/images/auth/coins.png"
+								alt="coins"
+								width={54}
+								height={54}
+							/>
 						</div>
 					</header>
 					<form className="space-y-[16px]">

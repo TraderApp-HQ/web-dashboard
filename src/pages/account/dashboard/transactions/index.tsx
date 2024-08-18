@@ -14,7 +14,7 @@ import RecentTransactions from "~/components/Wallet/RecentTransactions";
 import IconButton from "~/components/AccountLayout/IconButton";
 import { ROUTES } from "~/config/constants";
 
-export default function () {
+const DashboardTransactions = () => {
 	const router = useRouter();
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 
@@ -49,7 +49,7 @@ export default function () {
 			</IconButton>
 			<div className={clsx("flex justify-between")}>
 				<SearchForm
-					onChange={(e) => {}}
+					onChange={() => {}}
 					aria-label="search asset"
 					placeHolder="Search for asset name, status, etc..."
 					onSubmit={handleSearch}
@@ -119,4 +119,6 @@ export default function () {
 			<RecentTransactions />
 		</>
 	);
-}
+};
+
+export default DashboardTransactions;

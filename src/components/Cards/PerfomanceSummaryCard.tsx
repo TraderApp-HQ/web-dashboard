@@ -1,6 +1,7 @@
 import React from "react";
 import Card from "~/components/AccountLayout/Card";
 import { ISignalPerformance } from "../common/DataTable/config";
+import Image from "next/image";
 interface IPerformanceSummaryCardProps {
 	data: ISignalPerformance;
 }
@@ -14,20 +15,25 @@ const PerformanceSummaryCard: React.FC<IPerformanceSummaryCardProps> = ({ data }
 				</h3>
 				<div className="flex justify-between items-center gap-14 md:gap-16 pr-8">
 					<div className="flex items-center gap-2">
-						<img
+						<Image
 							src={data.asset.logo}
 							alt={data.asset.name}
+							width={24}
+							height={24}
 							className="w-6 h-6 relative"
 						/>
 						<span className="text-slate-900 text-base font-semibold leading-none">
 							{data.asset.name}
 						</span>
 					</div>
+					{/* TODO: change this to svg icon in a different component */}
 					<div className="flex justify-start items-center">
-						<img
+						<Image
 							src="/images/percentageIncrease.png"
 							alt="Signal Percentage"
 							className="p-1.5"
+							width={12}
+							height={12}
 						/>
 						<span className="text-emerald-700 text-base font-normal">
 							{data.percentage ?? "10"}%

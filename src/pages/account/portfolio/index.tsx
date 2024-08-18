@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect, ReactNode  } from "react";
+import React, { useEffect, ReactNode } from "react";
 import PageTab from "~/components/AccountLayout/Tabs";
 import AccountLayout from "~/components/AccountLayout/Layout";
 
@@ -8,11 +8,11 @@ const SignalsHome = () => {
 	useEffect(() => {
 		router.push(`portfolio/open-trades`);
 	}, []);
-}
+};
 
 type IProps = {
-	children: ReactNode
-}
+	children: ReactNode;
+};
 
 const PortfolioLayout = ({ children }: IProps) => {
 	const tabs = [
@@ -32,9 +32,9 @@ const PortfolioLayout = ({ children }: IProps) => {
 };
 
 export const NestedPortfolioLayout: React.FC<IProps> = ({ children }) => (
-  <AccountLayout>
-    <PortfolioLayout>{children}</PortfolioLayout>
-  </AccountLayout>
+	<AccountLayout>
+		<PortfolioLayout>{children}</PortfolioLayout>
+	</AccountLayout>
 );
 
 export default SignalsHome;
