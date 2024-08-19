@@ -14,7 +14,7 @@ import {
 	openTradesDataTableSelector,
 	openTradesDataTableMobileSelector,
 } from "~/selectors/portfolio";
-import { NestedPortfolioLayout } from "..";
+import { NestedTradeCenterLayout } from "..";
 import Image from "next/image";
 
 interface ConfirmParam {
@@ -307,6 +307,6 @@ function ConfirmCloseTradeValidate({ openModal, onConfirm, onCancel }: ConfirmPa
 }
 
 OpenTrades.getLayout = (page: React.ReactElement) => (
-	<NestedPortfolioLayout>{page}</NestedPortfolioLayout>
+	<NestedTradeCenterLayout>{page}</NestedTradeCenterLayout>
 );
 export default OpenTrades;

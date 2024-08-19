@@ -14,7 +14,7 @@ import { orderDataTableMobileSelector, orderDataTableSelector } from "~/selector
 import WalletBalanceCard from "~/components/Wallet/WalletBalanceCard";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { NestedPortfolioLayout } from "../..";
+import { NestedTradeCenterLayout } from "../..";
 import Image from "next/image";
 
 const TradeBreakdown = () => {
@@ -33,7 +33,7 @@ const TradeBreakdown = () => {
 	return (
 		<OverlayContainer subClass="bg-blue-50" className="md:left-[16%] left-0 pr-0 md:pr-[16%]">
 			<IconButton
-				onClick={() => router.push(ROUTES.portfolio.backButton)}
+				onClick={() => router.push(ROUTES.tradeCenter.backButton)}
 				btnClass="mb-6"
 				Icon={LeftArrowIcon}
 				aria-label="back button"
@@ -69,7 +69,9 @@ const TradeDetails: React.FC<{ trade: OpenTrade }> = ({ trade }) => {
 						<h4> {trade?.asset?.shortName}</h4>
 					</div>
 				</div>
-				<Button onClick={() => router.push(`${trade.id}/${ROUTES.portfolio.manageTrade}`)}>
+				<Button
+					onClick={() => router.push(`${trade.id}/${ROUTES.tradeCenter.manageTrade}`)}
+				>
 					Manage Tradessss
 				</Button>
 			</div>
@@ -152,6 +154,6 @@ const OrdersListTable: React.FC<{ orders: Orders[] }> = ({ orders }) => {
 };
 
 TradeBreakdown.getLayout = (page: React.ReactElement) => (
-	<NestedPortfolioLayout>{page}</NestedPortfolioLayout>
+	<NestedTradeCenterLayout>{page}</NestedTradeCenterLayout>
 );
 export default TradeBreakdown;

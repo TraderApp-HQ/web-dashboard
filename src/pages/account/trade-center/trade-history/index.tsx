@@ -8,7 +8,7 @@ import {
 } from "~/selectors/portfolio";
 import React from "react";
 import Pagination from "~/components/Pagination";
-import { NestedPortfolioLayout } from "..";
+import { NestedTradeCenterLayout } from "..";
 
 const TradeHistory = () => {
 	const res = data;
@@ -79,6 +79,6 @@ const TradeHistory = () => {
 };
 
 TradeHistory.getLayout = (page: React.ReactElement) => (
-	<NestedPortfolioLayout>{page}</NestedPortfolioLayout>
+	<NestedTradeCenterLayout>{page}</NestedTradeCenterLayout>
 );
 export default TradeHistory;
