@@ -2,7 +2,6 @@
 import AggregateIcon from "~/components/icons/AggregateIcon";
 import DashboardIcon from "~/components/icons/DashboardIcon";
 import FinanceIcon from "~/components/icons/FinanceIcon";
-import PortfolioIcon from "~/components/icons/PortfolioIcon";
 import ReferralsIcon from "~/components/icons/ReferralsIcon";
 import SettingIcon from "~/components/icons/SettingIcon";
 import SignalManagementIcon from "~/components/icons/SignalManagementIcon";
