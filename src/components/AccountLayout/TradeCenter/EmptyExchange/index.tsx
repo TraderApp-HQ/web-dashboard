@@ -1,7 +1,7 @@
 import TradeCenterIcon from "~/components/icons/TradeCenterIcon";
 import Button from "../../../AccountLayout/Button";
 
-export default function EmptyExchange() {
+const EmptyExchange = () => {
 	return (
 		<div className="flex mt-24 gap-y-6 flex-col justify-center text-center">
 			<div className="w-20 h-16 bg-indigo-50 rounded-xl self-center flex items-center justify-center">
@@ -16,4 +16,6 @@ export default function EmptyExchange() {
 			<Button innerClassName="w-96">Connect new Exchange</Button>
 		</div>
 	);
-}
+};
+
+export default EmptyExchange;

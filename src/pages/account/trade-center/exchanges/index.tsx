@@ -1,24 +1,17 @@
 import { IExchange } from "~/apis/handlers/signals/interfaces";
 import { NestedTradeCenterLayout } from "..";
-import { GetServerSideProps } from "next";
 import myExchangeData from "~/data/wallet/data.json";
 import EmptyExchange from "~/components/AccountLayout/TradeCenter/EmptyExchange";
 import Button from "~/components/AccountLayout/Button";
 import MyExchangeCard from "~/components/AccountLayout/TradeCenter/MyExchangeCard";
 
-export const getServerSideProps: GetServerSideProps = async () => {
-	return {
-		props: {
-			exchanges: myExchangeData.exchanges,
-		},
-	};
-};
+export interface IExchangeConnection extends IExchange {
+	isConnected: boolean;
+}
 
-const TradeCenterExchanges = ({
-	exchanges,
-}: {
-	exchanges: (IExchange & { isConnected: boolean })[];
-}) => {
+const TradeCenterExchanges = () => {
+	const exchanges: IExchangeConnection[] = myExchangeData.exchanges;
+
 	return (
 		<div className="flex flex-col gap-y-8">
 			{exchanges && exchanges.length > 0 ? (
@@ -29,7 +22,7 @@ const TradeCenterExchanges = ({
 					</div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-8">
 						{exchanges.map((exchange) => (
-							<MyExchangeCard key={exchange.id} exchange={exchange} />
+							<MyExchangeCard key={exchange.id} {...exchange} />
 						))}
 					</div>
 				</>

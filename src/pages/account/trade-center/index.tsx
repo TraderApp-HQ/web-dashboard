@@ -10,11 +10,11 @@ const TradeCenterHome = () => {
 	}, []);
 };
 
-type IProps = {
+interface IProps {
 	children: ReactNode;
-};
+}
 
-const TradeCenterLayout = ({ children }: IProps) => {
+const TradeCenterLayout: React.FC<IProps> = ({ children }) => {
 	const tabs = [
 		{ title: "Open Trades", href: "/account/trade-center/open-trades" },
 		{ title: "Trades History", href: "/account/trade-center/trade-history" },
