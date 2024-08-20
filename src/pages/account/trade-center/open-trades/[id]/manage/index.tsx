@@ -5,7 +5,7 @@ import { getTrade } from "~/lib/utils";
 import data from "~/data/wallet/data.json";
 import type { OpenTrade } from "~/lib/types";
 import Button from "~/components/AccountLayout/Button";
-import { NestedPortfolioLayout } from "../../..";
+import { NestedTradeCenterLayout } from "../../..";
 
 const ManageTrade = () => {
 	const [openModal, setOpenModal] = useState(true);
@@ -96,6 +96,6 @@ const ManageTrade = () => {
 };
 
 ManageTrade.getLayout = (page: React.ReactElement) => (
-	<NestedPortfolioLayout>{page}</NestedPortfolioLayout>
+	<NestedTradeCenterLayout>{page}</NestedTradeCenterLayout>
 );
 export default ManageTrade;
