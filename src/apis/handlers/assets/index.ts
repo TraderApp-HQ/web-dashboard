@@ -1,7 +1,13 @@
 import { APIClient } from "~/apis/apiClient";
 import type { IResponse } from "../interfaces";
 import { UsersService } from "../users";
-import type { IFetchExchanges, IFetchSignals, IGetExchangesInput, ISignal, ISignalUpdateInput } from "./interfaces";
+import type {
+	IFetchExchanges,
+	IFetchSignals,
+	IGetExchangesInput,
+	ISignal,
+	ISignalUpdateInput,
+} from "./interfaces";
 // import { SignalStatus } from "./enums";
 
 export class AssetsService {
@@ -70,9 +76,13 @@ export class AssetsService {
 		return data as IFetchSignals;
 	}
 
-
 	//Exchanges
-	public async getAllExchanges({page, rowsPerPage, orderBy, isTradingActive}: IGetExchangesInput): Promise<IFetchExchanges[]> {
+	public async getAllExchanges({
+		page,
+		rowsPerPage,
+		orderBy,
+		isTradingActive,
+	}: IGetExchangesInput): Promise<IFetchExchanges[]> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/exchanges?page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&isTradingActive=${isTradingActive}`,
 			options: { credentials: "include" },
