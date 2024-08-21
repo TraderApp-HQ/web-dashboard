@@ -14,14 +14,14 @@ const useExchanges = ({ page, rowsPerPage, orderBy, isTradingActive }: IUseExcha
 	const assetsService = new AssetsService();
 
 	// Memoized function to fetch users
-	const fetchUsers = useCallback(() => {
+	const fetchExchanges = useCallback(() => {
 		return assetsService.getAllExchanges({ page, rowsPerPage, orderBy, isTradingActive });
 	}, [page, rowsPerPage, orderBy, isTradingActive]);
 
 	// Using custom useFetch hook to fetch data
 	return useFetch({
 		queryKey: [rowsPerPage, orderBy, isTradingActive],
-		queryFn: fetchUsers,
+		queryFn: fetchExchanges,
 	});
 };
 
