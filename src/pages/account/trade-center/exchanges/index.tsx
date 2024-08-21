@@ -4,12 +4,14 @@ import myExchangeData from "~/data/wallet/data.json";
 import EmptyExchange from "~/components/AccountLayout/TradeCenter/EmptyExchange";
 import Button from "~/components/AccountLayout/Button";
 import MyExchangeCard from "~/components/AccountLayout/TradeCenter/MyExchangeCard";
+import { useRouter } from "next/router";
 
 export interface IExchangeConnection extends IExchange {
 	isConnected: boolean;
 }
 
 const TradeCenterExchanges = () => {
+	const router = useRouter();
 	const exchanges: IExchangeConnection[] = myExchangeData.exchanges;
 
 	return (
@@ -18,7 +20,13 @@ const TradeCenterExchanges = () => {
 				<>
 					<div className="flex justify-between">
 						<h1 className="text-slate-900 text-3xl font-semibold">My Exchanges</h1>
-						<Button>Connect new Exchange</Button>
+						<Button
+							onClick={() => {
+								router.push("exchanges/connect");
+							}}
+						>
+							Connect new Exchange
+						</Button>
 					</div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-8">
 						{exchanges.map((exchange) => (

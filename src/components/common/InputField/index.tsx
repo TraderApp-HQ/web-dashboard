@@ -10,6 +10,7 @@ export type IInputFieldProps = {
 	labelText?: string;
 	labelClassName?: string;
 	className?: string;
+	icon?: { name: React.ReactNode; onClick?: () => void };
 	props?: React.DetailedHTMLProps<
 		React.InputHTMLAttributes<HTMLInputElement>,
 		HTMLInputElement
@@ -27,6 +28,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 	labelText,
 	labelClassName,
 	className,
+	icon,
 	onKeyDown,
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -64,6 +66,14 @@ const InputField: React.FC<IInputFieldProps> = ({
 					>
 						{showPassword ? "Hide" : "Show"}
 					</p>
+				)}
+				{icon && (
+					<div
+						onClick={icon.onClick}
+						className="absolute top-0 right-[6px] h-full flex items-center cursor-pointer"
+					>
+						{icon.name}
+					</div>
 				)}
 			</div>
 		</div>

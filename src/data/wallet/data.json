@@ -299,20 +299,20 @@
 	"exchanges": [
 		{
 			"id": "1",
-			"name": "Binance",
-			"logo": "/images/btc_round.png",
-			"isConnected": true
-		},
-		{
-			"id": "2",
 			"name": "Kucoin",
 			"logo": "/images/btc_round.png",
 			"isConnected": true
 		},
 		{
+			"id": "2",
+			"name": "Binance",
+			"logo": "/images/binance_round.png",
+			"isConnected": true
+		},
+		{
 			"id": "3",
 			"name": "ByBit",
-			"logo": "/images/btc_round.png",
+			"logo": "/images/usdt_round.png",
 			"isConnected": false
 		},
 		{
