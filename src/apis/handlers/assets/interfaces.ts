@@ -54,3 +54,16 @@ export interface ISignalUpdateInput {
 	id: string;
 	status: SignalStatus;
 }
+
+export interface IFetchExchanges {
+	id: string;
+	name: number;
+	logo: number;
+}
+
+export interface IGetExchangesInput {
+	page?: number;
+	rowsPerPage?: number;
+	orderBy?: "asc" | "desc";
+	isTradingActive?: boolean;
+}

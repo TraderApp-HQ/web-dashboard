@@ -2,7 +2,7 @@ import MessageModal from "~/components/Modal/MessageModal";
 import Button from "~/components/AccountLayout/Button";
 import InputField from "~/components/common/InputField";
 import SuccessIcon from "~/components/icons/SuccessIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import myExchangeData from "~/data/wallet/data.json";
 import { ISelectBoxOption } from "~/components/interfaces";
 import SelectBox from "~/components/common/SelectBox";
@@ -14,6 +14,7 @@ import ContentTab from "~/components/AccountLayout/ContentTab";
 import { NestedTradeCenterLayout } from "../..";
 import OrderedListTile from "~/components/AccountLayout/OrderedListTile";
 import Link from "next/link";
+import useExchanges from "~/hooks/useExchanges";
 
 const ExchangeConnection = () => {
   const router = useRouter();
@@ -22,25 +23,33 @@ const ExchangeConnection = () => {
   const [isOpen, setIsOpen] = useState(true);
   const ipAddress = "2345678901mj940485686505940400";
 
+  const [exchangeOptions, setExchangeOptions] = useState<ISelectBoxOption[]>([]);
+
   const [selectedExchange, setSelectedExchange] = useState<ISelectBoxOption | null>(null);
   const [apiKey, setApiKey] = useState<string | undefined>();
   const [secretKey, setSecretKey] = useState<string | undefined>();
 
   const tabs = [{ label: "Manual Connection" }, { label: "Fast Connection" }];
 
-  const handleModalClose = () => {
+	const { data: exchanges, isSuccess: isExchangeSuccess } = useExchanges({page:1, rowsPerPage: 10, orderBy: "asc", isTradingActive: true});
+
+	// format countries to display on selectBox
+	useEffect(() => {
+		if (isExchangeSuccess && exchanges) {
+			const options: ISelectBoxOption[] = exchanges.map((exchange) => ({
+				displayText: exchange.name.toString(),
+				value: exchange.id,
+				imgUrl: exchange.logo.toString(),
+			}));
+			setExchangeOptions(options);
+		}
+	}, [isExchangeSuccess, exchanges]);
+
+	const handleModalClose = () => {
     router.back();
     setIsOpen(false);
   };
-
-  const exchangeOptions: ISelectBoxOption[] = myExchangeData.exchanges.map(
-    (exchange) => ({
-      displayText: exchange.name,
-      value: exchange.id,
-      imgUrl: exchange.logo,
-    })
-  );
-
+	
   const handleSuccessClose = () => {
     setToggleSuccess(false);
   };

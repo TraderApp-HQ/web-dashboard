@@ -1,17 +1,17 @@
 import { APIClient } from "~/apis/apiClient";
 import type { IResponse } from "../interfaces";
 import { UsersService } from "../users";
-import type { IFetchSignals, ISignal, ISignalUpdateInput } from "./interfaces";
+import type { IFetchExchanges, IFetchSignals, IGetExchangesInput, ISignal, ISignalUpdateInput } from "./interfaces";
 // import { SignalStatus } from "./enums";
 
-export class SignalsService {
+export class AssetsService {
 	private apiClient: APIClient;
 	private usersService: UsersService;
 
 	constructor() {
 		this.usersService = new UsersService();
 		if (!process.env.NEXT_PUBLIC_ASSETS_SERVICE_API_URL)
-			throw Error("Signals service backend url not found");
+			throw Error("Assets service backend url not found");
 		this.apiClient = new APIClient(
 			process.env.NEXT_PUBLIC_ASSETS_SERVICE_API_URL,
 			this.usersService.refreshUserAccessToken.bind(this.usersService),
@@ -69,6 +69,22 @@ export class SignalsService {
 		const { data } = response;
 		return data as IFetchSignals;
 	}
+
+
+	//Exchanges
+	public async getAllExchanges({page, rowsPerPage, orderBy, isTradingActive}: IGetExchangesInput): Promise<IFetchExchanges[]> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/exchanges?page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&isTradingActive=${isTradingActive}`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch exchange records");
+		}
+
+		const { data } = response;
+		return data;
+	}
 }
 
-// export default new SignalsService();
+// export default new AssetsService();

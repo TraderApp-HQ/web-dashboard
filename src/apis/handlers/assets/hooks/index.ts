@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { SignalsService } from "..";
+import { AssetsService } from "..";
 import { useFetch } from "~/hooks/useFetch";
 import { SignalsQueryId } from "../constants";
 import {
@@ -20,7 +20,7 @@ export const useFetchActiveSignals = ({
 	handleSetToggleDeleteModal,
 	handleResumeSignal,
 }: UseFetchActiveSignalsProps) => {
-	const signalsService = new SignalsService();
+	const signalsService = new AssetsService();
 	const [activeSignals, setActiveSignals] = useState<ISignal[]>([]);
 	const [signalsTableHead, setSignalsTableHead] = useState<ITHead[]>([]);
 	const [signalsTableBody, setSignalsTableBody] = useState<ITBody>();

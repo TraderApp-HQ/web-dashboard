@@ -1,4 +1,4 @@
-import { IExchange } from "~/apis/handlers/signals/interfaces";
+import { IExchange } from "~/apis/handlers/assets/interfaces";
 import { NestedTradeCenterLayout } from "..";
 import myExchangeData from "~/data/wallet/data.json";
 import EmptyExchange from "~/components/AccountLayout/TradeCenter/EmptyExchange";
