@@ -21,7 +21,9 @@ const ExchangeConnection = () => {
 	const [toggleSuccess, setToggleSuccess] = useState(false);
 	const [isOpen, setIsOpen] = useState(true);
 
-	const [selectedExchange, setSelectedExchange] = useState<ISelectBoxOption | undefined>(undefined);
+	const [selectedExchange, setSelectedExchange] = useState<ISelectBoxOption | undefined>(
+		undefined,
+	);
 	const [apiKey, setApiKey] = useState<string | undefined>();
 	const [secretKey, setSecretKey] = useState<string | undefined>();
 

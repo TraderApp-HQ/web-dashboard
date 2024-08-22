@@ -23,5 +23,5 @@ export enum SignalStatus {
 
 export enum TradeStatus {
 	active = "ACTIVE",
-	inactive= "INACTIVE"
+	inactive = "INACTIVE",
 }
