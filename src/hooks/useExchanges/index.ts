@@ -1,12 +1,13 @@
 import { useCallback } from "react";
 import { useFetch } from "../useFetch";
 import { AssetsService } from "~/apis/handlers/assets";
+import { TradeStatus } from "~/apis/handlers/assets/enums";
 
 interface IUseExchanges {
 	page?: number;
 	rowsPerPage?: number;
 	orderBy?: "asc" | "desc";
-	isTradingActive?: boolean;
+	isTradingActive?: TradeStatus;
 }
 
 // Custom hook to fetch users data based on search keyword, current page, and rows per page

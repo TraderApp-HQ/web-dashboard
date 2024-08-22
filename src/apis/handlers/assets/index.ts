@@ -78,23 +78,37 @@ export class AssetsService {
 
 	//Exchanges
 	public async getAllExchanges({
-		page,
-		rowsPerPage,
-		orderBy,
+		page = 1,
+		rowsPerPage = 10,
+		orderBy = 'asc',
 		isTradingActive,
 	}: IGetExchangesInput): Promise<IFetchExchanges[]> {
+	
+		// Construct query parameters
+		const queryParams = new URLSearchParams({
+			page: page.toString(),
+			rowsPerPage: rowsPerPage.toString(),
+			orderBy: orderBy,
+		});
+		
+		if (isTradingActive !== undefined) {
+			queryParams.append('isTradingActive', isTradingActive);
+		}
+	
+		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
-			url: `/exchanges?page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&isTradingActive=${isTradingActive}`,
+			url: `/exchanges?${queryParams.toString()}`,
 			options: { credentials: "include" },
 		});
-
+	
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch exchange records");
 		}
-
+	
 		const { data } = response;
 		return data;
 	}
+	
 }
 
 // export default new AssetsService();

@@ -14,6 +14,7 @@ import { NestedTradeCenterLayout } from "../..";
 import OrderedListTile from "~/components/AccountLayout/OrderedListTile";
 import useExchanges from "~/hooks/useExchanges";
 import { ISelectBoxOption } from "~/components/interfaces";
+import { TradeStatus } from "~/apis/handlers/assets/enums";
 
 const ExchangeConnection = () => {
 	const router = useRouter();
@@ -32,7 +33,7 @@ const ExchangeConnection = () => {
 		page: 1,
 		rowsPerPage: 10,
 		orderBy: "asc",
-		isTradingActive: true,
+		isTradingActive: TradeStatus.active,
 	});
 
 	useEffect(() => {

@@ -1,4 +1,4 @@
-import type { Candlestick, SignalRisk, SignalStatus } from "./enums";
+import type { Candlestick, SignalRisk, SignalStatus, TradeStatus } from "./enums";
 
 export interface ISignalAsset {
 	id: string;
@@ -65,5 +65,5 @@ export interface IGetExchangesInput {
 	page?: number;
 	rowsPerPage?: number;
 	orderBy?: "asc" | "desc";
-	isTradingActive?: boolean;
+	isTradingActive?: TradeStatus;
 }
