@@ -20,7 +20,7 @@ const ExchangeConnection = () => {
 	const [toggleSuccess, setToggleSuccess] = useState(false);
 	const [isOpen, setIsOpen] = useState(true);
 
-	const [selectedExchange, setSelectedExchange] = useState<ISelectBoxOption | null>(null);
+	const [selectedExchange, setSelectedExchange] = useState<ISelectBoxOption | undefined>(undefined);
 	const [apiKey, setApiKey] = useState<string | undefined>();
 	const [secretKey, setSecretKey] = useState<string | undefined>();
 
@@ -69,6 +69,7 @@ const ExchangeConnection = () => {
 	const ManualConnection = () => (
 		<div className="flex flex-col gap-y-4">
 			<SelectBox
+				option={selectedExchange}
 				isSearchable
 				labelText="Exchange"
 				options={exchangeOptions}
