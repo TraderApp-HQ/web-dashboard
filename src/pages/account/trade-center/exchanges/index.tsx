@@ -18,7 +18,7 @@ const TradeCenterExchanges = () => {
 				<>
 					<div className="flex justify-between flex-col md:flex-row">
 						<h1 className="text-slate-900 text-3xl font-semibold mb-4">My Exchanges</h1>
-						<Button className="!block" innerClassName="px-10 text-xl">
+						<Button className="!block" innerClassName="px-4 md:px-4 text-xl md:text-sm">
 							Connect new Exchange
 						</Button>
 					</div>
