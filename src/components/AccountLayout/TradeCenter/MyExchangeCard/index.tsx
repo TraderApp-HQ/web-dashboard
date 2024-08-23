@@ -71,8 +71,16 @@ const MyExchangeCard: React.FC<IExchangeConnection> = ({ logo, name, isConnected
 		<Card className="relative">
 			<div className="flex justify-between w-full">
 				<div className="flex gap-x-2 items-center">
-					<Image height={35} width={35} src={logo} alt={name} />
-					<p className="text-neutral-700 text-xs font-semibold leading-none">{name}</p>
+					<Image
+						src={logo}
+						alt={name}
+						className="w-[45px] h-[45px] sm:w-[35px] sm:h-[35px]"
+						width={45}
+						height={45}
+					/>
+					<p className="text-neutral-700 text-sm md:text-xs font-semibold leading-none">
+						{name}
+					</p>
 				</div>
 				<ExchangeDropdownMenu />
 			</div>

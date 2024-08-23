@@ -16,9 +16,11 @@ const TradeCenterExchanges = () => {
 		<div className="flex flex-col gap-y-8">
 			{exchanges && exchanges.length > 0 ? (
 				<>
-					<div className="flex justify-between">
-						<h1 className="text-slate-900 text-3xl font-semibold">My Exchanges</h1>
-						<Button>Connect new Exchange</Button>
+					<div className="flex justify-between flex-col md:flex-row">
+						<h1 className="text-slate-900 text-3xl font-semibold mb-4">My Exchanges</h1>
+						<Button className="!block" innerClassName="px-10 text-xl">
+							Connect new Exchange
+						</Button>
 					</div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-8">
 						{exchanges.map((exchange) => (
