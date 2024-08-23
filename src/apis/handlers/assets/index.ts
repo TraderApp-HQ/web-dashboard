@@ -81,7 +81,7 @@ export class AssetsService {
 		page = 1,
 		rowsPerPage = 10,
 		orderBy = "asc",
-		isTradingActive,
+		status,
 	}: IGetExchangesInput): Promise<IFetchExchanges[]> {
 		// Construct query parameters
 		const queryParams = new URLSearchParams({
@@ -90,8 +90,8 @@ export class AssetsService {
 			orderBy: orderBy,
 		});
 
-		if (isTradingActive !== undefined) {
-			queryParams.append("isTradingActive", isTradingActive);
+		if (status !== undefined) {
+			queryParams.append("status", status);
 		}
 
 		// Fetch data from API

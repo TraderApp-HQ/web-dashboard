@@ -32,10 +32,7 @@ const ExchangeConnection = () => {
 	const ipAddress = "2345678901mj940485686505940400";
 
 	const { data: exchanges, isSuccess: isExchangeSuccess } = useExchanges({
-		page: 1,
-		rowsPerPage: 10,
-		orderBy: "asc",
-		isTradingActive: TradeStatus.active,
+		status: TradeStatus.active,
 	});
 
 	useEffect(() => {

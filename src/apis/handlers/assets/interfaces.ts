@@ -65,5 +65,5 @@ export interface IGetExchangesInput {
 	page?: number;
 	rowsPerPage?: number;
 	orderBy?: "asc" | "desc";
-	isTradingActive?: TradeStatus;
+	status?: TradeStatus;
 }
