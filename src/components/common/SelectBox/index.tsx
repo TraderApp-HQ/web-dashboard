@@ -10,11 +10,14 @@ import Image from "next/image";
 interface ISelectBoxProps {
 	options: ISelectBoxOption[];
 	option?: ISelectBoxOption;
+	defaultOption?: ISelectBoxOption; // Add this prop
 	setOption?: (option: ISelectBoxOption) => void;
 	placeholder?: string;
 	labelText?: string;
 	labelClassName?: string;
 	className?: string;
+	containerStyle?: string;
+	bgColor?: string;
 	isSearchable?: boolean;
 }
 
@@ -29,11 +32,14 @@ interface ISelectBoxProps {
 const SelectBox: React.FC<ISelectBoxProps> = ({
 	options,
 	option,
+	defaultOption,
 	setOption,
 	placeholder,
 	labelText,
 	labelClassName,
 	className,
+	bgColor,
+	containerStyle,
 	isSearchable,
 }: ISelectBoxProps): JSX.Element => {
 	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption>();
@@ -57,7 +63,6 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 				setIsOpen(false);
 			}
 		};
-
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
@@ -69,14 +74,16 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 		}
 	}, [isOpen]);
 
-	// Set default option
+	// Set default option or externally provided option
 	useEffect(() => {
-		if (option) {
+		if (defaultOption) {
+			setSelectedOption(defaultOption);
+		} else if (option) {
 			setSelectedOption(option);
 		}
-	}, []);
+	}, [defaultOption, option]);
 
-	// set selected option value. For external use for the caller
+	// Notify external setOption handler when the selected option changes
 	useEffect(() => {
 		if (setOption && selectedOption) setOption(selectedOption);
 	}, [selectedOption]);
@@ -88,11 +95,15 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					{labelText}
 				</label>
 			)}
-			<div className="relative " aria-labelledby={labelText} ref={selectBoxRef}>
+			<div
+				className={`relative ${containerStyle}`}
+				aria-labelledby={labelText}
+				ref={selectBoxRef}
+			>
 				<div
-					className={`p-[16px] placeholder-[#808080] w-full text-[#102477] bg-[#F5F8FE] invalid:text-[#808080] rounded-lg font-normal outline-[1px] outline-[#6579CC] appearance-none bg-no-repeat bg-[center_right_1em] invalid:[&:not(:empty)]:visited:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${
+					className={`p-[16px] placeholder-[#808080] w-full text-[#102477] invalid:text-[#808080] rounded-lg font-normal outline-[1px] outline-[#6579CC] appearance-none bg-no-repeat bg-[center_right_1em] invalid:[&:not(:empty)]:visited:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${
 						isOpen ? "border-[#7949FF]" : "border-gray-100"
-					} rounded-md p-2 flex justify-between items-center cursor-pointer`}
+					} rounded-md p-2 flex justify-between items-center cursor-pointer ${bgColor ? bgColor : "bg-[#F5F8FE]"}`}
 					onClick={() => setIsOpen(!isOpen)}
 				>
 					{!selectedOption && (
@@ -147,6 +158,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 		</div>
 	);
 };
+
 export default SelectBox;
 
 // SelectBox option component

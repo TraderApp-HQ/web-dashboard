@@ -321,5 +321,10 @@
 			"logo": "/images/btc_round.png",
 			"isConnected": false
 		}
+	],
+	"accountTypes": [
+		{ "type": "Spot", "balance": 1000 },
+		{ "type": "Future", "balance": 2000 },
+		{ "type": "Main", "balance": 4000 }
 	]
 }
