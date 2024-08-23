@@ -5,12 +5,12 @@ interface Tab {
 	label: string;
 }
 
-interface ContentTabProps {
+interface IcontentTabProps {
 	tabs: Tab[];
 	children: ReactNode[];
 }
 
-const ContentTab: React.FC<ContentTabProps> = ({ tabs, children }) => {
+const ContentTab: React.FC<IcontentTabProps> = ({ tabs, children }) => {
 	const [activeTab, setActiveTab] = useState<string>(tabs[0].label);
 
 	const handleTabClick = (label: string) => {
