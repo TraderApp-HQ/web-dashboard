@@ -98,7 +98,6 @@ const Login = () => {
 
 	// ensure query params are set
 	useEffect(() => {
-		console.log("From dev");
 		if (router.query.userid && router.query.recipient) {
 			setIsQueryParamsSet(true);
 		}

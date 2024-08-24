@@ -1,4 +1,4 @@
-name: users-service-deploy-dev
+name: web-dashboard-deploy-dev
 
 on:
     push:
@@ -66,4 +66,3 @@ jobs:
                 URL="${{ vars.WEBHOOK_URL }}"
                 curl -X POST -d {} "$URL" -H "Content-Type:application/json"
                 echo "Deployment triggered in Amplify."
-                
