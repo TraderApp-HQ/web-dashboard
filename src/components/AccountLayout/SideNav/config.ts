@@ -2,12 +2,12 @@
 import AggregateIcon from "~/components/icons/AggregateIcon";
 import DashboardIcon from "~/components/icons/DashboardIcon";
 import FinanceIcon from "~/components/icons/FinanceIcon";
-import PortfolioIcon from "~/components/icons/PortfolioIcon";
 import ReferralsIcon from "~/components/icons/ReferralsIcon";
 import SettingIcon from "~/components/icons/SettingIcon";
 import SignalManagementIcon from "~/components/icons/SignalManagementIcon";
 import SignalsIcon from "~/components/icons/SignalsIcon";
 import SystemManagementIcon from "~/components/icons/SystemManagementIcon";
+import TradeCenterIcon from "~/components/icons/TradeCenterIcon";
 import UserIcon from "~/components/icons/UserIcon";
 import WalletIcon from "~/components/icons/WalletIcon";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
@@ -30,9 +30,9 @@ export const NavLinks: SidenavLink[] = [
 		path: LAYOUT_ROUTES.account + ROUTES.signals,
 	},
 	{
-		icon: PortfolioIcon,
-		text: "Portfolio",
-		path: LAYOUT_ROUTES.account + ROUTES.portfolio.homepage,
+		icon: TradeCenterIcon,
+		text: "Trade Center",
+		path: LAYOUT_ROUTES.account + ROUTES.tradeCenter.homepage,
 	},
 	{
 		icon: WalletIcon,
