@@ -15,7 +15,6 @@ jobs:
 
             - name: Set environment variables
               run: |
-                  # echo "NODE_ENV=${{ vars.NODE_ENV }}" >> $GITHUB_ENV
                   echo "SERVICE=${{ vars.SERVICE }}" >> $GITHUB_ENV
                   echo "NEXT_PUBLIC_ASSETS_SERVICE_API_URL=${{ vars.NEXT_PUBLIC_ASSETS_SERVICE_API_URL }}" >> $GITHUB_ENV
                   echo "NEXT_PUBLIC_USERS_SERVICE_API_URL=${{ vars.NEXT_PUBLIC_USERS_SERVICE_API_URL }}" >> $GITHUB_ENV
