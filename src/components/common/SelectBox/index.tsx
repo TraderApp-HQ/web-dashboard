@@ -10,7 +10,6 @@ import Image from "next/image";
 interface ISelectBoxProps {
 	options: ISelectBoxOption[];
 	option?: ISelectBoxOption;
-	defaultOption?: ISelectBoxOption; // Add this prop
 	setOption?: (option: ISelectBoxOption) => void;
 	placeholder?: string;
 	labelText?: string;
@@ -32,7 +31,6 @@ interface ISelectBoxProps {
 const SelectBox: React.FC<ISelectBoxProps> = ({
 	options,
 	option,
-	defaultOption,
 	setOption,
 	placeholder,
 	labelText,
@@ -76,12 +74,10 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 
 	// Set default option or externally provided option
 	useEffect(() => {
-		if (defaultOption) {
-			setSelectedOption(defaultOption);
-		} else if (option) {
+		if (option) {
 			setSelectedOption(option);
 		}
-	}, [defaultOption, option]);
+	}, [option]);
 
 	// Notify external setOption handler when the selected option changes
 	useEffect(() => {

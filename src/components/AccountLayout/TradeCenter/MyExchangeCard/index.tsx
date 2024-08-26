@@ -89,7 +89,7 @@ const MyExchangeCard: React.FC<IExchangeConnection> = ({ logo, name, isConnected
 				<div className="flex justify-between items-center">
 					<SelectBox
 						containerStyle="-ml-4"
-						defaultOption={accountOptions[1]}
+						option={accountOptions[1]}
 						options={accountOptions}
 						setOption={handleAccountChange}
 						bgColor="bg-none"
