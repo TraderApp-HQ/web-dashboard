@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-export const useClipboard = () => {
+export const useCopyToClipboard = () => {
 	const [copyMessage, setCopyMessage] = useState<string | undefined>(undefined);
 
 	const copyToClipboard = useCallback(async (text: string) => {

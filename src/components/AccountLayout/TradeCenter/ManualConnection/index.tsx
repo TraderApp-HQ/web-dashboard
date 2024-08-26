@@ -4,7 +4,7 @@ import Button from "~/components/AccountLayout/Button";
 import Link from "next/link";
 import ExchangeCopyIcon from "~/components/icons/ExchangeCopyIcon";
 import { ISelectBoxOption } from "~/components/interfaces";
-import { useClipboard } from "~/hooks/useClipboard";
+import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import Toast from "~/components/common/Toast";
 
 interface ManualConnectionProps {
@@ -26,7 +26,7 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 	isSubmitDisabled,
 	ipString,
 }) => {
-	const { copyToClipboard, copyMessage } = useClipboard();
+	const { copyToClipboard, copyMessage } = useCopyToClipboard();
 
 	const handleExchangeCopy = () => {
 		copyToClipboard(ipString);
