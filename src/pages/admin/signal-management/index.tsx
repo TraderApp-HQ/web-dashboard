@@ -29,14 +29,11 @@ const SignalsLayout = ({ children }: IProps) => {
 	return (
 		<div>
 			<div className="flex mb-8 justify-between items-center">
-				<div className="w-12/12 lg:w-2.5/12">
-					<PageTab tabs={tabs} />
-				</div>
+				<PageTab tabs={tabs} />
 				<Button onClick={handleCreateSignal} labelText="Create signal" />
 			</div>
 
-			<div className="mt-6" />
-			{children}
+			<div className="mt-6">{children}</div>
 		</div>
 	);
 };
