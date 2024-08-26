@@ -61,7 +61,7 @@ const AssetBreakdown: React.FC<IProps> = ({ children }) => {
 						</h2>
 					</div>
 
-					<div className="sm:w-[40%] w-full my-6">
+					<div className="my-6">
 						<PageTab tabs={tabs} />
 					</div>
 

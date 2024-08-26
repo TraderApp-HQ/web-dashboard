@@ -24,10 +24,8 @@ const TradeCenterLayout: React.FC<IProps> = ({ children }) => {
 
 	return (
 		<div>
-			<div className="mb-6 md:w-[70%] lg:w-[52%] 2xl:w-[40%]">
-				<PageTab tabs={tabs} />
-			</div>
-			<div>{children}</div>
+			<PageTab tabs={tabs} />
+			<div className="mt-6">{children}</div>
 		</div>
 	);
 };
