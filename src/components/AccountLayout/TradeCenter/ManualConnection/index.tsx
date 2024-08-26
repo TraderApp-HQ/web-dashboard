@@ -2,10 +2,10 @@ import SelectBox from "~/components/common/SelectBox";
 import InputField from "~/components/common/InputField";
 import Button from "~/components/AccountLayout/Button";
 import Link from "next/link";
-import ExchangeCopyIcon from "~/components/icons/ExchangeCopyIcon";
 import { ISelectBoxOption } from "~/components/interfaces";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import Toast from "~/components/common/Toast";
+import CopyIcon from "~/components/icons/CopyIcon";
 
 interface ManualConnectionProps {
 	selectedExchange: ISelectBoxOption | undefined;
@@ -66,7 +66,7 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 			</div>
 			<InputField
 				type="text"
-				icon={{ name: <ExchangeCopyIcon />, onClick: handleExchangeCopy }}
+				icon={{ name: <CopyIcon color="#1836B2" />, onClick: handleExchangeCopy }}
 				labelText="IP Address"
 				props={{ name: "ipaddress", disabled: true }}
 				placeholder={ipString}
