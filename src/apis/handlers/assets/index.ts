@@ -78,17 +78,25 @@ export class AssetsService {
 
 	//Exchanges
 	public async getAllExchanges({
-		page = 1,
-		rowsPerPage = 10,
-		orderBy = "asc",
+		page,
+		rowsPerPage,
+		orderBy,
 		status,
 	}: IGetExchangesInput): Promise<IFetchExchanges[]> {
 		// Construct query parameters
-		const queryParams = new URLSearchParams({
-			page: page.toString(),
-			rowsPerPage: rowsPerPage.toString(),
-			orderBy: orderBy,
-		});
+		const queryParams = new URLSearchParams();
+
+		if (page !== undefined) {
+			queryParams.set("page", page.toString());
+		}
+
+		if (rowsPerPage !== undefined) {
+			queryParams.set("rowsPerPage", rowsPerPage.toString());
+		}
+
+		if (orderBy !== undefined) {
+			queryParams.set("orderBy", orderBy);
+		}
 
 		if (status !== undefined) {
 			queryParams.append("status", status);
