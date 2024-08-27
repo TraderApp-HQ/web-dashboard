@@ -58,6 +58,20 @@ export class SignalsService {
 
 	public async getAllSignals(): Promise<IFetchSignals> {
 		const response = await this.apiClient.get<IResponse>({
+			url: `/history`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch signal history records");
+		}
+
+		const { data } = response;
+		return data as IFetchSignals;
+	}
+
+	public async getAllSignalHistory(): Promise<IFetchSignals> {
+		const response = await this.apiClient.get<IResponse>({
 			url: `/signals`,
 			options: { credentials: "include" },
 		});

@@ -7,15 +7,16 @@ import type { SignalHistoryItem } from "~/lib/types";
 import data from "../data.json";
 import FilterDropdown from "~/components/AccountLayout/FilterDropdown";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
-import {
-	signalsHistoryDataTableMobileSelector,
-	signalsHistoryDataTableSelector,
-} from "~/selectors/signals";
+// import {
+// 	signalsHistoryDataTableMobileSelector,
+// 	signalsHistoryDataTableSelector,
+// } from "~/selectors/signals";
 import Pagination from "~/components/Pagination";
 import { NestedSignalsLayout } from "../";
+import { useFetchSignalHistory } from "~/apis/handlers/signals/hooks/history";
 
-function SignalsHistory() {
-	const signalHistory: SignalHistoryItem[] = data.signalHistory;
+const SignalsHistory = () => {
+	// const signalHistory: SignalHistoryItem[] = data.signalHistory;
 
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 
@@ -23,6 +24,15 @@ function SignalsHistory() {
 	const [startDate, setStartDate] = useState<string>("");
 	const [endDate, setEndDate] = useState<string>("");
 	// const [searchterm, setSearchTerm] = useState<string>(urlTerm ?? "");
+
+	const {
+		isLoading,
+		isSuccess,
+		signalHistory,
+		signalsTableHead,
+		signalsTableBody,
+		signalsMobileTableBody,
+	} = useFetchSignalHistory({});
 
 	const onStartDateChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setStartDate(event.target.value);
@@ -54,11 +64,11 @@ function SignalsHistory() {
 	const totalPages = Math.ceil(totalRecord / rowsPerPage);
 
 	// Calculate the rows to display
-	const startIndex = (currentPage - 1) * rowsPerPage;
+	// const startIndex = (currentPage - 1) * rowsPerPage;
 
 	//===================================================================
 	// paginatedSignalHistory is the data to be displayed on the current page
-	const paginatedSignalHistory = paginatedData.slice(startIndex, startIndex + rowsPerPage);
+	// const paginatedSignalHistory = paginatedData.slice(startIndex, startIndex + rowsPerPage);
 	//===================================================================
 
 	React.useEffect(() => {
@@ -66,12 +76,12 @@ function SignalsHistory() {
 		setCurrentPage(1);
 	}, [rowsPerPage]);
 
-	const { tableHead, tableBody } = signalsHistoryDataTableSelector(
-		paginatedSignalHistory /** signalHistory **/,
-	);
-	const dataMobile = signalsHistoryDataTableMobileSelector(
-		paginatedSignalHistory /** signalHistory **/,
-	);
+	// const { tableHead, tableBody } = signalsHistoryDataTableSelector(
+	// 	paginatedSignalHistory /** signalHistory **/,
+	// );
+	// const dataMobile = signalsHistoryDataTableMobileSelector(
+	// 	paginatedSignalHistory /** signalHistory **/,
+	// );
 
 	return (
 		<>
@@ -103,10 +113,20 @@ function SignalsHistory() {
 					<h3 className="font-semibold text-base text-[#08123B]">Resent Transaction</h3>
 					<div className="mt-4 mb-8">
 						<div className="hidden md:block overflow-x-auto p-2 bg-white rounded-2xl relative">
-							<DataTable tHead={tableHead} tBody={tableBody} hasActions={false} />
+							{isLoading && <div>Loading...</div>}
+							{isSuccess && signalsTableBody && (
+								<DataTable
+									tHead={signalsTableHead}
+									tBody={signalsTableBody}
+									hasActions={false}
+								/>
+							)}
 						</div>
 						<div className="md:hidden">
-							<DataTableMobile data={dataMobile} hasActions={false} />
+							{isLoading && <div>Loading...</div>}
+							{isSuccess && signalsMobileTableBody && (
+								<DataTableMobile data={signalsMobileTableBody} hasActions={false} />
+							)}
 						</div>
 					</div>
 					<div className="bg-white p-4 w-1/2 ml-auto">
@@ -125,7 +145,7 @@ function SignalsHistory() {
 			)}
 		</>
 	);
-}
+};
 
 SignalsHistory.getLayout = (page: React.ReactElement) => (
 	<NestedSignalsLayout>{page}</NestedSignalsLayout>
