@@ -1,0 +1,37 @@
+name: pull-request-ci
+
+on:
+    pull_request:
+    workflow_dispatch: # Allow manual runs of the pipeline.
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        environment:
+            name: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
+        steps:
+            - name: Checkout code from branch
+              uses: actions/checkout@v2
+
+            - name: Set environment variables
+              run: |
+                  echo "SERVICE=${{ vars.SERVICE }}" >> $GITHUB_ENV
+                  echo "NEXT_PUBLIC_ASSETS_SERVICE_API_URL=${{ vars.NEXT_PUBLIC_ASSETS_SERVICE_API_URL }}" >> $GITHUB_ENV
+                  echo "NEXT_PUBLIC_USERS_SERVICE_API_URL=${{ vars.NEXT_PUBLIC_USERS_SERVICE_API_URL }}" >> $GITHUB_ENV
+
+            - name: Install Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 18.17.0
+
+            - name: Install dependencies
+              run: npm install --force
+
+            - name: Build
+              run: npm run build
+
+            - name: Test
+              run: npm run test
+
+            - name: Start
+              run: npm run start &

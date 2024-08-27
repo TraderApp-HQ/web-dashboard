@@ -35,7 +35,7 @@ const DataTable: React.FC<IDataTable> = ({
 					{tHead.map((th, index) => (
 						<th
 							key={index}
-							className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles} ${th.styles ?? ""}`}
+							className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles} ${th.styles}`}
 						>
 							{th.displayItem}
 						</th>
