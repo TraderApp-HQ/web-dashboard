@@ -9,6 +9,7 @@ import { ActiveSignalsTableHeadItems, SignalsHistoryTableHeadItems } from "./con
 import { renderDisplayItem, renderStatus, renderTargetProfits } from "~/helpers";
 import type { ISignal } from "~/apis/handlers/signals/interfaces";
 import { SignalStatus } from "~/apis/handlers/signals/enums";
+import { format } from "date-fns";
 
 export function activeSignalsDataTableSelector(
 	activeSignals: ISignal[],
@@ -113,6 +114,14 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 	return dataMobile;
 }
 
+const formatDate = (date: string) => {
+	const day = format(date, "do");
+
+	// Format the rest of the date
+	const formattedDate = `${day} ${format(date, "MMMM (h:mma)")}`;
+	return formattedDate;
+};
+
 export function signalsHistoryDataTableSelector(data: SignalHistoryItem[]) {
 	const tableHead = [...SignalsHistoryTableHeadItems];
 	const tableBody: ITBody = {
@@ -120,12 +129,12 @@ export function signalsHistoryDataTableSelector(data: SignalHistoryItem[]) {
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: signal.asset, style: "text-base font-normal" },
-						itemImage: signal.image,
+						itemText: { text: signal.asset.name, style: "text-base font-normal" },
+						itemImage: signal.asset.logo,
 					}),
 				},
-				{ displayItem: `${signal.winLoss} USDT` },
-				{ displayItem: signal.startDate },
+				{ displayItem: `${signal.stopLoss.price} USDT` },
+				{ displayItem: formatDate(signal.createdAt) },
 				{ displayItem: signal.endDate },
 			],
 		})),
@@ -138,20 +147,20 @@ export function signalsHistoryDataTableMobileSelector(data: SignalHistoryItem[])
 	const dataMobile: ITableMobile[] = data.map((signal) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
-				itemText: { text: signal.asset, style: "text-base font-normal" },
-				itemSubText: { text: signal.shortName },
-				itemImage: signal.image,
+				itemText: { text: signal.asset.name, style: "text-base font-normal" },
+				itemSubText: { text: signal.name },
+				itemImage: signal.asset.logo,
 			}),
 			displayItemValue: "",
 		},
 		tBody: [
 			{
 				displayItemTitle: "Win/loss",
-				displayItemValue: `${signal.winLoss} USDT`,
+				displayItemValue: `${signal.stopLoss.price} USDT`,
 			},
 			{
 				displayItemTitle: "Start date / Time",
-				displayItemValue: signal.startDate,
+				displayItemValue: formatDate(signal.createdAt),
 			},
 			{
 				displayItemTitle: "End date / Time",
