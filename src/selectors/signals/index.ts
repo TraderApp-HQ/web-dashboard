@@ -1,5 +1,4 @@
 // import type { SignalHistoryItem } from "~/lib/types";
-import { ISignal } from "~/apis/handlers/signals/interfaces";
 import type {
 	ISignalPerformance,
 	ITBody,
