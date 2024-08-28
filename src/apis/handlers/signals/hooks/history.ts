@@ -16,7 +16,7 @@ interface IUseFetchSignalsHistoryProps {
 }
 
 export const useFetchSignalHistory = ({
-	isAdmin = false,
+	// isAdmin = false,
 	handleSetToggleDeleteModal,
 	handleResumeSignal,
 }: IUseFetchSignalsHistoryProps) => {
