@@ -3,7 +3,6 @@ import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
 import clsx from "clsx";
 import type { ChangeEvent } from "react";
 import React, { useState } from "react";
-import type { SignalHistoryItem } from "~/lib/types";
 import data from "../data.json";
 import FilterDropdown from "~/components/AccountLayout/FilterDropdown";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
