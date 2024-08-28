@@ -1,4 +1,5 @@
-import type { SignalHistoryItem } from "~/lib/types";
+// import type { SignalHistoryItem } from "~/lib/types";
+import { ISignal } from "~/apis/handlers/signals/interfaces";
 import type {
 	ISignalPerformance,
 	ITBody,
@@ -122,7 +123,7 @@ const formatDate = (date: string) => {
 	return formattedDate;
 };
 
-export function signalsHistoryDataTableSelector(data: SignalHistoryItem[]) {
+export function signalsHistoryDataTableSelector(data: ISignal[]) {
 	const tableHead = [...SignalsHistoryTableHeadItems];
 	const tableBody: ITBody = {
 		tBodyRows: data.map((signal) => ({
@@ -135,7 +136,7 @@ export function signalsHistoryDataTableSelector(data: SignalHistoryItem[]) {
 				},
 				{ displayItem: `${signal.stopLoss.price} USDT` },
 				{ displayItem: formatDate(signal.createdAt) },
-				{ displayItem: signal.endDate },
+				{ displayItem: signal.createdAt },
 			],
 		})),
 	};
@@ -143,12 +144,12 @@ export function signalsHistoryDataTableSelector(data: SignalHistoryItem[]) {
 	return { tableHead, tableBody };
 }
 
-export function signalsHistoryDataTableMobileSelector(data: SignalHistoryItem[]) {
+export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 	const dataMobile: ITableMobile[] = data.map((signal) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
 				itemText: { text: signal.asset.name, style: "text-base font-normal" },
-				itemSubText: { text: signal.name },
+				itemSubText: { text: signal.asset.name },
 				itemImage: signal.asset.logo,
 			}),
 			displayItemValue: "",
