@@ -164,7 +164,7 @@ export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 			},
 			{
 				displayItemTitle: "End date / Time",
-				displayItemValue: signal.endDate,
+				displayItemValue: signal.createdAt,
 			},
 		],
 	}));
