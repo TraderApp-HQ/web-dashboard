@@ -69,6 +69,34 @@ export class SignalsService {
 		const { data } = response;
 		return data as IFetchSignals;
 	}
+
+	public async getActiveSignals(): Promise<IFetchSignals> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/signals/active`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch signal records");
+		}
+
+		const { data } = response;
+		return data as IFetchSignals;
+	}
+
+	public async getInActiveSignals(): Promise<IFetchSignals> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/signals/history`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch signal records");
+		}
+
+		const { data } = response;
+		return data as IFetchSignals;
+	}
 }
 
 // export default new SignalsService();

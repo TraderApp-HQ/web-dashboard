@@ -13,9 +13,18 @@ import {
 } from "~/selectors/signals";
 import Pagination from "~/components/Pagination";
 import { NestedSignalsLayout } from "../";
+import { useFetchInActiveSignals } from "~/apis/handlers/signals/hooks";
 
 function SignalsHistory() {
 	const signalHistory: SignalHistoryItem[] = data.signalHistory;
+	const {
+		isLoading,
+		isSuccess,
+		activeSignals,
+		signalsTableHead,
+		signalsTableBody,
+		signalsMobileTableBody,
+	} = useFetchInActiveSignals({});
 
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 
@@ -101,12 +110,16 @@ function SignalsHistory() {
 			) : (
 				<div className="pb-8 rounded-2xl">
 					<h3 className="font-semibold text-base text-[#08123B]">Resent Transaction</h3>
-					<div className="mt-4 mb-8">
-						<div className="hidden md:block overflow-x-auto p-2 bg-white rounded-2xl relative">
-							<DataTable tHead={tableHead} tBody={tableBody} hasActions={false} />
+					<div className="mt-2 mb-8">
+						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
+							{isLoading && <div>Loading...</div>}
+							{isSuccess && signalsTableBody && (
+								<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
+							)}
 						</div>
-						<div className="md:hidden">
-							<DataTableMobile data={dataMobile} hasActions={false} />
+						<div className="md:hidden relative">
+							{isLoading && <div>Loading...</div>}
+							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
 						</div>
 					</div>
 					<div className="bg-white p-4 w-1/2 ml-auto">
