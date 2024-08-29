@@ -7,10 +7,10 @@ import type { SignalHistoryItem } from "~/lib/types";
 import data from "../data.json";
 import FilterDropdown from "~/components/AccountLayout/FilterDropdown";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
-import {
-	signalsHistoryDataTableMobileSelector,
-	signalsHistoryDataTableSelector,
-} from "~/selectors/signals";
+// import {
+// 	signalsHistoryDataTableMobileSelector,
+// 	signalsHistoryDataTableSelector,
+// } from "~/selectors/signals";
 import Pagination from "~/components/Pagination";
 import { NestedSignalsLayout } from "../";
 import { useFetchInActiveSignals } from "~/apis/handlers/signals/hooks";
@@ -20,7 +20,7 @@ function SignalsHistory() {
 	const {
 		isLoading,
 		isSuccess,
-		activeSignals,
+		// activeSignals,
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
@@ -67,7 +67,7 @@ function SignalsHistory() {
 
 	//===================================================================
 	// paginatedSignalHistory is the data to be displayed on the current page
-	const paginatedSignalHistory = paginatedData.slice(startIndex, startIndex + rowsPerPage);
+	const paginatedSignalHistory = paginatedData.slice(startIndex, startIndex + rowsPerPage); // eslint-disable-line
 	//===================================================================
 
 	React.useEffect(() => {
@@ -75,12 +75,12 @@ function SignalsHistory() {
 		setCurrentPage(1);
 	}, [rowsPerPage]);
 
-	const { tableHead, tableBody } = signalsHistoryDataTableSelector(
-		paginatedSignalHistory /** signalHistory **/,
-	);
-	const dataMobile = signalsHistoryDataTableMobileSelector(
-		paginatedSignalHistory /** signalHistory **/,
-	);
+	// const { tableHead, tableBody } = signalsHistoryDataTableSelector(
+	// 	paginatedSignalHistory /** signalHistory **/,
+	// );
+	// const dataMobile = signalsHistoryDataTableMobileSelector(
+	// 	paginatedSignalHistory /** signalHistory **/,
+	// );
 
 	return (
 		<>
