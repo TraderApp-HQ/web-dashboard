@@ -113,7 +113,7 @@ export class AssetsService {
 		}
 
 		const { data } = response;
-		return data;
+		return data as IFetchExchanges[];
 	}
 }
 

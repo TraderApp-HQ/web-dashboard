@@ -24,7 +24,7 @@ const ExchangeTile: React.FC<ExchangeTileProps> = ({
 			<TraderAppIcon />
 			<ConnectionIcon />
 			{imageUrl ? (
-				<Image src={imageUrl} width={70} height={70} alt="" />
+				<Image src={imageUrl} width={70} height={70} alt={imageUrl} />
 			) : (
 				<div
 					className={`flex justify-center items-center text-xs rounded-full p-2 md:text-sm font-semibold cursor-pointer ${textColor} ${bgColor} ${size.height} ${size.width}`}
