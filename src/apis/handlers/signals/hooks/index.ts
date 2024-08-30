@@ -11,7 +11,7 @@ import {
 import type { ITBody, ITHead, ITableMobile } from "~/components/common/DataTable/config";
 import { ISignal } from "../interfaces";
 import { SignalStatus } from "../enums";
-import { SignalHistoryItem } from "~/lib/types";
+
 interface UseFetchActiveSignalsProps {
 	handleSetToggleDeleteModal?: (id: string) => void;
 	handleResumeSignal?: (id: string, currentStatus: SignalStatus) => void;
@@ -90,7 +90,7 @@ export const useFetchActiveSignals = ({
 };
 
 export const useFetchInActiveSignals = ({
-	isAdmin = false,
+	isAdmin = false, // eslint-disable-line
 	handleSetToggleDeleteModal,
 	handleResumeSignal,
 }: UseFetchActiveSignalsProps) => {
@@ -115,7 +115,7 @@ export const useFetchInActiveSignals = ({
 
 	useEffect(() => {
 		const { tableHead, tableBody } = signalsHistoryDataTableSelector(allSignals?.signals ?? []);
-		const dataMobile = activeSignalsDataTableMobileSelector(allSignals?.signals ?? []);
+		const dataMobile = signalsHistoryDataTableMobileSelector(allSignals?.signals ?? []);
 
 		setHistory(allSignals?.signals ?? []);
 		setSignalsTableHead(tableHead);

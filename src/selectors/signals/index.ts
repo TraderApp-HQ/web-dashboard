@@ -1,4 +1,4 @@
-import type { SignalHistoryItem } from "~/lib/types";
+// import type { SignalHistoryItem } from "~/lib/types";
 import type {
 	ISignalPerformance,
 	ITBody,
@@ -134,28 +134,28 @@ export function signalsHistoryDataTableSelector(data: ISignal[]) {
 	return { tableHead, tableBody };
 }
 
-export function signalsHistoryDataTableMobileSelector(data: SignalHistoryItem[]) {
+export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 	const dataMobile: ITableMobile[] = data.map((signal) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
-				itemText: { text: signal.asset, style: "text-base font-normal" },
-				itemSubText: { text: signal.shortName },
-				itemImage: signal.image,
+				itemText: { text: signal.asset.name, style: "text-base font-normal" },
+				itemSubText: { text: signal.asset.symbol },
+				itemImage: signal.asset.logo,
 			}),
 			displayItemValue: "",
 		},
 		tBody: [
 			{
 				displayItemTitle: "Win/loss",
-				displayItemValue: `${signal.winLoss} USDT`,
+				displayItemValue: `${signal.risk} USDT`,
 			},
 			{
 				displayItemTitle: "Start date / Time",
-				displayItemValue: signal.startDate,
+				displayItemValue: signal.createdAt,
 			},
 			{
 				displayItemTitle: "End date / Time",
-				displayItemValue: signal.endDate,
+				displayItemValue: signal.endedAt,
 			},
 		],
 	}));
