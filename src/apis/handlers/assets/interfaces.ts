@@ -56,7 +56,7 @@ export interface ISignalUpdateInput {
 }
 
 export interface IFetchExchanges {
-	id: string;
+	_id: string;
 	name: string;
 	logo: string;
 }

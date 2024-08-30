@@ -36,7 +36,7 @@ const ExchangeConnection = () => {
 		if (isExchangeSuccess && exchanges) {
 			const options = exchanges.map((exchange) => ({
 				displayText: exchange.name.toString(),
-				value: exchange.id,
+				value: exchange._id,
 				imgUrl: exchange.logo.toString(),
 			}));
 			setExchangeOptions(options);
