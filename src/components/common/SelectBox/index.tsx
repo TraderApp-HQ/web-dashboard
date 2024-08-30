@@ -128,7 +128,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 								/>
 							</div>
 						)}
-						<ul className={`max-h-60 overflow-auto ${className}`}>
+						<ul role="listbox" className={`max-h-60 overflow-auto ${className}`}>
 							{filteredOptions.map((option, index) => (
 								<li
 									key={index}

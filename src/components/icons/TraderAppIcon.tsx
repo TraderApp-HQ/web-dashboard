@@ -3,6 +3,7 @@ import React from "react";
 const TraderAppIcon = () => {
 	return (
 		<svg
+			data-testid="trader-app-icon"
 			width="70"
 			height="70"
 			viewBox="0 0 70 70"
@@ -13,8 +14,8 @@ const TraderAppIcon = () => {
 			<path
 				d="M23 28L32.0933 28L32.0933 42.8661L46.9594 28"
 				stroke="white"
-				stroke-width="4.66389"
-				stroke-linecap="round"
+				strokeWidth="4.66389"
+				strokeLinecap="round"
 			/>
 		</svg>
 	);
