@@ -113,20 +113,20 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 	return dataMobile;
 }
 
-export function signalsHistoryDataTableSelector(data: SignalHistoryItem[]) {
+export function signalsHistoryDataTableSelector(data: ISignal[]) {
 	const tableHead = [...SignalsHistoryTableHeadItems];
 	const tableBody: ITBody = {
 		tBodyRows: data.map((signal) => ({
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: signal.asset, style: "text-base font-normal" },
-						itemImage: signal.image,
+						itemText: { text: signal.asset.name, style: "text-base font-normal" },
+						itemImage: signal.asset.logo,
 					}),
 				},
-				{ displayItem: `${signal.winLoss} USDT` },
-				{ displayItem: signal.startDate },
-				{ displayItem: signal.endDate },
+				{ displayItem: `${signal.risk} USDT` },
+				{ displayItem: signal.createdAt },
+				{ displayItem: signal.endedAt },
 			],
 		})),
 	};

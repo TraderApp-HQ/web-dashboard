@@ -5,10 +5,13 @@ import { SignalsQueryId } from "../constants";
 import {
 	activeSignalsDataTableMobileSelector,
 	activeSignalsDataTableSelector,
+	signalsHistoryDataTableMobileSelector,
+	signalsHistoryDataTableSelector,
 } from "~/selectors/signals";
 import type { ITBody, ITHead, ITableMobile } from "~/components/common/DataTable/config";
 import { ISignal } from "../interfaces";
 import { SignalStatus } from "../enums";
+import { SignalHistoryItem } from "~/lib/types";
 interface UseFetchActiveSignalsProps {
 	handleSetToggleDeleteModal?: (id: string) => void;
 	handleResumeSignal?: (id: string, currentStatus: SignalStatus) => void;
@@ -92,15 +95,12 @@ export const useFetchInActiveSignals = ({
 	handleResumeSignal,
 }: UseFetchActiveSignalsProps) => {
 	const signalsService = new SignalsService();
-	const [activeSignals, setActiveSignals] = useState<ISignal[]>([]);
+	const [signalHistory, setHistory] = useState<ISignal[]>([]);
 	const [signalsTableHead, setSignalsTableHead] = useState<ITHead[]>([]);
 	const [signalsTableBody, setSignalsTableBody] = useState<ITBody>();
 	const [signalsMobileTableBody, setSignalsMobileTableBody] = useState<ITableMobile[]>([]);
 
-	// const [socketUrl, setSocketUrl] = useState("ws://localhost:8080/signals/stream");
-	// const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
-
-	const fetchSignals = useCallback(() => signalsService.getInActiveSignals(), [signalsService]);
+	const fetchSignals = useCallback(() => signalsService.getHistory(), [signalsService]);
 	const {
 		data: allSignals,
 		error,
@@ -109,20 +109,15 @@ export const useFetchInActiveSignals = ({
 		isError,
 		refetch,
 	} = useFetch({
-		queryKey: [SignalsQueryId.signals],
+		queryKey: [SignalsQueryId.history],
 		queryFn: fetchSignals,
 	});
 
 	useEffect(() => {
-		const { tableHead, tableBody } = activeSignalsDataTableSelector(
-			allSignals?.signals ?? [],
-			isAdmin,
-			handleSetToggleDeleteModal,
-			handleResumeSignal,
-		);
+		const { tableHead, tableBody } = signalsHistoryDataTableSelector(allSignals?.signals ?? []);
 		const dataMobile = activeSignalsDataTableMobileSelector(allSignals?.signals ?? []);
 
-		setActiveSignals(allSignals?.signals ?? []);
+		setHistory(allSignals?.signals ?? []);
 		setSignalsTableHead(tableHead);
 		setSignalsTableBody(tableBody);
 		setSignalsMobileTableBody(dataMobile);
@@ -150,7 +145,7 @@ export const useFetchInActiveSignals = ({
 		error,
 		isLoading,
 		isSuccess,
-		activeSignals,
+		signalHistory,
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,

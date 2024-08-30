@@ -16,11 +16,11 @@ import { NestedSignalsLayout } from "../";
 import { useFetchInActiveSignals } from "~/apis/handlers/signals/hooks";
 
 function SignalsHistory() {
-	const signalHistory: SignalHistoryItem[] = data.signalHistory;
+	// const signalHistory: SignalHistoryItem[] = data.signalHistory;
 	const {
 		isLoading,
 		isSuccess,
-		// activeSignals,
+		signalHistory,
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
