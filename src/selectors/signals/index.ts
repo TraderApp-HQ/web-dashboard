@@ -1,4 +1,4 @@
-import type { SignalHistoryItem } from "~/lib/types";
+// import type { SignalHistoryItem } from "~/lib/types";
 import type {
 	ISignalPerformance,
 	ITBody,
@@ -9,6 +9,7 @@ import { ActiveSignalsTableHeadItems, SignalsHistoryTableHeadItems } from "./con
 import { renderDisplayItem, renderStatus, renderTargetProfits } from "~/helpers";
 import type { ISignal } from "~/apis/handlers/signals/interfaces";
 import { SignalStatus } from "~/apis/handlers/signals/enums";
+import { format } from "date-fns";
 
 export function activeSignalsDataTableSelector(
 	activeSignals: ISignal[],
@@ -113,20 +114,29 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 	return dataMobile;
 }
 
-export function signalsHistoryDataTableSelector(data: SignalHistoryItem[]) {
+const formatDate = (date: string) => {
+	const day = format(date, "do");
+
+	// Format the rest of the date
+	const formattedDate = `${day} ${format(date, "MMMM yyyy")}`;
+	return formattedDate;
+};
+
+export function signalsHistoryDataTableSelector(data: ISignal[]) {
 	const tableHead = [...SignalsHistoryTableHeadItems];
 	const tableBody: ITBody = {
 		tBodyRows: data.map((signal) => ({
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: signal.asset, style: "text-base font-normal" },
-						itemImage: signal.image,
+						itemText: { text: signal.asset.name, style: "text-base font-normal" },
+						itemImage: signal.asset.logo,
 					}),
 				},
-				{ displayItem: `${signal.winLoss} USDT` },
-				{ displayItem: signal.startDate },
-				{ displayItem: signal.endDate },
+				// { displayItem: `${signal.stopLoss.price} USDT` },
+				{ displayItem: `${0} %` },
+				{ displayItem: formatDate(signal.createdAt) },
+				{ displayItem: formatDate(signal.createdAt) },
 			],
 		})),
 	};
@@ -134,28 +144,29 @@ export function signalsHistoryDataTableSelector(data: SignalHistoryItem[]) {
 	return { tableHead, tableBody };
 }
 
-export function signalsHistoryDataTableMobileSelector(data: SignalHistoryItem[]) {
+export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 	const dataMobile: ITableMobile[] = data.map((signal) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
-				itemText: { text: signal.asset, style: "text-base font-normal" },
-				itemSubText: { text: signal.shortName },
-				itemImage: signal.image,
+				itemText: { text: signal.asset.name, style: "text-base font-normal" },
+				itemSubText: { text: signal.asset.name },
+				itemImage: signal.asset.logo,
 			}),
 			displayItemValue: "",
 		},
 		tBody: [
 			{
 				displayItemTitle: "Win/loss",
-				displayItemValue: `${signal.winLoss} USDT`,
+				// displayItemValue: `${signal.stopLoss.price} USDT`,
+				displayItemValue: `${0} %`,
 			},
 			{
 				displayItemTitle: "Start date / Time",
-				displayItemValue: signal.startDate,
+				displayItemValue: formatDate(signal.createdAt),
 			},
 			{
 				displayItemTitle: "End date / Time",
-				displayItemValue: signal.endDate,
+				displayItemValue: formatDate(signal.createdAt),
 			},
 		],
 	}));
