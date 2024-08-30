@@ -1,10 +1,11 @@
 interface IProps {
 	color?: string;
 }
-	
+
 const CopyIcon: React.FC<IProps> = ({ color = "black" }) => {
 	return (
 		<svg
+			data-testid="copy-icon"
 			width="24"
 			height="25"
 			viewBox="0 0 24 25"

@@ -41,7 +41,10 @@ const InputField: React.FC<IInputFieldProps> = ({
 	return (
 		<div>
 			{labelText && (
-				<label className={`text-sm text-[#08123B] font-normal ${labelClassName}`}>
+				<label
+					aria-label={labelText}
+					className={`text-sm text-[#08123B] font-normal ${labelClassName}`}
+				>
 					{labelText}
 				</label>
 			)}
