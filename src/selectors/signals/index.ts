@@ -118,7 +118,7 @@ const formatDate = (date: string) => {
 	const day = format(date, "do");
 
 	// Format the rest of the date
-	const formattedDate = `${day} ${format(date, "MMMM (h:mma)")}`;
+	const formattedDate = `${day} ${format(date, "MMMM yyyy")}`;
 	return formattedDate;
 };
 
@@ -133,9 +133,10 @@ export function signalsHistoryDataTableSelector(data: ISignal[]) {
 						itemImage: signal.asset.logo,
 					}),
 				},
-				{ displayItem: `${signal.stopLoss.price} USDT` },
+				// { displayItem: `${signal.stopLoss.price} USDT` },
+				{ displayItem: `${0} %` },
 				{ displayItem: formatDate(signal.createdAt) },
-				{ displayItem: signal.createdAt },
+				{ displayItem: formatDate(signal.createdAt) },
 			],
 		})),
 	};
@@ -156,7 +157,8 @@ export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 		tBody: [
 			{
 				displayItemTitle: "Win/loss",
-				displayItemValue: `${signal.stopLoss.price} USDT`,
+				// displayItemValue: `${signal.stopLoss.price} USDT`,
+				displayItemValue: `${0} %`,
 			},
 			{
 				displayItemTitle: "Start date / Time",
@@ -164,7 +166,7 @@ export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 			},
 			{
 				displayItemTitle: "End date / Time",
-				displayItemValue: signal.createdAt,
+				displayItemValue: formatDate(signal.createdAt),
 			},
 		],
 	}));
