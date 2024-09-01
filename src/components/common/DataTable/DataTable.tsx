@@ -2,6 +2,12 @@ import React from "react";
 import type { ITBody, ITHead } from "./config";
 import TableMenuDropdown from "./TableMenuDropdown";
 import TableMenuItems from "./TableMenuitems";
+import { format, isValid } from "date-fns";
+
+function isDate(dateStr: string) {
+	const date = new Date(dateStr);
+	return date instanceof Date && isValid(date);
+  }
 
 interface IDataTable {
 	tHead: ITHead[];
@@ -52,14 +58,14 @@ const DataTable: React.FC<IDataTable> = ({
 			<tbody>
 				{tBody.tBodyRows.map((tr, index) => (
 					<tr key={index}>
-						{tr.tBodyColumns.map((tc) => (
+						{tr.tBodyColumns.map((tc, idx) => (
 							<td
 								key={index}
 								className={`py-5 border-b text-sm border-slate-200 text-zinc-600 font-normal leading-none whitespace-nowrap ${tableRowItemStyles} ${
 									tc.styles ?? ""
 								}`}
 							>
-								{tc.displayItem}
+								{isDate(tc.displayItem as string) ? format(tc.displayItem as string, "do MMMM yyyy") : tc.displayItem}
 							</td>
 						))}
 						{hasActions && (

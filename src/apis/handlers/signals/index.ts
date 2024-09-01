@@ -84,7 +84,7 @@ export class SignalsService {
 		return data as IFetchSignals;
 	}
 
-	public async getHistory(): Promise<IFetchSignals> {
+	public async getSignalsHistory(): Promise<IFetchSignals> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/signals/history`,
 			options: { credentials: "include" },

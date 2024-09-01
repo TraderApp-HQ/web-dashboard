@@ -100,7 +100,7 @@ export const useFetchInActiveSignals = ({
 	const [signalsTableBody, setSignalsTableBody] = useState<ITBody>();
 	const [signalsMobileTableBody, setSignalsMobileTableBody] = useState<ITableMobile[]>([]);
 
-	const fetchSignals = useCallback(() => signalsService.getHistory(), [signalsService]);
+	const fetchSignals = useCallback(() => signalsService.getSignalsHistory(), [signalsService]);
 	const {
 		data: allSignals,
 		error,
