@@ -11,7 +11,6 @@ import { ISelectBoxOption } from "~/components/interfaces";
 import { TradeStatus } from "~/apis/handlers/assets/enums";
 import FastConnection from "~/components/AccountLayout/TradeCenter/FastConnection";
 import ManualConnection from "~/components/AccountLayout/TradeCenter/ManualConnection";
-import myExchangeData from "~/data/wallet/data.json";
 
 const ExchangeConnection = () => {
 	const router = useRouter();
@@ -35,9 +34,9 @@ const ExchangeConnection = () => {
 
 	useEffect(() => {
 		if (isExchangeSuccess && exchanges) {
-			const options = myExchangeData.exchanges.map((exchange) => ({
+			const options = exchanges.map((exchange) => ({
 				displayText: exchange.name.toString(),
-				value: exchange.id,
+				value: exchange._id,
 				imgUrl: exchange.logo.toString(),
 			}));
 			setExchangeOptions(options);
