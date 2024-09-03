@@ -184,7 +184,7 @@ const SelectBoxOption: React.FC<ISelectBoxOptionProps> = ({
 					height={20}
 				/>
 			)}
-			<span>{displayText}</span>
+			<span data-testid={`${displayText}-${displayText}`}>{displayText}</span>
 		</div>
 	);
 };
