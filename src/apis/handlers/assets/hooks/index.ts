@@ -94,7 +94,7 @@ export const useFetchInActiveSignals = ({
 	handleSetToggleDeleteModal,
 	handleResumeSignal,
 }: UseFetchActiveSignalsProps) => {
-	const signalsService = new SignalsService();
+	const signalsService = new AssetsService();
 	const [signalHistory, setHistory] = useState<ISignal[]>([]);
 	const [signalsTableHead, setSignalsTableHead] = useState<ITHead[]>([]);
 	const [signalsTableBody, setSignalsTableBody] = useState<ITBody>();
