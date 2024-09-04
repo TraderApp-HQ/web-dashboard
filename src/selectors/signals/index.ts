@@ -7,8 +7,8 @@ import type {
 } from "~/components/common/DataTable/config";
 import { ActiveSignalsTableHeadItems, SignalsHistoryTableHeadItems } from "./constants";
 import { renderDisplayItem, renderStatus, renderTargetProfits } from "~/helpers";
-import type { ISignal } from "~/apis/handlers/signals/interfaces";
-import { SignalStatus } from "~/apis/handlers/signals/enums";
+import type { ISignal } from "~/apis/handlers/assets/interfaces";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
 
 export function activeSignalsDataTableSelector(
 	activeSignals: ISignal[],

@@ -7,6 +7,7 @@ interface IProps {
 const ConnectedIcon: React.FC<IProps> = ({ color = "white" }) => {
 	return (
 		<svg
+			data-testId="connection-icon"
 			width="24"
 			height="24"
 			viewBox="0 0 24 24"

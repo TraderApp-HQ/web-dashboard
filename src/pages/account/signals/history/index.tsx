@@ -13,7 +13,7 @@ import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 // } from "~/selectors/signals";
 import Pagination from "~/components/Pagination";
 import { NestedSignalsLayout } from "../";
-import { useFetchInActiveSignals } from "~/apis/handlers/signals/hooks";
+import { useFetchInActiveSignals } from "~/apis/handlers/assets/hooks";
 
 function SignalsHistory() {
 	// const signalHistory: SignalHistoryItem[] = data.signalHistory;
