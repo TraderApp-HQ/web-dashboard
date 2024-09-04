@@ -13,6 +13,8 @@ import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 // } from "~/selectors/signals";
 import Pagination from "~/components/Pagination";
 import { NestedSignalsLayout } from "../";
+import TableLoader from "~/components/Loaders/TableLoader";
+import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import { useFetchInActiveSignals } from "~/apis/handlers/assets/hooks";
 
 function SignalsHistory() {
@@ -112,13 +114,13 @@ function SignalsHistory() {
 					<h3 className="font-semibold text-base text-[#08123B]">Resent Transaction</h3>
 					<div className="mt-2 mb-8">
 						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
-							{isLoading && <div>Loading...</div>}
+							{isLoading && <TableLoader />}
 							{isSuccess && signalsTableBody && (
 								<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
 							)}
 						</div>
 						<div className="md:hidden relative">
-							{isLoading && <div>Loading...</div>}
+							{isLoading && <MobileTableLoader />}
 							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
 						</div>
 					</div>
