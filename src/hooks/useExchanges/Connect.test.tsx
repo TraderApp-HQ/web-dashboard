@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import ExchangeConnection from "."; // Ensure this is the correct path to your component
+import ExchangeConnection from "../../pages/account/trade-center/exchanges/connect"; // Ensure this is the correct path to your component
 import useExchanges from "~/hooks/useExchanges"; // Adjust the import based on the actual path
 import { useRouter } from "next/router";
 
