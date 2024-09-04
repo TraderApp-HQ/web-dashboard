@@ -28,16 +28,22 @@ const ExchangeConnection = () => {
 	const ipAddress = ["2345678901mj940485686505940400", "940485686505940l4002345678901m"];
 	const ipString = ipAddress.join(", ");
 
-	const { data: exchanges, isSuccess: isExchangeSuccess } = useExchanges({
+	const {
+		data: exchanges,
+		isSuccess: isExchangeSuccess,
+		isError,
+		error,
+		isLoading,
+	} = useExchanges({
 		status: TradeStatus.active,
 	});
 
 	useEffect(() => {
 		if (isExchangeSuccess && exchanges) {
 			const options = exchanges.map((exchange) => ({
-				displayText: exchange.name.toString(),
+				displayText: exchange.name?.toString(),
 				value: exchange._id,
-				imgUrl: exchange.logo.toString(),
+				imgUrl: exchange.logo?.toString(),
 			}));
 			setExchangeOptions(options);
 		}
@@ -63,6 +69,9 @@ const ExchangeConnection = () => {
 				<ExchangeTile imageUrl={selectedExchange?.imgUrl} />
 				<ContentTab tabs={tabs}>
 					<ManualConnection
+						isLoading={isLoading}
+						isError={isError}
+						error={error}
 						selectedExchange={selectedExchange}
 						exchangeOptions={exchangeOptions}
 						setSelectedExchange={setSelectedExchange}

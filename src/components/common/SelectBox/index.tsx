@@ -84,8 +84,13 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 		if (setOption && selectedOption) setOption(selectedOption);
 	}, [selectedOption]);
 
+	console.log("this is optons ==========================", options);
+
 	return (
 		<div>
+			{/* {options.map((option) => (
+				<div key={option.value}>{option.displayText}</div>
+			))} */}
 			{labelText && (
 				<label
 					aria-label={labelText}
@@ -99,7 +104,13 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 				aria-labelledby={labelText}
 				ref={selectBoxRef}
 			>
+				{/* for testing */}
+				{filteredOptions.map(({ value, displayText }) => (
+					<div key={value} data-testid={displayText} />
+				))}
+
 				<div
+					// data-testid={options.map(({ displayText }) => displayText).join("")}
 					className={`p-[16px] placeholder-[#808080] w-full text-[#102477] invalid:text-[#808080] rounded-lg font-normal outline-[1px] outline-[#6579CC] appearance-none bg-no-repeat bg-[center_right_1em] invalid:[&:not(:empty)]:visited:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${
 						isOpen ? "border-[#7949FF]" : "border-gray-100"
 					} rounded-md p-2 flex justify-between items-center cursor-pointer ${bgColor ? bgColor : "bg-[#F5F8FE]"}`}
@@ -184,7 +195,7 @@ const SelectBoxOption: React.FC<ISelectBoxOptionProps> = ({
 					height={20}
 				/>
 			)}
-			<span data-testid={`${displayText}-${displayText}`}>{displayText}</span>
+			<div>{displayText}</div>
 		</div>
 	);
 };

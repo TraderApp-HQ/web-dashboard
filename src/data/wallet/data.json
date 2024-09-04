@@ -298,25 +298,25 @@
 	},
 	"exchanges": [
 		{
-			"id": "1",
+			"_id": "1",
 			"name": "Kucoin",
 			"logo": "/images/btc_round.png",
 			"isConnected": true
 		},
 		{
-			"id": "2",
+			"_id": "2",
 			"name": "Binance",
 			"logo": "/images/binance_round.png",
 			"isConnected": true
 		},
 		{
-			"id": "3",
+			"_id": "3",
 			"name": "ByBit",
 			"logo": "/images/usdt_round.png",
 			"isConnected": false
 		},
 		{
-			"id": "4",
+			"_id": "4",
 			"name": "BitGate",
 			"logo": "/images/btc_round.png",
 			"isConnected": false

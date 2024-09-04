@@ -15,9 +15,15 @@ interface ManualConnectionProps {
 	setSecretKey: (secretKey: string | undefined) => void;
 	isSubmitDisabled: boolean;
 	ipString: string;
+	isError: boolean;
+	error: Error | null;
+	isLoading: boolean;
 }
 
 const ManualConnection: React.FC<ManualConnectionProps> = ({
+	isError,
+	error,
+	isLoading,
 	selectedExchange,
 	exchangeOptions,
 	setSelectedExchange,
@@ -39,7 +45,11 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 				isSearchable
 				labelText="Exchange"
 				options={exchangeOptions}
-				placeholder="Select Exchange Channel"
+				placeholder={
+					(isError && error?.message) ||
+					(isLoading && "loading...") ||
+					"Select Exchange Channel"
+				}
 				setOption={setSelectedExchange}
 			/>
 			<InputField

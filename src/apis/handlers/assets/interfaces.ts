@@ -15,7 +15,7 @@ export interface ISignalMilestone {
 }
 
 export interface IExchange {
-	id: string;
+	_id: string;
 	name: string;
 	logo: string;
 }

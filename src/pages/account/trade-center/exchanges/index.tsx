@@ -32,7 +32,7 @@ const TradeCenterExchanges = () => {
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-8">
 						{exchanges.map((exchange) => (
-							<MyExchangeCard key={exchange.id} {...exchange} />
+							<MyExchangeCard key={exchange._id} {...exchange} />
 						))}
 					</div>
 				</>
