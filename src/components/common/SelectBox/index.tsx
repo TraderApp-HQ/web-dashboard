@@ -84,13 +84,8 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 		if (setOption && selectedOption) setOption(selectedOption);
 	}, [selectedOption]);
 
-	console.log("this is optons ==========================", options);
-
 	return (
 		<div>
-			{/* {options.map((option) => (
-				<div key={option.value}>{option.displayText}</div>
-			))} */}
 			{labelText && (
 				<label
 					aria-label={labelText}
