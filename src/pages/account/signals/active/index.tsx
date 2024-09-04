@@ -16,6 +16,8 @@ import { useFetchActiveSignals } from "~/apis/handlers/signals/hooks";
 import { ISignal } from "~/apis/handlers/signals/interfaces";
 import { activeSignalsPerfomanceSumary } from "~/selectors/signals";
 import { NestedSignalsLayout } from "../";
+import TableLoader from "~/components/Loaders/TableLoader";
+import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 
 const ActiveSignals = () => {
 	const signalResult: SignalsData = data;
@@ -159,13 +161,13 @@ const ActiveSignals = () => {
 					<h3 className="font-bold text-base text-[#08123B]">All Active Signal (10)</h3>
 					<div className="mt-2 mb-8">
 						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
-							{isLoading && <div>Loading...</div>}
+							{isLoading && <TableLoader />}
 							{isSuccess && signalsTableBody && (
 								<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
 							)}
 						</div>
 						<div className="md:hidden relative">
-							{isLoading && <div>Loading...</div>}
+							{isLoading && <MobileTableLoader />}
 							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
 						</div>
 					</div>
