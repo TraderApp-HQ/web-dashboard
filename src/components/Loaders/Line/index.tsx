@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import clsx from "clsx";
 import Polygon from "../Polygon";
 
