@@ -1,17 +1,23 @@
 import { APIClient } from "~/apis/apiClient";
 import type { IResponse } from "../interfaces";
 import { UsersService } from "../users";
-import type { IFetchSignals, ISignal, ISignalUpdateInput } from "./interfaces";
+import type {
+	IFetchExchanges,
+	IFetchSignals,
+	IGetExchangesInput,
+	ISignal,
+	ISignalUpdateInput,
+} from "./interfaces";
 // import { SignalStatus } from "./enums";
 
-export class SignalsService {
+export class AssetsService {
 	private apiClient: APIClient;
 	private usersService: UsersService;
 
 	constructor() {
 		this.usersService = new UsersService();
 		if (!process.env.NEXT_PUBLIC_ASSETS_SERVICE_API_URL)
-			throw Error("Signals service backend url not found");
+			throw Error("Assets service backend url not found");
 		this.apiClient = new APIClient(
 			process.env.NEXT_PUBLIC_ASSETS_SERVICE_API_URL,
 			this.usersService.refreshUserAccessToken.bind(this.usersService),
@@ -97,6 +103,46 @@ export class SignalsService {
 		const { data } = response;
 		return data as IFetchSignals;
 	}
+
+	//Exchanges
+	public async getAllExchanges({
+		page,
+		rowsPerPage,
+		orderBy,
+		status,
+	}: IGetExchangesInput): Promise<IFetchExchanges[]> {
+		// Construct query parameters
+		const queryParams = new URLSearchParams();
+
+		if (page !== undefined) {
+			queryParams.set("page", page.toString());
+		}
+
+		if (rowsPerPage !== undefined) {
+			queryParams.set("rowsPerPage", rowsPerPage.toString());
+		}
+
+		if (orderBy !== undefined) {
+			queryParams.set("orderBy", orderBy);
+		}
+
+		if (status !== undefined) {
+			queryParams.append("status", status);
+		}
+
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `/exchanges?${queryParams.toString()}`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch exchange records");
+		}
+
+		const { data } = response;
+		return data as IFetchExchanges[];
+	}
 }
 
-// export default new SignalsService();
+// export default new AssetsService();

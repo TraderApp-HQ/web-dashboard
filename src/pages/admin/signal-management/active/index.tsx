@@ -13,14 +13,14 @@ import type SignalsData from "~/lib/types";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import DeleteModal from "~/components/Modal/DeleteModal";
 import Select from "~/components/AccountLayout/Select";
-import { useFetchActiveSignals } from "~/apis/handlers/signals/hooks";
-import { ISignal } from "~/apis/handlers/signals/interfaces";
+import { useFetchActiveSignals } from "~/apis/handlers/assets/hooks";
+import { ISignal } from "~/apis/handlers/assets/interfaces";
 import { activeSignalsPerfomanceSumary } from "~/selectors/signals";
 import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
 import { AdminNestedSignalsLayout } from "..";
 import { useCreate } from "~/hooks/useCreate";
-import { SignalsService } from "~/apis/handlers/signals";
-import { SignalStatus } from "~/apis/handlers/signals/enums";
+import { AssetsService } from "~/apis/handlers/assets";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
 import Toast from "~/components/common/Toast";
 
 interface ActiveSignalProps {
@@ -38,7 +38,7 @@ export const getServerSideProps = async () => {
 
 function ActiveSignals({ signalResult }: ActiveSignalProps) {
 	const { signals } = signalResult;
-	const signalsService = new SignalsService();
+	const signalsService = new AssetsService();
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 	const router = useRouter();
 	const { term } = router.query;

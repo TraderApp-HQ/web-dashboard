@@ -1,4 +1,4 @@
-import type { Candlestick, SignalRisk, SignalStatus } from "./enums";
+import type { Candlestick, SignalRisk, SignalStatus, TradeStatus } from "./enums";
 
 export interface ISignalAsset {
 	id: string;
@@ -15,7 +15,7 @@ export interface ISignalMilestone {
 }
 
 export interface IExchange {
-	id: string;
+	_id: string;
 	name: string;
 	logo: string;
 }
@@ -53,4 +53,17 @@ export interface IFetchSignals {
 export interface ISignalUpdateInput {
 	id: string;
 	status: SignalStatus;
+}
+
+export interface IFetchExchanges {
+	_id: string;
+	name: string;
+	logo: string;
+}
+
+export interface IGetExchangesInput {
+	page?: number;
+	rowsPerPage?: number;
+	orderBy?: "asc" | "desc";
+	status?: TradeStatus;
 }

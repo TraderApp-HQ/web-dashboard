@@ -7,6 +7,7 @@ interface IProps {
 const TrashIcon: React.FC<IProps> = ({ color = "#414141" }) => {
 	return (
 		<svg
+			data-testid="trash-icon"
 			width="24"
 			height="24"
 			viewBox="0 0 24 24"
