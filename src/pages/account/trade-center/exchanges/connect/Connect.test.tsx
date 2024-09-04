@@ -12,7 +12,7 @@ jest.mock("next/router", () => ({
 // Mock the useExchanges hook
 jest.mock("~/hooks/useExchanges");
 
-describe("ExchangeConnection Page - Network Requests", () => {
+describe("ExchangeConnection Page - Get all exchanges", () => {
 	let mockPush: jest.Mock;
 
 	beforeEach(() => {
