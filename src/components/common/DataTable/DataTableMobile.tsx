@@ -2,6 +2,12 @@ import type { FC } from "react";
 import React from "react";
 import type { ITableMobile } from "./config";
 import TableMenuDropdown from "./TableMenuDropdown";
+import { format, isValid } from "date-fns";
+
+function isDate(dateStr: string) {
+	const date = new Date(dateStr);
+	return date instanceof Date && isValid(date);
+}
 
 interface IDataTableMobile {
 	data: ITableMobile[];
@@ -34,7 +40,10 @@ const DataTableMobile: FC<IDataTableMobile> = ({ data, hasActions }) => {
 								{tb.displayItemTitle}
 							</div>
 							<div className="mr-4 text-base text-[#0C394B] font-semibold w-[60%] text-right">
-								{tb.displayItemValue}
+								{/* {tb.displayItemValue} */}
+								{isDate(tb.displayItemValue as string)
+									? format(tb.displayItemValue as string, "do MMMM yyyy")
+									: tb.displayItemValue}
 							</div>
 						</div>
 					))}
