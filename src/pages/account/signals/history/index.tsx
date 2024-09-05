@@ -18,11 +18,12 @@ import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import { useFetchInActiveSignals } from "~/apis/handlers/assets/hooks";
 
 function SignalsHistory() {
-	// const signalHistory: SignalHistoryItem[] = data.signalHistory;
+	const signalResult = data;
+	const { signalHistory } = signalResult;
 	const {
 		isLoading,
 		isSuccess,
-		signalHistory,
+		// signalHistory,
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
