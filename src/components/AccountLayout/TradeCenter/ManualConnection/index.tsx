@@ -42,7 +42,6 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 		<div className="flex flex-col gap-y-4">
 			<SelectBox
 				option={selectedExchange}
-				isSearchable
 				labelText="Exchange"
 				options={exchangeOptions}
 				placeholder={

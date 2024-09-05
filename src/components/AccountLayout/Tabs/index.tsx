@@ -31,7 +31,7 @@ interface PageTabProps {
 const PageTab: React.FC<PageTabProps> = ({ tabs }) => {
 	const router = useRouter();
 	return (
-		<div className="overflow-x-auto py-4">
+		<div className="md:overflow-visible overflow-x-auto py-4">
 			<div className="flex border-b gap-x-8 md:gap-x-[27px] w-fit">
 				{tabs.map((tab, index) => (
 					<Tab

@@ -24,8 +24,8 @@ const FastConnection = () => (
 			Connect
 		</Button>
 		<Link className="my-8 flex justify-center text-blue-800" href={""}>
-			<span className="text-base font-medium mr-1">Don't have an account? </span>
-			<span className="text-base font-bold">Create one now.</span>
+			<span className="text-base font-medium">Don't have an account?</span>
+			<span className="text-base font-bold">&nbsp;Create one now.</span>
 		</Link>
 	</div>
 );
