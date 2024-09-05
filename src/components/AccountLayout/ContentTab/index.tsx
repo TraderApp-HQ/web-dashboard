@@ -19,8 +19,8 @@ const ContentTab: React.FC<IcontentTabProps> = ({ tabs, children }) => {
 
 	return (
 		<div>
-			<div className="flex justify-center">
-				<div className="flex justify-center md:w-[80%] lg:w-[60%] 2xl:w-[50%] overflow-x-auto border-b gap-x-8 md:gap-x-[27px] my-10">
+			<div className="flex justify-center overflow-visible my-10">
+				<div className="flex justify-center border-b gap-x-8 md:gap-x-[27px] w-fit">
 					{tabs.map((tab) => (
 						<button
 							key={tab.label}
