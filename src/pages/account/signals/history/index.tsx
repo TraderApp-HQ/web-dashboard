@@ -16,11 +16,10 @@ import { NestedSignalsLayout } from "../";
 import TableLoader from "~/components/Loaders/TableLoader";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import { useFetchInActiveSignals } from "~/apis/handlers/assets/hooks";
-import SignalsData from "~/lib/types";
 
 function SignalsHistory() {
 	const signalResult = data;
-	const { signalHistory } = signalResult
+	const { signalHistory } = signalResult;
 	const {
 		isLoading,
 		isSuccess,
