@@ -3,23 +3,32 @@ import EmptySignal from "../../../../components/AdminLayout/Signal/EmptySignal";
 import clsx from "clsx";
 import type { ChangeEvent } from "react";
 import { useState } from "react";
-import type { SignalHistoryData } from "~/lib/types";
 import data from "~/pages/account/signals/data.json";
 import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import Button from "~/components/common/old/Button";
 import DropdownIcon from "~/components/icons/DropdownIcon";
 import Date from "~/components/common/Date";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
-import {
-	signalsHistoryDataTableMobileSelector,
-	signalsHistoryDataTableSelector,
-} from "~/selectors/signal-management";
 import Select from "~/components/AccountLayout/Select";
 import { AdminNestedSignalsLayout } from "..";
 import { useParams } from "react-router-dom";
+import { useFetchInActiveSignals } from "~/apis/handlers/signals/hooks";
+import TableLoader from "~/components/Loaders/TableLoader";
+import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 
 function SignalHistory() {
-	const signalHistory: SignalHistoryData = data.signalHistory;
+	// const signalHistory: SignalHistoryData = data.signalHistory;
+
+	const {
+		isLoading,
+		isSuccess,
+		signalHistory,
+		signalsTableHead,
+		signalsTableBody,
+		signalsMobileTableBody,
+	} = useFetchInActiveSignals({
+		isAdmin: true,
+	});
 
 	const { term: urlTerm } = useParams<{ term?: string }>();
 
@@ -47,8 +56,8 @@ function SignalHistory() {
 		console.log("searchterm::::::::::::::::::", searchterm);
 	};
 
-	const { tableHead, tableBody } = signalsHistoryDataTableSelector(signalHistory);
-	const dataMobile = signalsHistoryDataTableMobileSelector(signalHistory);
+	// const { tableHead, tableBody } = signalsHistoryDataTableSelector(signalHistory);
+	// const dataMobile = signalsHistoryDataTableMobileSelector(signalHistory);
 
 	return (
 		<>
@@ -109,13 +118,21 @@ function SignalHistory() {
 				<EmptySignal />
 			) : (
 				<div className="pb-8 rounded-2xl">
-					<h3 className="font-bold text-base text-[#08123B]">All Active Signal (2)</h3>
+					<h3 className="font-bold text-base text-[#08123B]">Resent Transaction</h3>
 					<div className="mt-2 mb-8">
 						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
-							<DataTable hasActions={false} tHead={tableHead} tBody={tableBody} />
+							{isLoading && <TableLoader />}
+							{isSuccess && signalsTableBody && (
+								<DataTable
+									hasActions={false}
+									tHead={signalsTableHead}
+									tBody={signalsTableBody}
+								/>
+							)}
 						</div>
 						<div className="md:hidden relative">
-							<DataTableMobile data={dataMobile} />
+							{isLoading && <MobileTableLoader />}
+							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
 						</div>
 					</div>
 					<div className="border w-[30%] ml-auto">pagination component goes here</div>

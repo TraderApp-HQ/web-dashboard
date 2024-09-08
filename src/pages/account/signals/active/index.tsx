@@ -18,6 +18,13 @@ import { activeSignalsPerfomanceSumary } from "~/selectors/signals";
 import { NestedSignalsLayout } from "../";
 import TableLoader from "~/components/Loaders/TableLoader";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
+import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
+
+interface ActiveSignalCardProps {
+	signals: ISignal[];
+	isSuccess?: boolean;
+	isLoading?: boolean;
+}
 
 const ActiveSignals = () => {
 	const signalResult: SignalsData = data;
@@ -79,7 +86,7 @@ const ActiveSignals = () => {
 
 	return (
 		<>
-			<ActiveSignalCard signals={activeSignals} />
+			<ActiveSignalCard signals={activeSignals} isSuccess={isSuccess} isLoading={isLoading} />
 			<div
 				className={clsx("flex justify-between", signals.signals.length === 0 ? "mt-0" : "")}
 			>
@@ -158,7 +165,7 @@ const ActiveSignals = () => {
 				<SignalsEmptyState />
 			) : (
 				<div className="pb-8 rounded-2xl">
-					<h3 className="font-bold text-base text-[#08123B]">All Active Signal (10)</h3>
+					<h3 className="font-bold text-base text-[#08123B]">{`All Active Signal (${signals.signals.length})`}</h3>
 					<div className="mt-2 mb-8">
 						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
 							{isLoading && <TableLoader />}
@@ -191,14 +198,16 @@ const ActiveSignals = () => {
 	);
 };
 
-const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
+const ActiveSignalCard: React.FC<ActiveSignalCardProps> = ({ signals, isSuccess, isLoading }) => {
 	const signalPerformer = activeSignalsPerfomanceSumary(signals);
 	return (
 		signals.length > 0 && (
 			<div className="flex flex-col md:flex-row gap-2">
-				{signalPerformer.map((performance) => (
-					<PerformanceSummaryCard key={performance.id} data={performance} />
-				))}
+				{isLoading && <PerformanceSummaryCardLoader />}
+				{isSuccess &&
+					signalPerformer.map((performance) => (
+						<PerformanceSummaryCard key={performance.id} data={performance} />
+					))}
 			</div>
 		)
 	);

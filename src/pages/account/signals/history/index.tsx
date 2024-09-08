@@ -13,17 +13,15 @@ import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 // } from "~/selectors/signals";
 import Pagination from "~/components/Pagination";
 import { NestedSignalsLayout } from "../";
+import { useFetchInActiveSignals } from "~/apis/handlers/assets/hooks";
 import TableLoader from "~/components/Loaders/TableLoader";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
-import { useFetchInActiveSignals } from "~/apis/handlers/assets/hooks";
 
 function SignalsHistory() {
-	const signalResult = data;
-	const { signalHistory } = signalResult;
 	const {
 		isLoading,
 		isSuccess,
-		// signalHistory,
+		signalHistory,
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
