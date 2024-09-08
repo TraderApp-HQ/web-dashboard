@@ -12,7 +12,7 @@ import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import Select from "~/components/AccountLayout/Select";
 import { AdminNestedSignalsLayout } from "..";
 import { useParams } from "react-router-dom";
-import { useFetchInActiveSignals } from "~/apis/handlers/signals/hooks";
+import { useFetchInActiveSignals } from "~/apis/handlers/assets/hooks";
 import TableLoader from "~/components/Loaders/TableLoader";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 
