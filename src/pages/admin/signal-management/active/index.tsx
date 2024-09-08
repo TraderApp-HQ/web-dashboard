@@ -22,9 +22,18 @@ import { useCreate } from "~/hooks/useCreate";
 import { SignalsService } from "~/apis/handlers/signals";
 import { SignalStatus } from "~/apis/handlers/signals/enums";
 import Toast from "~/components/common/Toast";
+import TableLoader from "~/components/Loaders/TableLoader";
+import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
+import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
 
 interface ActiveSignalProps {
 	signalResult: SignalsData;
+}
+
+interface ActiveSignalCardProps {
+	signals: ISignal[];
+	isSuccess?: boolean;
+	isLoading?: boolean;
 }
 
 export const getServerSideProps = async () => {
@@ -119,7 +128,7 @@ function ActiveSignals({ signalResult }: ActiveSignalProps) {
 
 	return (
 		<>
-			<ActiveSignalCard signals={activeSignals} />
+			<ActiveSignalCard signals={activeSignals} isSuccess={isSuccess} isLoading={isLoading} />
 			<div
 				className={clsx("flex justify-between", signals.signals.length === 0 ? "mt-0" : "")}
 			>
@@ -194,16 +203,16 @@ function ActiveSignals({ signalResult }: ActiveSignalProps) {
 				<EmptySignal />
 			) : (
 				<div className="pb-8 rounded-2xl">
-					<h3 className="font-bold text-base text-[#08123B]">All Active Signal (10)</h3>
+					<h3 className="font-bold text-base text-[#08123B]">{`All Active Signal (${signals.signals.length})`}</h3>
 					<div className="mt-2 mb-8">
 						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
-							{isLoading && <div>Loading...</div>}
+							{isLoading && <TableLoader />}
 							{isSuccess && signalsTableBody && (
 								<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
 							)}
 						</div>
 						<div className="md:hidden relative">
-							{isLoading && <div>Loading...</div>}
+							{isLoading && <MobileTableLoader />}
 							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
 						</div>
 					</div>
@@ -243,14 +252,16 @@ function ActiveSignals({ signalResult }: ActiveSignalProps) {
 	);
 }
 
-const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
+const ActiveSignalCard: React.FC<ActiveSignalCardProps> = ({ signals, isSuccess, isLoading }) => {
 	const signalPerformer = activeSignalsPerfomanceSumary(signals);
 	return (
 		signals.length > 0 && (
 			<div className="flex flex-col md:flex-row gap-2">
-				{signalPerformer.map((performance) => (
-					<PerformanceSummaryCard key={performance.id} data={performance} />
-				))}
+				{isLoading && <PerformanceSummaryCardLoader />}
+				{isSuccess &&
+					signalPerformer.map((performance) => (
+						<PerformanceSummaryCard key={performance.id} data={performance} />
+					))}
 			</div>
 		)
 	);

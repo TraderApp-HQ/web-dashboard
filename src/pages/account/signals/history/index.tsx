@@ -18,7 +18,6 @@ import TableLoader from "~/components/Loaders/TableLoader";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 
 function SignalsHistory() {
-	// const signalHistory: SignalHistoryItem[] = data.signalHistory;
 	const {
 		isLoading,
 		isSuccess,
