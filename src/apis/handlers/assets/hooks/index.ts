@@ -89,7 +89,7 @@ export const useFetchActiveSignals = ({
 	};
 };
 
-export const useFetchInActiveSignals = ({
+export const useSignalHistory = ({
 	isAdmin = false, // eslint-disable-line
 	handleSetToggleDeleteModal,
 	handleResumeSignal,

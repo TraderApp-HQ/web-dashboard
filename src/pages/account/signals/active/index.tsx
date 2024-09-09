@@ -154,7 +154,7 @@ const ActiveSignals = () => {
 				</DropdownMenu>
 			</div>
 
-			{signals.signals.length === 0 ? (
+			{!isLoading && activeSignals.length === 0 ? (
 				<SignalsEmptyState />
 			) : (
 				<div className="pb-8 rounded-2xl">

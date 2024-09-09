@@ -15,19 +15,19 @@ import Pagination from "~/components/Pagination";
 import { NestedSignalsLayout } from "../";
 import TableLoader from "~/components/Loaders/TableLoader";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
-import { useFetchInActiveSignals } from "~/apis/handlers/assets/hooks";
+import { useSignalHistory } from "~/apis/handlers/assets/hooks";
 
 function SignalsHistory() {
-	const signalResult = data;
-	const { signalHistory } = signalResult;
+	// const signalResult = data;
+	// const { signalHistory } = signalResult;
 	const {
 		isLoading,
 		isSuccess,
-		// signalHistory,
+		signalHistory,
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
-	} = useFetchInActiveSignals({});
+	} = useSignalHistory({});
 
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 
@@ -108,7 +108,7 @@ function SignalsHistory() {
 					options={data.assets}
 				/>
 			</div>
-			{signalHistory.length === 0 ? (
+			{!isLoading && signalHistory.length === 0 ? (
 				<SignalsEmptyState />
 			) : (
 				<div className="pb-8 rounded-2xl">
