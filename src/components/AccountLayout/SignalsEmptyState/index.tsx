@@ -8,8 +8,8 @@ export default function EmptySignal() {
 				<div>
 					<NoSignalAvailableIcon />
 				</div>
-				<div className="sm:text-xl text-base sm:font-extrabold font-bold sm:leading-normal leading-tight">
-					No Signal Available please try letter
+				<div className="sm:text-lg text-base sm:font-extrabold font-bold sm:leading-normal leading-tight">
+					No Signal Available please try later
 				</div>
 				<div className="text-sm sm:font-normal font-bold leading-none">
 					All signal will be displayed here{" "}
