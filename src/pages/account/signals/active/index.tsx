@@ -8,7 +8,6 @@ import Select from "~/components/AccountLayout/Select";
 import type { ChangeEvent } from "react";
 import React, { useState } from "react";
 import data from "../data.json";
-import type SignalsData from "~/lib/types";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
 import Pagination from "~/components/Pagination";
@@ -20,8 +19,6 @@ import TableLoader from "~/components/Loaders/TableLoader";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 
 const ActiveSignals = () => {
-	const signalResult: SignalsData = data;
-	const { signals } = signalResult;
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 
 	const [asset, setAsset] = useState<string>("");
@@ -59,7 +56,7 @@ const ActiveSignals = () => {
 	const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
 
 	// Signal data pagination
-	const paginatedData = signals.signals;
+	const paginatedData = activeSignals;
 
 	const totalRecord = paginatedData.length; // Example total rows
 	const totalPages = Math.ceil(totalRecord / rowsPerPage);
@@ -80,9 +77,7 @@ const ActiveSignals = () => {
 	return (
 		<>
 			<ActiveSignalCard signals={activeSignals} />
-			<div
-				className={clsx("flex justify-between", signals.signals.length === 0 ? "mt-0" : "")}
-			>
+			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
 				<SearchForm
 					// onChange={(e) => setSearchTerm(e.target.value)}
 					onChange={(e) => {
@@ -158,7 +153,9 @@ const ActiveSignals = () => {
 				<SignalsEmptyState />
 			) : (
 				<div className="pb-8 rounded-2xl">
-					<h3 className="font-bold text-base text-[#08123B]">All Active Signal (10)</h3>
+					<h3 className="font-bold text-base text-[#08123B]">
+						All Active Signal ({activeSignals.length})
+					</h3>
 					<div className="mt-2 mb-8">
 						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
 							{isLoading && <TableLoader />}
@@ -185,8 +182,6 @@ const ActiveSignals = () => {
 					</div>
 				</div>
 			)}
-
-			{/* <Outlet /> */}
 		</>
 	);
 };

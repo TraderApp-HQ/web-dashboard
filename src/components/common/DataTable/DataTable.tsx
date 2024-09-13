@@ -35,7 +35,7 @@ const DataTable: React.FC<IDataTable> = ({
 	tableRowItemStyles,
 }) => {
 	return (
-		<table className={`min-w-[1100px] w-full ${tableStyles}`}>
+		<table data-testId="table-data" className={`min-w-[1100px] w-full ${tableStyles}`}>
 			<thead className={`border-b border-neutral-400 border-opacity-20 ${tableHeadStyles}`}>
 				<tr>
 					{tHead.map((th, index) => (
