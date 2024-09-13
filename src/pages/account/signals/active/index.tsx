@@ -182,8 +182,6 @@ const ActiveSignals = () => {
 					</div>
 				</div>
 			)}
-
-			{/* <Outlet /> */}
 		</>
 	);
 };
