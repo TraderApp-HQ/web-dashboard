@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import SearchForm from "~/components/AccountLayout/SearchForm";
-import EmptySignal from "../../../../components/AdminLayout/Signal/EmptySignal";
 import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import clsx from "clsx";
 import DropdownIcon from "~/components/icons/DropdownIcon";
@@ -23,6 +22,7 @@ import { SignalStatus } from "~/apis/handlers/assets/enums";
 import Toast from "~/components/common/Toast";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
+import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
 
 function ActiveSignals() {
 	const signalsService = new AssetsService();
@@ -176,7 +176,7 @@ function ActiveSignals() {
 			</div>
 
 			{!isLoading && activeSignals.length === 0 ? (
-				<EmptySignal />
+				<SignalsEmptyState />
 			) : (
 				<div className="pb-8 rounded-2xl">
 					<h3 className="font-bold text-base text-[#08123B]">
