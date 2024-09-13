@@ -15,7 +15,6 @@ jest.mock("~/apis/handlers/assets/hooks");
 
 // Mock implementation of useSignalHistory
 const mockUseSignalHistory = useSignalHistory as jest.MockedFunction<typeof useSignalHistory>;
-// const mockUseSignalHistory = useSignalHistory as jest.Mock;
 const signalHistory = [
 	{
 		id: "66bb7135e59f0544faca48fa",
