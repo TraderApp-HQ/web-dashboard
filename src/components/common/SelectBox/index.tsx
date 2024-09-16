@@ -18,6 +18,7 @@ interface ISelectBoxProps {
 	containerStyle?: string;
 	bgColor?: string;
 	isSearchable?: boolean;
+	clear?: boolean | undefined;
 }
 
 /**
@@ -39,12 +40,15 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	bgColor,
 	containerStyle,
 	isSearchable,
+	clear,
 }: ISelectBoxProps): JSX.Element => {
-	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption>();
+	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const selectBoxRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
+
+	console.log("Change", clear);
 
 	const filteredOptions = options.filter((option) =>
 		option.displayText.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -111,15 +115,17 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					} rounded-md p-2 flex justify-between items-center cursor-pointer ${bgColor ? bgColor : "bg-[#F5F8FE]"}`}
 					onClick={() => setIsOpen(!isOpen)}
 				>
-					{!selectedOption && (
+					{clear || !selectedOption ? (
 						<span className="text-[#808080]">{placeholder || "Select option"}</span>
-					)}
-					{selectedOption && (
+					) : (
 						<SelectBoxOption
 							displayText={selectedOption.displayText}
 							imgUrl={selectedOption.imgUrl}
 						/>
 					)}
+					{/* {(!clear || selectedOption) && (
+						
+					)} */}
 					{isOpen ? <FiChevronUp /> : <FiChevronDown />}
 				</div>
 				{isOpen && (
