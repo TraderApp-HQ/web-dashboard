@@ -74,10 +74,12 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 
 	// Set default option or externally provided option
 	useEffect(() => {
-		if (option) {
-			setSelectedOption(option);
+		if (option?.value?.length == 0) {
+			setSelectedOption(undefined);
+		} else {
+			setSelectedOption(option); // Update selected option if provided
 		}
-	}, [option]);
+	}, [option?.value.length]);
 
 	// Notify external setOption handler when the selected option changes
 	useEffect(() => {

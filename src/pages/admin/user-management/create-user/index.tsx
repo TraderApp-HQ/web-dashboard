@@ -26,8 +26,8 @@ function CreateUser() {
 	const [firstName, setFirstName] = useState<string>("");
 	const [lastName, setLastName] = useState<string>("");
 	const [email, setEmail] = useState<string>("");
-	const [role, setRole] = useState<string[]>([]);
-	const [country, setCountry] = useState<{ name: string; id: string }>();
+	const [role, setRole] = useState<string[] | string>([]);
+	const [country, setCountry] = useState<{ name: string; id: string }>({ name: "", id: "" });
 	const [countryOptions, setCountryOptions] = useState<ISelectBoxOption[]>([]);
 
 	const handleFirstNameChange = (value: string) => {
@@ -43,14 +43,17 @@ function CreateUser() {
 	};
 
 	const handleRoleChange = (role: ISelectBoxOption) => {
-		setRole((prevRoles) => {
-			if (prevRoles.includes(role.value)) {
-				return prevRoles.filter((r) => r !== role.value);
-			} else {
-				return [...prevRoles, role.value];
-			}
-		});
+		setRole(role.value);
 	};
+	// const handleRoleChange = (role: ISelectBoxOption) => {
+	// 	setRole((prevRoles) => {
+	// 		if (prevRoles.includes(role.value)) {
+	// 			return prevRoles.filter((r) => r !== role.value);
+	// 		} else {
+	// 			return [...prevRoles, role.value];
+	// 		}
+	// 	});
+	// };
 
 	const handleCountryChange = (option: ISelectBoxOption) => {
 		setCountry({ name: option.displayText, id: option.value });
@@ -67,6 +70,8 @@ function CreateUser() {
 		setFirstName("");
 		setLastName("");
 		setEmail("");
+		setRole([]);
+		setCountry({ name: "", id: "" });
 	};
 
 	// Setup query to backend
@@ -125,7 +130,6 @@ function CreateUser() {
 			setCountryOptions(options);
 		}
 	}, [isCountrySuccess, countries]);
-
 	return (
 		<>
 			<Modal
@@ -168,6 +172,7 @@ function CreateUser() {
 							<SelectBox
 								labelText="Country"
 								isSearchable={true}
+								option={{ value: country.id, displayText: country.name }}
 								options={countryOptions}
 								placeholder={isCountryLoading ? "Loading..." : "Select country"}
 								setOption={handleCountryChange}
@@ -178,6 +183,7 @@ function CreateUser() {
 								labelText="User Role(s)"
 								options={roleOptions}
 								placeholder="Select role"
+								option={{ value: role, displayText: role }}
 								setOption={handleRoleChange}
 							/>
 						</div>
