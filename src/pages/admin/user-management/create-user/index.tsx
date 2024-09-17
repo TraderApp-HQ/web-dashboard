@@ -26,7 +26,7 @@ function CreateUser() {
 	const [firstName, setFirstName] = useState<string>("");
 	const [lastName, setLastName] = useState<string>("");
 	const [email, setEmail] = useState<string>("");
-	const [role, setRole] = useState<string[] | string>([]);
+	const [role, setRole] = useState<string[]>([]);
 	const [country, setCountry] = useState<{ name: string; id: string }>({ name: "", id: "" });
 	const [countryOptions, setCountryOptions] = useState<ISelectBoxOption[]>([]);
 
@@ -43,17 +43,14 @@ function CreateUser() {
 	};
 
 	const handleRoleChange = (role: ISelectBoxOption) => {
-		setRole(role.value);
+		setRole((prevRoles) => {
+			if (prevRoles.includes(role.value)) {
+				return prevRoles.filter((r) => r !== role.value);
+			} else {
+				return [...prevRoles, role.value];
+			}
+		});
 	};
-	// const handleRoleChange = (role: ISelectBoxOption) => {
-	// 	setRole((prevRoles) => {
-	// 		if (prevRoles.includes(role.value)) {
-	// 			return prevRoles.filter((r) => r !== role.value);
-	// 		} else {
-	// 			return [...prevRoles, role.value];
-	// 		}
-	// 	});
-	// };
 
 	const handleCountryChange = (option: ISelectBoxOption) => {
 		setCountry({ name: option.displayText, id: option.value });
@@ -183,7 +180,11 @@ function CreateUser() {
 								labelText="User Role(s)"
 								options={roleOptions}
 								placeholder="Select role"
-								option={{ value: role, displayText: role }}
+								option={
+									role.length == 0
+										? { value: "", displayText: "" }
+										: { value: role[0], displayText: role[0] }
+								}
 								setOption={handleRoleChange}
 							/>
 						</div>
