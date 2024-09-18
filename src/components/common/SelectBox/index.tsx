@@ -48,8 +48,6 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	const selectBoxRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	console.log("Change", clear);
-
 	const filteredOptions = options.filter((option) =>
 		option.displayText.toLowerCase().includes(searchTerm.toLowerCase()),
 	);
