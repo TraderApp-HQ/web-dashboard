@@ -17,6 +17,13 @@ import { activeSignalsPerfomanceSumary } from "~/selectors/signals";
 import { NestedSignalsLayout } from "../";
 import TableLoader from "~/components/Loaders/TableLoader";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
+import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
+
+interface ActiveSignalCardProps {
+	signals: ISignal[];
+	isSuccess?: boolean;
+	isLoading?: boolean;
+}
 
 const ActiveSignals = () => {
 	// const { term: urlTerm } = useParams<{ term?: string }>();
@@ -76,7 +83,7 @@ const ActiveSignals = () => {
 
 	return (
 		<>
-			<ActiveSignalCard signals={activeSignals} />
+			<ActiveSignalCard signals={activeSignals} isLoading={isLoading} isSuccess={isSuccess} />
 			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
 				<SearchForm
 					// onChange={(e) => setSearchTerm(e.target.value)}
@@ -185,21 +192,25 @@ const ActiveSignals = () => {
 		</>
 	);
 };
-
-const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
+const ActiveSignalCard: React.FC<ActiveSignalCardProps> = ({ signals, isSuccess, isLoading }) => {
 	const signalPerformer = activeSignalsPerfomanceSumary(signals);
 	return (
-		signals.length > 0 && (
-			<div className="flex flex-col md:flex-row gap-2">
-				{signalPerformer.map((performance) => (
-					<PerformanceSummaryCard key={performance.id} data={performance} />
-				))}
-			</div>
-		)
+		<div>
+			{isLoading && <PerformanceSummaryCardLoader />}
+			{signals.length > 0 && (
+				<div className="flex flex-col md:flex-row gap-2">
+					{isSuccess &&
+						signalPerformer.map((performance) => (
+							<PerformanceSummaryCard key={performance.id} data={performance} />
+						))}
+				</div>
+			)}
+		</div>
 	);
 };
 
 ActiveSignals.getLayout = (page: React.ReactElement) => (
 	<NestedSignalsLayout>{page}</NestedSignalsLayout>
 );
+
 export default ActiveSignals;
