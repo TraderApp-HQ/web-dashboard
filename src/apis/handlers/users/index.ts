@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { jwtDecode } from "jwt-decode";
 import { APIClient } from "~/apis/apiClient";
 import { getAccessToken, setAccessToken, removeAccessToken } from "~/utils/localStorage";

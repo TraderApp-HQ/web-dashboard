@@ -29,9 +29,6 @@ const Signup = () => {
 
 	const [showVerificationModal, setShowVerificationModal] = useState(false);
 	const [showHints, setShowHints] = useState(false);
-	const [searchParams, setSearchParams] = useState(
-		new URLSearchParams(router.asPath.split("?")[1]),
-	);
 	const [validCredentials, setValidCredentials] = useState(false);
 	const [countryOptions, setCountryOptions] = useState<ISelectBoxOption[]>([]);
 	const [isVerificationSuccess, setIsVerificationSuccess] = useState(false);
@@ -177,22 +174,30 @@ const Signup = () => {
 	// signup successful. Set query params and open verification modal
 	useEffect(() => {
 		if (isSuccess && data) {
-			setSearchParams((prev) => {
-				const newSearchParams = new URLSearchParams(prev);
-				newSearchParams.set("userid", data.id);
-				newSearchParams.set("recipient", data.email);
-				return newSearchParams;
-			});
+			const newSearchParams = new URLSearchParams();
+
+			newSearchParams.set("userid", data.id);
+			newSearchParams.set("recipient", data.email);
+
+			router.replace(
+				{
+					pathname: router.pathname,
+					query: Object.fromEntries(newSearchParams.entries()),
+				},
+				undefined,
+				{ shallow: true },
+			);
+
 			setShowVerificationModal(true);
 		}
-	}, [isSuccess, data]);
+	}, [isSuccess, data, router]);
 
 	// ensure query params are set
 	useEffect(() => {
-		if (searchParams.get("userid") && searchParams.get("recipient")) {
+		if (router.query.userid && router.query.recipient) {
 			setIsQueryParamsSet(true);
 		}
-	}, [searchParams]);
+	}, [router.query]);
 
 	const handleVerificationSuccess = async () => {
 		setIsVerificationSuccess(true);
