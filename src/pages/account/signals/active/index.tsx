@@ -76,7 +76,7 @@ const ActiveSignals = () => {
 
 	return (
 		<>
-			<ActiveSignalCard signals={activeSignals} />
+			<ActiveSignalCard signals={activeSignals} isLoading={isLoading} isSuccess={isSuccess} />
 			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
 				<SearchForm
 					// onChange={(e) => setSearchTerm(e.target.value)}
@@ -186,7 +186,7 @@ const ActiveSignals = () => {
 	);
 };
 
-const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
+const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals, isLoading, isSuccess }) => {
 	const signalPerformer = activeSignalsPerfomanceSumary(signals);
 	return (
 		signals.length > 0 && (
