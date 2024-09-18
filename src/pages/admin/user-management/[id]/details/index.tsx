@@ -68,7 +68,11 @@ const UserDetails = ({ id }: { id: string }) => {
 					/>
 					<h3>{`${data?.firstName ?? "First Name"} ${data?.lastName ?? "Last Name"}`}</h3>
 					<div className="flex gap-x-4 w-full md:w-[70%] lg:w-[60%] xl 2xl">
-						<Button>Edit user details</Button>
+						<Button
+							onClick={() => router.push(`/admin/user-management/${data?.id}/edit`)}
+						>
+							Edit user details
+						</Button>
 						<Button
 							bgColor="bg-white"
 							color="text-black"
