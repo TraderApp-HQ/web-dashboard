@@ -16,7 +16,7 @@ interface IDataTableMobile {
 
 const DataTableMobile: FC<IDataTableMobile> = ({ data, hasActions }) => {
 	return (
-		<>
+		<div data-testId="table-data-mobile">
 			{data.map((dataItem, index) => (
 				<div className="border rounded-lg p-2 bg-white mb-6" key={index}>
 					<div className="flex items-center justify-between mb-6">
@@ -49,7 +49,7 @@ const DataTableMobile: FC<IDataTableMobile> = ({ data, hasActions }) => {
 					))}
 				</div>
 			))}
-		</>
+		</div>
 	);
 };
 
