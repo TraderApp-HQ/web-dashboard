@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import InputField from ".";
 
 describe("InputField Component", () => {
@@ -13,5 +14,12 @@ describe("InputField Component", () => {
 		render(<InputField type="text" value="input field text" />);
 		const inputFieldText = screen.getByDisplayValue("input field text");
 		expect(inputFieldText).toBeInTheDocument();
+	});
+
+	test("accepts space in input while typing", async () => {
+		render(<InputField type="text" placeholder="Type in something" />);
+		await userEvent.type(screen.getByPlaceholderText("Type in something"), "typed in text ");
+		const inputFieldText: HTMLInputElement = await screen.findByDisplayValue("typed in text");
+		expect(inputFieldText.value).toBe("typed in text ");
 	});
 });
