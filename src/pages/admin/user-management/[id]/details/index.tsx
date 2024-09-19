@@ -27,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const UserDetails = ({ id }: { id: string }) => {
 	const router = useRouter();
-	const [openModal, setOpenModal] = useState(true);
+	const [openModal] = useState(true);
 	const usersService = new UsersService();
 
 	const fetchUser = useCallback(() => usersService.getUser({ id }), [id, usersService]);
@@ -37,7 +37,6 @@ const UserDetails = ({ id }: { id: string }) => {
 	});
 
 	const onClose = () => {
-		setOpenModal(false);
 		router.push(`${LAYOUT_ROUTES.admin}${ROUTES.usermanagement.homepage}`);
 	};
 
@@ -49,7 +48,6 @@ const UserDetails = ({ id }: { id: string }) => {
 
 	const handleConfirmModalClose = () => {
 		setIsConfirmModalOpen(false);
-		setOpenModal(false);
 		refetch();
 	};
 
