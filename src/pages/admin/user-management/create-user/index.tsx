@@ -29,6 +29,16 @@ function CreateUser() {
 	const [role, setRole] = useState<string[]>([]);
 	const [country, setCountry] = useState<{ name: string; id: string }>();
 	const [countryOptions, setCountryOptions] = useState<ISelectBoxOption[]>([]);
+	const [emailValid, setEmailValid] = useState(false);
+	const [resetCountry, setResetCountry] = useState(false);
+	const [resetRole, setResetRole] = useState(false);
+
+	const validateEmail = (email: string) => {
+		// Email Criteria
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		const isValidEmail = emailRegex.test(email);
+		setEmailValid(isValidEmail);
+	};
 
 	const handleFirstNameChange = (value: string) => {
 		setFirstName(value);
@@ -39,10 +49,12 @@ function CreateUser() {
 	};
 
 	const handleEmailChange = (value: string) => {
+		validateEmail(value);
 		setEmail(value);
 	};
 
 	const handleRoleChange = (role: ISelectBoxOption) => {
+		setResetRole(false);
 		setRole((prevRoles) => {
 			if (prevRoles.includes(role.value)) {
 				return prevRoles.filter((r) => r !== role.value);
@@ -53,6 +65,7 @@ function CreateUser() {
 	};
 
 	const handleCountryChange = (option: ISelectBoxOption) => {
+		setResetCountry(false);
 		setCountry({ name: option.displayText, id: option.value });
 	};
 
@@ -61,12 +74,14 @@ function CreateUser() {
 		setIsOpen(false);
 	};
 	// Validation function to check if any state value is empty
-	const isSubmitDisabled = !(firstName && lastName && email && role.length && country);
+	const isSubmitDisabled = !(firstName && lastName && emailValid && role.length && country);
 
 	const onReset = () => {
 		setFirstName("");
 		setLastName("");
 		setEmail("");
+		setResetCountry(true);
+		setResetRole(true);
 	};
 
 	// Setup query to backend
@@ -102,6 +117,7 @@ function CreateUser() {
 	useEffect(() => {
 		if (isSuccess && data) {
 			setIsOpen(false);
+			router.push("/admin/user-management");
 		}
 	}, [isSuccess, data]);
 
@@ -160,9 +176,10 @@ function CreateUser() {
 							labelText="Email"
 							props={{ name: "email" }}
 							placeholder="Enter Email"
+							pattern={"[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$"}
 							onChange={handleEmailChange}
-							className="no-spin-buttons"
 							value={email}
+							className="no-spin-buttons"
 						/>
 						<div className="flex flex-col gap-y-[8px]">
 							<SelectBox
@@ -171,6 +188,7 @@ function CreateUser() {
 								options={countryOptions}
 								placeholder={isCountryLoading ? "Loading..." : "Select country"}
 								setOption={handleCountryChange}
+								clear={resetCountry}
 							/>
 						</div>
 						<div className="flex flex-col gap-y-[8px]">
@@ -179,6 +197,7 @@ function CreateUser() {
 								options={roleOptions}
 								placeholder="Select role"
 								setOption={handleRoleChange}
+								clear={resetRole}
 							/>
 						</div>
 						<Button
