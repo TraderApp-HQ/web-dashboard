@@ -16,6 +16,7 @@ import type {
 	ICreateUserInput,
 	IDisableUserInput,
 	IFetchAllUsers,
+	IUpdateUserInput,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 
@@ -222,6 +223,20 @@ export class UsersService {
 		if (response.error) {
 			throw new Error(response.message || "Status update failed");
 		}
+		const { data } = response;
+		return data as IUserProfile;
+	}
+
+	public async updateUser(userData: IUpdateUserInput): Promise<IUserProfile> {
+		const response = await this.apiClient.patch<IResponse>({
+			url: "/users/update",
+			data: userData,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "User Update failed");
+		}
+
 		const { data } = response;
 		return data as IUserProfile;
 	}

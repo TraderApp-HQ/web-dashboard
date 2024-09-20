@@ -69,4 +69,16 @@ describe("SelectBox Component", () => {
 		fireEvent.mouseDown(document);
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 	});
+
+	test("clears value if clear prop is passed", () => {
+		render(<SelectBox options={mockOptions} option={mockOptions[0]} clear={true} />);
+		const selectBox = screen.getByText("Select option");
+		expect(selectBox).toBeInTheDocument();
+	});
+
+	test("shows value if clear prop is not passed", () => {
+		render(<SelectBox options={mockOptions} option={mockOptions[0]} />);
+		const selectBoxWithValue = screen.getByText(mockOptions[0].displayText);
+		expect(selectBoxWithValue).toBeInTheDocument();
+	});
 });
