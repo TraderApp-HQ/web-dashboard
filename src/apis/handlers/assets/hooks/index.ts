@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { AssetsService } from "..";
 import { useFetch } from "~/hooks/useFetch";
-import { SignalsQueryId } from "../constants";
+import { AssetsQueryId } from "../constants";
 import {
 	activeSignalsDataTableMobileSelector,
 	activeSignalsDataTableSelector,
@@ -41,7 +41,7 @@ export const useFetchActiveSignals = ({
 		isError,
 		refetch,
 	} = useFetch({
-		queryKey: [SignalsQueryId.signals],
+		queryKey: [AssetsQueryId.signals],
 		queryFn: fetchSignals,
 	});
 
@@ -109,7 +109,7 @@ export const useSignalHistory = ({
 		isError,
 		refetch,
 	} = useFetch({
-		queryKey: [SignalsQueryId.history],
+		queryKey: [AssetsQueryId.history],
 		queryFn: fetchSignals,
 	});
 

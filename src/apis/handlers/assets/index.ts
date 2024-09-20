@@ -2,11 +2,16 @@ import { APIClient } from "~/apis/apiClient";
 import type { IResponse } from "../interfaces";
 import { UsersService } from "../users";
 import type {
+	ICreateSignalInput,
+	IExchange,
 	IFetchExchanges,
 	IFetchSignals,
+	IGetAssetsInput,
 	IGetExchangesInput,
 	ISignal,
+	ISignalAsset,
 	ISignalUpdateInput,
+	ISupportedExchangeInput,
 } from "./interfaces";
 // import { SignalStatus } from "./enums";
 
@@ -24,10 +29,10 @@ export class AssetsService {
 		);
 	}
 
-	public async createSignal(): Promise<ISignal> {
+	public async createSignal(signal: ICreateSignalInput): Promise<ISignal> {
 		const response = await this.apiClient.post<IResponse>({
 			url: "/signals/create",
-			data: {},
+			data: signal,
 		});
 
 		if (response.error) {
@@ -142,6 +147,91 @@ export class AssetsService {
 
 		const { data } = response;
 		return data as IFetchExchanges[];
+	}
+
+	//Exchanges
+	public async getAllAssets({
+		page,
+		rowsPerPage,
+		orderBy,
+		sortBy,
+	}: IGetAssetsInput): Promise<ISignalAsset[]> {
+		// Construct query parameters
+		const queryParams = new URLSearchParams();
+
+		if (page !== undefined) {
+			queryParams.set("page", page.toString());
+		}
+
+		if (rowsPerPage !== undefined) {
+			queryParams.set("rowsPerPage", rowsPerPage.toString());
+		}
+
+		if (orderBy !== undefined) {
+			queryParams.set("orderBy", orderBy);
+		}
+
+		if (sortBy !== undefined) {
+			queryParams.append("sortBy", sortBy);
+		}
+
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `/coins?${queryParams.toString()}`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch assets records");
+		}
+
+		const { data } = response;
+		return data.coins as ISignalAsset[];
+	}
+
+	//Currencies
+	public async getAllCurrencies(): Promise<ISignalAsset[]> {
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `/currencies`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch currencies records");
+		}
+
+		const { data } = response;
+		return data as ISignalAsset[];
+	}
+
+	public async getSupportedExchanges({
+		coinId,
+		currencyId,
+	}: ISupportedExchangeInput): Promise<IExchange[]> {
+		// Construct query parameters
+		const queryParams = new URLSearchParams();
+
+		if (coinId !== undefined) {
+			queryParams.set("coinId", coinId.toString());
+		}
+
+		if (currencyId !== undefined) {
+			queryParams.set("currencyId", currencyId.toString());
+		}
+
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `exchanges/supported/exchanges?${queryParams.toString()}`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch supported Exchanges records");
+		}
+
+		const { data } = response;
+		return data as IExchange[];
 	}
 }
 

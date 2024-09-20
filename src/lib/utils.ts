@@ -2,6 +2,7 @@ import type { KeyboardEvent } from "react";
 import type { IRecentTransactions, OpenTrade, Signal } from "./types";
 import type SignalsData from "./types";
 import { format } from "date-fns";
+import { ISelectBoxOption } from "~/components/interfaces";
 
 export async function getAsset(id: string | undefined, data: SignalsData) {
 	const res = data.signals.signals.filter((signal: Signal) => signal.id === id);
@@ -27,3 +28,13 @@ export const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
 
 export const formattedDate = (date: string | number | Date) =>
 	format(new Date(date), "MMMM dd, yyyy, hh:mma");
+
+// Convert enum to options
+export const convertEnumToOptions = <T extends Record<string, string>>(
+	enumObject: T,
+): ISelectBoxOption[] => {
+	return Object.values(enumObject).map((value) => ({
+		value,
+		displayText: value,
+	}));
+};

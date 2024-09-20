@@ -111,10 +111,10 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					} rounded-md p-2 flex justify-between items-center cursor-pointer ${bgColor ? bgColor : "bg-[#F5F8FE]"}`}
 					onClick={() => setIsOpen(!isOpen)}
 				>
-					{!selectedOption && (
+					{(!selectedOption || !option) && (
 						<span className="text-[#808080]">{placeholder || "Select option"}</span>
 					)}
-					{selectedOption && (
+					{selectedOption && option && (
 						<SelectBoxOption
 							displayText={selectedOption.displayText}
 							imgUrl={selectedOption.imgUrl}

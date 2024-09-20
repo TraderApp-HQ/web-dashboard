@@ -53,8 +53,8 @@ export function activeSignalsDataTableSelector(
 					? {
 							label:
 								signal.status === SignalStatus.ACTIVE
-									? "Pause signal"
-									: "Resume signal",
+									? "Active signal"
+									: "Paused signal",
 							isToggle: signal.status === SignalStatus.ACTIVE,
 							setToggle: () => handleResumeSignal(signal.id, signal.status),
 							id: signal.id,
