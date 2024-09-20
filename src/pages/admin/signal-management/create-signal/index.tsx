@@ -46,6 +46,11 @@ export default function CreateSignal() {
 	const [selectedRisk, setSelectedRisk] = useState<ISelectBoxOption>();
 	const [tradeNote, setTradeNote] = useState<string>();
 
+	const [resetSelectedAsset, setResetSelectedAsset] = useState(false);
+	const [resetSelectedBaseCurrency, setResetSelectedBaseCurrency] = useState(false);
+	const [resetSelectedCandle, setResetSelectedCandle] = useState(false);
+	const [resetSelectedRisk, setResetSelectedRisk] = useState(false);
+
 	const {
 		data: exchanges,
 		isSuccess: isExchangeSuccess,
@@ -110,6 +115,7 @@ export default function CreateSignal() {
 	}, [isExchangeSuccess, exchanges]);
 
 	const handleBaseCurrencyChange = (option: ISelectBoxOption<ISignalAsset>) => {
+		setResetSelectedBaseCurrency(false);
 		setSelectedBaseCurrency({
 			id: option.data?.id ?? "",
 			name: option.data?.name ?? "",
@@ -119,12 +125,23 @@ export default function CreateSignal() {
 	};
 
 	const handleAssetChange = (option: ISelectBoxOption<ISignalAsset>) => {
+		setResetSelectedAsset(false);
 		setSelectedAsset({
 			id: option.data?.id ?? "",
 			name: option.data?.name ?? "",
 			symbol: option.data?.symbol ?? "",
 			logo: option.data?.logo ?? "",
 		});
+	};
+
+	const handleCandleChange = (option: ISelectBoxOption) => {
+		setResetSelectedCandle(false);
+		setSelectedCandle(option);
+	};
+
+	const handleRiskChange = (option: ISelectBoxOption) => {
+		setResetSelectedRisk(false);
+		setSelectedRisk(option);
 	};
 
 	const handleStopLoss = (value: string) => {
@@ -209,12 +226,13 @@ export default function CreateSignal() {
 	const onReset = () => {
 		setSignalImage("");
 		setTargetProfits(undefined);
-		setSelectedAsset(undefined);
-		setSelectedCandle(undefined);
+		setResetSelectedAsset(true);
+		setResetSelectedBaseCurrency(true);
+		setResetSelectedCandle(true);
 		setEntryPrice(undefined);
 		setStopLoss(undefined);
 		setSelectedBaseCurrency(undefined);
-		setSelectedRisk(undefined);
+		setResetSelectedRisk(true);
 		setSelectedSupportedExchange(undefined);
 		setTradeNote(undefined);
 	};
@@ -283,8 +301,6 @@ export default function CreateSignal() {
 		setEntryPrice(value);
 	};
 
-	console.log("selectedAsset..........", selectedAsset);
-
 	return (
 		<>
 			<Modal
@@ -308,13 +324,7 @@ export default function CreateSignal() {
 										: "Select Quote Asset"
 							}
 							setOption={handleAssetChange}
-							option={
-								selectedAsset
-									? assetOptions.find(
-											(option) => option.value === selectedAsset.id,
-										)
-									: undefined
-							}
+							clear={resetSelectedAsset}
 						/>
 						<SelectBox
 							labelText="Base Currency"
@@ -328,21 +338,15 @@ export default function CreateSignal() {
 										: "Select Base Currency"
 							}
 							setOption={handleBaseCurrencyChange}
-							option={
-								selectedBaseCurrency
-									? baseCurrencyOptions.find(
-											(option) => option.value === selectedBaseCurrency.id,
-										)
-									: undefined
-							}
+							clear={resetSelectedBaseCurrency}
 						/>
 						<SelectBox
 							labelText="Timeframe/ Candles"
 							isSearchable={false}
 							options={convertEnumToOptions(Candlestick)}
 							placeholder="Select TimeFrame/ Candles"
-							setOption={(candle) => setSelectedCandle(candle)}
-							option={selectedCandle}
+							setOption={handleCandleChange}
+							clear={resetSelectedCandle}
 						/>
 						<SelectBox
 							labelText="Risk Level"
@@ -350,7 +354,8 @@ export default function CreateSignal() {
 							options={convertEnumToOptions(SignalRisk)}
 							placeholder="Select Risk Level"
 							option={selectedRisk}
-							setOption={(risk) => setSelectedRisk(risk)}
+							setOption={handleRiskChange}
+							clear={resetSelectedRisk}
 						/>
 						<InputField
 							type="number"
