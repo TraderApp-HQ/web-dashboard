@@ -12,7 +12,7 @@ interface CheckboxProps {
 const Checkbox: React.FC<CheckboxProps> = ({ label, checked, onChange, imageUrl, className }) => {
 	return (
 		<div
-			data-testId="checkbox-data"
+			data-testid="checkbox-data"
 			className={`flex my-3 flex-row items-center justify-between w-full, ${className}`}
 			onClick={onChange}
 		>
@@ -22,6 +22,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ label, checked, onChange, imageUrl,
 			</div>
 
 			<div
+				data-testid="checkbox-border"
 				className={`w-6 h-6 flex items-center justify-center cursor-pointer border-2 rounded-lg ${
 					checked ? "bg-blue-500 border-blue-500" : "bg-white border-gray-300"
 				}`}
