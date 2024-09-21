@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { AssetsService } from "..";
 import { useFetch } from "~/hooks/useFetch";
-import { AssetsQueryId } from "../constants";
+import { AssetsQueryId } from "~/apis/handlers/assets/constants";
 import {
 	activeSignalsDataTableMobileSelector,
 	activeSignalsDataTableSelector,
@@ -9,8 +9,8 @@ import {
 	signalsHistoryDataTableSelector,
 } from "~/selectors/signals";
 import type { ITBody, ITHead, ITableMobile } from "~/components/common/DataTable/config";
-import { ISignal } from "../interfaces";
-import { SignalStatus } from "../enums";
+import { ISignal } from "~/apis/handlers/assets/interfaces";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
 
 interface UseFetchActiveSignalsProps {
 	handleSetToggleDeleteModal?: (id: string) => void;
@@ -89,7 +89,11 @@ export const useFetchActiveSignals = ({
 	};
 };
 
-export const useSignalHistory = () => {
+export const useSignalHistory = ({
+	isAdmin = false, // eslint-disable-line
+	handleSetToggleDeleteModal,
+	handleResumeSignal,
+}: UseFetchActiveSignalsProps) => {
 	const signalsService = new AssetsService();
 	const [signalHistory, setHistory] = useState<ISignal[]>([]);
 	const [signalsTableHead, setSignalsTableHead] = useState<ITHead[]>([]);
@@ -121,7 +125,7 @@ export const useSignalHistory = () => {
 
 	useEffect(() => {
 		refetch();
-	});
+	}, [handleResumeSignal, handleSetToggleDeleteModal]);
 
 	// const { sendMessage, lastMessage, readyState, getWebSocket } = useWebSocket("ws://localhost:8080/stream/signals", {
 	//   onOpen: () => console.log("WebSocket opened"),

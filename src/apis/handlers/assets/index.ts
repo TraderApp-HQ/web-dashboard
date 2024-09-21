@@ -1,6 +1,6 @@
 import { APIClient } from "~/apis/apiClient";
-import type { IResponse } from "../interfaces";
-import { UsersService } from "../users";
+import type { IResponse } from "~/apis/handlers/interfaces";
+import { UsersService } from "~/apis/handlers/users";
 import type {
 	ICreateSignalInput,
 	IExchange,
