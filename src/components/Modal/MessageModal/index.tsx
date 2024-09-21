@@ -30,7 +30,10 @@ export default function MessageModal({
 			width="md:w-[445px]"
 			onClose={handleMeClose}
 		>
-			<div className="flex flex-col gap-5 text-center items-center">
+			<div
+				data-testId="message-modal"
+				className="flex flex-col gap-5 text-center items-center"
+			>
 				<h2 className="text-slate-900 text-2xl font-semibold leading-10">{title}</h2>
 				<Icon className={"inline-block flex-shrink-0"} />
 				<h3 className="text-center text-gray-700 text-base font-medium">{description}</h3>

@@ -15,21 +15,19 @@ import type { ICheckedBoxOption, ISelectBoxOption } from "~/components/interface
 import CancelIcon from "~/components/icons/CancelIcon";
 import { Candlestick, SignalRisk } from "~/apis/handlers/assets/enums";
 import type { IExchange, ISignalAsset, ISignalMilestone } from "~/apis/handlers/assets/interfaces";
-import { AssetsService } from "~/apis/handlers/assets";
-import { useCreate } from "~/hooks/useCreate";
 import Toast from "~/components/common/Toast";
 import Checkbox from "~/components/common/CheckBox";
 import TextArea from "~/components/common/TextArea";
 import useAssets from "~/hooks/useAssets";
 import useCurrencies from "~/hooks/useCurrencies";
 import useSupportedExchanges from "~/hooks/useSupportedExchanges";
+import { useCreateSignal } from "~/hooks/useCreateSignal";
 
 export default function CreateSignal() {
 	const [toggleSuccess, setToggleSuccess] = useState(false);
 	const [isOpen, setIsOpen] = useState(true);
 
 	const router = useRouter();
-	const signalsService = new AssetsService();
 
 	const [assetOptions, setAssetOptions] = useState<ISelectBoxOption[]>([]);
 	const [baseCurrencyOptions, setBaseCurrencyOptions] = useState<ISelectBoxOption[]>([]);
@@ -238,16 +236,7 @@ export default function CreateSignal() {
 	};
 
 	// Setup query to backend
-	const {
-		mutate: createSignal,
-		isError,
-		isPending,
-		error,
-		isSuccess,
-		data,
-	} = useCreate({
-		mutationFn: signalsService.createSignal.bind(signalsService),
-	});
+	const { createSignal, isError, isPending, error, isSuccess, data } = useCreateSignal();
 
 	// Make call to backend
 	const handleCreateSignal = () => {
@@ -502,14 +491,15 @@ export default function CreateSignal() {
 					</div>
 				</div>
 			</Modal>
-
-			<MessageModal
-				title={"Successful"}
-				description={"You have successfully created a new signal"}
-				icon={SuccessIcon}
-				openModal={toggleSuccess}
-				onClose={handleSuccessClose}
-			/>
+			{isSuccess && data && (
+				<MessageModal
+					title={"Successful"}
+					description={"You have successfully created a new signal"}
+					icon={SuccessIcon}
+					openModal={toggleSuccess}
+					onClose={handleSuccessClose}
+				/>
+			)}
 			{isError && (
 				<Toast
 					type="error"

@@ -12,6 +12,7 @@ interface CheckboxProps {
 const Checkbox: React.FC<CheckboxProps> = ({ label, checked, onChange, imageUrl, className }) => {
 	return (
 		<div
+			data-testId="checkbox-data"
 			className={`flex my-3 flex-row items-center justify-between w-full, ${className}`}
 			onClick={onChange}
 		>
