@@ -31,8 +31,6 @@ const Signup = () => {
 	const [showHints, setShowHints] = useState(false);
 	const [validCredentials, setValidCredentials] = useState(false);
 	const [countryOptions, setCountryOptions] = useState<ISelectBoxOption[]>([]);
-	const [isVerificationSuccess, setIsVerificationSuccess] = useState(false);
-	const [isQueryParamsSet, setIsQueryParamsSet] = useState(false);
 	const [passwordHints, setPasswordHints] = useState({
 		uppercase: {
 			value: true,
@@ -174,7 +172,7 @@ const Signup = () => {
 	// signup successful. Set query params and open verification modal
 	useEffect(() => {
 		if (isSuccess && data) {
-			const newSearchParams = new URLSearchParams();
+			const newSearchParams = new URLSearchParams(router.query as Record<string, string>);
 
 			newSearchParams.set("userid", data.id);
 			newSearchParams.set("recipient", data.email);
@@ -183,32 +181,30 @@ const Signup = () => {
 				{
 					pathname: router.pathname,
 					query: Object.fromEntries(newSearchParams.entries()),
+					// query: newSearchParams.toString(),
 				},
 				undefined,
 				{ shallow: true },
 			);
 
 			setShowVerificationModal(true);
-		}
-	}, [isSuccess, data, router]);
+			// const timer = setTimeout(() => {
+			// 	setShowVerificationModal(true);
+			// }, 100); // Delay to allow router to stabilize
 
-	// ensure query params are set
-	useEffect(() => {
-		if (router.query.userid && router.query.recipient) {
-			setIsQueryParamsSet(true);
+			// return () => clearTimeout(timer); // Clean up on unmount
 		}
-	}, [router.query]);
-
-	const handleVerificationSuccess = async () => {
-		setIsVerificationSuccess(true);
-	};
+	}, [isSuccess, data, router.query, router.pathname]);
 
 	return (
 		<>
 			<section className="py-[100px] md:px-[20px] flex max-[768px]:justify-center max-[768px]:pt-[0px]">
 				<div className="max-w-[419px] w-full">
 					<header className="text-center mb-[40px]">
-						<p className="text-[32px] text-[#102477] font-extrabold">
+						<p
+							className="text-[32px] text-[#102477] font-extrabold"
+							data-testid="heading"
+						>
 							Lets get started
 						</p>
 						<div className="flex items-center justify-center gap-x-[13px]">
@@ -231,6 +227,7 @@ const Signup = () => {
 								placeholder="Enter your First name"
 								labelText={"First Name"}
 								onChange={handleFirstNameChange}
+								value={firstName}
 							/>
 						</div>
 						{/* last name */}
@@ -240,12 +237,14 @@ const Signup = () => {
 								placeholder="Enter your Last name"
 								labelText={"Last Name"}
 								onChange={handleLastNameChange}
+								value={lastName}
 							/>
 						</div>
 						{/* email address */}
 						<div className="flex flex-col gap-y-[8px]">
 							<InputField
 								onChange={handleEmailChange}
+								value={email}
 								pattern={"[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$"}
 								type={"text"}
 								placeholder={"Enter your email address"}
@@ -269,6 +268,7 @@ const Signup = () => {
 								type={"password"}
 								placeholder="-------------"
 								labelText={"Password"}
+								value={password}
 							/>
 						</div>
 						{/* password hints */}
@@ -326,17 +326,13 @@ const Signup = () => {
 					</form>
 				</div>
 			</section>
-			{isQueryParamsSet && (
-				<VerificationModal
-					openModal={showVerificationModal}
-					setOpenModal={() => setShowVerificationModal(true)}
-					isSuccess={isVerificationSuccess}
-					setIsSuccess={handleVerificationSuccess}
-					notificationChannel={NotificationChannel.EMAIL}
-					verificationType={[VerificationType.UPDATE, VerificationType.AUTHENTICATE]}
-					redirectTo={LAYOUT_ROUTES.account}
-				/>
-			)}
+			<VerificationModal
+				openModal={showVerificationModal}
+				setOpenModal={setShowVerificationModal}
+				notificationChannel={NotificationChannel.EMAIL}
+				verificationType={[VerificationType.UPDATE, VerificationType.AUTHENTICATE]}
+				redirectTo={LAYOUT_ROUTES.account}
+			/>
 			{isError && (
 				<Toast
 					type="error"

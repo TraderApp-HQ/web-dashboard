@@ -100,9 +100,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 				ref={selectBoxRef}
 			>
 				{/* for testing */}
-				{filteredOptions.map(({ value, displayText }) => (
+				{/* {filteredOptions.map(({ value, displayText }) => (
 					<div key={value} data-testid={displayText} />
-				))}
+				))} */}
 
 				<div
 					// data-testid={options.map(({ displayText }) => displayText).join("")}
@@ -110,6 +110,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 						isOpen ? "border-[#7949FF]" : "border-gray-100"
 					} rounded-md p-2 flex justify-between items-center cursor-pointer ${bgColor ? bgColor : "bg-[#F5F8FE]"}`}
 					onClick={() => setIsOpen(!isOpen)}
+					data-testid={placeholder}
 				>
 					{!selectedOption && (
 						<span className="text-[#808080]">{placeholder || "Select option"}</span>
@@ -149,6 +150,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 										setIsOpen(false);
 										setSearchTerm("");
 									}}
+									data-testid={`${option.displayText} button`}
 								>
 									<SelectBoxOption
 										displayText={option.displayText}
@@ -180,7 +182,7 @@ const SelectBoxOption: React.FC<ISelectBoxOptionProps> = ({
 	className,
 }) => {
 	return (
-		<div className="flex items-center space-x-2">
+		<div className="flex items-center space-x-2" data-testid={displayText}>
 			{imgUrl && (
 				<Image
 					src={imgUrl}
@@ -190,7 +192,7 @@ const SelectBoxOption: React.FC<ISelectBoxOptionProps> = ({
 					height={20}
 				/>
 			)}
-			<div>{displayText}</div>
+			<p>{displayText}</p>
 		</div>
 	);
 };
