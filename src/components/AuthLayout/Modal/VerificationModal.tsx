@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef, useEffect, ClipboardEvent } from "react";
 import { useRouter } from "next/router";
 import Modal from ".";

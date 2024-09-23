@@ -181,18 +181,12 @@ const Signup = () => {
 				{
 					pathname: router.pathname,
 					query: Object.fromEntries(newSearchParams.entries()),
-					// query: newSearchParams.toString(),
 				},
 				undefined,
 				{ shallow: true },
 			);
 
 			setShowVerificationModal(true);
-			// const timer = setTimeout(() => {
-			// 	setShowVerificationModal(true);
-			// }, 100); // Delay to allow router to stabilize
-
-			// return () => clearTimeout(timer); // Clean up on unmount
 		}
 	}, [isSuccess, data, router.query, router.pathname]);
 
