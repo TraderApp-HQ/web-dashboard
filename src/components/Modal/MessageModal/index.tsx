@@ -31,7 +31,7 @@ export default function MessageModal({
 			onClose={handleMeClose}
 		>
 			<div
-				data-testId="message-modal"
+				data-testid="message-modal"
 				className="flex flex-col gap-5 text-center items-center"
 			>
 				<h2 className="text-slate-900 text-2xl font-semibold leading-10">{title}</h2>
