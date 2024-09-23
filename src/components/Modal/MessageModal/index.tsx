@@ -23,21 +23,22 @@ export default function MessageModal({
 	};
 
 	return (
-		<Modal
-			title={title}
-			description={description}
-			openModal={openModal}
-			width="md:w-[445px]"
-			onClose={handleMeClose}
-		>
-			<div
-				data-testid="message-modal"
-				className="flex flex-col gap-5 text-center items-center"
+		<div data-testid="message-modal">
+			<Modal
+				title={title}
+				description={description}
+				openModal={openModal}
+				width="md:w-[445px]"
+				onClose={handleMeClose}
 			>
-				<h2 className="text-slate-900 text-2xl font-semibold leading-10">{title}</h2>
-				<Icon className={"inline-block flex-shrink-0"} />
-				<h3 className="text-center text-gray-700 text-base font-medium">{description}</h3>
-			</div>
-		</Modal>
+				<div className="flex flex-col gap-5 text-center items-center">
+					<h2 className="text-slate-900 text-2xl font-semibold leading-10">{title}</h2>
+					<Icon className={"inline-block flex-shrink-0"} />
+					<h3 className="text-center text-gray-700 text-base font-medium">
+						{description}
+					</h3>
+				</div>
+			</Modal>
+		</div>
 	);
 }
