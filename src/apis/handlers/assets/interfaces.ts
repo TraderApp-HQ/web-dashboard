@@ -50,6 +50,20 @@ export interface IFetchSignals {
 	totalRecords: number;
 }
 
+export interface ICreateSignalInput {
+	targetProfits: ISignalMilestone[];
+	stopLoss: ISignalMilestone;
+	entryPrice: number;
+	tradeNote: string;
+	candlestick: Candlestick;
+	risk: SignalRisk;
+	isSignalTradable: boolean;
+	chart: string;
+	supportedExchanges: number[];
+	asset: number;
+	baseCurrency: number;
+}
+
 export interface ISignalUpdateInput {
 	id: string;
 	status: SignalStatus;
@@ -66,4 +80,16 @@ export interface IGetExchangesInput {
 	rowsPerPage?: number;
 	orderBy?: "asc" | "desc";
 	status?: TradeStatus;
+}
+
+export interface IGetAssetsInput {
+	page: number;
+	rowsPerPage: number;
+	orderBy: "asc" | "desc";
+	sortBy: string;
+}
+
+export interface ISupportedExchangeInput {
+	coinId: number;
+	currencyId: number;
 }

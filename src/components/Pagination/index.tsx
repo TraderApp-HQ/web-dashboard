@@ -77,7 +77,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
 	return (
 		<div
-			data-testId="pagination-data"
+			data-testid="pagination-data"
 			className="flex flex-col sm:flex-row justify-between self-end items-center"
 		>
 			<PagingComponent className="hidden md:flex items-center justify-center" />

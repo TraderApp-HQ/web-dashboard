@@ -1,12 +1,17 @@
 import { APIClient } from "~/apis/apiClient";
-import type { IResponse } from "../interfaces";
-import { UsersService } from "../users";
+import type { IResponse } from "~/apis/handlers/interfaces";
+import { UsersService } from "~/apis/handlers/users";
 import type {
+	ICreateSignalInput,
+	IExchange,
 	IFetchExchanges,
 	IFetchSignals,
+	IGetAssetsInput,
 	IGetExchangesInput,
 	ISignal,
+	ISignalAsset,
 	ISignalUpdateInput,
+	ISupportedExchangeInput,
 } from "./interfaces";
 // import { SignalStatus } from "./enums";
 
@@ -24,10 +29,10 @@ export class AssetsService {
 		);
 	}
 
-	public async createSignal(): Promise<ISignal> {
+	public async createSignal(signal: ICreateSignalInput): Promise<ISignal> {
 		const response = await this.apiClient.post<IResponse>({
 			url: "/signals/create",
-			data: {},
+			data: signal,
 		});
 
 		if (response.error) {
@@ -142,6 +147,61 @@ export class AssetsService {
 
 		const { data } = response;
 		return data as IFetchExchanges[];
+	}
+
+	//Exchanges
+	public async getAllAssets({
+		page,
+		rowsPerPage,
+		orderBy,
+		sortBy,
+	}: IGetAssetsInput): Promise<ISignalAsset[]> {
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `/coins?page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&sortBy=${sortBy}`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch assets records");
+		}
+
+		const { data } = response;
+		return data.coins as ISignalAsset[];
+	}
+
+	//Currencies
+	public async getAllCurrencies(): Promise<ISignalAsset[]> {
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `/currencies`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch currencies records");
+		}
+
+		const { data } = response;
+		return data as ISignalAsset[];
+	}
+
+	public async getSupportedExchanges({
+		coinId,
+		currencyId,
+	}: ISupportedExchangeInput): Promise<IExchange[]> {
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `exchanges/supported/exchanges?coinId=${coinId}&currencyId=${currencyId}`,
+			options: { credentials: "include" },
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch supported Exchanges records");
+		}
+
+		const { data } = response;
+		return data as IExchange[];
 	}
 }
 
