@@ -32,7 +32,9 @@ describe("ManualConnection", () => {
 	};
 
 	it("renders the component and displays the correct elements", () => {
-		render(<ManualConnection {...defaultProps} />);
+		render(
+			<ManualConnection isError={false} error={null} isLoading={false} {...defaultProps} />,
+		);
 
 		// Check if SelectBox is rendered
 		expect(screen.getByLabelText("Exchange")).toBeInTheDocument();
@@ -53,7 +55,9 @@ describe("ManualConnection", () => {
 	});
 
 	it("handles the copy functionality correctly", async () => {
-		render(<ManualConnection {...defaultProps} />);
+		render(
+			<ManualConnection isError={false} error={null} isLoading={false} {...defaultProps} />,
+		);
 
 		// Simulate the copy icon click
 		fireEvent.click(screen.getByTestId("copy-icon"));
@@ -65,7 +69,9 @@ describe("ManualConnection", () => {
 	});
 
 	it("handles form inputs changes", () => {
-		render(<ManualConnection {...defaultProps} />);
+		render(
+			<ManualConnection isError={false} error={null} isLoading={false} {...defaultProps} />,
+		);
 
 		// Simulate entering text in API Key input field
 		fireEvent.change(screen.getByPlaceholderText("Enter API Keys"), {
@@ -81,7 +87,15 @@ describe("ManualConnection", () => {
 	});
 
 	it("handles disabled state of the submit button", () => {
-		render(<ManualConnection {...defaultProps} isSubmitDisabled={true} />);
+		render(
+			<ManualConnection
+				isError={false}
+				error={null}
+				isLoading={false}
+				{...defaultProps}
+				isSubmitDisabled={true}
+			/>,
+		);
 
 		// Check if Button is disabled
 		expect(screen.getByRole("button", { name: /connect/i })).toBeDisabled();
