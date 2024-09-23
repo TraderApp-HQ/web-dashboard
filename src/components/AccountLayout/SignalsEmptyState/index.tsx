@@ -5,7 +5,7 @@ export default function EmptySignal() {
 	return (
 		<Card className="w-full sm:h-[634px] h-[509px] md:px-4 lg:px-96 px-12 justify-center items-center flex">
 			<div
-				data-testId="empty-signal"
+				data-testid="empty-signal"
 				className="flex-col justify-start items-center gap-4 inline-flex"
 			>
 				<div>

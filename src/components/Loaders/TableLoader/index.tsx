@@ -8,7 +8,7 @@ import Polygon from "../Polygon";
  */
 const TableLoader: React.FC = () => {
 	return (
-		<div data-testId="table-loader" className="rounded-lg space-y-10">
+		<div data-testid="table-loader" className="rounded-lg space-y-10">
 			<div className="flex gap-10">
 				<Line width="full" height="sm" />
 				<Line width="full" height="sm" />

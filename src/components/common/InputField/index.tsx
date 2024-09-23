@@ -53,7 +53,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 					{...props}
 					value={value}
 					onChange={(e) => {
-						if (onChange) onChange(e.target.value.trim());
+						if (onChange) onChange(e.target.value);
 					}}
 					data-testid={labelText?.split(" ")[0]}
 					pattern={pattern}

@@ -4,7 +4,7 @@ import MyExchangeCard from ".";
 
 describe("MyExchangeCard", () => {
 	const defaultProps = {
-		id: "1",
+		_id: "1",
 		logo: "/path/to/logo.png",
 		name: "Exchange Name",
 		isConnected: true,
