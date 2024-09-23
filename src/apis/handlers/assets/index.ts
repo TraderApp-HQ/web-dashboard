@@ -156,28 +156,9 @@ export class AssetsService {
 		orderBy,
 		sortBy,
 	}: IGetAssetsInput): Promise<ISignalAsset[]> {
-		// Construct query parameters
-		const queryParams = new URLSearchParams();
-
-		if (page !== undefined) {
-			queryParams.set("page", page.toString());
-		}
-
-		if (rowsPerPage !== undefined) {
-			queryParams.set("rowsPerPage", rowsPerPage.toString());
-		}
-
-		if (orderBy !== undefined) {
-			queryParams.set("orderBy", orderBy);
-		}
-
-		if (sortBy !== undefined) {
-			queryParams.append("sortBy", sortBy);
-		}
-
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
-			url: `/coins?${queryParams.toString()}`,
+			url: `/coins?page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&sortBy=${sortBy}`,
 			options: { credentials: "include" },
 		});
 
@@ -209,20 +190,9 @@ export class AssetsService {
 		coinId,
 		currencyId,
 	}: ISupportedExchangeInput): Promise<IExchange[]> {
-		// Construct query parameters
-		const queryParams = new URLSearchParams();
-
-		if (coinId !== undefined) {
-			queryParams.set("coinId", coinId.toString());
-		}
-
-		if (currencyId !== undefined) {
-			queryParams.set("currencyId", currencyId.toString());
-		}
-
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
-			url: `exchanges/supported/exchanges?${queryParams.toString()}`,
+			url: `exchanges/supported/exchanges?coinId=${coinId}&currencyId=${currencyId}`,
 			options: { credentials: "include" },
 		});
 

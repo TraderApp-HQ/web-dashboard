@@ -3,10 +3,10 @@ import { useFetch } from "../useFetch";
 import { AssetsService } from "~/apis/handlers/assets";
 
 interface IUseAssets {
-	page?: number;
-	rowsPerPage?: number;
-	orderBy?: "asc" | "desc";
-	sortBy?: string;
+	page: number;
+	rowsPerPage: number;
+	orderBy: "asc" | "desc";
+	sortBy: string;
 }
 
 // Custom hook to fetch users data based on search keyword, current page, and rows per page

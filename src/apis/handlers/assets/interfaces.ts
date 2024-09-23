@@ -83,10 +83,10 @@ export interface IGetExchangesInput {
 }
 
 export interface IGetAssetsInput {
-	page?: number;
-	rowsPerPage?: number;
-	orderBy?: "asc" | "desc";
-	sortBy?: string;
+	page: number;
+	rowsPerPage: number;
+	orderBy: "asc" | "desc";
+	sortBy: string;
 }
 
 export interface ISupportedExchangeInput {

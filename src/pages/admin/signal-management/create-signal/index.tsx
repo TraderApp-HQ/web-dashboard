@@ -65,7 +65,10 @@ export default function CreateSignal() {
 		error: assetError,
 		isLoading: isAssetLoading,
 	} = useAssets({
+		page: 1,
 		rowsPerPage: 100,
+		orderBy: "asc",
+		sortBy: "rank",
 	});
 
 	const {
