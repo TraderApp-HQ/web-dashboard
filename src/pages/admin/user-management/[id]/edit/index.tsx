@@ -40,12 +40,12 @@ function UpdateUser({ id }: { id: string }) {
 
 	const [firstName, setFirstName] = useState<string>("");
 	const [lastName, setLastName] = useState<string>("");
-	const [email, setEmail] = useState<string>("");
 	const [role, setRole] = useState<string[]>([]);
 	const [country, setCountry] = useState<{ name: string; id: string }>();
 	const [countryOptions, setCountryOptions] = useState<ISelectBoxOption[]>([]);
 	const [currentRole, setCurrentRole] = useState<ISelectBoxOption>();
 	const [currentCountry, setCurrentCountry] = useState<ISelectBoxOption>();
+	const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
 	const handleFirstNameChange = (value: string) => {
 		setFirstName(value);
@@ -55,11 +55,14 @@ function UpdateUser({ id }: { id: string }) {
 		setLastName(value);
 	};
 
-	const handleEmailChange = (value: string) => {
-		setEmail(value);
+	const compareArrays = (a: string[], b: string[]) => {
+		a.sort();
+		b.sort();
+		return a.length === b.length && a.every((element, index) => element === b[index]);
 	};
 
 	const handleRoleChange = (role: ISelectBoxOption) => {
+		setCurrentRole(role);
 		setRole((prevRoles) => {
 			if (prevRoles.includes(role.value)) {
 				return prevRoles.filter((r) => r !== role.value);
@@ -70,6 +73,7 @@ function UpdateUser({ id }: { id: string }) {
 	};
 
 	const handleCountryChange = (option: ISelectBoxOption) => {
+		setCurrentCountry(option);
 		setCountry({ name: option.displayText, id: option.value });
 	};
 
@@ -77,21 +81,33 @@ function UpdateUser({ id }: { id: string }) {
 		setIsOpen(false);
 		router.back();
 	};
-	// Validation function to check if any state value is empty
-	const isSubmitDisabled = !(firstName && lastName && email && role.length && country);
+
+	// Validation to check if form is fit to submit
+	useEffect(() => {
+		if (
+			fetchData?.firstName != firstName ||
+			fetchData.lastName != lastName ||
+			!compareArrays(fetchData.role.slice(), role.slice()) ||
+			fetchData.countryName != currentCountry?.value
+		) {
+			if (firstName && lastName && role.length && country) {
+				setIsSubmitDisabled(false);
+			} else {
+				setIsSubmitDisabled(true);
+			}
+		}
+	}, [firstName, lastName, currentRole, currentCountry]);
 
 	// Optionally update state when fetchData changes
 	useEffect(() => {
 		if (fetchSuccess && fetchData) {
 			setFirstName(fetchData.firstName);
 			setLastName(fetchData.lastName);
-			setEmail(fetchData.email);
 			const currentRole: ISelectBoxOption | undefined = roleOptions.find(
 				(role) => role.value === fetchData?.role[0],
 			);
 			if (currentRole) {
 				setCurrentRole(currentRole);
-				setRole(fetchData.role);
 			}
 			if (countryOptions) {
 				const currentCountry = countryOptions.find(
@@ -124,7 +140,7 @@ function UpdateUser({ id }: { id: string }) {
 			id,
 			firstName,
 			lastName,
-			role: role as UserRole[],
+			role: [currentRole?.value] as UserRole[],
 			countryId: Number(country?.id),
 			countryName: country?.name,
 		});
@@ -200,15 +216,6 @@ function UpdateUser({ id }: { id: string }) {
 							onChange={handleLastNameChange}
 							className="no-spin-buttons"
 							value={lastName}
-						/>
-						<InputField
-							type="text"
-							labelText="Email"
-							props={{ name: "email" }}
-							placeholder="Enter Email"
-							onChange={handleEmailChange}
-							className="no-spin-buttons"
-							value={email}
 						/>
 						<div className="flex flex-col gap-y-[8px]">
 							<SelectBox
