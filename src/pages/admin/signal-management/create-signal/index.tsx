@@ -221,7 +221,9 @@ export default function CreateSignal() {
 		selectedBaseCurrency &&
 		selectedRisk &&
 		targetProfits &&
+		targetProfits[0].price !== 0 &&
 		selectedSupportedExchange &&
+		selectedSupportedExchange.length > 0 &&
 		tradeNote;
 
 	const onReset = () => {
