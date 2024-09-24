@@ -105,13 +105,9 @@ describe("SignalsHistory Component", () => {
 		await waitFor(() => {
 			signalData.forEach((signal) => {
 				expect(tableData).toHaveTextContent(signal.asset.name);
-				expect(tableData).toHaveTextContent(signal.risk);
-				expect(tableData).toHaveTextContent(
-					format(signal.createdAt as string, "do MMMM yyyy"),
-				);
-				expect(tableData).toHaveTextContent(
-					format(signal.endedAt as string, "do MMMM yyyy"),
-				);
+				expect(tableData).toHaveTextContent(signal.maxGain.toString());
+				expect(tableData).toHaveTextContent(format(signal.createdAt, "dd MMM h:mm a"));
+				expect(tableData).toHaveTextContent(format(signal.endedAt, "dd MMM h:mm a"));
 			});
 		});
 	});
