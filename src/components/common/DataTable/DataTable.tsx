@@ -65,9 +65,7 @@ const DataTable: React.FC<IDataTable> = ({
 									tc.styles ?? ""
 								}`}
 							>
-								{isDate(tc.displayItem as string)
-									? format(tc.displayItem as string, "do MMMM yyyy")
-									: tc.displayItem}
+								{tc.displayItem}
 							</td>
 						))}
 						{hasActions && (
