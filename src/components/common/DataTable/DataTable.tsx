@@ -58,7 +58,7 @@ const DataTable: React.FC<IDataTable> = ({
 			<tbody>
 				{tBody.tBodyRows.map((tr, index) => (
 					<tr key={index}>
-						{tr.tBodyColumns.map((tc) => (
+						{tr.tBodyColumns.map((tc, index) => (
 							<td
 								key={index}
 								className={`py-5 border-b text-sm border-slate-200 text-zinc-600 font-normal leading-none whitespace-nowrap ${tableRowItemStyles} ${

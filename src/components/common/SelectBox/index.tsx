@@ -102,9 +102,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 				ref={selectBoxRef}
 			>
 				{/* for testing */}
-				{/* {filteredOptions.map(({ value, displayText }) => (
+				{filteredOptions.map(({ value, displayText }) => (
 					<div key={value} data-testid={displayText} />
-				))} */}
+				))}
 
 				<div
 					// data-testid={options.map(({ displayText }) => displayText).join("")}

@@ -14,8 +14,8 @@ export default function CircledRightArrowIcon() {
 			<path
 				d="M10.25 7.91671L14.3333 12L10.25 16.0834"
 				stroke="#1D5BD6"
-				stroke-linecap="round"
-				stroke-linejoin="round"
+				strokeLinecap="round"
+				strokeLinejoin="round"
 			/>
 		</svg>
 	);
