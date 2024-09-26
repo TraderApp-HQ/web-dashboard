@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, ClipboardEvent } from "react";
 import { useRouter } from "next/router";
 import Modal from ".";
 import type { NotificationChannel, VerificationType } from "~/apis/handlers/users/enums";
@@ -58,6 +58,31 @@ export default function VerificationModal({
 		}
 	};
 
+	// Handle pasting of OTP
+	const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
+		// Get the pasted data (max 6 characters) and ensure only digits are taken
+		const pasteData = e.clipboardData
+			.getData("text")
+			.slice(0, 6)
+			.split("")
+			.filter((char) => /\d/.test(char));
+
+		// Ensure otp digit is not less than 6
+		const newOtp =
+			pasteData.length < 6
+				? pasteData.concat(new Array(6 - pasteData.length).fill(""))
+				: pasteData;
+
+		newOtp.forEach((value, index) => {
+			if (value && index < inputRefs.current.length) {
+				inputRefs.current[index]!.value = value; // Set value of the respective input field
+				inputRefs.current[index]!.focus(); // Focus the input to next field
+			}
+		});
+
+		setEnteredInput(newOtp);
+	};
+
 	// Handle Backspace key press
 	const handleKeyDown = (index: number, e: any) => {
 		if (
@@ -80,12 +105,8 @@ export default function VerificationModal({
 	}, [enteredInput.length]);
 
 	useEffect(() => {
-		// check query param. I.e first load
-		if (openModal && (!userId || !recipient)) {
-			router.push("/auth/login");
-		}
 		setCountdown(initialCountdownTime);
-	}, [openModal, userId, recipient]);
+	}, [openModal]);
 
 	// check if otp is set on first load then open otp modal. This is typically used on page reload
 	useEffect(() => {
@@ -142,15 +163,10 @@ export default function VerificationModal({
 
 	useEffect(() => {
 		const handleRedirect = async () => {
-			if (isVerificationSuccess) {
+			if (isVerificationSuccess && redirectTo) {
+				await router.push(redirectTo);
 				setOpenModal(false);
 				if (setIsSuccess) setIsSuccess(true);
-
-				// Ensure the router is ready before redirecting
-				if (redirectTo) {
-					await router.push(redirectTo);
-					// window.location.replace(redirectTo)
-				}
 			}
 		};
 
@@ -167,7 +183,7 @@ export default function VerificationModal({
 	}, [isVerificationErrorFlag]);
 
 	return (
-		<Modal open={openModal} setOpen={setOpenModal}>
+		<Modal open={openModal} setOpen={setOpenModal} data-testId="otp-modal">
 			<section>
 				<div>
 					<header className="flex flex-col items-center mb-[40px]">
@@ -205,6 +221,7 @@ export default function VerificationModal({
 										inputRefs.current[index] = ref;
 									}}
 									onChange={(e) => inputChangeHandler(index, e.target.value)}
+									onPaste={handlePaste}
 									onKeyDown={(e) => handleKeyDown(index, e)}
 									className="placeholder-[#808080] w-[54px] h-[54px] text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[20px] outline-[1px] outline-[#6579CC]"
 								/>
