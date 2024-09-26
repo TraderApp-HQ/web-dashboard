@@ -25,7 +25,7 @@ const NavLinkItem = ({ navlink, toggleSideNav }: NavLinkItemProps) => {
 		<li onClick={() => toggleSideNav(false)}>
 			<Link
 				href={navlink.path}
-				className={`${isActive ? "active" : "inactive"} flex items-center space-x-4 font-bold text-[#414141] text-sm p-3.5 rounded-lg 2xl:text-base 2xl:p-3`}
+				className={`${isActive ? "active" : "inactive"} flex items-center space-x-2 lg:space-x-4 font-bold text-[#414141] text-sm p-2.5 rounded-lg 2xl:text-base 2xl:p-3`}
 			>
 				<i>
 					<navlink.icon color={isActive ? "white" : "#414141"} />
@@ -61,7 +61,7 @@ const SideNav: React.FC<ISideNavProps> = ({ clientApp = "USER_DASHBOARD" }) => {
 					<CancelIcon />
 				</div>
 			</div>
-			<div className={`${containerHeight} p-8 overflow-y-auto`}>
+			<div className={`${containerHeight} p-3 lg:p-8 overflow-y-auto`}>
 				<ul className="space-y-6">
 					{navLinks.map((navlink, index) => (
 						<NavLinkItem key={index} navlink={navlink} toggleSideNav={toggleSideNav} />
@@ -69,13 +69,13 @@ const SideNav: React.FC<ISideNavProps> = ({ clientApp = "USER_DASHBOARD" }) => {
 				</ul>
 			</div>
 			{!isAdmin && <div className="border mx-10"></div>}
-			<div className="overflow-y-auto px-8 py-4">
+			<div className="overflow-y-auto px-4 lg:px-8 py-4">
 				<ul className="space-y-6">
 					{navLinksExtras.map((navlink, index) => (
 						<NavLinkItem key={index} navlink={navlink} toggleSideNav={toggleSideNav} />
 					))}
 					<li
-						className={`flex items-center space-x-4 font-bold text-[#414141] text-[16px] p-3 rounded cursor-pointer`}
+						className={`flex items-center space-x-2 lg:space-x-4 font-bold text-[#414141] text-[16px] p-3 rounded cursor-pointer`}
 					>
 						<LogoutIcon />
 						<span onClick={handleLogout}>Logout</span>

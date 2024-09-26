@@ -3,7 +3,7 @@ import type { ITHead } from "~/components/common/DataTable/config";
 export const ActiveSignalsTableHeadItems: ITHead[] = [
 	{
 		displayItem: "Asset",
-		styles: "md:!text-left md:!pl-8",
+		isAssetItem: true,
 	},
 	{
 		displayItem: "Current price",
@@ -25,6 +25,7 @@ export const ActiveSignalsTableHeadItems: ITHead[] = [
 export const SignalsHistoryTableHeadItems: ITHead[] = [
 	{
 		displayItem: "Asset",
+		isAssetItem: true,
 	},
 	{
 		displayItem: "Win/loss",

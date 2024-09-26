@@ -11,8 +11,20 @@ export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
 }
 
-export function renderDisplayItem({ itemText, itemSubText, itemImage, styles }: IDisplayItem) {
-	return React.createElement(DisplayItem, { itemText, itemSubText, itemImage, styles });
+export function renderDisplayItem({
+	itemText,
+	itemSubText,
+	itemImage,
+	styles,
+	isAssetItem,
+}: IDisplayItem) {
+	return React.createElement(DisplayItem, {
+		itemText,
+		itemSubText,
+		itemImage,
+		styles,
+		isAssetItem,
+	});
 }
 
 export function renderTargetProfits({

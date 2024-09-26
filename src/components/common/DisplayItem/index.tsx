@@ -2,9 +2,17 @@ import Image from "next/image";
 import React from "react";
 import type { IDisplayItem } from "~/lib/types";
 
-const DisplayItem: React.FC<IDisplayItem> = ({ itemText, itemImage, itemSubText, styles }) => {
+const DisplayItem: React.FC<IDisplayItem> = ({
+	itemText,
+	itemImage,
+	itemSubText,
+	isAssetItem,
+	styles,
+}) => {
 	return (
-		<div className={`flex items-center md:justify-center justify-end space-x-4 ${styles}`}>
+		<div
+			className={`flex items-center space-x-4 md:justify-center justify-end ${styles} ${isAssetItem ? "md:w-[60%] md:mx-auto md:!justify-start" : ""}`}
+		>
 			{itemImage && (
 				<Image
 					src={itemImage}
