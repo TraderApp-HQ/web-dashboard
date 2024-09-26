@@ -23,8 +23,9 @@ export function activeSignalsDataTableSelector(
 				{
 					displayItem: renderDisplayItem({
 						itemText: { text: signal.asset.name, style: "text-base font-normal" },
+						itemSubText: { text: signal.asset.symbol },
 						itemImage: signal.asset.logo,
-						styles: "md:!justify-start",
+						isAssetItem: true,
 					}),
 				},
 				{ displayItem: `${signal.currentPrice ?? "-"} USDT` },
@@ -122,6 +123,7 @@ export function signalsHistoryDataTableSelector(data: ISignal[]) {
 					displayItem: renderDisplayItem({
 						itemText: { text: signal.asset.name, style: "text-base font-normal" },
 						itemImage: signal.asset.logo,
+						isAssetItem: true,
 					}),
 				},
 				{ displayItem: `${signal.risk} USDT` },
