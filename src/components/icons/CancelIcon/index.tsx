@@ -15,16 +15,16 @@ const CancelIcon = () => {
 				<path
 					d="M19.6802 5.67969L6.18018 19.1797"
 					stroke="#414141"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
+					strokeWidth="2"
+					strokeLinecap="round"
+					strokeLinejoin="round"
 				/>
 				<path
 					d="M19.6802 19.1797L6.18018 5.67969"
 					stroke="#414141"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
+					strokeWidth="2"
+					strokeLinecap="round"
+					strokeLinejoin="round"
 				/>
 			</svg>
 		</button>

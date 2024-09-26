@@ -9,6 +9,7 @@ import { ActiveSignalsTableHeadItems, SignalsHistoryTableHeadItems } from "./con
 import { renderDisplayItem, renderStatus, renderTargetProfits } from "~/helpers";
 import type { ISignal } from "~/apis/handlers/assets/interfaces";
 import { SignalStatus } from "~/apis/handlers/assets/enums";
+import { format } from "date-fns";
 
 export function activeSignalsDataTableSelector(
 	activeSignals: ISignal[],
@@ -126,9 +127,9 @@ export function signalsHistoryDataTableSelector(data: ISignal[]) {
 						isAssetItem: true,
 					}),
 				},
-				{ displayItem: `${signal.risk} USDT` },
-				{ displayItem: signal.createdAt },
-				{ displayItem: signal.endedAt },
+				{ displayItem: signal.maxGain },
+				{ displayItem: format(signal.createdAt, "dd MMM h:mm a") },
+				{ displayItem: signal.endedAt ? format(signal.endedAt, "dd MMM h:mm a") : "" },
 			],
 		})),
 	};
