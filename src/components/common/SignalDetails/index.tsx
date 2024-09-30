@@ -9,6 +9,7 @@ import { AssetsQueryId } from "~/apis/handlers/assets/constants";
 import OverlayContainer from "~/components/AccountLayout/OverlayContainer";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import SignalBreakDownLoader from "~/components/Loaders/SignalBreakDownLoader";
 
 interface IProps {
 	children: ReactNode;
@@ -51,7 +52,7 @@ const SignalDetail: React.FC<IProps> = ({ children }) => {
 						<span className="ml-4 text-lg font-semibold">Back</span>
 					</IconButton>
 
-					{isLoading && <div>loading....</div>}
+					{isLoading && <SignalBreakDownLoader />}
 					{isSuccess && signal && (
 						<div className="flex gap-2 items-center my-6">
 							<Image
