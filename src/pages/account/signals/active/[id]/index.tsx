@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import SignalDetail from "~/components/AdminLayout/Signal/SignalDetails";
+import SignalDetail from "~/components/common/SignalDetails";
 
 interface IProps {
 	children: ReactNode;
