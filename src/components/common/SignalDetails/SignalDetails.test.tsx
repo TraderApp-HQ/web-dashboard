@@ -58,8 +58,8 @@ describe("SignalDetail component", () => {
 
 		render(<SignalDetail>Test Child</SignalDetail>);
 
-		// Ensure loading text is rendered
-		expect(screen.getByText(/loading/i)).toBeInTheDocument();
+		// Ensure SignalBreakDownLoader is rendered
+		expect(screen.getByTestId("signal-breakdown-loader")).toBeInTheDocument();
 	});
 
 	it("renders signal details when fetch is successful", () => {
