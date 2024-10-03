@@ -1,9 +1,7 @@
 import TradeCenterIcon from "~/components/icons/TradeCenterIcon";
 import Button from "../../../AccountLayout/Button";
-import { useRouter } from "next/router";
 
 const EmptyExchange = () => {
-	const router = useRouter();
 	return (
 		<div className="flex mt-24 gap-y-6 flex-col justify-center text-center">
 			<div className="w-20 h-16 bg-indigo-50 rounded-xl self-center flex items-center justify-center">
@@ -15,14 +13,7 @@ const EmptyExchange = () => {
 					You don’t have any connected exchange
 				</h3>
 			</div>
-			<Button
-				onClick={() => {
-					router.push("exchanges/connect");
-				}}
-				innerClassName="w-96"
-			>
-				Connect new Exchange
-			</Button>
+			<Button innerClassName="w-96">Connect new Exchange</Button>
 		</div>
 	);
 };

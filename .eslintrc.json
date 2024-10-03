@@ -48,12 +48,7 @@
 				"extensions": [".ts", ".tsx"]
 			}
 		],
-		"prettier/prettier": [
-			"error",
-			{
-				"endOfLine": "auto"
-			}
-		],
+		"prettier/prettier": "error",
 		"import/extensions": [
 			"error",
 			"ignorePackages",

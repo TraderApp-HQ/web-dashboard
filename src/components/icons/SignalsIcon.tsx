@@ -16,9 +16,9 @@ const SignalsIcon: React.FC<IProps> = ({ color = "#414141" }) => {
 			<path
 				d="M18.3337 10.8602H15.0003L12.5003 18.3602L7.50033 3.36023L5.00033 10.8602H1.66699"
 				stroke={color}
-				strokeWidth="2"
-				strokeLinecap="round"
-				strokeLinejoin="round"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
 			/>
 		</svg>
 	);

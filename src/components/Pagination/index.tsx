@@ -76,17 +76,13 @@ const Pagination: React.FC<PaginationProps> = ({
 	};
 
 	return (
-		<div
-			data-testid="pagination-data"
-			className="flex flex-col sm:flex-row justify-between self-end items-center"
-		>
+		<div className="flex flex-col sm:flex-row justify-between self-end items-center">
 			<PagingComponent className="hidden md:flex items-center justify-center" />
 			<div className="flex items-center gap-x-2">
 				<span className="mx-2 hidden md:flex text-[#072F40] text-[14px]">
 					{currentPage} - {totalPages} of {totalRecord}
 				</span>
 				<button
-					data-testid="prev-btn"
 					onClick={handlePrev}
 					className="px-3 py-1 mx-1 rounded disabled:bg-gray-100 disabled:cursor-not-allowed text-[14px]"
 					disabled={currentPage === 1}
@@ -100,7 +96,6 @@ const Pagination: React.FC<PaginationProps> = ({
 					<PagingComponent className="md:hidden flex items-center justify-center" />
 				</div>
 				<button
-					data-testid="next-btn"
 					onClick={handleNext}
 					className="px-3 py-1 mx-1 rounded disabled:bg-gray-100 disabled:cursor-not-allowed text-[14px]"
 					disabled={currentPage === totalPages}

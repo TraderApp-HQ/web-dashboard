@@ -16,9 +16,9 @@ const TransferIcon: React.FC<IProps> = ({ color = "#808080" }) => {
 			<path
 				d="M4.1665 3.3335L1.6665 5.8335M1.6665 5.8335L4.1665 8.3335M1.6665 5.8335H18.3332M15.8332 11.6668L18.3332 14.1668M18.3332 14.1668L15.8332 16.6668M18.3332 14.1668H1.6665"
 				stroke={color}
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
 			/>
 		</svg>
 	);

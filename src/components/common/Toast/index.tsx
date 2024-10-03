@@ -111,15 +111,12 @@ const Toast: React.FC<ToastProps> = ({
 	}, [autoVanish, autoVanishTimeout]);
 
 	const styles = clsx(
-		`bg-white flex items-start p-4 rounded-md shadow-md ${!show && "hidden"}`,
+		`flex items-start p-4 rounded-md shadow-md ${!show && "hidden"}`,
 		variant === "outlined" ? `border ${typeClasses[type].outlined}` : typeClasses[type].filled,
 	);
 
 	return (
-		<div
-			data-testid="toast-message"
-			className={`fixed z-50 right-1 top-1 min-w-[400px] ${styles}`}
-		>
+		<div className={`fixed right-1 top-1 min-w-[400px] ${styles}`}>
 			<div className="flex-shrink-0 self-baseline">{typeClasses[type].icon}</div>
 			<div className="ml-3 w-full">
 				<div className="flex items-center justify-between">

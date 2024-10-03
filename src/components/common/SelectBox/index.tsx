@@ -15,10 +15,7 @@ interface ISelectBoxProps {
 	labelText?: string;
 	labelClassName?: string;
 	className?: string;
-	containerStyle?: string;
-	bgColor?: string;
 	isSearchable?: boolean;
-	clear?: boolean | undefined;
 }
 
 /**
@@ -37,12 +34,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	labelText,
 	labelClassName,
 	className,
-	bgColor,
-	containerStyle,
 	isSearchable,
-	clear,
 }: ISelectBoxProps): JSX.Element => {
-	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>();
+	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption>();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const selectBoxRef = useRef<HTMLDivElement>(null);
@@ -63,6 +57,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 				setIsOpen(false);
 			}
 		};
+
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
@@ -74,14 +69,14 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 		}
 	}, [isOpen]);
 
-	// Set default option or externally provided option
+	// Set default option
 	useEffect(() => {
 		if (option) {
 			setSelectedOption(option);
 		}
-	}, [option]);
+	}, []);
 
-	// Notify external setOption handler when the selected option changes
+	// set selected option value. For external use for the caller
 	useEffect(() => {
 		if (setOption && selectedOption) setOption(selectedOption);
 	}, [selectedOption]);
@@ -89,42 +84,26 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	return (
 		<div>
 			{labelText && (
-				<label
-					aria-label={labelText}
-					className={`text-sm text-[#08123B] font-normal ${labelClassName}`}
-				>
+				<label className={`text-sm text-[#08123B] font-normal ${labelClassName}`}>
 					{labelText}
 				</label>
 			)}
-			<div
-				className={`relative ${containerStyle}`}
-				aria-labelledby={labelText}
-				ref={selectBoxRef}
-			>
-				{/* for testing */}
-				{filteredOptions.map(({ value, displayText }) => (
-					<div key={value} data-testid={displayText} />
-				))}
-
+			<div className="relative " aria-labelledby={labelText} ref={selectBoxRef}>
 				<div
-					// data-testid={options.map(({ displayText }) => displayText).join("")}
-					className={`p-[16px] placeholder-[#808080] w-full text-[#102477] invalid:text-[#808080] rounded-lg font-normal outline-[1px] outline-[#6579CC] appearance-none bg-no-repeat bg-[center_right_1em] invalid:[&:not(:empty)]:visited:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${
+					className={`p-[16px] placeholder-[#808080] w-full text-[#102477] bg-[#F5F8FE] invalid:text-[#808080] rounded-lg font-normal outline-[1px] outline-[#6579CC] appearance-none bg-no-repeat bg-[center_right_1em] invalid:[&:not(:empty)]:visited:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${
 						isOpen ? "border-[#7949FF]" : "border-gray-100"
-					} rounded-md p-2 flex justify-between items-center cursor-pointer ${bgColor ? bgColor : "bg-[#F5F8FE]"}`}
+					} rounded-md p-2 flex justify-between items-center cursor-pointer`}
 					onClick={() => setIsOpen(!isOpen)}
-					data-testid={placeholder}
 				>
-					{clear || !selectedOption ? (
+					{!selectedOption && (
 						<span className="text-[#808080]">{placeholder || "Select option"}</span>
-					) : (
+					)}
+					{selectedOption && (
 						<SelectBoxOption
 							displayText={selectedOption.displayText}
 							imgUrl={selectedOption.imgUrl}
 						/>
 					)}
-					{/* {(!clear || selectedOption) && (
-						
-					)} */}
 					{isOpen ? <FiChevronUp /> : <FiChevronDown />}
 				</div>
 				{isOpen && (
@@ -142,7 +121,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 								/>
 							</div>
 						)}
-						<ul role="listbox" className={`max-h-60 overflow-auto ${className}`}>
+						<ul className={`max-h-60 overflow-auto ${className}`}>
 							{filteredOptions.map((option, index) => (
 								<li
 									key={index}
@@ -154,7 +133,6 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 										setIsOpen(false);
 										setSearchTerm("");
 									}}
-									data-testid={`${option.displayText} button`}
 								>
 									<SelectBoxOption
 										displayText={option.displayText}
@@ -169,7 +147,6 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 		</div>
 	);
 };
-
 export default SelectBox;
 
 // SelectBox option component
@@ -186,7 +163,7 @@ const SelectBoxOption: React.FC<ISelectBoxOptionProps> = ({
 	className,
 }) => {
 	return (
-		<div className="flex items-center space-x-2" data-testid={displayText}>
+		<div className="flex items-center space-x-2">
 			{imgUrl && (
 				<Image
 					src={imgUrl}
@@ -196,7 +173,7 @@ const SelectBoxOption: React.FC<ISelectBoxOptionProps> = ({
 					height={20}
 				/>
 			)}
-			<p>{displayText}</p>
+			<span>{displayText}</span>
 		</div>
 	);
 };

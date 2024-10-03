@@ -7,7 +7,6 @@ interface IProps {
 const ReplaceIcon: React.FC<IProps> = ({ color = "black" }) => {
 	return (
 		<svg
-			data-testid="replace-icon"
 			width="24"
 			height="24"
 			viewBox="0 0 24 24"

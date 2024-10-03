@@ -20,8 +20,3 @@ export enum SignalStatus {
 	PAUSED = "PAUSED",
 	INACTIVE = "INACTIVE",
 }
-
-export enum TradeStatus {
-	active = "ACTIVE",
-	inactive = "INACTIVE",
-}

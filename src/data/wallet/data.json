@@ -298,33 +298,28 @@
 	},
 	"exchanges": [
 		{
-			"_id": "1",
+			"id": "1",
+			"name": "Binance",
+			"logo": "/images/btc_round.png",
+			"isConnected": true
+		},
+		{
+			"id": "2",
 			"name": "Kucoin",
 			"logo": "/images/btc_round.png",
 			"isConnected": true
 		},
 		{
-			"_id": "2",
-			"name": "Binance",
-			"logo": "/images/binance_round.png",
-			"isConnected": true
-		},
-		{
-			"_id": "3",
+			"id": "3",
 			"name": "ByBit",
-			"logo": "/images/usdt_round.png",
+			"logo": "/images/btc_round.png",
 			"isConnected": false
 		},
 		{
-			"_id": "4",
+			"id": "4",
 			"name": "BitGate",
 			"logo": "/images/btc_round.png",
 			"isConnected": false
 		}
-	],
-	"accountTypes": [
-		{ "type": "Spot", "balance": 1000 },
-		{ "type": "Future", "balance": 2000 },
-		{ "type": "Main", "balance": 4000 }
 	]
 }

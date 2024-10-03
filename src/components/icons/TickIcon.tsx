@@ -12,9 +12,9 @@ export default function TickIcon() {
 			<path
 				d="M9.125 1.375L3.875 6.62477L1.25 4"
 				stroke="#21A01F"
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
 			/>
 		</svg>
 	);

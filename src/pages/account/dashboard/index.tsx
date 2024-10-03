@@ -104,7 +104,7 @@ const Dashbaord = () => {
 							<HidenBalance className="mt-6 mb-2" />
 						)}
 					</h3>
-					<div className="flex flex-wrap max-sm:gap-4 md:flex-nowrap md:justify-between md:space-x-2 py-4 text-xs">
+					<div className="flex justify-between md:space-x-2 py-4 text-xs">
 						{supportedOperations.map((item, index) => (
 							<IconButton
 								key={index}

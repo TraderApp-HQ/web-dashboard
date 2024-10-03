@@ -2,12 +2,6 @@ import React from "react";
 import type { ITBody, ITHead } from "./config";
 import TableMenuDropdown from "./TableMenuDropdown";
 import TableMenuItems from "./TableMenuitems";
-// import { format, isValid } from "date-fns";
-
-// function isDate(dateStr: string) {
-// 	const date = new Date(dateStr);
-// 	return date instanceof Date && isValid(date);
-// }
 
 interface IDataTable {
 	tHead: ITHead[];
@@ -35,13 +29,13 @@ const DataTable: React.FC<IDataTable> = ({
 	tableRowItemStyles,
 }) => {
 	return (
-		<table data-testid="table-data" className={`min-w-[1100px] w-full ${tableStyles}`}>
+		<table className={`min-w-[1100px] w-full ${tableStyles}`}>
 			<thead className={`border-b border-neutral-400 border-opacity-20 ${tableHeadStyles}`}>
 				<tr>
 					{tHead.map((th, index) => (
 						<th
 							key={index}
-							className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles} ${th.styles} ${th.isAssetItem ? "" : ""}`}
+							className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles} ${th.styles ?? ""}`}
 						>
 							{th.displayItem}
 						</th>
@@ -58,7 +52,7 @@ const DataTable: React.FC<IDataTable> = ({
 			<tbody>
 				{tBody.tBodyRows.map((tr, index) => (
 					<tr key={index}>
-						{tr.tBodyColumns.map((tc, index) => (
+						{tr.tBodyColumns.map((tc) => (
 							<td
 								key={index}
 								className={`py-5 border-b text-sm border-slate-200 text-zinc-600 font-normal leading-none whitespace-nowrap ${tableRowItemStyles} ${

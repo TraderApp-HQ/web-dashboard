@@ -10,7 +10,9 @@ const PortfolioTabSection = () => {
 
 	return (
 		<div>
-			<PageTab tabs={tabs} />
+			<div className="w-12/12 lg:w-10/12 2xl:w-10/12 text-base">
+				<PageTab tabs={tabs} />
+			</div>
 			<div className="mt-6" />
 		</div>
 	);

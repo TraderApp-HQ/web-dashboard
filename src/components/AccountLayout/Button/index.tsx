@@ -48,7 +48,7 @@ const Button: React.FC<ButtonProps> = ({
 					"inline-flex justify-center items-center first-letter:uppercase rounded-md border border-transparent transition focus:outline-none  hover:bg-blue-dark active:bg-blue-dark focus:bg-blue-dark disabled:bg-gray-400",
 					color ?? "text-white",
 					sizeClassnames,
-					disabled && "cursor-not-allowed !opacity-50 !bg-blue-800",
+					disabled && "cursor-not-allowed",
 					fluid && "w-full",
 					innerClassName,
 					bgColor ?? "bg-blue-800",

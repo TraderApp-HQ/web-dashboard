@@ -70,16 +70,7 @@ const Polygon: React.FC<PolygonBaseProps> = ({
 
 	style = opacity === "open" ? `${style}` : "bg-skeleton";
 
-	return (
-		<div
-			className={clsx(
-				"animate-pulse",
-				`bg-[rgba(242,245,254,0.71)] ${dimension}`,
-				style,
-				className,
-			)}
-		/>
-	);
+	return <div className={clsx(`animate-pulse ${dimension}`, style, className)} />;
 };
 
 Polygon.defaultProps = {

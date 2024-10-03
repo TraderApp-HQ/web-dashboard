@@ -19,7 +19,6 @@ const customJestConfig = {
 	moduleNameMapper: {
 		"\\.(css|less|scss|sass)$": "identity-obj-proxy",
 		"^@/(.*)$": "<rootDir>/src/$1", // Handles path aliases starting with '@'
-		"^~/(.*)$": "<rootDir>/src/$1", // Handles path aliases starting with '~'
 	},
 	moduleDirectories: ["node_modules", "<rootDir>/src"],
 };

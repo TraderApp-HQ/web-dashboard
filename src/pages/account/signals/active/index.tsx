@@ -8,24 +8,18 @@ import Select from "~/components/AccountLayout/Select";
 import type { ChangeEvent } from "react";
 import React, { useState } from "react";
 import data from "../data.json";
+import type SignalsData from "~/lib/types";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
 import Pagination from "~/components/Pagination";
-import { useFetchActiveSignals } from "~/apis/handlers/assets/hooks";
-import { ISignal } from "~/apis/handlers/assets/interfaces";
+import { useFetchActiveSignals } from "~/apis/handlers/signals/hooks";
+import { ISignal } from "~/apis/handlers/signals/interfaces";
 import { activeSignalsPerfomanceSumary } from "~/selectors/signals";
 import { NestedSignalsLayout } from "../";
-import TableLoader from "~/components/Loaders/TableLoader";
-import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
-import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
-
-interface ActiveSignalCardProps {
-	signals: ISignal[];
-	isSuccess?: boolean;
-	isLoading?: boolean;
-}
 
 const ActiveSignals = () => {
+	const signalResult: SignalsData = data;
+	const { signals } = signalResult;
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 
 	const [asset, setAsset] = useState<string>("");
@@ -63,7 +57,7 @@ const ActiveSignals = () => {
 	const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
 
 	// Signal data pagination
-	const paginatedData = activeSignals;
+	const paginatedData = signals.signals;
 
 	const totalRecord = paginatedData.length; // Example total rows
 	const totalPages = Math.ceil(totalRecord / rowsPerPage);
@@ -83,8 +77,10 @@ const ActiveSignals = () => {
 
 	return (
 		<>
-			<ActiveSignalCard signals={activeSignals} isLoading={isLoading} isSuccess={isSuccess} />
-			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
+			<ActiveSignalCard signals={activeSignals} />
+			<div
+				className={clsx("flex justify-between", signals.signals.length === 0 ? "mt-0" : "")}
+			>
 				<SearchForm
 					// onChange={(e) => setSearchTerm(e.target.value)}
 					onChange={(e) => {
@@ -156,22 +152,20 @@ const ActiveSignals = () => {
 				</DropdownMenu>
 			</div>
 
-			{!isLoading && activeSignals.length === 0 ? (
+			{signals.signals.length === 0 ? (
 				<SignalsEmptyState />
 			) : (
 				<div className="pb-8 rounded-2xl">
-					<h3 className="font-bold text-base text-[#08123B]">
-						All Active Signal ({activeSignals.length})
-					</h3>
+					<h3 className="font-bold text-base text-[#08123B]">All Active Signal (10)</h3>
 					<div className="mt-2 mb-8">
 						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
-							{isLoading && <TableLoader />}
+							{isLoading && <div>Loading...</div>}
 							{isSuccess && signalsTableBody && (
 								<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
 							)}
 						</div>
 						<div className="md:hidden relative">
-							{isLoading && <MobileTableLoader />}
+							{isLoading && <div>Loading...</div>}
 							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
 						</div>
 					</div>
@@ -189,28 +183,26 @@ const ActiveSignals = () => {
 					</div>
 				</div>
 			)}
+
+			{/* <Outlet /> */}
 		</>
 	);
 };
-const ActiveSignalCard: React.FC<ActiveSignalCardProps> = ({ signals, isSuccess, isLoading }) => {
+
+const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
 	const signalPerformer = activeSignalsPerfomanceSumary(signals);
 	return (
-		<div>
-			{isLoading && <PerformanceSummaryCardLoader />}
-			{signals.length > 0 && (
-				<div className="flex flex-col md:flex-row gap-2">
-					{isSuccess &&
-						signalPerformer.map((performance) => (
-							<PerformanceSummaryCard key={performance.id} data={performance} />
-						))}
-				</div>
-			)}
-		</div>
+		signals.length > 0 && (
+			<div className="flex flex-col md:flex-row gap-2">
+				{signalPerformer.map((performance) => (
+					<PerformanceSummaryCard key={performance.id} data={performance} />
+				))}
+			</div>
+		)
 	);
 };
 
 ActiveSignals.getLayout = (page: React.ReactElement) => (
 	<NestedSignalsLayout>{page}</NestedSignalsLayout>
 );
-
 export default ActiveSignals;
