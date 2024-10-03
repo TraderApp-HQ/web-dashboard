@@ -23,10 +23,8 @@ const ReferralsLayout = ({ children }: IProps) => {
 
 	return (
 		<div>
-			<div className="mb-6 md:w-[50%] lg:w-[35%] 2xl:w-[25%]">
-				<PageTab tabs={tabs} />
-			</div>
-			<div>{children}</div>
+			<PageTab tabs={tabs} />
+			<div className="mt-6">{children}</div>
 		</div>
 	);
 };

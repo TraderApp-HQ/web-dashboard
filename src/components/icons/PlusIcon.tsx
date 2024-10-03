@@ -12,16 +12,16 @@ export default function PlusIcon() {
 			<path
 				d="M8 3.3335V12.6668"
 				stroke="#EA860D"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
+				strokeWidth="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
 			/>
 			<path
 				d="M3.3335 8H12.6668"
 				stroke="#EA860D"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
+				strokeWidth="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
 			/>
 		</svg>
 	);

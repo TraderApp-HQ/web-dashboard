@@ -17,6 +17,7 @@ export const ROUTES = {
 		tradingRules: "../trading-rules",
 		backButton: "/account/trade-center",
 		manageTrade: "manage",
+		exchanges: "exchanges",
 	},
 	wallet: {
 		homepage: "/wallets",

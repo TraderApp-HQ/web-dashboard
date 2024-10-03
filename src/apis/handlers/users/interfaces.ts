@@ -60,6 +60,15 @@ export interface ICreateUserInput {
 	countryName?: string;
 }
 
+export interface IUpdateUserInput {
+	id: string;
+	firstName: string;
+	lastName: string;
+	role: UserRole[];
+	countryId?: number;
+	countryName?: string;
+}
+
 export interface IPasswordResetInput {
 	password: string;
 	verificationToken: string | null;

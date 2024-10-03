@@ -10,6 +10,7 @@ export type IInputFieldProps = {
 	labelText?: string;
 	labelClassName?: string;
 	className?: string;
+	icon?: { name: React.ReactNode; onClick?: () => void };
 	props?: React.DetailedHTMLProps<
 		React.InputHTMLAttributes<HTMLInputElement>,
 		HTMLInputElement
@@ -27,6 +28,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 	labelText,
 	labelClassName,
 	className,
+	icon,
 	onKeyDown,
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +41,10 @@ const InputField: React.FC<IInputFieldProps> = ({
 	return (
 		<div>
 			{labelText && (
-				<label className={`text-sm text-[#08123B] font-normal ${labelClassName}`}>
+				<label
+					aria-label={labelText}
+					className={`text-sm text-[#08123B] font-normal ${labelClassName}`}
+				>
 					{labelText}
 				</label>
 			)}
@@ -48,8 +53,9 @@ const InputField: React.FC<IInputFieldProps> = ({
 					{...props}
 					value={value}
 					onChange={(e) => {
-						if (onChange) onChange(e.target.value.trim());
+						if (onChange) onChange(e.target.value);
 					}}
+					data-testid={labelText?.split(" ")[0]}
 					pattern={pattern}
 					type={inputType}
 					placeholder={placeholder}
@@ -64,6 +70,14 @@ const InputField: React.FC<IInputFieldProps> = ({
 					>
 						{showPassword ? "Hide" : "Show"}
 					</p>
+				)}
+				{icon && (
+					<div
+						onClick={icon.onClick}
+						className="absolute top-0 right-[6px] h-full flex items-center cursor-pointer"
+					>
+						{icon.name}
+					</div>
 				)}
 			</div>
 		</div>

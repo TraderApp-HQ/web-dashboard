@@ -11,6 +11,7 @@ const TradeCenterIcon: React.FC<IProps> = ({
 }) => {
 	return (
 		<svg
+			data-testid="trade-center-icon"
 			width={size.width}
 			height={size.height}
 			viewBox="0 0 50 50"

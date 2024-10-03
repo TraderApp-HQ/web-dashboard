@@ -1,48 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "../../Card";
 import Image from "next/image";
 import DropdownMenu, { DropdownMenuItem } from "../../DropdownMenu";
 import DottedIcon from "~/components/icons/DottedIcon";
-import DropdownIcon from "~/components/icons/DropdownIcon";
 import ConnectedIcon from "~/components/icons/ConnectedIcon";
 import FailedIcon from "~/components/icons/FailedIcon";
 import TrashIcon from "~/components/icons/TrashIcon";
 import ReplaceIcon from "~/components/icons/ReplaceIcon";
 import { IExchangeConnection } from "~/pages/account/trade-center/exchanges";
-
-interface IAccountDropdownProps {
-	account: string;
-	onSelect: (account: string) => void;
-}
+import SelectBox from "~/components/common/SelectBox";
+import { ISelectBoxOption } from "~/components/interfaces";
+import accountData from "~/data/wallet/data.json";
 
 interface IConnectionStatus {
 	isConnected: boolean;
 }
-
-const AccountDropdown: React.FC<IAccountDropdownProps> = ({ account, onSelect }) => (
-	<DropdownMenu
-		trigger={
-			<>
-				<p className="text-neutral-700 text-sm font-medium leading-tight">{account}</p>
-				<DropdownIcon />
-			</>
-		}
-		position="right"
-		direction="bottom"
-		btnClass="-ml-3"
-	>
-		{["Spot", "Futures"].map((type) => (
-			<DropdownMenuItem
-				key={type}
-				type="button"
-				className="pl-0"
-				onClick={() => onSelect(type)}
-			>
-				{type}
-			</DropdownMenuItem>
-		))}
-	</DropdownMenu>
-);
 
 const ConnectionStatus: React.FC<IConnectionStatus> = ({ isConnected }) => (
 	<div
@@ -79,22 +51,50 @@ const ExchangeDropdownMenu = () => (
 );
 
 const MyExchangeCard: React.FC<IExchangeConnection> = ({ logo, name, isConnected }) => {
-	const [account, setAccount] = useState<string>("Futures");
+	const [account, setAccount] = useState<{ name: string; id: string }>();
+	const [accountOptions, setAccountyOptions] = useState<ISelectBoxOption[]>([]);
+
+	// format accounts to display on selectBox
+	useEffect(() => {
+		const options: ISelectBoxOption[] = accountData.accountTypes.map((account) => ({
+			displayText: account.type.toString(),
+			value: account.balance.toString(),
+		}));
+		setAccountyOptions(options);
+	}, []);
+
+	const handleAccountChange = (option: ISelectBoxOption) => {
+		setAccount({ name: option.displayText, id: option.value });
+	};
 
 	return (
 		<Card className="relative">
 			<div className="flex justify-between w-full">
 				<div className="flex gap-x-2 items-center">
-					<Image height={25} width={25} src={logo} alt={name} />
-					<p className="text-neutral-700 text-xs font-semibold leading-none">{name}</p>
+					<Image
+						src={logo}
+						alt={name}
+						className="w-[45px] h-[45px] sm:w-[35px] sm:h-[35px]"
+						width={45}
+						height={45}
+					/>
+					<p className="text-neutral-700 text-sm md:text-xs font-semibold leading-none">
+						{name}
+					</p>
 				</div>
 				<ExchangeDropdownMenu />
 			</div>
 
-			<div className="flex flex-col gap-y-6 mt-6 relative">
-				<div className="flex justify-between">
-					<AccountDropdown account={account} onSelect={setAccount} />
-					<p className="text-neutral-700 text-sm font-bold">{"$1000.00"}</p>
+			<div className="flex flex-col gap-y-3 mt-2">
+				<div className="flex justify-between items-center">
+					<SelectBox
+						containerStyle="-ml-4"
+						option={accountOptions[1]}
+						options={accountOptions}
+						setOption={handleAccountChange}
+						bgColor="bg-none"
+					/>
+					<p className="text-neutral-700 text-sm font-bold">{account?.id}</p>
 				</div>
 
 				<div className="border border-slate-100" />

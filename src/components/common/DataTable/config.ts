@@ -4,6 +4,7 @@ import type { IconProps } from "~/lib/types";
 export interface ITHead {
 	displayItem: string | JSX.Element | ReactNode;
 	styles?: string;
+	isAssetItem?: boolean;
 }
 
 export interface ITBody {
