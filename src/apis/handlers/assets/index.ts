@@ -56,9 +56,8 @@ export class AssetsService {
 		return response.message;
 	}
 
-	public async getSignal(): Promise<ISignal> {
-		const response = await this.apiClient.get<IResponse>({ url: "/signal/id" });
-
+	public async getSignal(id: string): Promise<ISignal> {
+		const response = await this.apiClient.get<IResponse>({ url: `/signals/${id}` });
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch signal");
 		}

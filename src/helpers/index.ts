@@ -36,9 +36,14 @@ export function renderTargetProfits({
 	styles?: string;
 	containerStyles?: string;
 }) {
-	const targetProfitPills = targetProfits.map((tp) => {
+	const targetProfitPills = targetProfits.map((tp, index) => {
 		const theme = tp.isReached ? ColourTheme.SUCCESS : ColourTheme.SECONDARY;
-		return React.createElement(TargetPill, { target: `${tp.percent}%`, theme, styles });
+		return React.createElement(TargetPill, {
+			key: index,
+			target: `${tp.percent}%`,
+			theme,
+			styles,
+		});
 	});
 	return React.createElement(
 		HTMLElements.div,
