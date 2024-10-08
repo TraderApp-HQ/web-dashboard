@@ -40,6 +40,7 @@ function UpdateUser({ id }: { id: string }) {
 
 	const [firstName, setFirstName] = useState<string>("");
 	const [lastName, setLastName] = useState<string>("");
+	const [email, setEmail] = useState<string>("");
 	const [role, setRole] = useState<string[]>([]);
 	const [country, setCountry] = useState<{ name: string; id: string }>();
 	const [countryOptions, setCountryOptions] = useState<ISelectBoxOption[]>([]);
@@ -103,6 +104,7 @@ function UpdateUser({ id }: { id: string }) {
 		if (fetchSuccess && fetchData) {
 			setFirstName(fetchData.firstName);
 			setLastName(fetchData.lastName);
+			setEmail(fetchData.email);
 			const currentRole: ISelectBoxOption | undefined = roleOptions.find(
 				(role) => role.value === fetchData?.role[0],
 			);
@@ -216,6 +218,14 @@ function UpdateUser({ id }: { id: string }) {
 							onChange={handleLastNameChange}
 							className="no-spin-buttons"
 							value={lastName}
+						/>
+						<InputField
+							type="text"
+							labelText="Email"
+							props={{ name: "email" }}
+							placeholder="Enter Email"
+							className="no-spin-buttons"
+							value={email}
 						/>
 						<div className="flex flex-col gap-y-[8px]">
 							<SelectBox
