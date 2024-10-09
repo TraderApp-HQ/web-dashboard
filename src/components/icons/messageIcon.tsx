@@ -1,4 +1,6 @@
-const MessageIcon = (props) => {
+import React from "react";
+
+const MessageIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
 	return (
 		<svg
 			width="20"
