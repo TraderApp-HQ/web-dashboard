@@ -128,3 +128,17 @@ export interface IFetchAllUsers {
 	totalDocs: number;
 	totalPages: number;
 }
+
+export interface IReferralStats {
+	referralCode: string;
+	referralLink: string;
+	currentRank: null | string;
+	currentEarning: number;
+	rankProgress: number;
+}
+
+export interface IReferralCommunityStats {
+	communityMembers: number;
+	communityATC: number;
+	referralTreeLevels: number;
+}

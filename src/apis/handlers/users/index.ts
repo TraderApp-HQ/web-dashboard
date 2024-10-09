@@ -17,6 +17,8 @@ import type {
 	IDisableUserInput,
 	IFetchAllUsers,
 	IUpdateUserInput,
+	IReferralStats,
+	IReferralCommunityStats,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 
@@ -240,6 +242,59 @@ export class UsersService {
 		const { data } = response;
 		return data as IUserProfile;
 	}
-}
 
-// export default new UsersService();
+	public async getReferrals(): Promise<any> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/users/referrals",
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Referrals fetch failed");
+		}
+
+		const { data } = response;
+		return data;
+	}
+
+	public async getReferralsStats(): Promise<IReferralStats> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/users/referral-stats",
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Referral Stats fetch failed");
+		}
+
+		const { data } = response;
+		return data as IReferralStats;
+	}
+
+	public async getCommunityStats(): Promise<IReferralCommunityStats> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/users/community-stats",
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Community Stats fetch failed");
+		}
+
+		const { data } = response;
+		return data as IReferralCommunityStats;
+	}
+
+	public async inviteFriends(emails: string[]): Promise<{ message: string }> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/users/invite-friends",
+			data: {
+				emails,
+			},
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Community Stats fetch failed");
+		}
+
+		const { data } = response;
+		return data;
+	}
+}
