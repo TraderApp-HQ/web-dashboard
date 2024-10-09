@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
 import { useFetch } from "../useFetch";
 import { useCallback } from "react";
+import { CreateTaskFormDataProps } from "~/components/AdminLayout/taskCenter/taskFormData";
 
 export const useGetTaskPlatforms = () => {
 	const usersService = new UsersService();
@@ -19,7 +20,7 @@ export const useGetTaskPlatforms = () => {
 export const useGetTask = (taskId: string) => {
 	const usersService = new UsersService();
 
-	const getUser = useCallback(() => usersService.getTask({ taskId }), [taskId, usersService]);
+	const getTask = useCallback(() => usersService.getTask({ taskId }), [taskId, usersService]);
 	const {
 		data: task,
 		isLoading,
@@ -27,11 +28,12 @@ export const useGetTask = (taskId: string) => {
 		error,
 	} = useFetch({
 		queryKey: [taskId],
-		queryFn: getUser,
+		queryFn: getTask,
 	});
 
 	return { task, isLoading, isError, error };
 };
+
 export const useGetAllTasks = () => {
 	const usersService = new UsersService();
 
@@ -65,4 +67,25 @@ export const useCreateTask = () => {
 	});
 
 	return { createTask, isPending, isSuccess, isError, error };
+};
+
+export const useUpdateTask = () => {
+	const usersService = new UsersService();
+	const queryClient = useQueryClient();
+
+	const {
+		mutate: updateTask,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+	} = useCreate({
+		mutationFn: (variables: { taskId: string; data: CreateTaskFormDataProps }) =>
+			usersService.updateTask(variables),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [UsersQueryId.task] });
+		},
+	});
+
+	return { updateTask, isPending, isSuccess, isError, error };
 };

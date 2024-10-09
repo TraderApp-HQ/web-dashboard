@@ -15,18 +15,26 @@ import {
 	taskStatus,
 	taskType,
 } from "./taskFormData";
-import { useCreateTask } from "~/hooks/useTask";
+import { useCreateTask, useUpdateTask } from "~/hooks/useTask";
 
 const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 	const initialFormData = task ? task : {};
-	const { createTask, error, isError, isPending } = useCreateTask();
 	const [formData, setFormData] = useState<CreateTaskFormDataProps>(
 		initialFormData as CreateTaskFormDataProps,
 	);
 	const [formInputError, setFormInputError] = useState<TaskFormError>({} as TaskFormError);
 	const [taskSubmittionError, setTaskSubmittionError] = useState<boolean>(false);
 
-	console.log(formData);
+	// Function for creating new task
+	const { createTask, error, isError, isPending } = useCreateTask();
+
+	// Function for updating a task
+	const {
+		updateTask,
+		error: updateError,
+		isError: isUpdateError,
+		isPending: isUpdatePending,
+	} = useUpdateTask();
 
 	// Function to dynamically render task platforms based on selected category
 	const platformOptions = useMemo(() => {
@@ -142,6 +150,7 @@ const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 				dueDate,
 				status,
 			} = formData;
+			const taskId = formData?._id;
 
 			// Track validation status
 			let hasError = false;
@@ -218,8 +227,8 @@ const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 				status,
 			};
 
-			// Create task
-			createTask(data);
+			// Function consitionally calls either create task or update task
+			!taskId ? createTask(data) : updateTask({ taskId, data });
 
 			// Reset form if request is successful
 			setFormData({} as CreateTaskFormDataProps);
@@ -394,12 +403,12 @@ const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 			/>
 
 			<Button
-				labelText="create new task"
+				labelText={formData?._id ? "update task" : "create new task"}
 				onClick={submitTask}
 				className="capitalize px-10 mt-6 text-sm font-bold w-full"
-				disabled={isPending}
+				disabled={isPending || isUpdatePending}
 			/>
-			{(taskSubmittionError || isError) && (
+			{(taskSubmittionError || isError || isUpdateError) && (
 				<Toast
 					type="error"
 					variant="filled"
@@ -407,7 +416,9 @@ const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 					message={
 						isError
 							? error?.message
-							: "Error creating task, check form body for error messsage."
+							: isUpdateError
+								? updateError?.message
+								: "Error creating task, check form body for error messsage."
 					}
 					autoVanish={true}
 					autoVanishTimeout={10}

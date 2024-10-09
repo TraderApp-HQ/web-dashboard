@@ -277,9 +277,15 @@ export class UsersService {
 		return response.message;
 	}
 
-	public async updateTask(data: CreateTaskFormDataProps): Promise<string> {
+	public async updateTask({
+		taskId,
+		data,
+	}: {
+		taskId: string;
+		data: CreateTaskFormDataProps;
+	}): Promise<string> {
 		const response = await this.apiClient.patch<IResponse>({
-			url: `/task/${data._id}`,
+			url: `/task/${taskId}`,
 			data,
 		});
 
