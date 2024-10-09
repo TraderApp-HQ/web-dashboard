@@ -3,19 +3,34 @@ import { NestedReferralsLayout } from "..";
 import { FaUsers } from "react-icons/fa";
 import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import SearchForm from "~/components/AccountLayout/SearchForm";
-import EmptyUser from "~/components/AdminLayout/User/EmptyUser";
 import ReferalCommunityCard from "~/components/Cards/ReferalCommunityCard";
 import { DataTable } from "~/components/common/DataTable";
 import ConnectionsIcons from "~/components/icons/ConnectionsIcons";
 import CurrencySymbolsIcon from "~/components/icons/CurrencySymbolsIcon";
 import DropdownIcon from "~/components/icons/DropdownIcon";
 import Pagination from "~/components/Pagination";
-import { useEffect, useState } from "react";
-import useUsers from "~/hooks/useUsers";
+import { useCallback, useEffect, useState } from "react";
 import { communityUsersDataTableSelector } from "~/selectors/referrals";
+import { UsersService } from "~/apis/handlers/users";
+import { IReferralCommunityStats } from "~/apis/handlers/users/interfaces";
+import ReferralCommunityCardLoader from "~/components/Loaders/ReferralCommunityCardLoader";
+import useReferrals from "~/hooks/useReferrals";
+import EmptyReferral from "~/components/AccountLayout/Referrals/EmptyReferral";
 
 const ReferralsCommunity = () => {
 	const router = useRouter();
+	const [stats, setStats] = useState<IReferralCommunityStats | null>(null);
+	const usersService = new UsersService();
+	const fetchCommunitysStats = useCallback(
+		() => usersService.getCommunityStats(),
+		[usersService],
+	);
+
+	useEffect(() => {
+		fetchCommunitysStats().then((data) => {
+			setStats(data);
+		});
+	}, []);
 	const searchKeywordInitial = Array.isArray(router.query.query)
 		? router.query.query[0]
 		: router.query.query || "";
@@ -25,7 +40,7 @@ const ReferralsCommunity = () => {
 	const [currentPage, setCurrentPage] = useState(Number(router.query.page) || 1);
 	const [rowsPerPage, setRowsPerPage] = useState(Number(router.query.rows) || 10);
 
-	const { data, refetch, error, isLoading, isSuccess, isError } = useUsers({
+	const { data, refetch, error, isLoading, isSuccess, isError } = useReferrals({
 		searchKeyword,
 		currentPage,
 		rowsPerPage,
@@ -64,28 +79,31 @@ const ReferralsCommunity = () => {
 		return <div>Error: {error.message}</div>;
 	}
 
-	const users = isSuccess ? data.docs : [];
-	const { tableHead, tableBody } = communityUsersDataTableSelector(users);
+	const referrals = isSuccess ? data.referrals : [];
+	const { tableHead, tableBody } = communityUsersDataTableSelector(referrals);
 
 	return (
 		<div>
-			<div className="flex flex-col md:flex-row gap-2">
-				<ReferalCommunityCard
-					title="Community Members"
-					subtext={"24"}
-					Icon={() => <FaUsers color="#102477" size={"24"} />}
-				/>
-				<ReferalCommunityCard
-					title="Community ATC"
-					subtext={"$ 23"}
-					Icon={CurrencySymbolsIcon}
-				/>
-				<ReferalCommunityCard
-					title="Referral Tree Levels"
-					subtext={"5"}
-					Icon={ConnectionsIcons}
-				/>
-			</div>
+			{!stats && <ReferralCommunityCardLoader />}
+			{stats && (
+				<div className="flex flex-col md:flex-row gap-2">
+					<ReferalCommunityCard
+						title="Community Members"
+						subtext={`${stats.communityMembers}`}
+						Icon={() => <FaUsers color="#102477" size={"24"} />}
+					/>
+					<ReferalCommunityCard
+						title="Community ATC"
+						subtext={`$ ${stats.communityMembers}`}
+						Icon={CurrencySymbolsIcon}
+					/>
+					<ReferalCommunityCard
+						title="Referral Tree Levels"
+						subtext={`${stats.referralTreeLevels}`}
+						Icon={ConnectionsIcons}
+					/>
+				</div>
+			)}
 
 			<section>
 				<div className="flex justify-between">
@@ -115,13 +133,13 @@ const ReferralsCommunity = () => {
 					</DropdownMenu>
 				</div>
 
-				{users.length === 0 ? (
+				{referrals.length === 0 ? (
 					<div className="flex mt-48 justify-center min-h-screen">
-						<EmptyUser />
+						<EmptyReferral />
 					</div>
 				) : (
 					<>
-						<h3 className="mb-2">User ({data?.totalDocs ?? 0})</h3>
+						<h3 className="mb-2">Referrals ({data?.totalDocs ?? 0})</h3>
 						<div className="pb-8 rounded-2xl">
 							<div className="hidden md:block p-5 bg-white rounded-2xl relative overflow-x-auto">
 								<DataTable

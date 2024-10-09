@@ -1,17 +1,17 @@
-import { IUserProfile } from "~/apis/handlers/users/interfaces";
+import { IReferrals } from "~/apis/handlers/users/interfaces";
 import { ITBody } from "~/components/common/DataTable/config";
 import { renderStatus } from "~/helpers";
 import { UsersCommunityHeadItems } from "./constants";
 
-export function communityUsersDataTableSelector(users: IUserProfile[]) {
+export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 	const tableHead = [...UsersCommunityHeadItems];
 	const tableBody: ITBody = {
-		tBodyRows: users.map((user) => ({
+		tBodyRows: referrals.map((referral) => ({
 			tBodyColumns: [
-				{ displayItem: `${user.firstName} ${user.lastName}` },
-				{ displayItem: user.email },
-				{ displayItem: user.role },
-				{ displayItem: renderStatus(user.status, { justify: "justify-start" }) },
+				{ displayItem: `${referral.user.firstName} ${referral.user.lastName}` },
+				{ displayItem: referral.user.email },
+				{ displayItem: referral.user.role },
+				{ displayItem: renderStatus(referral.user.status, { justify: "justify-start" }) },
 			],
 		})),
 	};

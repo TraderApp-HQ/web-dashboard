@@ -36,6 +36,7 @@ export interface IUserSignupInput {
 	password: string;
 	countryId: number;
 	countryName?: string;
+	referralCode?: string;
 }
 export interface IResetPasswordInput {
 	verificationToken: string;
@@ -141,4 +142,11 @@ export interface IReferralCommunityStats {
 	communityMembers: number;
 	communityATC: number;
 	referralTreeLevels: number;
+}
+
+export interface IReferrals {
+	user: IUserProfile;
+	parent: IUserProfile;
+	level: number;
+	createdAt: Date;
 }

@@ -24,6 +24,7 @@ const Signup = () => {
 	const [email, setEmail] = useState("");
 	const [emailValid, setEmailValid] = useState(false);
 	const [password, setPassword] = useState("");
+	const [referralCode, setReferralCode] = useState((router.query.ref as string) ?? "");
 	const [passwordValid, setPasswordValid] = useState(false);
 	const [country, setCountry] = useState<{ name: string; id: string }>();
 
@@ -105,6 +106,10 @@ const Signup = () => {
 		setLastName(value.trim());
 	};
 
+	const handleReferralCodeChange = (value: string) => {
+		setReferralCode(value.trim());
+	};
+
 	const handleEmailChange = (value: string) => {
 		validateEmail(value);
 		setEmail(value);
@@ -171,6 +176,7 @@ const Signup = () => {
 			password,
 			countryId: country?.id ? Number(country.id) : 89, // default to Nigeria
 			countryName: country?.name ?? "Nigeria", // default to Nigeria
+			referralCode,
 		});
 	};
 
@@ -255,6 +261,16 @@ const Signup = () => {
 								options={countryOptions}
 								placeholder={isCountryLoading ? "Loading..." : "Select country"}
 								setOption={handleCountryChange}
+							/>
+						</div>
+						{/* referral code */}
+						<div className="flex flex-col gap-y-[8px]">
+							<InputField
+								type={"text"}
+								placeholder="Enter referral code"
+								labelText={"Referral Code"}
+								onChange={handleReferralCodeChange}
+								value={referralCode}
 							/>
 						</div>
 						{/* password */}
