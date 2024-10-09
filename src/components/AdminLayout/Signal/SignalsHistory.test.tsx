@@ -1,13 +1,13 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useSignalHistory } from "~/apis/handlers/assets/hooks";
-import SignalsHistory from "./SignalsHistory";
+import SignalsHistory from "~/components/AdminLayout/Signal/SignalsHistory";
 import {
 	signalsHistoryDataTableMobileSelector,
 	signalsHistoryDataTableSelector,
 } from "~/selectors/signals";
 import { format } from "date-fns";
-import { signalData } from "./SignalData";
+import { signalData } from "~/components/AdminLayout/Signal/SignalData";
 
 // Mock the useSignalHistory hook
 jest.mock("~/apis/handlers/assets/hooks");

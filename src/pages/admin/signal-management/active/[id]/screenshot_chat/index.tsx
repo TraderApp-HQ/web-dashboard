@@ -1,4 +1,4 @@
-import AssetBreakdown from "~/pages/account/signals/active/[id]";
+import AssetBreakdown from "~/pages/admin/signal-management/active/[id]";
 import SignalChart from "~/components/AdminLayout/Signal/SignalChart";
 
 const ScreenshotChart = () => {

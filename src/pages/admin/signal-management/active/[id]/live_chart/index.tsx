@@ -4,7 +4,7 @@ import data from "~/pages/account/signals/data.json";
 import type { Signal } from "~/lib/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import AssetBreakdown from "~/pages/account/signals/active/[id]";
+import AssetBreakdown from "~/pages/admin/signal-management/active/[id]";
 
 const LiveChart = () => {
 	const router = useRouter();
