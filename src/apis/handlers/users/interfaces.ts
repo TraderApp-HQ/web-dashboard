@@ -128,3 +128,29 @@ export interface IFetchAllUsers {
 	totalDocs: number;
 	totalPages: number;
 }
+
+export interface ITaskPlatforms {
+	_id: string;
+	name: string;
+	logoUrl: string;
+	isActive: boolean;
+	supportedActions: string[];
+	categories: string[];
+}
+
+export interface ITask {
+	_id: string;
+	title: string;
+	description: string;
+	objective?: string;
+	taskType: string;
+	category: string;
+	platformId?: string | ITaskPlatforms;
+	platformName?: string;
+	link?: string;
+	expectedActions?: string[];
+	points: number;
+	startDate?: Date;
+	dueDate?: Date;
+	status: string;
+}

@@ -50,7 +50,12 @@ export const ROUTES = {
 	signalmanagement: "/signal-management",
 	systemmanagement: "/system-management",
 	aggregateview: "/aggregate-view",
-	taskcenter: "/task-center",
+	taskcenter: {
+		home: "/task-center",
+		create: "/create-task",
+		view: "/view",
+		edit: "/edit",
+	},
 };
 
 export const ENDPOINTS = {

@@ -79,7 +79,7 @@ export const AdminNavLinks: SidenavLink[] = [
 	{
 		icon: TaskCenterIcon,
 		text: "Task Center",
-		path: LAYOUT_ROUTES.admin + ROUTES.taskcenter,
+		path: LAYOUT_ROUTES.admin + ROUTES.taskcenter.home,
 	},
 	{
 		icon: SystemManagementIcon,

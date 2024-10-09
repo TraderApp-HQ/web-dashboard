@@ -6,6 +6,7 @@ import { ColourTheme, HTMLElements, OperationStatus, UserStatus } from "~/config
 import TargetPill from "~/components/common/TargetPill";
 import type { IDisplayItem, TartgetProfit } from "~/lib/types";
 import DisplayItem from "~/components/common/DisplayItem";
+import { TaskStatus } from "~/components/AdminLayout/taskCenter/taskFormData";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -52,11 +53,14 @@ export function renderTargetProfits({
 export function renderStatus(status: string, style?: { justify?: string }) {
 	let theme: ColourTheme;
 	switch (status) {
+		case TaskStatus.STARTED:
+		case TaskStatus.COMPLETED:
 		case OperationStatus.ACTIVE:
 		case OperationStatus.COMPLETED: {
 			theme = ColourTheme.SUCCESS;
 			break;
 		}
+		case TaskStatus.NOT_STARTED:
 		case OperationStatus.PAUSED:
 		case OperationStatus.PROCESSING: {
 			theme = ColourTheme.WARNING;

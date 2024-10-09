@@ -16,7 +16,7 @@ export type IInputFieldProps = {
 		HTMLInputElement
 	> & {};
 	onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-	inputError?: string | null;
+	inputError?: string;
 };
 
 const InputField: React.FC<IInputFieldProps> = ({

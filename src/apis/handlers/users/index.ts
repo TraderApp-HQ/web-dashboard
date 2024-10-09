@@ -17,8 +17,11 @@ import type {
 	IDisableUserInput,
 	IFetchAllUsers,
 	IUpdateUserInput,
+	ITaskPlatforms,
+	ITask,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
+import { CreateTaskFormDataProps } from "~/components/AdminLayout/taskCenter/taskFormData";
 
 export class UsersService {
 	private apiClient: APIClient;
@@ -239,6 +242,61 @@ export class UsersService {
 
 		const { data } = response;
 		return data as IUserProfile;
+	}
+
+	public async getAllActiveTaskPlatforms(): Promise<ITaskPlatforms[]> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/task/platforms",
+		});
+
+		if (response.error) throw new Error(response.message || "Error fetching platforms.");
+
+		const { data } = response;
+		return data as ITaskPlatforms[];
+	}
+
+	public async getAllTasks(): Promise<ITask[]> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/task",
+		});
+
+		if (response.error) throw new Error(response.message || "Error fetching tasks.");
+
+		const { data } = response;
+		return data as ITask[];
+	}
+
+	public async createTask(data: CreateTaskFormDataProps): Promise<string> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/task/create-task",
+			data,
+		});
+
+		if (response.error) throw new Error(response.message || "Error creating task.");
+
+		return response.message;
+	}
+
+	public async updateTask(data: CreateTaskFormDataProps): Promise<string> {
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/task/${data._id}`,
+			data,
+		});
+
+		if (response.error) throw new Error(response.message || "Error updating task.");
+
+		return response.message;
+	}
+
+	public async getTask({ taskId }: { taskId: string }): Promise<ITask> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/task/${taskId}`,
+		});
+
+		if (response.error) throw new Error(response.message || "Error updating task.");
+
+		const { data } = response;
+		return data as ITask;
 	}
 }
 
