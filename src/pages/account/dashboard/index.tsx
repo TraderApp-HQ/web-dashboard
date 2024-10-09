@@ -29,7 +29,7 @@ import Chart from "~/components/Portfolio/Chart";
 const Dashbaord = () => {
 	const router = useRouter();
 	const transactionsResult = data;
-	const signals = transactionsResult.signals;
+	// const signals = transactionsResult.signals;
 	const [showBalance, handleShowBalance] = useState(true);
 
 	const supportedOperations = [
