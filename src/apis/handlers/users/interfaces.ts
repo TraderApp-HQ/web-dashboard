@@ -145,7 +145,24 @@ export interface ITask {
 	objective?: string;
 	taskType: string;
 	category: string;
-	platformId?: string | ITaskPlatforms;
+	platformId?: string;
+	platformName?: string;
+	link?: string;
+	expectedActions?: string[];
+	points: number;
+	startDate?: Date;
+	dueDate?: Date;
+	status: string;
+}
+
+export interface ITaskWithPopulate {
+	_id: string;
+	title: string;
+	description: string;
+	objective?: string;
+	taskType: string;
+	category: string;
+	platformId?: ITaskPlatforms;
 	platformName?: string;
 	link?: string;
 	expectedActions?: string[];

@@ -1,9 +1,9 @@
 import Image from "next/image";
-import { ITask } from "~/apis/handlers/users/interfaces";
 import { renderStatus } from "~/helpers";
+import { ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
 
 type Props = {
-	selectedTask: ITask;
+	selectedTask: ITaskWithPopulate;
 };
 
 const ViewTask = ({ selectedTask }: Props) => {

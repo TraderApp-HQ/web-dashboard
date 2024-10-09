@@ -19,6 +19,7 @@ import type {
 	IUpdateUserInput,
 	ITaskPlatforms,
 	ITask,
+	ITaskWithPopulate,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 import { CreateTaskFormDataProps } from "~/components/AdminLayout/taskCenter/taskFormData";
@@ -294,7 +295,7 @@ export class UsersService {
 		return response.message;
 	}
 
-	public async getTask({ taskId }: { taskId: string }): Promise<ITask> {
+	public async getTask({ taskId }: { taskId: string }): Promise<ITaskWithPopulate> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/task/${taskId}`,
 		});
@@ -302,7 +303,7 @@ export class UsersService {
 		if (response.error) throw new Error(response.message || "Error updating task.");
 
 		const { data } = response;
-		return data as ITask;
+		return data as ITaskWithPopulate;
 	}
 }
 
