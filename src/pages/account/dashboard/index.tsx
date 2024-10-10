@@ -24,13 +24,25 @@ import Link from "next/link";
 import AccountLayout from "~/components/AccountLayout/Layout";
 import Image from "next/image";
 import MessageIcon from "~/components/icons/messageIcon";
-import Chart from "~/components/Portfolio/Chart";
+import Chart from "~/components/Portfolio/PieChart";
+import PortfolioSummary from "~/components/Portfolio/PorfolioSummary";
 
 const Dashbaord = () => {
 	const router = useRouter();
 	const transactionsResult = data;
 	// const signals = transactionsResult.signals;
 	const [showBalance, handleShowBalance] = useState(true);
+
+	const chartData = [
+		{ name: "Group A", value: 400 },
+		{ name: "Group B", value: 300 },
+		{ name: "Group C", value: 300 },
+		{ name: "Group D", value: 200 },
+	];
+
+	const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+
+	const numberOfUnreadTasks = 2;
 
 	const supportedOperations = [
 		{
@@ -146,7 +158,7 @@ const Dashbaord = () => {
 						<div className="flex gap-0.5">
 							<MessageIcon />
 							<div className="-mt-2.5 w-[19px] h-[19px] bg-[#FF0808] rounded-full flex justify-center items-center font-semibold text-white text-[10px]">
-								2
+								{numberOfUnreadTasks}
 							</div>
 						</div>
 						<p className="text-base font-normal -mt-1">Tasks</p>
@@ -158,34 +170,7 @@ const Dashbaord = () => {
 			</Card>
 			<div className="my-6">
 				<h2 className="text-[#08123B] font-bold py-3">Portfolio Summary</h2>
-				<Card>
-					<div className="flex flex-col lg:flex-row items-center lg:h-60">
-						<div className="w-[75%] sm:w-[35%] md:w-[37%] lg:w-[30%]">
-							<Chart />
-						</div>
-						<div className="text-center lg:text-start pb-10">
-							<div className="flex flex-col items-center lg:items-start justify-center sm:justify-start lg:flex-row gap-2 lg:gap-4">
-								<div className="flex gap-1 mb-2 lg:mb-0">
-									<p className="font-bold text-sm">Capital</p>
-									<p className="font-medium text-sm">0000.00</p>
-									<p className="font-medium text-[10px] mt-1">USDT</p>
-									<p className="font-normal text-sm">≈ $000.00</p>
-								</div>
-								<div className="flex gap-1.5">
-									<p className="font-bold text-[13px]">Profit</p>
-									<p className="font-medium text-sm text-[green]">
-										{" "}
-										+ 00%(00.00 USDT)
-									</p>
-									<p className="font-normal text-sm">≈$00.00</p>
-								</div>
-							</div>
-							<p className="relative lg:left-32 font-extrabold text-base mt-2">
-								No asset in your portfolio
-							</p>
-						</div>
-					</div>
-				</Card>
+				<PortfolioSummary chartData={chartData} colors={COLORS} />
 			</div>
 
 			<div className="flex justify-between py-6 font-bold">

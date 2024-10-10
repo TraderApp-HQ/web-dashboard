@@ -1,14 +1,17 @@
+import React from "react";
 import { PieChart, Pie, Cell } from "recharts";
 
-const data = [
-	{ name: "Group A", value: 400 },
-	{ name: "Group B", value: 300 },
-	{ name: "Group C", value: 300 },
-	{ name: "Group D", value: 200 },
-];
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+interface DataEntry {
+	name: string;
+	value: number;
+}
 
-const Chart = () => {
+interface ChartProps {
+	data: DataEntry[];
+	colors: string[];
+}
+
+const Chart: React.FC<ChartProps> = ({ data, colors }) => {
 	return (
 		<PieChart width={300} height={400}>
 			<Pie
@@ -22,7 +25,7 @@ const Chart = () => {
 				dataKey="value"
 			>
 				{data.map((entry, index) => (
-					<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+					<Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
 				))}
 			</Pie>
 		</PieChart>
