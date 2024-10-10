@@ -22,7 +22,7 @@ import type {
 	ITaskWithPopulate,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
-import { CreateTaskFormDataProps } from "~/components/AdminLayout/taskCenter/taskFormData";
+import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
 
 export class UsersService {
 	private apiClient: APIClient;
@@ -267,7 +267,7 @@ export class UsersService {
 		return data as ITask[];
 	}
 
-	public async createTask(data: CreateTaskFormDataProps): Promise<string> {
+	public async createTask(data: ICreateTaskFormData): Promise<string> {
 		const response = await this.apiClient.post<IResponse>({
 			url: "/task/create-task",
 			data,
@@ -283,7 +283,7 @@ export class UsersService {
 		data,
 	}: {
 		taskId: string;
-		data: CreateTaskFormDataProps;
+		data: ICreateTaskFormData;
 	}): Promise<string> {
 		const response = await this.apiClient.patch<IResponse>({
 			url: `/task/${taskId}`,

@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import DropdownMenu from "~/components/AccountLayout/DropdownMenu";
 import SearchForm from "~/components/AccountLayout/SearchForm";
 import AdminLayout from "~/components/AdminLayout/Layout";
-import { CreateTaskFormDataProps } from "~/components/AdminLayout/taskCenter/taskFormData";
+import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
 import Button from "~/components/common/Button";
 import { DataTable } from "~/components/common/DataTable";
 import DropdownIcon from "~/components/icons/DropdownIcon";
@@ -14,7 +14,7 @@ const TaskCenter = () => {
 	// const [searchTerm, setSearchTerm] = useState("");
 	const router = useRouter();
 	const { tasks, isLoading, isError, error } = useGetAllTasks();
-	const { tableBody, tableHead } = taskCenterTableSelector(tasks as CreateTaskFormDataProps[]);
+	const { tableBody, tableHead } = taskCenterTableSelector(tasks as ICreateTaskFormData[]);
 
 	return (
 		<section className="">

@@ -139,7 +139,7 @@ export interface ITaskPlatforms {
 }
 
 export interface ITask {
-	_id: string;
+	id: string;
 	title: string;
 	description: string;
 	objective?: string;
@@ -156,7 +156,7 @@ export interface ITask {
 }
 
 export interface ITaskWithPopulate {
-	_id: string;
+	id: string;
 	title: string;
 	description: string;
 	objective?: string;

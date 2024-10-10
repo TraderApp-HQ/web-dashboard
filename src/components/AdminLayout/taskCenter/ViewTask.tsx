@@ -1,12 +1,13 @@
 import Image from "next/image";
 import { renderStatus } from "~/helpers";
 import { ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
+import React from "react";
 
-type Props = {
+interface IViewTaskProps {
 	selectedTask: ITaskWithPopulate;
-};
+}
 
-const ViewTask = ({ selectedTask }: Props) => {
+const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 	return (
 		<section className="space-y-4">
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">

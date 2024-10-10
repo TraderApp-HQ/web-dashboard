@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
 import { useFetch } from "../useFetch";
 import { useCallback } from "react";
-import { CreateTaskFormDataProps } from "~/components/AdminLayout/taskCenter/taskFormData";
+import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
 
 export const useGetTaskPlatforms = () => {
 	const usersService = new UsersService();
@@ -80,7 +80,7 @@ export const useUpdateTask = () => {
 		error,
 		isSuccess,
 	} = useCreate({
-		mutationFn: (variables: { taskId: string; data: CreateTaskFormDataProps }) =>
+		mutationFn: (variables: { taskId: string; data: ICreateTaskFormData }) =>
 			usersService.updateTask(variables),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: [UsersQueryId.task] });

@@ -5,24 +5,24 @@ import InputField from "~/components/common/InputField";
 import SelectBox from "~/components/common/SelectBox";
 import TextArea from "~/components/common/TextArea";
 import Toast from "~/components/common/Toast";
+import { useCreateTask, useUpdateTask } from "~/hooks/useTask";
 import {
-	CreateTaskFormDataProps,
+	ICreateTaskFormData,
+	ITaskForm,
+	ITaskFormError,
 	Platform,
 	PlatformActions,
 	taskCategory,
-	TaskFormError,
-	TaskFormProps,
 	taskStatus,
 	taskType,
 } from "./taskFormData";
-import { useCreateTask, useUpdateTask } from "~/hooks/useTask";
 
-const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
+const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) => {
 	const initialFormData = task ? task : {};
-	const [formData, setFormData] = useState<CreateTaskFormDataProps>(
-		initialFormData as CreateTaskFormDataProps,
+	const [formData, setFormData] = useState<ICreateTaskFormData>(
+		initialFormData as ICreateTaskFormData,
 	);
-	const [formInputError, setFormInputError] = useState<TaskFormError>({} as TaskFormError);
+	const [formInputError, setFormInputError] = useState<ITaskFormError>({} as ITaskFormError);
 	const [taskSubmittionError, setTaskSubmittionError] = useState<boolean>(false);
 
 	// Function for creating new task
@@ -46,8 +46,7 @@ const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 			platformList?.length > 0
 				? platformList?.map((platform) => {
 						return {
-							displayText:
-								platform.name === "Twitter" ? "X - (Twitter)" : platform.name,
+							displayText: platform.name,
 							value: platform.name,
 						};
 					})
@@ -69,10 +68,7 @@ const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 	}, [formData.platformId]);
 
 	// Handler for form input update
-	const updateFormData = (
-		field: keyof CreateTaskFormDataProps,
-		value: string | number | Date,
-	) => {
+	const updateFormData = (field: keyof ICreateTaskFormData, value: string | number | Date) => {
 		setFormData((prevData) => {
 			// This helps to update both platformName and platformId
 			if (field === "platformName" && platformOptions.platformList) {
@@ -109,7 +105,7 @@ const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 	};
 
 	// Handler for form input error
-	const handleFormError = (field: keyof TaskFormError, value: string) => {
+	const handleFormError = (field: keyof ITaskFormError, value: string) => {
 		setFormInputError((prev) => {
 			return {
 				...prev,
@@ -132,7 +128,7 @@ const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 
 	// Handler for form submittion
 	const submitTask = () => {
-		setFormInputError({} as TaskFormError);
+		setFormInputError({} as ITaskFormError);
 		try {
 			// Extract form values
 			const {
@@ -209,7 +205,9 @@ const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 				hasError = true;
 			}
 
-			if (hasError) throw new Error();
+			if (hasError) {
+				throw new Error();
+			}
 
 			const data = {
 				title,
@@ -231,7 +229,7 @@ const TaskForm = ({ onClose, isLoading, platforms, task }: TaskFormProps) => {
 			!taskId ? createTask(data) : updateTask({ taskId, data });
 
 			// Reset form if request is successful
-			setFormData({} as CreateTaskFormDataProps);
+			setFormData({} as ICreateTaskFormData);
 
 			// close form
 			onClose();

@@ -2,7 +2,7 @@ import { ITaskPlatforms } from "~/apis/handlers/users/interfaces";
 
 export enum Platform {
 	INSTAGRAM = "Instagram",
-	TWITTER = "Twitter",
+	TWITTER = "X - (Twitter)",
 	TIKTOK = "Tiktok",
 	FACEBOOK = "Facebook",
 	WHATSAPP = "Whatsapp",
@@ -42,49 +42,40 @@ export enum UserTaskStatus {
 	DONE = "Done",
 }
 
-export interface TaskCategoryProps {
+export interface ITaskCategory {
 	displayText: string;
 	value: TaskCategory;
 }
 
-interface TaskPlatformProps {
+interface ITaskPlatform {
 	displayText: string;
 	value: Platform;
 }
 
-interface TaskTypeProps {
+interface ITaskType {
 	displayText: string;
 	value: TaskType;
 }
 
-interface TaskStatusProps {
+interface ITaskStatus {
 	displayText: string;
 	value: TaskStatus;
 }
 
-export type TaskFormProps = {
+export interface ITaskForm {
 	onClose: () => void;
 	isLoading: boolean;
 	platforms: ITaskPlatforms[];
-	task?: CreateTaskFormDataProps;
-};
-
-export type UpdateTaskFormProps = {
-	onClose: () => void;
-	isLoading: boolean;
-	task: CreateTaskFormDataProps;
-};
-
-export interface TaskPlatform {
-	_id: string;
-	name: Platform;
-	logoUrl: string;
-	isActive: boolean;
-	supportedActions: PlatformActions[];
-	categories: TaskCategory[];
+	task?: ICreateTaskFormData;
 }
 
-export interface CreateTaskFormDataProps {
+export interface IUpdateTaskFormProps {
+	onClose: () => void;
+	isLoading: boolean;
+	task: ICreateTaskFormData;
+}
+
+export interface ICreateTaskFormData {
 	_id?: string;
 	title: string;
 	description: string;
@@ -101,7 +92,7 @@ export interface CreateTaskFormDataProps {
 	status: TaskStatus;
 }
 
-export interface TaskFormError {
+export interface ITaskFormError {
 	title: string;
 	description: string;
 	taskType: string;
@@ -115,7 +106,7 @@ export interface TaskFormError {
 	status: string;
 }
 
-export const taskCategory: TaskCategoryProps[] = [
+export const taskCategory: ITaskCategory[] = [
 	{
 		displayText: "Social Media Engagement",
 		value: TaskCategory.SOCIAL,
@@ -134,7 +125,7 @@ export const taskCategory: TaskCategoryProps[] = [
 	},
 ];
 
-export const taskPlatform: TaskPlatformProps[] = [
+export const taskPlatform: ITaskPlatform[] = [
 	{
 		displayText: "Instagram",
 		value: Platform.INSTAGRAM,
@@ -153,7 +144,7 @@ export const taskPlatform: TaskPlatformProps[] = [
 	},
 ];
 
-export const taskType: TaskTypeProps[] = [
+export const taskType: ITaskType[] = [
 	{
 		displayText: "Permanent",
 		value: TaskType.PERMANENT,
@@ -164,7 +155,7 @@ export const taskType: TaskTypeProps[] = [
 	},
 ];
 
-export const taskStatus: TaskStatusProps[] = [
+export const taskStatus: ITaskStatus[] = [
 	{
 		displayText: "Not Started",
 		value: TaskStatus.NOT_STARTED,

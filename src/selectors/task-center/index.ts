@@ -1,11 +1,11 @@
-import { CreateTaskFormDataProps } from "~/components/AdminLayout/taskCenter/taskFormData";
 import { ITableActions, ITBody } from "~/components/common/DataTable/config";
 import EditIcon from "~/components/icons/EditIcon";
 import { renderDisplayItem, renderStatus } from "~/helpers";
 import { TaskCenterTableHeadItems } from "./constant";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
+import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
 
-export const taskCenterTableSelector = (tasks: CreateTaskFormDataProps[]) => {
+export const taskCenterTableSelector = (tasks: ICreateTaskFormData[]) => {
 	const tableHead = [...TaskCenterTableHeadItems];
 	const tableBody: ITBody = {
 		tBodyRows: tasks?.map((task) => {
