@@ -117,7 +117,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					data-testid={placeholder}
 				>
 					{clear || !selectedOption ? (
-						<span className="text-[#808080]">{placeholder || "Select option"}</span>
+						<span role="button" className="text-[#808080]">
+							{placeholder || "Select option"}
+						</span>
 					) : (
 						<SelectBoxOption
 							displayText={selectedOption.displayText}

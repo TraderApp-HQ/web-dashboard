@@ -239,7 +239,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 	};
 
 	return (
-		<form className="my-4 space-y-5">
+		<form data-testid="create-task-form" className="my-4 space-y-5">
 			<InputField
 				labelText="Title"
 				type="text"
@@ -351,7 +351,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				type="number"
 				labelClassName="text-textColor"
 				placeholder="0"
-				value={formData.points?.toString()} // converts value back to string
+				value={formData.points?.toString() || ""} // converts value back to string
 				onChange={(value) => updateFormData("points", +value)} //converts value back to number before saving it
 				inputError={formInputError?.points}
 			/>

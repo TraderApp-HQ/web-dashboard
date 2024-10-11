@@ -20,7 +20,10 @@ const CreateTask = () => {
 	return (
 		<Modal
 			title={
-				<p className="capitalize font-bold text-xl md:text-2xl text-textColor">
+				<p
+					data-testid="create-new-task-form"
+					className="capitalize font-bold text-xl md:text-2xl text-textColor"
+				>
 					create new task
 				</p>
 			}
