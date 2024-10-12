@@ -29,5 +29,6 @@ export const useFetch = <T>({
 		queryFn,
 		onSuccess,
 		onError,
+		refetchOnWindowFocus: false,
 	} as UseQueryOptions<T, Error>);
 };

@@ -49,6 +49,12 @@ interface ToastProps {
 	 * @type {number}
 	 */
 	autoVanishTimeout?: number;
+
+	// Opens to from parent component
+	showToast?: boolean;
+
+	// Updates toast state on parent component
+	onToastClose?: () => void;
 }
 
 const iconSize = 23;
@@ -93,17 +99,21 @@ const Toast: React.FC<ToastProps> = ({
 	type = "success",
 	variant = "filled",
 	autoVanishTimeout = 10,
+	showToast = true,
+	onToastClose,
 }) => {
-	const [show, setShow] = React.useState(true);
+	const [show, setShow] = React.useState(showToast);
 
 	const handleClose = () => {
 		setShow(false);
+		onToastClose && onToastClose();
 	};
 
 	React.useEffect(() => {
 		if (autoVanish) {
 			const timeout = setTimeout(() => {
 				setShow(false);
+				onToastClose && onToastClose();
 			}, autoVanishTimeout * 1000);
 
 			return () => clearTimeout(timeout);

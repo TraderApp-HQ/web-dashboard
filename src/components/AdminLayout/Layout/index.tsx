@@ -32,7 +32,7 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
 					<MobileTopHeader />
 				</div>
 				{/* Body */}
-				<div className="h-[90%] overflow-y-auto px-4 md:px-12 ">
+				<div className="h-[90%] overflow-y-auto px-4 md:px-12 scrollbar-hide">
 					<div className="border-t mt-4 py-4 md:py-6" />
 					{children}
 				</div>
