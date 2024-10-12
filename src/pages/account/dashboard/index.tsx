@@ -24,7 +24,7 @@ import Link from "next/link";
 import AccountLayout from "~/components/AccountLayout/Layout";
 import Image from "next/image";
 import MessageIcon from "~/components/icons/messageIcon";
-import Chart from "~/components/Portfolio/PieChart";
+// import Chart from "~/components/Portfolio/PieChart";
 import PortfolioSummary from "~/components/Portfolio/PorfolioSummary";
 
 const Dashbaord = () => {
