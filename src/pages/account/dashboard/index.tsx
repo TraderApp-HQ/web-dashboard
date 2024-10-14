@@ -40,7 +40,7 @@ const Dashbaord = () => {
 		{ name: "Group D", value: 200 },
 	];
 
-	const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+	const COLORS = ["#808080", "#808080", "#808080", "#808080"];
 
 	const numberOfUnreadTasks = 2;
 
