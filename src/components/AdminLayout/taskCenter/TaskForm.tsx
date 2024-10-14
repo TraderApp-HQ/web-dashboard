@@ -352,7 +352,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				labelClassName="text-textColor"
 				placeholder="0"
 				value={formData.points?.toString() || ""} // converts value back to string
-				onChange={(value) => updateFormData("points", +value)} //converts value back to number before saving it
+				onChange={(value) => updateFormData("points", Number(value))} //converts value back to number before saving it
 				inputError={formInputError?.points}
 			/>
 			<InputField

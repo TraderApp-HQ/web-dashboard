@@ -2,16 +2,21 @@ import { useEffect, useState } from "react";
 import ProfileDropdown from "../ProfileDropdown";
 import NotificationsDropdown from "../NotificationsDropdown";
 import Link from "next/link";
-import { LAYOUT_ROUTES } from "~/config/constants";
+import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import RightArrowIcon from "~/components/icons/RightArrowIcon";
 import { UserRole } from "~/apis/handlers/users/enums";
 import { UsersService } from "~/apis/handlers/users";
+import { useRouter } from "next/router";
+import IconButton from "../IconButton";
+import LeftArrowIcon from "~/components/icons/LeftArrowIcon";
 
 interface ITopHeaderProps {
 	clientApp?: "USER_DASHBOARD" | "ADMIN_DASHBOARD";
 }
 const TopHeader: React.FC<ITopHeaderProps> = ({ clientApp }) => {
 	const [isAdmin, setIsAdmin] = useState<boolean>(false);
+	const router = useRouter();
+	const currentRoute = router.pathname;
 
 	useEffect(() => {
 		const usersService = new UsersService();
@@ -46,6 +51,16 @@ const TopHeader: React.FC<ITopHeaderProps> = ({ clientApp }) => {
 						</div>
 					</div>
 				)}
+				{!isAdmin &&
+					currentRoute === `${LAYOUT_ROUTES.account}${ROUTES.taskcenter.home}` && (
+						<IconButton
+							onClick={() => router.push(`${ROUTES.dashboard.backButton}`)}
+							btnClass="gap-2"
+						>
+							<LeftArrowIcon />
+							Back
+						</IconButton>
+					)}
 			</div>
 			<div className="flex items-center space-x-4">
 				<NotificationsDropdown />

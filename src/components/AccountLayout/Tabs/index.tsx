@@ -1,15 +1,25 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import clsx from "clsx";
-import React from "react";
+import React, { MouseEvent } from "react";
 
 interface TabProps {
 	href?: string;
 	title: string;
+	query?: string;
 	isActive: boolean;
 }
 
-function Tab({ href, title, isActive }: TabProps) {
+function Tab({ href, title, query, isActive }: TabProps) {
+	const router = useRouter();
+
+	const handleQueryParam = (e: MouseEvent<HTMLAnchorElement>) => {
+		if (query) {
+			e.preventDefault();
+			router.push({ query: { task: query } }, undefined, { shallow: true });
+		}
+	};
+
 	return (
 		<Link
 			href={`${href}`}
@@ -18,6 +28,7 @@ function Tab({ href, title, isActive }: TabProps) {
 				`${isActive ? "border-b-2 border-blue-800 text-blue-800" : "text-zinc-500"}`,
 			)}
 			aria-label={title}
+			onClick={query ? handleQueryParam : undefined}
 		>
 			<div className="whitespace-nowrap px-2">{title}</div>
 		</Link>
@@ -25,7 +36,7 @@ function Tab({ href, title, isActive }: TabProps) {
 }
 
 interface PageTabProps {
-	tabs: { title: string; href: string }[];
+	tabs: { title: string; href: string; query?: string }[];
 }
 
 const PageTab: React.FC<PageTabProps> = ({ tabs }) => {
@@ -38,7 +49,12 @@ const PageTab: React.FC<PageTabProps> = ({ tabs }) => {
 						key={index}
 						title={tab.title}
 						href={tab.href}
-						isActive={router.asPath.endsWith(tab.href)}
+						query={tab.query}
+						isActive={
+							tab.query
+								? tab.query === router.query.task
+								: router.asPath.endsWith(tab.href)
+						}
 					/>
 				))}
 			</div>

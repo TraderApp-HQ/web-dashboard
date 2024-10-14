@@ -15,7 +15,7 @@ import IconButton from "~/components/AccountLayout/IconButton";
 import DepositIcon from "~/components/icons/DepositIcon";
 import { useRouter } from "next/router";
 import WithdrawIcon from "~/components/icons/WithdrawIcon";
-import { ROUTES } from "~/config/constants";
+import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { useFetch } from "~/hooks/useFetch";
 import { UsersService } from "~/apis/handlers/users";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
@@ -163,7 +163,15 @@ const Dashbaord = () => {
 						</div>
 						<p className="text-base font-normal -mt-1">Tasks</p>
 					</div>
-					<div className="-mt-4 bg-[#F3F5F6] w-[40%] md:w-[20%] h-[49px] flex justify-center items-center rounded cursor-pointer">
+					<div
+						onClick={() =>
+							router.push({
+								pathname: `${LAYOUT_ROUTES.account}${ROUTES.taskcenter.home}`,
+								query: { task: "all" },
+							})
+						}
+						className="-mt-4 bg-[#F3F5F6] w-[40%] md:w-[20%] h-[49px] flex justify-center items-center rounded cursor-pointer"
+					>
 						View Tasks
 					</div>
 				</div>
