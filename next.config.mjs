@@ -21,6 +21,18 @@ const nextConfig = {
 				port: "",
 				pathname: "/**",
 			},
+			{
+				protocol: "https",
+				hostname: "aws-s3-dev-assets-service.s3.eu-west-1.amazonaws.com",
+				port: "",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "aws-s3-dev-users-service.s3.eu-west-1.amazonaws.com",
+				port: "",
+				pathname: "/**",
+			},
 		],
 	},
 };
