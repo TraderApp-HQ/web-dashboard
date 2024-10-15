@@ -135,6 +135,7 @@ export interface IDisplayItem {
 	itemSubText?: { text: string; style?: string };
 	itemImage?: string;
 	styles?: string;
+	isAssetItem?: boolean;
 }
 export type Asset = AssetItem | null;
 

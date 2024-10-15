@@ -42,7 +42,7 @@ const DataTable: React.FC<IDataTable> = ({
 					{tHead.map((th, index) => (
 						<th
 							key={index}
-							className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles} ${th.styles}`}
+							className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles} ${th.styles} ${th.isAssetItem ? "" : ""}`}
 						>
 							{th.displayItem}
 						</th>
@@ -59,7 +59,7 @@ const DataTable: React.FC<IDataTable> = ({
 			<tbody>
 				{tBody.tBodyRows.map((tr, index) => (
 					<tr key={index}>
-						{tr.tBodyColumns.map((tc) => (
+						{tr.tBodyColumns.map((tc, index) => (
 							<td
 								key={index}
 								className={`py-5 border-b text-sm border-slate-200 text-zinc-600 font-normal leading-none whitespace-nowrap ${tableRowItemStyles} ${

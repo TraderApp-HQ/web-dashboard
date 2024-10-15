@@ -156,3 +156,46 @@ export interface iInviteCodeProps {
 	title: string;
 	subtext: string;
 }
+
+export interface ITaskPlatforms {
+	_id: string;
+	name: string;
+	logoUrl: string;
+	isActive: boolean;
+	supportedActions: string[];
+	categories: string[];
+}
+
+export interface ITask {
+	id: string;
+	title: string;
+	description: string;
+	objective?: string;
+	taskType: string;
+	category: string;
+	platformId?: string;
+	platformName?: string;
+	link?: string;
+	expectedActions?: string[];
+	points: number;
+	startDate?: Date;
+	dueDate?: Date;
+	status: string;
+}
+
+export interface ITaskWithPopulate {
+	id: string;
+	title: string;
+	description: string;
+	objective?: string;
+	taskType: string;
+	category: string;
+	platformId?: ITaskPlatforms;
+	platformName?: string;
+	link?: string;
+	expectedActions?: string[];
+	points: number;
+	startDate?: Date;
+	dueDate?: Date;
+	status: string;
+}
