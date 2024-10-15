@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { getAsset } from "~/lib/utils";
-import data from "../../../data.json";
+import data from "~/pages/account/signals/data.json";
 import type { Signal } from "~/lib/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import AssetBreakdown from "..";
+import AssetBreakdown from "~/pages/account/signals/active/[id]";
 
 const LiveChart = () => {
 	const router = useRouter();

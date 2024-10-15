@@ -1,13 +1,13 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useSignalHistory } from "~/apis/handlers/assets/hooks";
-import SignalsHistory from "./SignalsHistory";
+import SignalsHistory from "~/components/AdminLayout/Signal/SignalsHistory";
 import {
 	signalsHistoryDataTableMobileSelector,
 	signalsHistoryDataTableSelector,
 } from "~/selectors/signals";
 import { format } from "date-fns";
-import { signalData } from "./SignalData";
+import { signalData } from "~/components/AdminLayout/Signal/SignalData";
 
 // Mock the useSignalHistory hook
 jest.mock("~/apis/handlers/assets/hooks");
@@ -105,13 +105,9 @@ describe("SignalsHistory Component", () => {
 		await waitFor(() => {
 			signalData.forEach((signal) => {
 				expect(tableData).toHaveTextContent(signal.asset.name);
-				expect(tableData).toHaveTextContent(signal.risk);
-				expect(tableData).toHaveTextContent(
-					format(signal.createdAt as string, "do MMMM yyyy"),
-				);
-				expect(tableData).toHaveTextContent(
-					format(signal.endedAt as string, "do MMMM yyyy"),
-				);
+				expect(tableData).toHaveTextContent(signal.maxGain.toString());
+				expect(tableData).toHaveTextContent(format(signal.createdAt, "dd MMM h:mm a"));
+				expect(tableData).toHaveTextContent(format(signal.endedAt, "dd MMM h:mm a"));
 			});
 		});
 	});

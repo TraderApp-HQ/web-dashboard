@@ -6,7 +6,10 @@ import Polygon from "../Polygon";
  */
 const SignalBreakDownLoader: React.FC = () => {
 	return (
-		<div className="flex flex-col gap-5 py-[26px] px-[38px] rounded-lg bg-white">
+		<div
+			data-testid="signal-breakdown-loader"
+			className="flex flex-col gap-5 py-[26px] px-[38px] rounded-lg bg-white"
+		>
 			<div className="w-full ">
 				<Polygon
 					size="xl"

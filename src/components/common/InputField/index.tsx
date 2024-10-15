@@ -5,7 +5,7 @@ export type IInputFieldProps = {
 	value?: string;
 	onChange?: (value: string) => void;
 	pattern?: string;
-	type: "text" | "password" | "email" | "number" | "radio";
+	type: "text" | "password" | "email" | "number" | "radio" | "datetime-local";
 	placeholder?: string;
 	labelText?: string;
 	labelClassName?: string;
@@ -16,6 +16,7 @@ export type IInputFieldProps = {
 		HTMLInputElement
 	> & {};
 	onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+	inputError?: string;
 };
 
 const InputField: React.FC<IInputFieldProps> = ({
@@ -30,6 +31,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 	className,
 	icon,
 	onKeyDown,
+	inputError,
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
 	const inputType = type === "password" && showPassword ? "text" : type;
@@ -55,6 +57,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 					onChange={(e) => {
 						if (onChange) onChange(e.target.value);
 					}}
+					data-testid={labelText?.split(" ")[0]}
 					pattern={pattern}
 					type={inputType}
 					placeholder={placeholder}
@@ -79,6 +82,9 @@ const InputField: React.FC<IInputFieldProps> = ({
 					</div>
 				)}
 			</div>
+			{inputError && (
+				<p className="pl-2 font-normal text-red-600 text-[12px]">{inputError}</p>
+			)}
 		</div>
 	);
 };
