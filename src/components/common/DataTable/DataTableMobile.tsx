@@ -5,6 +5,7 @@ import TableMenuDropdown from "./TableMenuDropdown";
 import { format, isValid } from "date-fns";
 
 function isDate(dateStr: string) {
+	if (dateStr.length <= 2) return false;
 	const date = new Date(dateStr);
 	return date instanceof Date && isValid(date);
 }
@@ -40,7 +41,6 @@ const DataTableMobile: FC<IDataTableMobile> = ({ data, hasActions }) => {
 								{tb.displayItemTitle}
 							</div>
 							<div className="mr-4 text-base text-[#0C394B] font-semibold w-[60%] text-right">
-								{/* {tb.displayItemValue} */}
 								{isDate(tb.displayItemValue as string)
 									? format(tb.displayItemValue as string, "do MMMM yyyy")
 									: tb.displayItemValue}

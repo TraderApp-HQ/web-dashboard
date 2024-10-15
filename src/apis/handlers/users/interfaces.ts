@@ -150,3 +150,9 @@ export interface IReferrals {
 	level: number;
 	createdAt: Date;
 }
+
+export interface iInviteCodeProps {
+	code: string;
+	title: string;
+	subtext: string;
+}

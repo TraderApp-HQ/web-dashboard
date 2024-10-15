@@ -5,6 +5,7 @@ import TableMenuItems from "./TableMenuitems";
 import { format, isValid } from "date-fns";
 
 function isDate(dateStr: string) {
+	if (typeof dateStr === "number") return false;
 	const date = new Date(dateStr);
 	return date instanceof Date && isValid(date);
 }

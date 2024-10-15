@@ -3,19 +3,22 @@ import { NestedReferralsLayout } from "..";
 import { FaUsers } from "react-icons/fa";
 import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import SearchForm from "~/components/AccountLayout/SearchForm";
-import ReferalCommunityCard from "~/components/Cards/ReferalCommunityCard";
-import { DataTable } from "~/components/common/DataTable";
+import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import ConnectionsIcons from "~/components/icons/ConnectionsIcons";
 import CurrencySymbolsIcon from "~/components/icons/CurrencySymbolsIcon";
 import DropdownIcon from "~/components/icons/DropdownIcon";
 import Pagination from "~/components/Pagination";
 import { useCallback, useEffect, useState } from "react";
-import { communityUsersDataTableSelector } from "~/selectors/referrals";
+import {
+	communityUsersDataTableSelector,
+	communityUsersMobileDataTableSelector,
+} from "~/selectors/referrals";
 import { UsersService } from "~/apis/handlers/users";
 import { IReferralCommunityStats } from "~/apis/handlers/users/interfaces";
 import ReferralCommunityCardLoader from "~/components/Loaders/ReferralCommunityCardLoader";
 import useReferrals from "~/hooks/useReferrals";
 import EmptyReferral from "~/components/AccountLayout/Referrals/EmptyReferral";
+import ReferalCard from "~/components/Cards/ReferalCard";
 
 const ReferralsCommunity = () => {
 	const router = useRouter();
@@ -81,23 +84,24 @@ const ReferralsCommunity = () => {
 
 	const referrals = isSuccess ? data.referrals : [];
 	const { tableHead, tableBody } = communityUsersDataTableSelector(referrals);
+	const mobileData = communityUsersMobileDataTableSelector(referrals);
 
 	return (
 		<div>
 			{!stats && <ReferralCommunityCardLoader />}
 			{stats && (
 				<div className="flex flex-col md:flex-row gap-2">
-					<ReferalCommunityCard
+					<ReferalCard
 						title="Community Members"
 						subtext={`${stats.communityMembers}`}
 						Icon={() => <FaUsers color="#102477" size={"24"} />}
 					/>
-					<ReferalCommunityCard
+					<ReferalCard
 						title="Community ATC"
 						subtext={`$ ${stats.communityMembers}`}
 						Icon={CurrencySymbolsIcon}
 					/>
-					<ReferalCommunityCard
+					<ReferalCard
 						title="Referral Tree Levels"
 						subtext={`${stats.referralTreeLevels}`}
 						Icon={ConnectionsIcons}
@@ -153,6 +157,19 @@ const ReferralsCommunity = () => {
 									tBody={tableBody}
 									hasActions={false}
 								/>
+								<Pagination
+									currentPage={data?.page ?? 1}
+									totalPages={data?.totalPages ?? 0}
+									rowsPerPage={rowsPerPage}
+									totalRecord={data?.totalDocs ?? 0}
+									setRowsPerPage={setRowsPerPage}
+									onNext={() => setCurrentPage((prev) => prev + 1)}
+									onPrev={() => setCurrentPage((prev) => prev - 1)}
+								/>
+							</div>
+
+							<div className="md:hidden p-5 bg-white rounded-2xl relative overflow-x-auto">
+								<DataTableMobile hasActions={false} data={mobileData} />
 								<Pagination
 									currentPage={data?.page ?? 1}
 									totalPages={data?.totalPages ?? 0}
