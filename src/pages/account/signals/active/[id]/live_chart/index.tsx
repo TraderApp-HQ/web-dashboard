@@ -1,24 +1,24 @@
 /* eslint-disable @next/next/no-img-element */
-import { getAsset } from "~/lib/utils";
-import data from "~/pages/account/signals/data.json";
-import type { Signal } from "~/lib/types";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+// import { getAsset } from "~/lib/utils";
+// import data from "~/pages/account/signals/data.json";
+// import type { Signal } from "~/lib/types";
+// import { useRouter } from "next/router";
+// import { useEffect, useState } from "react";
 import AssetBreakdown from "~/pages/account/signals/active/[id]";
 import TradingViewWidget from "~/components/TradingViewWidget";
 
 const LiveChart = () => {
-	const router = useRouter();
-	const id = router.query.id as string;
-	const [asset, setAsset] = useState<Signal | null>(null);
+	// const router = useRouter();
+	// const id = router.query.id as string;
+	// const [asset, setAsset] = useState<Signal | null>(null);
 
-	useEffect(() => {
-		async function fetchData() {
-			const asset: Signal | null = await getAsset("1", data);
-			setAsset(asset);
-		}
-		fetchData();
-	}, [id]);
+	// useEffect(() => {
+	// 	async function fetchData() {
+	// 		const asset: Signal | null = await getAsset("1", data);
+	// 		setAsset(asset);
+	// 	}
+	// 	fetchData();
+	// }, [id]);
 
 	return (
 		<>
