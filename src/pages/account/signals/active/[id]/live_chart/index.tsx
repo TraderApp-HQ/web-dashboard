@@ -5,6 +5,7 @@ import type { Signal } from "~/lib/types";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import AssetBreakdown from "~/pages/account/signals/active/[id]";
+import TradingViewWidget from "~/components/TradingViewWidget";
 
 const LiveChart = () => {
 	const router = useRouter();
@@ -23,7 +24,7 @@ const LiveChart = () => {
 		<>
 			<div className="sm:w-[100%] grid gap-y-8">
 				<div className="flex justify-center rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:rounded-2xl">
-					<img src={asset?.signalImage ?? ""} className="w-full" alt="signal chart" />
+					<TradingViewWidget />
 				</div>
 			</div>
 		</>
