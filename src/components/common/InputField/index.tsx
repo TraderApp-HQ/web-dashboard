@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 
 export type IInputFieldProps = {
-	value?: string;
+	value?: string | Date;
 	onChange?: (value: string) => void;
 	pattern?: string;
-	type: "text" | "password" | "email" | "number" | "radio" | "datetime-local";
+	type: "text" | "password" | "email" | "number" | "radio" | "date";
 	placeholder?: string;
 	labelText?: string;
 	labelClassName?: string;
@@ -17,6 +17,7 @@ export type IInputFieldProps = {
 	> & {};
 	onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 	inputError?: string;
+	disable?: boolean;
 };
 
 const InputField: React.FC<IInputFieldProps> = ({
@@ -32,6 +33,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 	icon,
 	onKeyDown,
 	inputError,
+	disable,
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
 	const inputType = type === "password" && showPassword ? "text" : type;
@@ -53,13 +55,14 @@ const InputField: React.FC<IInputFieldProps> = ({
 			<div className="relative">
 				<input
 					{...props}
-					value={value}
+					value={value?.toLocaleString()}
 					onChange={(e) => {
 						if (onChange) onChange(e.target.value);
 					}}
 					data-testid={labelText?.split(" ")[0]}
 					pattern={pattern}
 					type={inputType}
+					disabled={disable}
 					placeholder={placeholder}
 					onKeyDown={onKeyDown}
 					className={`placeholder-[#808080] w-full text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[16px] pr-[54px] outline-[1px] outline-[#6579CC] invalid:[&:not(:placeholder-shown)]:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px]",

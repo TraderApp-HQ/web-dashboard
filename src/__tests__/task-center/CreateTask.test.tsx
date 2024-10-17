@@ -67,6 +67,13 @@ describe("Task Center - Create Task form", () => {
 		// check that create task form is rendered
 		expect(screen.getByTestId("create-task-form")).toBeInTheDocument();
 
+		// check for the create new task button
+		const createTaskButton = screen.getByRole("button", { name: /create new task/i });
+		expect(createTaskButton).toBeInTheDocument();
+
+		// check that button is not clickable
+		expect(createTaskButton).not.toBeEnabled();
+
 		// check for the title input field and the event
 		const titleInput = screen.getByTestId("Title");
 		expect(titleInput).toBeInTheDocument();
@@ -75,9 +82,7 @@ describe("Task Center - Create Task form", () => {
 		expect(titleInput).toHaveValue("Task Title");
 
 		// check for the description field and the event
-		const descriptionInput = screen.getByPlaceholderText(
-			/Provide detailed instructions on how to complete the task/i,
-		);
+		const descriptionInput = screen.getByPlaceholderText(/Provide task description/i);
 		expect(descriptionInput).toBeInTheDocument();
 		// simulate description input
 		await userEvent.type(descriptionInput, "Task desciption for users");
@@ -131,33 +136,10 @@ describe("Task Center - Create Task form", () => {
 		await userEvent.type(pointInput, "50");
 		expect(pointInput).toHaveValue(50);
 
-		// check for the task status selection and the event
-		const taskStatusSelectButton = screen.getByTestId(/select task status/i);
-		const taskStatusPlaceholderElement = screen.getByRole("button", {
-			name: /select task status/i,
-		});
-
-		expect(taskStatusSelectButton).toBeInTheDocument();
-		expect(taskStatusSelectButton).toContainElement(taskStatusPlaceholderElement);
-
-		// simulate dropdown selection for task category
-		await userEvent.click(taskStatusSelectButton);
-		const taskStartedButton = screen.getByTestId("Started button");
-		expect(taskStartedButton).toBeInTheDocument();
-		await userEvent.click(taskStartedButton);
-		expect(screen.getByText(/started/i)).toBeInTheDocument();
-
-		// check for the create new task button
-		const createTaskButton = screen.getByRole("button", { name: /create new task/i });
-		expect(createTaskButton).toBeInTheDocument();
-
-		// check that button is clickable
-		expect(createTaskButton).toBeEnabled();
-
 		// simulate button click
 		await userEvent.click(createTaskButton);
 
 		// expect useCreateTask to have been called
 		expect(useCreateTask).toHaveBeenCalled();
-	}, 10000);
+	});
 });

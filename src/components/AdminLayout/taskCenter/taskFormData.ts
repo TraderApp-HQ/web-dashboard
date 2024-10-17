@@ -57,11 +57,6 @@ interface ITaskType {
 	value: TaskType;
 }
 
-interface ITaskStatus {
-	displayText: string;
-	value: TaskStatus;
-}
-
 export interface ITaskForm {
 	onClose: () => void;
 	isLoading: boolean;
@@ -76,7 +71,7 @@ export interface IUpdateTaskFormProps {
 }
 
 export interface ICreateTaskFormData {
-	_id?: string;
+	id?: string;
 	title: string;
 	description: string;
 	objective?: string;
@@ -89,21 +84,12 @@ export interface ICreateTaskFormData {
 	points: number;
 	startDate?: Date;
 	dueDate?: Date;
-	status: TaskStatus;
+	status?: TaskStatus;
 }
 
 export interface ITaskFormError {
-	title: string;
-	description: string;
-	taskType: string;
-	category: string;
-	expectedActions?: string[];
-	platform?: string;
-	link?: string;
-	points: string;
 	startDate?: string;
 	dueDate?: string;
-	status: string;
 }
 
 export const taskCategory: ITaskCategory[] = [
@@ -152,20 +138,5 @@ export const taskType: ITaskType[] = [
 	{
 		displayText: "Time Based",
 		value: TaskType.TIME_BASED,
-	},
-];
-
-export const taskStatus: ITaskStatus[] = [
-	{
-		displayText: "Not Started",
-		value: TaskStatus.NOT_STARTED,
-	},
-	{
-		displayText: "Started",
-		value: TaskStatus.STARTED,
-	},
-	{
-		displayText: "Completed",
-		value: TaskStatus.COMPLETED,
 	},
 ];

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Button from "~/components/common/Button";
 import Checkbox from "~/components/common/CheckBox";
 import InputField from "~/components/common/InputField";
@@ -13,20 +13,26 @@ import {
 	Platform,
 	PlatformActions,
 	taskCategory,
-	taskStatus,
+	TaskStatus,
+	TaskType,
 	taskType,
 } from "./taskFormData";
 
 const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) => {
-	const initialFormData = task ? task : {};
-	const [formData, setFormData] = useState<ICreateTaskFormData>(
-		initialFormData as ICreateTaskFormData,
-	);
+	const [formData, setFormData] = useState<ICreateTaskFormData>({} as ICreateTaskFormData);
 	const [formInputError, setFormInputError] = useState<ITaskFormError>({} as ITaskFormError);
+	const [validFormData, setValidFormData] = useState<boolean>(false);
 	const [taskSubmittionError, setTaskSubmittionError] = useState<boolean>(false);
 
+	// on Edit, sets formData to existing task details
+	useEffect(() => {
+		if (task) {
+			setFormData(task);
+		}
+	}, [task]);
+
 	// Function for creating new task
-	const { createTask, error, isError, isPending } = useCreateTask();
+	const { createTask, error, isError, isPending, isSuccess, successMessage } = useCreateTask();
 
 	// Function for updating a task
 	const {
@@ -34,7 +40,25 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 		error: updateError,
 		isError: isUpdateError,
 		isPending: isUpdatePending,
+		isSuccess: isUpdateSuccess,
+		updateMessage,
 	} = useUpdateTask();
+
+	const taskSuccess = useMemo(() => {
+		const status = isSuccess || isUpdateSuccess;
+		const message = successMessage || updateMessage;
+
+		return { status, message };
+	}, [isSuccess, isUpdateSuccess]);
+
+	const taskError = useMemo(() => {
+		const status = isError || isUpdateError;
+		const message = error?.message || updateError?.message;
+
+		return { status, message };
+	}, [isError, isUpdateError]);
+
+	const taskStatus = useMemo(() => isPending || isUpdatePending, [isPending, isUpdatePending]);
 
 	// Function to dynamically render task platforms based on selected category
 	const platformOptions = useMemo(() => {
@@ -114,20 +138,46 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 		});
 	};
 
-	// Function to format the Date object
-	const formatDateForInput = (date: Date): string => {
-		const newDate = new Date(date);
-		const yyyy = newDate?.getFullYear();
-		const mm = String(newDate?.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-		const dd = String(newDate?.getDate()).padStart(2, "0");
-		const hh = String(newDate?.getHours()).padStart(2, "0");
-		const min = String(newDate?.getMinutes()).padStart(2, "0");
+	// Form input validation function
+	useEffect(() => {
+		const {
+			title,
+			description,
+			taskType,
+			category,
+			platformId,
+			platformName,
+			link,
+			expectedActions,
+			points,
+			startDate,
+			dueDate,
+		} = formData;
 
-		return `${yyyy}-${mm}-${dd}T${hh}:${min}`; // Format for datetime-local input
-	};
+		if (
+			!title ||
+			title?.length < 5 ||
+			!description ||
+			description?.length < 5 ||
+			!taskType ||
+			!category ||
+			(platformId && !link) ||
+			(category && !platformName) ||
+			(platformId && !expectedActions) ||
+			(expectedActions && expectedActions.length < 1) ||
+			!points ||
+			points <= 0 ||
+			(taskType && taskType === TaskType.TIME_BASED && (!startDate || !dueDate)) ||
+			(startDate && dueDate && dueDate.toLocaleString() <= startDate.toLocaleString())
+		) {
+			setValidFormData(false);
+		} else {
+			setValidFormData(true);
+		}
+	}, [formData]);
 
 	// Handler for form submittion
-	const submitTask = () => {
+	const submitTask = async () => {
 		setFormInputError({} as ITaskFormError);
 		try {
 			// Extract form values
@@ -144,63 +194,24 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				points,
 				startDate,
 				dueDate,
-				status,
 			} = formData;
-			const taskId = formData?._id;
+			const taskId = formData?.id;
 
 			// Track validation status
 			let hasError = false;
 
 			// Form input validation
-			if (!title || title?.length < 5) {
-				handleFormError("title", "Title cannot be less than 5 characters.");
-				hasError = true;
-			}
-			if (!description || description?.length < 5) {
-				handleFormError("description", "Description cannot be less than 5 characters.");
-				hasError = true;
-			}
-			if (!taskType) {
-				handleFormError("taskType", "Select a task type.");
-				hasError = true;
-			}
-			if (!category) {
-				handleFormError("category", "Select a task category.");
-				hasError = true;
-			}
-			if (platformId && !link) {
-				handleFormError("link", "Please provide a link to task.");
-				hasError = true;
-			}
-			if (category && !platformName) {
-				handleFormError("platform", "Select a task platform.");
-				hasError = true;
-			}
-			if (
-				(platformId && !expectedActions) ||
-				(expectedActions && expectedActions.length < 1)
-			) {
-				handleFormError("expectedActions", "No action selected.");
-				hasError = true;
-			}
-			if (platformId && !link) {
-				handleFormError("link", "No link provided.");
-				hasError = true;
-			}
-			if (!points || points <= 0) {
-				handleFormError("points", "Points value must be greater than zero(0)");
-				hasError = true;
-			}
-			if (!status) {
-				handleFormError("status", "Project status is not selected.");
-				hasError = true;
-			}
-			if (startDate && startDate < new Date()) {
+			const currentDate = new Date();
+			currentDate.setHours(0, 0, 0, 0); // resets the time to 00:00:00
+			if (startDate && new Date(startDate) < currentDate) {
 				handleFormError("startDate", "Start date cannot be in the past.");
 				hasError = true;
 			}
 
-			if ((startDate && !dueDate) || (startDate && dueDate && dueDate <= startDate)) {
+			if (
+				(startDate && !dueDate) ||
+				(startDate && dueDate && new Date(dueDate) <= new Date(startDate))
+			) {
 				handleFormError("dueDate", "Due date must be later than the start date.");
 				hasError = true;
 			}
@@ -222,11 +233,10 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				points,
 				startDate,
 				dueDate,
-				status,
 			};
 
 			// Function consitionally calls either create task or update task
-			!taskId ? createTask(data) : updateTask({ taskId, data });
+			!taskId ? await createTask(data) : await updateTask({ taskId, data });
 
 			// Reset form if request is successful
 			setFormData({} as ICreateTaskFormData);
@@ -239,30 +249,28 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 	};
 
 	return (
-		<form data-testid="create-task-form" className="my-4 space-y-5">
+		<form data-testid="create-task-form" className="my-4 space-y-5 px-2">
 			<InputField
 				labelText="Title"
 				type="text"
 				labelClassName="text-textColor"
-				placeholder="Create new post on:"
+				placeholder="Create new post"
 				value={formData?.title || ""}
 				onChange={(value) => updateFormData("title", value)}
-				inputError={formInputError?.title}
 			/>
 
 			<TextArea
 				label="Task Description"
-				placeholder="Provide detailed instructions on how to complete the task, including any specific steps the user must follow (e.g., 'Post a screenshot of your TraderApp portfolio on your Instagram story and tag  @TraderAppOfficial')"
+				placeholder="Provide task description"
 				value={formData?.description || ""}
 				onChange={(value) => updateFormData("description", value)}
-				inputError={formInputError?.description}
 			/>
 
 			<InputField
 				labelText="Objective(Optional)"
 				type="text"
 				labelClassName="text-textColor"
-				placeholder="Social Media Engagement: Requires users to interact with TraderApp's content on social media platforms"
+				placeholder="Provide task objectives"
 				value={formData?.objective || ""}
 				onChange={(value) => updateFormData("objective", value)}
 			/>
@@ -274,7 +282,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				option={taskType.find((type) => type.value === formData?.taskType)}
 				isSearchable={false}
 				setOption={({ value }) => updateFormData("taskType", value)}
-				inputError={formInputError?.taskType}
 			/>
 
 			<SelectBox
@@ -284,7 +291,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				option={taskCategory.find((category) => category.value === formData?.category)}
 				isSearchable={true}
 				setOption={({ value }) => updateFormData("category", value)}
-				inputError={formInputError?.category}
 			/>
 
 			{/* Renders when category is selected and platforms data is available */}
@@ -299,7 +305,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 								(platform) => platform.value === formData?.platformName,
 							)}
 							setOption={({ value }) => updateFormData("platformName", value)}
-							inputError={formInputError?.platform}
 						/>
 					)}
 
@@ -312,18 +317,12 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 								placeholder="www.example.com"
 								value={formData?.link ?? ""}
 								onChange={(value) => updateFormData("link", value)}
-								inputError={formInputError?.link}
 							/>
 
 							<section>
 								<p className="text-sm font-normal text-textColor flex">
 									Expected Actions
 								</p>
-								{formInputError.expectedActions && (
-									<p className="pl-2 font-normal text-red-600 text-[12px]">
-										{formInputError.expectedActions}
-									</p>
-								)}
 
 								{supportedActionList?.map((action, index) => (
 									<Checkbox
@@ -350,77 +349,102 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				labelText="Points"
 				type="number"
 				labelClassName="text-textColor"
+				className="!pr-4 disabled:cursor-not-allowed"
+				disable={formData.status && formData.status === TaskStatus.STARTED}
 				placeholder="0"
 				value={formData.points?.toString() || ""} // converts value back to string
 				onChange={(value) => updateFormData("points", +value)} //converts value back to number before saving it
-				inputError={formInputError?.points}
 			/>
-			<InputField
-				labelText="Start Date"
-				type="datetime-local"
-				labelClassName="text-textColor"
-				value={formData.startDate && formatDateForInput(formData.startDate)}
-				onChange={(value) => {
-					const currentDate = new Date();
-					const startDate = new Date(value);
+			{formData.taskType && formData.taskType === `${TaskType.TIME_BASED}` && (
+				<>
+					<InputField
+						labelText="Start Date"
+						type="date"
+						labelClassName="text-textColor"
+						className="!pr-4 disabled:cursor-not-allowed"
+						value={
+							formData.startDate &&
+							new Date(formData.startDate).toLocaleDateString("en-CA")
+						}
+						disable={formData.status && formData.status === TaskStatus.STARTED}
+						onChange={(value) => {
+							const currentDate = new Date();
+							currentDate.setHours(0, 0, 0, 0); // resets the time to 00:00:00
+							const startDate = new Date(value);
 
-					if (startDate < currentDate) {
-						handleFormError("startDate", "Start date cannot be in the past.");
-						return;
-					}
-					handleFormError("startDate", "");
-					updateFormData("startDate", startDate);
-				}}
-				inputError={formInputError?.startDate}
-			/>
-			<InputField
-				labelText="Due Date"
-				type="datetime-local"
-				labelClassName="text-textColor"
-				value={formData.dueDate && formatDateForInput(formData.dueDate)}
-				onChange={(value) => {
-					const dueDate = new Date(value);
-					if (formData.startDate && dueDate <= formData.startDate!) {
-						handleFormError("dueDate", "Due date must be later than the start date.");
-						return;
-					}
-					handleFormError("dueDate", "");
-					updateFormData("dueDate", dueDate);
-				}}
-				inputError={formInputError.dueDate}
-			/>
-
-			<SelectBox
-				labelText="Task Status"
-				placeholder="Select Task Status"
-				options={taskStatus}
-				option={taskStatus.find((status) => status.value === formData?.status)}
-				isSearchable={false}
-				setOption={({ value }) => updateFormData("status", value)}
-				inputError={formInputError?.status}
-			/>
+							if (startDate < currentDate) {
+								handleFormError("startDate", "Start date cannot be in the past.");
+								updateFormData("startDate", "");
+								return;
+							}
+							handleFormError("startDate", "");
+							updateFormData("startDate", value);
+						}}
+						inputError={formInputError?.startDate}
+					/>
+					<InputField
+						labelText="Due Date"
+						type="date"
+						labelClassName="text-textColor"
+						className="!pr-4"
+						value={
+							formData.dueDate &&
+							new Date(formData.dueDate).toLocaleDateString("en-CA")
+						}
+						onChange={(value) => {
+							const dueDate = new Date(value);
+							if (formData.startDate && dueDate <= new Date(formData.startDate!)) {
+								handleFormError(
+									"dueDate",
+									"Due date must be later than the start date.",
+								);
+								updateFormData("dueDate", "");
+								return;
+							}
+							handleFormError("dueDate", "");
+							updateFormData("dueDate", value);
+						}}
+						inputError={formInputError.dueDate}
+					/>
+				</>
+			)}
 
 			<Button
-				labelText={formData?._id ? "update task" : "create new task"}
+				labelText={
+					taskStatus
+						? "processing . . ."
+						: formData?.id
+							? "update task"
+							: "create new task"
+				}
 				onClick={submitTask}
-				className="capitalize px-10 mt-6 text-sm font-bold w-full"
-				disabled={isPending || isUpdatePending}
+				className="capitalize py-4 mt-6 text-sm font-bold w-full disabled:cursor-not-allowed"
+				disabled={!validFormData || taskStatus}
 			/>
-			{(taskSubmittionError || isError || isUpdateError) && (
+
+			{!taskStatus && (taskSubmittionError || taskError.status) && (
 				<Toast
 					type="error"
 					variant="filled"
 					title="Error"
 					message={
-						isError
-							? error?.message
-							: isUpdateError
-								? updateError?.message
-								: "Error creating task, check form body for error messsage."
+						taskError.message ||
+						"Error creating task, check form body for error messsage."
 					}
 					autoVanish={true}
 					autoVanishTimeout={10}
 					onToastClose={() => setTaskSubmittionError(false)}
+				/>
+			)}
+
+			{!taskStatus && taskSuccess.status && (
+				<Toast
+					type="success"
+					variant="filled"
+					title="Success"
+					message={taskSuccess.message}
+					autoVanish={true}
+					autoVanishTimeout={10}
 				/>
 			)}
 		</form>

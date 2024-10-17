@@ -8,7 +8,6 @@ interface TextAreaProps {
 	rows?: number;
 	cols?: number;
 	className?: string;
-	inputError?: string;
 }
 
 const TextArea: React.FC<TextAreaProps> = ({
@@ -19,7 +18,6 @@ const TextArea: React.FC<TextAreaProps> = ({
 	rows = 4,
 	cols = 50,
 	className,
-	inputError,
 }) => {
 	return (
 		<div className={`flex flex-col ${className}`}>
@@ -32,9 +30,6 @@ const TextArea: React.FC<TextAreaProps> = ({
 				cols={cols}
 				className="placeholder-[#808080] w-full text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[16px] pr-[54px] outline-[1px] outline-[#6579CC] invalid:[&:not(:placeholder-shown)]:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] resize-none"
 			/>
-			{inputError && (
-				<p className="pl-2 font-normal text-red-600 text-[12px]">{inputError}</p>
-			)}
 		</div>
 	);
 };

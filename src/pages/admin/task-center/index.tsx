@@ -6,6 +6,7 @@ import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFor
 import Button from "~/components/common/Button";
 import { DataTable } from "~/components/common/DataTable";
 import DropdownIcon from "~/components/icons/DropdownIcon";
+import TableLoader from "~/components/Loaders/TableLoader";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { useGetAllTasks } from "~/hooks/useTask";
 import { taskCenterTableSelector } from "~/selectors/task-center";
@@ -18,7 +19,20 @@ const TaskCenter = () => {
 
 	return (
 		<section className="">
-			<h1 className="mb-8 text-xl font-bold leading-loose">Task Center</h1>
+			<section className="flex items-center justify-between">
+				<h1 className="mb-8 text-2xl font-bold leading-loose">Task Center</h1>
+				{tasks && tasks.length >= 1 && (
+					<Button
+						labelText="create new task"
+						onClick={() =>
+							router.push(
+								`${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}${ROUTES.taskcenter.create}`,
+							)
+						}
+						className="capitalize px-10 mb-6 text-sm font-bold"
+					/>
+				)}
+			</section>
 
 			<section className="flex flex-row items-center -mt-6">
 				<SearchForm
@@ -46,21 +60,12 @@ const TaskCenter = () => {
 			</section>
 
 			{isLoading ? (
-				<section>Fetching tasks...</section>
+				<TableLoader />
 			) : !isLoading && isError && !tasks ? (
-				<section>{`An Error occured: ${error?.message}`}</section>
+				<section className="bg-white text-red-400 flex items-center justify-center rounded-md mt-6">{`An Error occured: ${error?.message}`}</section>
 			) : !isLoading && tasks && tasks?.length >= 1 ? (
 				<>
-					<Button
-						labelText="create new task"
-						onClick={() =>
-							router.push(
-								`${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}${ROUTES.taskcenter.create}`,
-							)
-						}
-						className="capitalize px-10 mb-6 text-sm font-bold"
-					/>
-					<section className="overflow-x-auto bg-white rounded-xl px-2">
+					<section className="overflow-x-auto bg-white rounded-xl px-5">
 						<DataTable
 							tableStyles="mb-4"
 							justifyMenueItem="justify-normal"
