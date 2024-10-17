@@ -1,7 +1,7 @@
 import Line from "../Line";
 import Polygon from "../Polygon";
 
-function ReferralCommunityCardLoader() {
+const ReferralCommunityCardLoader: React.FC = () => {
 	return (
 		<div className="flex flex-col md:flex-row gap-7 md:gap-[108px] py-[26px] md:py-[30px] px-[38px] md:px[42px] border rounded-lg w-full md:w-[90%] xl:w-[55%] bg-white">
 			<div className="w-[80%] md:w-full">
@@ -18,5 +18,5 @@ function ReferralCommunityCardLoader() {
 			</div>
 		</div>
 	);
-}
+};
 export default ReferralCommunityCardLoader;

@@ -145,13 +145,13 @@ export interface IReferralCommunityStats {
 }
 
 export interface IReferrals {
-	user: IUserProfile;
-	parent: IUserProfile;
+	userId: IUserProfile;
+	parentId: IUserProfile;
 	level: number;
 	createdAt: Date;
 }
 
-export interface iInviteCodeProps {
+export interface IInviteCodeProps {
 	code: string;
 	title: string;
 	subtext: string;

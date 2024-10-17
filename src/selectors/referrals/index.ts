@@ -2,17 +2,18 @@ import { IReferrals } from "~/apis/handlers/users/interfaces";
 import { ITableMobile, ITBody } from "~/components/common/DataTable/config";
 import { renderDisplayItem, renderStatus } from "~/helpers";
 import { UsersCommunityHeadItems } from "./constants";
+import { format } from "date-fns";
 
 export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 	const tableHead = [...UsersCommunityHeadItems];
 	const tableBody: ITBody = {
 		tBodyRows: referrals.map((referral) => ({
 			tBodyColumns: [
-				{ displayItem: `${referral.user.firstName} ${referral.user.lastName}` },
-				{ displayItem: referral.user.email },
+				{ displayItem: `${referral.userId.firstName} ${referral.userId.lastName}` },
+				{ displayItem: referral.userId.email },
 				{ displayItem: referral.level },
-				{ displayItem: renderStatus(referral.user.status, { justify: "justify-start" }) },
-				{ displayItem: referral.user.createdAt },
+				{ displayItem: renderStatus(referral.userId.status, { justify: "justify-start" }) },
+				{ displayItem: format(referral.userId.createdAt, "do MMMM yyyy") },
 			],
 		})),
 	};
@@ -25,10 +26,10 @@ export function communityUsersMobileDataTableSelector(referrals: IReferrals[]) {
 		tHead: {
 			displayItemTitle: renderDisplayItem({
 				itemText: {
-					text: referral.user.firstName + " " + referral.user.lastName,
+					text: referral.userId.firstName + " " + referral.userId.lastName,
 					style: "text-base font-normal",
 				},
-				itemSubText: { text: referral.user.email },
+				itemSubText: { text: referral.userId.email },
 			}),
 			displayItemValue: "",
 		},
@@ -39,11 +40,11 @@ export function communityUsersMobileDataTableSelector(referrals: IReferrals[]) {
 			},
 			{
 				displayItemTitle: "Status",
-				displayItemValue: renderStatus(referral.user.status, { justify: "justify-end" }),
+				displayItemValue: renderStatus(referral.userId.status, { justify: "justify-end" }),
 			},
 			{
 				displayItemTitle: "Registration Date",
-				displayItemValue: referral.user.createdAt,
+				displayItemValue: format(referral.userId.createdAt, "do MMMM yyyy"),
 			},
 		],
 	}));
