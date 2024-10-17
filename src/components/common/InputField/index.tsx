@@ -6,6 +6,7 @@ export type IInputFieldProps = {
 	onChange?: (value: string) => void;
 	pattern?: string;
 	type: "text" | "password" | "email" | "number" | "radio" | "date";
+
 	placeholder?: string;
 	labelText?: string;
 	labelClassName?: string;

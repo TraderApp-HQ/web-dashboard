@@ -67,7 +67,9 @@ export const useCreateTask = () => {
 		},
 	});
 
+
 	return { createTask, isPending, isSuccess, successMessage, isError, error };
+
 };
 
 export const useUpdateTask = () => {
@@ -75,8 +77,10 @@ export const useUpdateTask = () => {
 	const queryClient = useQueryClient();
 
 	const {
+
 		mutateAsync: updateTask,
 		data: updateMessage,
+
 		isError,
 		isPending,
 		error,
@@ -89,5 +93,7 @@ export const useUpdateTask = () => {
 		},
 	});
 
+
 	return { updateTask, isPending, isSuccess, updateMessage, isError, error };
+
 };
