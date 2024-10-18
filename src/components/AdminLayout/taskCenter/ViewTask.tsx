@@ -40,15 +40,18 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 				</section>
 			</section>
 			<section className="bg-textCardBg px-3 rounded-xl space-y-3 bg-[#F9FBFF]">
+
 				<h3 className="text-textBlack text-base font-bold">TaskType</h3>
 				<p className="text-textLight text-base font-normal">{selectedTask?.taskType}</p>
 			</section>
+
 
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3 bg-[#F9FBFF]">
 				<h3 className="text-textBlack text-base font-bold">Description</h3>
 				<p className="text-textLight text-base font-normal">{selectedTask?.description}</p>
 			</section>
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-5  bg-[#F9FBFF]">
+
 				<section className="flex items-center justify-between border-b-[1px] border-[#D1D7F0] pb-2">
 					<h3 className="text-textBlack text-sm font-bold">Point</h3>
 

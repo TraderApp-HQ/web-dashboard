@@ -67,12 +67,14 @@ describe("Task Center - Create Task form", () => {
 		// check that create task form is rendered
 		expect(screen.getByTestId("create-task-form")).toBeInTheDocument();
 
+
 		// check for the create new task button
 		const createTaskButton = screen.getByRole("button", { name: /create new task/i });
 		expect(createTaskButton).toBeInTheDocument();
 
 		// check that button is not clickable
 		expect(createTaskButton).not.toBeEnabled();
+
 
 		// check for the title input field and the event
 		const titleInput = screen.getByTestId("Title");
@@ -82,7 +84,9 @@ describe("Task Center - Create Task form", () => {
 		expect(titleInput).toHaveValue("Task Title");
 
 		// check for the description field and the event
+
 		const descriptionInput = screen.getByPlaceholderText(/Provide task description/i);
+
 		expect(descriptionInput).toBeInTheDocument();
 		// simulate description input
 		await userEvent.type(descriptionInput, "Task desciption for users");
@@ -136,10 +140,12 @@ describe("Task Center - Create Task form", () => {
 		await userEvent.type(pointInput, "50");
 		expect(pointInput).toHaveValue(50);
 
+
 		// simulate button click
 		await userEvent.click(createTaskButton);
 
 		// expect useCreateTask to have been called
 		expect(useCreateTask).toHaveBeenCalled();
 	});
+
 });

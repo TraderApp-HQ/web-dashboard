@@ -24,7 +24,8 @@
 		"react-dropzone": "^14.2.3",
 		"react-icons": "^5.2.1",
 		"react-router-dom": "^6.25.1",
-		"react-use-websocket": "^2.9.1"
+		"react-use-websocket": "^2.9.1",
+		"recharts": "^2.12.7"
 	},
 	"devDependencies": {
 		"@testing-library/jest-dom": "^6.4.8",
