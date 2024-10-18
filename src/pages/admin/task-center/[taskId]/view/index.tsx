@@ -33,7 +33,6 @@ const ViewTaskModal = () => {
 				<section className="bg-white text-red-400 flex items-center justify-center rounded-md mt-6">
 					{error?.message}
 				</section>
-
 			) : (
 				task && <ViewTask selectedTask={task} />
 			)}

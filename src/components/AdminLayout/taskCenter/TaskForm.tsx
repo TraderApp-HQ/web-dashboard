@@ -19,7 +19,6 @@ import {
 } from "./taskFormData";
 
 const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) => {
-
 	const [formData, setFormData] = useState<ICreateTaskFormData>({} as ICreateTaskFormData);
 	const [formInputError, setFormInputError] = useState<ITaskFormError>({} as ITaskFormError);
 	const [validFormData, setValidFormData] = useState<boolean>(false);
@@ -34,7 +33,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 
 	// Function for creating new task
 	const { createTask, error, isError, isPending, isSuccess, successMessage } = useCreateTask();
-
 
 	// Function for updating a task
 	const {
@@ -62,7 +60,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 	}, [isError, isUpdateError]);
 
 	const taskStatus = useMemo(() => isPending || isUpdatePending, [isPending, isUpdatePending]);
-
 
 	// Function to dynamically render task platforms based on selected category
 	const platformOptions = useMemo(() => {
@@ -142,7 +139,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 		});
 	};
 
-
 	// Form input validation function
 	useEffect(() => {
 		const {
@@ -183,7 +179,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 
 	// Handler for form submittion
 	const submitTask = async () => {
-
 		setFormInputError({} as ITaskFormError);
 		try {
 			// Extract form values
@@ -200,10 +195,8 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				points,
 				startDate,
 				dueDate,
-
 			} = formData;
 			const taskId = formData?.id;
-
 
 			// Track validation status
 			let hasError = false;
@@ -221,7 +214,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				(startDate && !dueDate) ||
 				(startDate && dueDate && new Date(dueDate) <= new Date(startDate))
 			) {
-
 				handleFormError("dueDate", "Due date must be later than the start date.");
 				hasError = true;
 			}
@@ -248,7 +240,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 			// Function consitionally calls either create task or update task
 			!taskId ? await createTask(data) : await updateTask({ taskId, data });
 
-
 			// Reset form if request is successful
 			setFormData({} as ICreateTaskFormData);
 
@@ -260,9 +251,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 	};
 
 	return (
-
 		<form data-testid="create-task-form" className="my-4 space-y-5 px-2">
-
 			<InputField
 				labelText="Title"
 				type="text"
@@ -270,7 +259,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				placeholder="Create new post"
 				value={formData?.title || ""}
 				onChange={(value) => updateFormData("title", value)}
-
 			/>
 
 			<TextArea
@@ -278,7 +266,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				placeholder="Provide task description"
 				value={formData?.description || ""}
 				onChange={(value) => updateFormData("description", value)}
-
 			/>
 
 			<InputField
@@ -286,7 +273,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				type="text"
 				labelClassName="text-textColor"
 				placeholder="Provide task objectives"
-
 				value={formData?.objective || ""}
 				onChange={(value) => updateFormData("objective", value)}
 			/>
@@ -439,7 +425,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 			/>
 
 			{!taskStatus && (taskSubmittionError || taskError.status) && (
-
 				<Toast
 					type="error"
 					variant="filled"
@@ -447,7 +432,6 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 					message={
 						taskError.message ||
 						"Error creating task, check form body for error messsage."
-
 					}
 					autoVanish={true}
 					autoVanishTimeout={10}
