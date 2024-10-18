@@ -26,6 +26,7 @@ import Image from "next/image";
 import MessageIcon from "~/components/icons/messageIcon";
 import Chart from "~/components/Portfolio/PieChart";
 import PortfolioSummary from "~/components/Portfolio/PorfolioSummary";
+import NoTransactionIcon from "~/components/icons/NoTransactionIcon";
 
 const Dashbaord = () => {
 	const router = useRouter();
@@ -179,7 +180,7 @@ const Dashbaord = () => {
 					<Link href="./transactions">see more</Link>
 				</span>
 			</div>
-			<Table>
+			{/* <Table>
 				<THead>
 					<THeadData>Currency</THeadData>
 					<THeadData>Transaction</THeadData>
@@ -230,7 +231,16 @@ const Dashbaord = () => {
 						</TBodyRow>
 					))}
 				</TBody>
-			</Table>
+			</Table> */}
+			<Card className="flex flex-col justify-center items-center h-[330px]">
+				<NoTransactionIcon />
+				<div className="text-[#414141] text-center mt-4">
+					<h3 className="font-extrabold text-base">No transaction made yet</h3>
+					<p className="font-normal text-sm ">
+						All your transaction history will appear here
+					</p>
+				</div>
+			</Card>
 		</div>
 	);
 };
