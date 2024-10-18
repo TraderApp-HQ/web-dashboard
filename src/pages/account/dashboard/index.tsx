@@ -1,14 +1,14 @@
 import { useCallback, useState } from "react";
 import Card from "~/components/AccountLayout/Card";
-import Table, {
-	THead,
-	THeadData,
-	TBody,
-	TBodyRow,
-	TBodyData,
-} from "~/components/AccountLayout/Table";
+// import Table, {
+// 	THead,
+// 	THeadData,
+// 	TBody,
+// 	TBodyRow,
+// 	TBodyData,
+// } from "~/components/AccountLayout/Table";
 import HidenBalance from "~/components/Wallet/HidenBalance";
-import DottedIcon from "~/components/icons/DottedIcon";
+// import DottedIcon from "~/components/icons/DottedIcon";
 import EyesIcon from "~/components/icons/EyesIcon";
 import data from "~/data/wallet/data.json";
 import IconButton from "~/components/AccountLayout/IconButton";
@@ -30,7 +30,7 @@ import NoTransactionIcon from "~/components/icons/NoTransactionIcon";
 
 const Dashbaord = () => {
 	const router = useRouter();
-	const transactionsResult = data;
+	// const transactionsResult = data;
 	// const signals = transactionsResult.signals;
 	const [showBalance, handleShowBalance] = useState(true);
 
@@ -41,7 +41,7 @@ const Dashbaord = () => {
 		{ name: "Group D", value: 200 },
 	];
 
-	const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+	const COLORS = ["#808080", "#808080", "#808080", "#808080"];
 
 	const numberOfUnreadTasks = 2;
 
