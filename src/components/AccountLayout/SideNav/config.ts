@@ -7,6 +7,7 @@ import SettingIcon from "~/components/icons/SettingIcon";
 import SignalManagementIcon from "~/components/icons/SignalManagementIcon";
 import SignalsIcon from "~/components/icons/SignalsIcon";
 import SystemManagementIcon from "~/components/icons/SystemManagementIcon";
+import TaskCenterIcon from "~/components/icons/taskCenterIcon";
 import TradeCenterIcon from "~/components/icons/TradeCenterIcon";
 import UserIcon from "~/components/icons/UserIcon";
 import WalletIcon from "~/components/icons/WalletIcon";
@@ -74,6 +75,11 @@ export const AdminNavLinks: SidenavLink[] = [
 		icon: SignalManagementIcon,
 		text: "Signal Management",
 		path: LAYOUT_ROUTES.admin + ROUTES.signalmanagement,
+	},
+	{
+		icon: TaskCenterIcon,
+		text: "Task Center",
+		path: LAYOUT_ROUTES.admin + ROUTES.taskcenter.home,
 	},
 	{
 		icon: SystemManagementIcon,

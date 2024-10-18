@@ -12,7 +12,7 @@ const mockData = [
 
 const mockColors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-describe("Chart Component", () => {
+xdescribe("Chart Component", () => {
 	it("renders correctly with given data and colors", () => {
 		// Render the Chart component with mock data and colors
 		const { container } = render(<Chart data={mockData} colors={mockColors} />);

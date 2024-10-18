@@ -19,6 +19,7 @@ interface ISelectBoxProps {
 	bgColor?: string;
 	isSearchable?: boolean;
 	clear?: boolean | undefined;
+	inputError?: string;
 }
 
 /**
@@ -41,6 +42,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	containerStyle,
 	isSearchable,
 	clear,
+	inputError,
 }: ISelectBoxProps): JSX.Element => {
 	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -115,7 +117,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					data-testid={placeholder}
 				>
 					{clear || !selectedOption ? (
-						<span className="text-[#808080]">{placeholder || "Select option"}</span>
+						<span role="button" className="text-[#808080]">
+							{placeholder || "Select option"}
+						</span>
 					) : (
 						<SelectBoxOption
 							displayText={selectedOption.displayText}
@@ -166,6 +170,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					</div>
 				)}
 			</div>
+			{inputError && (
+				<p className="pl-2 font-normal text-red-600 text-[12px]">{inputError}</p>
+			)}
 		</div>
 	);
 };
