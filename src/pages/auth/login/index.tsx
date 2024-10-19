@@ -9,8 +9,11 @@ import { NotificationChannel, VerificationType } from "~/apis/handlers/users/enu
 import Toast from "~/components/common/Toast";
 import AuthLayout from "../layout";
 import { useSearchParams } from "next/navigation";
+import useUnProtectedRoute from "~/hooks/useUnProtectedRoute";
 
 const Login = () => {
+	const router = useRouter();
+	useUnProtectedRoute({ path: router.pathname });
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordValid, setPasswordValid] = useState(false);
@@ -21,7 +24,6 @@ const Login = () => {
 	const [isQueryParamsSet, setIsQueryParamsSet] = useState(false);
 	const redirectTo = useSearchParams().get("redirect_to");
 
-	const router = useRouter();
 	// const [searchParams, setSearchParams] = useState(new URLSearchParams(router.asPath.split('?')[1]));
 	const usersService = new UsersService();
 

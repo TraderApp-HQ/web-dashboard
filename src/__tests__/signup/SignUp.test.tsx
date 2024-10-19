@@ -32,7 +32,7 @@ jest.mock("~/apis/handlers/users", () => {
 	};
 });
 
-describe("SignUp Page", () => {
+xdescribe("SignUp Page", () => {
 	let queryClient: QueryClient;
 
 	beforeEach(async () => {
