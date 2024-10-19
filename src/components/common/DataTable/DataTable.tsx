@@ -2,12 +2,6 @@ import React from "react";
 import type { ITBody, ITHead } from "./config";
 import TableMenuDropdown from "./TableMenuDropdown";
 import TableMenuItems from "./TableMenuitems";
-// import { format, isValid } from "date-fns";
-
-// function isDate(dateStr: string) {
-// 	const date = new Date(dateStr);
-// 	return date instanceof Date && isValid(date);
-// }
 
 interface IDataTable {
 	tHead: ITHead[];
