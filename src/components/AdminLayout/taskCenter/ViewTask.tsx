@@ -10,11 +10,11 @@ interface IViewTaskProps {
 const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 	return (
 		<section className="space-y-5">
-			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3 bg-[#F9FBFF]">
+			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
 				<h3 className="text-textBlack text-base font-bold">Objective</h3>
 				<p className="text-textLight text-base font-normal">{selectedTask.objective}</p>
 			</section>
-			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3 bg-[#F9FBFF]">
+			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
 				<section className="flex items-center justify-between border-b-[1px] border-[#D1D7F0] pb-2">
 					<h3 className="text-textBlack text-base font-bold">Category</h3>
 					<p className="text-textLight text-base font-semibold capitalize">
@@ -39,22 +39,20 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 					</section>
 				</section>
 			</section>
-			<section className="bg-textCardBg px-3 rounded-xl space-y-3 bg-[#F9FBFF]">
+			<section className="bg-textCardBg px-3 rounded-xl space-y-3">
 				<h3 className="text-textBlack text-base font-bold">TaskType</h3>
 				<p className="text-textLight text-base font-normal">{selectedTask?.taskType}</p>
 			</section>
 
-			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3 bg-[#F9FBFF]">
+			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
 				<h3 className="text-textBlack text-base font-bold">Description</h3>
 				<p className="text-textLight text-base font-normal">{selectedTask?.description}</p>
 			</section>
-			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-5  bg-[#F9FBFF]">
+			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-5">
 				<section className="flex items-center justify-between border-b-[1px] border-[#D1D7F0] pb-2">
 					<h3 className="text-textBlack text-sm font-bold">Point</h3>
 
-					<section
-						className={`flex px-3 py-1.5 font-black rounded-lg justify-center items-center gap-2 bg-[#EDFDF8]`}
-					>
+					<section className="flex px-3 py-1.5 font-black rounded-lg justify-center items-center gap-2 bg-textCardBg">
 						<div className={`p-1 rounded-full bg-[#08875D]`}></div>
 						<div className="capitalize text-base font-semibold text-[#08875D]">
 							{selectedTask?.points} points
