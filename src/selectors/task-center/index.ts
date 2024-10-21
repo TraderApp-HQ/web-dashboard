@@ -20,7 +20,7 @@ export const taskCenterTableSelector = (tasks: ICreateTaskFormData[]) => {
 					{ displayItem: task.category },
 					{ displayItem: task.points },
 					{
-						displayItem: renderStatus(task.status, {
+						displayItem: renderStatus(task.status!, {
 							justify: "!justify-start w-fit",
 						}),
 					},
@@ -31,12 +31,12 @@ export const taskCenterTableSelector = (tasks: ICreateTaskFormData[]) => {
 				actions: [
 					{
 						label: "View",
-						url: `${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}/${task._id}${ROUTES.taskcenter.view}`,
+						url: `${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}/${task.id}${ROUTES.taskcenter.view}`,
 					},
 					{
 						label: "",
 						icon: EditIcon,
-						url: `${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}/${task._id}${ROUTES.taskcenter.edit}`,
+						url: `${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}/${task.id}${ROUTES.taskcenter.edit}`,
 					},
 				] as ITableActions[],
 			};

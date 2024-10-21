@@ -275,7 +275,11 @@ export class UsersService {
 			data,
 		});
 
-		if (response.error) throw new Error(response.message || "Error creating task.");
+
+		if (response.error) {
+			throw new Error(response.message || "Error creating task.");
+		}
+
 
 		return response.message;
 	}
@@ -292,7 +296,11 @@ export class UsersService {
 			data,
 		});
 
-		if (response.error) throw new Error(response.message || "Error updating task.");
+
+		if (response.error) {
+			throw new Error(response.message || "Error updating task.");
+		}
+
 
 		return response.message;
 	}

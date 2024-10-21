@@ -37,18 +37,13 @@ const UpdateTaskModal = () => {
 			openModal={openTaskModal}
 			onClose={closeModal}
 		>
-			{isLoading ? (
-				<section>Loading...</section>
-			) : (
-				!isError && (
-					<TaskForm
-						onClose={closeModal}
-						isLoading={isLoading}
-						platforms={platforms!}
-						task={task as ICreateTaskFormData}
-					/>
-				)
-			)}
+			<TaskForm
+				onClose={closeModal}
+				isLoading={isLoading}
+				platforms={platforms!}
+				task={task as ICreateTaskFormData}
+			/>
+
 		</Modal>
 	);
 };
