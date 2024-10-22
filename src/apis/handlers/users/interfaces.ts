@@ -1,5 +1,5 @@
 import type { UserStatus } from "~/config/enum";
-import type { NotificationChannel, UserRole, VerificationType } from "./enums";
+import type { NotificationChannel, ReferralRank, UserRole, VerificationType } from "./enums";
 
 export interface IUserProfile {
 	id: string;
@@ -13,6 +13,7 @@ export interface IUserProfile {
 	isPhoneVerified: boolean;
 	isIdVerified: boolean;
 	role: UserRole[];
+	referralRank: ReferralRank;
 	status: UserStatus;
 	createdAt: string;
 	updatedAt: string;

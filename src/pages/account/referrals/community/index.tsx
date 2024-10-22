@@ -19,6 +19,8 @@ import ReferralCommunityCardLoader from "~/components/Loaders/ReferralCommunityC
 import useReferrals from "~/hooks/useReferrals";
 import EmptyReferral from "~/components/AccountLayout/Referrals/EmptyReferral";
 import ReferalCard from "~/components/Cards/ReferalCard";
+import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
+import TableLoader from "~/components/Loaders/TableLoader";
 
 const ReferralsCommunity = () => {
 	const router = useRouter();
@@ -74,9 +76,9 @@ const ReferralsCommunity = () => {
 		refetch();
 	};
 
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
+	// if (isLoading) {
+	// 	return <div>Loading...</div>;
+	// }
 
 	if (isError) {
 		return <div>Error: {error.message}</div>;
@@ -98,7 +100,7 @@ const ReferralsCommunity = () => {
 					/>
 					<ReferalCard
 						title="Community ATC"
-						subtext={`$ ${stats.communityMembers}`}
+						subtext={`$ ${stats.communityATC}`}
 						Icon={CurrencySymbolsIcon}
 					/>
 					<ReferalCard
@@ -137,7 +139,7 @@ const ReferralsCommunity = () => {
 					</DropdownMenu>
 				</div>
 
-				{referrals.length === 0 ? (
+				{referrals.length === 0 && !isLoading ? (
 					<div className="flex mt-48 justify-center min-h-screen">
 						<EmptyReferral />
 					</div>
@@ -145,41 +147,54 @@ const ReferralsCommunity = () => {
 					<>
 						<h3 className="mb-2">Referrals ({data?.totalDocs ?? 0})</h3>
 						<div className="pb-8 rounded-2xl">
-							<div className="hidden md:block p-5 bg-white rounded-2xl relative overflow-x-auto">
-								<DataTable
-									tableStyles="mb-4"
-									justifyMenueItem="justify-normal"
-									tableHeadStyles="text-justify"
-									tableRowItemStyles="text-justify"
-									hasMenueItems
-									menueItemType="icon-button"
-									tHead={tableHead}
-									tBody={tableBody}
-									hasActions={false}
-								/>
-								<Pagination
-									currentPage={data?.page ?? 1}
-									totalPages={data?.totalPages ?? 0}
-									rowsPerPage={rowsPerPage}
-									totalRecord={data?.totalDocs ?? 0}
-									setRowsPerPage={setRowsPerPage}
-									onNext={() => setCurrentPage((prev) => prev + 1)}
-									onPrev={() => setCurrentPage((prev) => prev - 1)}
-								/>
-							</div>
+							{isLoading ? (
+								<>
+									<div className="hidden md:block rounded-lg space-y-10 bg-white py-5 px-[19px] border border-[#EDEDED]">
+										<TableLoader />
+									</div>
+									<div className="md:hidden">
+										<MobileTableLoader />
+									</div>
+								</>
+							) : (
+								<>
+									<div className="hidden md:block p-5 bg-white rounded-2xl relative overflow-x-auto">
+										<DataTable
+											tableStyles="mb-4"
+											justifyMenueItem="justify-normal"
+											tableHeadStyles="text-justify"
+											tableRowItemStyles="text-justify"
+											hasMenueItems
+											menueItemType="icon-button"
+											tHead={tableHead}
+											tBody={tableBody}
+											hasActions={false}
+										/>
+										<Pagination
+											currentPage={data?.page ?? 1}
+											totalPages={data?.totalPages ?? 0}
+											rowsPerPage={rowsPerPage}
+											totalRecord={data?.totalDocs ?? 0}
+											setRowsPerPage={setRowsPerPage}
+											onNext={() => setCurrentPage((prev) => prev + 1)}
+											onPrev={() => setCurrentPage((prev) => prev - 1)}
+										/>
+									</div>
 
-							<div className="md:hidden p-5 bg-white rounded-2xl relative overflow-x-auto">
-								<DataTableMobile hasActions={false} data={mobileData} />
-								<Pagination
-									currentPage={data?.page ?? 1}
-									totalPages={data?.totalPages ?? 0}
-									rowsPerPage={rowsPerPage}
-									totalRecord={data?.totalDocs ?? 0}
-									setRowsPerPage={setRowsPerPage}
-									onNext={() => setCurrentPage((prev) => prev + 1)}
-									onPrev={() => setCurrentPage((prev) => prev - 1)}
-								/>
-							</div>
+									<div className="md:hidden p-5 bg-white rounded-2xl relative overflow-x-auto">
+										<DataTableMobile hasActions={false} data={mobileData} />
+										<Pagination
+											currentPage={data?.page ?? 1}
+											totalPages={data?.totalPages ?? 0}
+											rowsPerPage={rowsPerPage}
+											totalRecord={data?.totalDocs ?? 0}
+											setRowsPerPage={setRowsPerPage}
+											onNext={() => setCurrentPage((prev) => prev + 1)}
+											onPrev={() => setCurrentPage((prev) => prev - 1)}
+										/>
+									</div>
+								</>
+							)}
 						</div>
 					</>
 				)}
