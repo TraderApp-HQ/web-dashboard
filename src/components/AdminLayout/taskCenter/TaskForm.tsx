@@ -47,14 +47,14 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 
 	const taskSuccess = useMemo(() => {
 		const status = isSuccess || isUpdateSuccess;
-		const message = successMessage || updateMessage;
+		const message = !isUpdateSuccess ? successMessage : updateMessage;
 
 		return { status, message };
 	}, [isSuccess, isUpdateSuccess]);
 
 	const taskError = useMemo(() => {
 		const status = isError || isUpdateError;
-		const message = error?.message || updateError?.message;
+		const message = !isUpdateError ? error?.message : updateError?.message;
 
 		return { status, message };
 	}, [isError, isUpdateError]);
