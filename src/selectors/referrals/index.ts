@@ -9,11 +9,35 @@ export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 	const tableBody: ITBody = {
 		tBodyRows: referrals.map((referral) => ({
 			tBodyColumns: [
-				{ displayItem: `${referral.userId.firstName} ${referral.userId.lastName}` },
-				{ displayItem: referral.userId.email },
-				{ displayItem: referral.level },
-				{ displayItem: renderStatus(referral.userId.status, { justify: "justify-start" }) },
-				{ displayItem: format(referral.userId.createdAt, "do MMMM yyyy") },
+				{
+					displayItem: renderDisplayItem({
+						itemText: {
+							text: `${referral.userId.firstName} ${referral.userId.lastName}`,
+						},
+					}),
+				},
+				{
+					displayItem: renderDisplayItem({
+						itemText: { text: referral.userId.referralRank },
+					}),
+				},
+				{
+					displayItem: renderDisplayItem({
+						itemText: {
+							text: String(referral.level),
+						},
+					}),
+				},
+				{
+					displayItem: renderStatus(referral.userId.status, {
+						justify: "justify-center",
+					}),
+				},
+				{
+					displayItem: renderDisplayItem({
+						itemText: { text: format(referral.userId.createdAt, "do MMMM yyyy") },
+					}),
+				},
 			],
 		})),
 	};

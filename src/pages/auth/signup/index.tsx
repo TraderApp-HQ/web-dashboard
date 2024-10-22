@@ -171,7 +171,7 @@ const Signup = () => {
 			password,
 			countryId: country?.id ? Number(country.id) : 89, // default to Nigeria
 			countryName: country?.name ?? "Nigeria", // default to Nigeria
-			referralCode,
+			...(referralCode && { referralCode }),
 		});
 	};
 

@@ -43,7 +43,6 @@ const UpdateTaskModal = () => {
 				platforms={platforms!}
 				task={task as ICreateTaskFormData}
 			/>
-
 		</Modal>
 	);
 };
