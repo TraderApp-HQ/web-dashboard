@@ -150,7 +150,9 @@ export class UsersService {
 			return data?.accessToken || null;
 		} catch (error: any) {
 			removeAccessToken();
-			window.location.href = "/auth/login";
+			const params = new URLSearchParams();
+			params.append("redirect_to", window.location.pathname);
+			window.location.href = "/auth/login?" + params.toString();
 			throw new Error(`Token refresh failed: ${error.message}`);
 		}
 	}
