@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import AdminLayout from "~/components/AdminLayout/Layout";
 import ViewTask from "~/components/AdminLayout/taskCenter/ViewTask";
+import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
 import { useGetTask } from "~/hooks/useTask";
 
@@ -27,9 +28,11 @@ const ViewTaskModal = () => {
 			onClose={closeModal}
 		>
 			{isLoading ? (
-				<section>Fetching task...</section>
+				<TaskViewLoader />
 			) : isError && !task ? (
-				<section>{error?.message}</section>
+				<section className="bg-white text-red-400 flex items-center justify-center rounded-md mt-6">
+					{error?.message}
+				</section>
 			) : (
 				task && <ViewTask selectedTask={task} />
 			)}

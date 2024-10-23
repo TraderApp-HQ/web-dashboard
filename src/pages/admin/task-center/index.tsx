@@ -5,20 +5,46 @@ import AdminLayout from "~/components/AdminLayout/Layout";
 import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
 import Button from "~/components/common/Button";
 import { DataTable } from "~/components/common/DataTable";
+import Toast from "~/components/common/Toast";
 import DropdownIcon from "~/components/icons/DropdownIcon";
+import TableLoader from "~/components/Loaders/TableLoader";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
-import { useGetAllTasks } from "~/hooks/useTask";
+import { useDeleteTask, useGetAllTasks } from "~/hooks/useTask";
 import { taskCenterTableSelector } from "~/selectors/task-center";
 
 const TaskCenter = () => {
 	// const [searchTerm, setSearchTerm] = useState("");
 	const router = useRouter();
 	const { tasks, isLoading, isError, error } = useGetAllTasks();
-	const { tableBody, tableHead } = taskCenterTableSelector(tasks as ICreateTaskFormData[]);
+	const {
+		deleteTask,
+		deleteMessage,
+		error: deleteError,
+		isError: isDeleteError,
+		isSuccess,
+	} = useDeleteTask();
+
+	const { tableBody, tableHead } = taskCenterTableSelector(
+		tasks as ICreateTaskFormData[],
+		deleteTask,
+	);
 
 	return (
 		<section className="">
-			<h1 className="mb-8 text-xl font-bold leading-loose">Task Center</h1>
+			<section className="flex items-center justify-between">
+				<h1 className="mb-8 text-2xl font-bold leading-loose">Task Center</h1>
+				{tasks && tasks.length >= 1 && (
+					<Button
+						labelText="create new task"
+						onClick={() =>
+							router.push(
+								`${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}${ROUTES.taskcenter.create}`,
+							)
+						}
+						className="capitalize px-10 mb-6 text-sm font-bold"
+					/>
+				)}
+			</section>
 
 			<section className="flex flex-row items-center -mt-6">
 				<SearchForm
@@ -46,28 +72,15 @@ const TaskCenter = () => {
 			</section>
 
 			{isLoading ? (
-				<section>Fetching tasks...</section>
+				<TableLoader />
 			) : !isLoading && isError && !tasks ? (
-				<section>{`An Error occured: ${error?.message}`}</section>
+				<section className="bg-white text-red-400 flex items-center justify-center rounded-md mt-6">{`An Error occured: ${error?.message}`}</section>
 			) : !isLoading && tasks && tasks?.length >= 1 ? (
 				<>
-					<Button
-						labelText="create new task"
-						onClick={() =>
-							router.push(
-								`${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}${ROUTES.taskcenter.create}`,
-							)
-						}
-						className="capitalize px-10 mb-6 text-sm font-bold"
-					/>
-					<section className="overflow-x-auto bg-white rounded-xl px-2">
+					<section className="overflow-x-auto bg-white rounded-xl px-5 scrollbar-hide">
 						<DataTable
-							tableStyles="mb-4"
-							justifyMenueItem="justify-normal"
 							tableHeadStyles="text-justify"
 							tableRowItemStyles="text-justify"
-							hasMenueItems
-							menueItemType="icon-button"
 							tHead={tableHead}
 							tBody={tableBody}
 						/>
@@ -83,6 +96,28 @@ const TaskCenter = () => {
 							onPrev={() => setCurrentPage((prev) => prev - 1)}
 						/> */}
 					</section>
+
+					{/* Alert modal */}
+					{isDeleteError && (
+						<Toast
+							type="error"
+							variant="filled"
+							title="Error"
+							message={deleteError?.message}
+							autoVanish={true}
+							autoVanishTimeout={10}
+						/>
+					)}
+					{isSuccess && (
+						<Toast
+							type="success"
+							variant="filled"
+							title="Success"
+							message={deleteMessage}
+							autoVanish={true}
+							autoVanishTimeout={10}
+						/>
+					)}
 				</>
 			) : (
 				<section className="bg-white flex items-center justify-center rounded-md mt-6">

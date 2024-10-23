@@ -15,7 +15,12 @@ const useProtectedRoute = ({ path, roles }: IUseProtectedRoute) => {
 		const usersService = new UsersService();
 		const userData = usersService.getDataFromToken();
 		if (!userData) {
-			router.push(`${LAYOUT_ROUTES.auth}${ROUTES.login}`);
+			const params = new URLSearchParams();
+			params.append("redirect_to", path);
+			router.push({
+				pathname: `${LAYOUT_ROUTES.auth}${ROUTES.login}`,
+				query: params.toString(),
+			});
 			return;
 		}
 

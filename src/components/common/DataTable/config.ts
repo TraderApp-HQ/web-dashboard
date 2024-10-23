@@ -14,6 +14,7 @@ export interface ITBody {
 export interface ITableActions {
 	label: string;
 	url?: string;
+	styles?: string;
 	isToggle?: boolean;
 	onClick?: () => void;
 	setToggle?: () => void;

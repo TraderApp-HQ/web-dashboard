@@ -17,6 +17,8 @@ import type {
 	IDisableUserInput,
 	IFetchAllUsers,
 	IUpdateUserInput,
+	IReferralStats,
+	IReferralCommunityStats,
 	ITaskPlatforms,
 	ITask,
 	ITaskWithPopulate,
@@ -148,7 +150,9 @@ export class UsersService {
 			return data?.accessToken || null;
 		} catch (error: any) {
 			removeAccessToken();
-			window.location.href = "/auth/login";
+			const params = new URLSearchParams();
+			params.append("redirect_to", window.location.pathname);
+			window.location.href = "/auth/login?" + params.toString();
 			throw new Error(`Token refresh failed: ${error.message}`);
 		}
 	}
@@ -273,7 +277,9 @@ export class UsersService {
 			data,
 		});
 
-		if (response.error) throw new Error(response.message || "Error creating task.");
+		if (response.error) {
+			throw new Error(response.message || "Error creating task.");
+		}
 
 		return response.message;
 	}
@@ -290,7 +296,9 @@ export class UsersService {
 			data,
 		});
 
-		if (response.error) throw new Error(response.message || "Error updating task.");
+		if (response.error) {
+			throw new Error(response.message || "Error updating task.");
+		}
 
 		return response.message;
 	}
@@ -305,6 +313,71 @@ export class UsersService {
 		const { data } = response;
 		return data as ITaskWithPopulate;
 	}
-}
 
-// export default new UsersService();
+	public async deleteTask(taskId: string): Promise<string> {
+		const response = await this.apiClient.delete<IResponse>({
+			url: `/task/${taskId}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Error deleting task.");
+		}
+
+		return response.message;
+	}
+
+	public async getReferrals(): Promise<any> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/users/referrals",
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Referrals fetch failed");
+		}
+
+		const { data } = response;
+		return data;
+	}
+
+	public async getReferralsStats(): Promise<IReferralStats> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/users/referral-stats",
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Referral Stats fetch failed");
+		}
+
+		const { data } = response;
+		return data as IReferralStats;
+	}
+
+	public async getCommunityStats(): Promise<IReferralCommunityStats> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/users/community-stats",
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Community Stats fetch failed");
+		}
+
+		const { data } = response;
+		return data as IReferralCommunityStats;
+	}
+
+	public async inviteFriends(emails: string[]): Promise<{ message: string }> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/users/invite-friends",
+			data: {
+				emails,
+			},
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Community Stats fetch failed");
+		}
+
+		const { data } = response;
+		return data;
+	}
+}
