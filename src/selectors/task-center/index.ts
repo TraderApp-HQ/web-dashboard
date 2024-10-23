@@ -4,8 +4,12 @@ import { renderDisplayItem, renderStatus } from "~/helpers";
 import { TaskCenterTableHeadItems } from "./constant";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
+import DeleteIcon from "~/components/icons/DeleteIcon";
 
-export const taskCenterTableSelector = (tasks: ICreateTaskFormData[]) => {
+export const taskCenterTableSelector = (
+	tasks: ICreateTaskFormData[],
+	deleteTask: (taskId: string) => void,
+) => {
 	const tableHead = [...TaskCenterTableHeadItems];
 	const tableBody: ITBody = {
 		tBodyRows: tasks?.map((task) => {
@@ -13,8 +17,11 @@ export const taskCenterTableSelector = (tasks: ICreateTaskFormData[]) => {
 				tBodyColumns: [
 					{
 						displayItem: renderDisplayItem({
-							itemText: { text: task.title, style: "text-base font-normal" },
-							styles: "!justify-start md:!justify-start w-fit",
+							itemText: {
+								text: task.title,
+								style: "text-base capitalize font-normal",
+							},
+							styles: "!justify-start md:!justify-start",
 						}),
 					},
 					{ displayItem: task.category },
@@ -34,9 +41,16 @@ export const taskCenterTableSelector = (tasks: ICreateTaskFormData[]) => {
 						url: `${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}/${task.id}${ROUTES.taskcenter.view}`,
 					},
 					{
-						label: "",
 						icon: EditIcon,
+						label: "Update",
 						url: `${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}/${task.id}${ROUTES.taskcenter.edit}`,
+						styles: "flex items-center",
+					},
+					{
+						icon: DeleteIcon,
+						label: "Delete",
+						styles: "flex items-center gap-2",
+						onClick: () => deleteTask(task.id!),
 					},
 				] as ITableActions[],
 			};

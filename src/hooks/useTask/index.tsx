@@ -77,7 +77,6 @@ export const useUpdateTask = () => {
 	const {
 		mutateAsync: updateTask,
 		data: updateMessage,
-
 		isError,
 		isPending,
 		error,
@@ -91,4 +90,24 @@ export const useUpdateTask = () => {
 	});
 
 	return { updateTask, isPending, isSuccess, updateMessage, isError, error };
+};
+
+export const useDeleteTask = () => {
+	const usersService = new UsersService();
+	const queryClient = useQueryClient();
+
+	const {
+		mutateAsync: deleteTask,
+		data: deleteMessage,
+		isError,
+		error,
+		isSuccess,
+	} = useCreate({
+		mutationFn: (taskId: string) => usersService.deleteTask(taskId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [UsersQueryId.task] });
+		},
+	});
+
+	return { deleteTask, isSuccess, deleteMessage, isError, error };
 };

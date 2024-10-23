@@ -165,7 +165,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 			(platformId && !link) ||
 			(category && !platformName) ||
 			(platformId && !expectedActions) ||
-			(expectedActions && expectedActions.length < 1) ||
+			(platformId && expectedActions && expectedActions.length < 1) ||
 			!points ||
 			points <= 0 ||
 			(taskType && taskType === TaskType.TIME_BASED && (!startDate || !dueDate)) ||
@@ -256,14 +256,14 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				labelText="Title"
 				type="text"
 				labelClassName="text-textColor"
-				placeholder="Create new post"
+				placeholder="Create new post (min of 5 characters.)"
 				value={formData?.title || ""}
 				onChange={(value) => updateFormData("title", value)}
 			/>
 
 			<TextArea
 				label="Task Description"
-				placeholder="Provide task description"
+				placeholder="Provide task description (min of 5 characters.)"
 				value={formData?.description || ""}
 				onChange={(value) => updateFormData("description", value)}
 			/>

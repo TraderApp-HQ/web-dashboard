@@ -314,6 +314,18 @@ export class UsersService {
 		return data as ITaskWithPopulate;
 	}
 
+	public async deleteTask(taskId: string): Promise<string> {
+		const response = await this.apiClient.delete<IResponse>({
+			url: `/task/${taskId}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Error deleting task.");
+		}
+
+		return response.message;
+	}
+
 	public async getReferrals(): Promise<any> {
 		const response = await this.apiClient.get<IResponse>({
 			url: "/users/referrals",
