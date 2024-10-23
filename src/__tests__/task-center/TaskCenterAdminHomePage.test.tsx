@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { useRouter } from "next/router";
 import { ITask } from "~/apis/handlers/users/interfaces";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
-import { useGetAllTasks } from "~/hooks/useTask";
+import { useDeleteTask, useGetAllTasks } from "~/hooks/useTask";
 import TaskCenter from "~/pages/admin/task-center";
 
 // Mocking hooks and dependencies
@@ -14,6 +14,7 @@ jest.mock("~/hooks/useTask");
 
 describe("Task Center - Admin Home Page", () => {
 	const mockPush = jest.fn();
+	const mockMutate = jest.fn();
 
 	beforeEach(() => {
 		(useRouter as jest.Mock).mockReturnValue({ push: mockPush });
@@ -33,6 +34,15 @@ describe("Task Center - Admin Home Page", () => {
 			isLoading: false,
 			isError: false,
 			error: null,
+		});
+
+		// setup mock implemetation for useDeleteTask
+		(useDeleteTask as jest.Mock).mockReturnValue({
+			mutate: mockMutate,
+			data: { message: "Task deleted successfully." },
+			isError: false,
+			error: null,
+			isSuccess: true,
 		});
 
 		// render task center home page
