@@ -43,8 +43,8 @@ function TradingViewWidget({ signal }: TradingViewWidgetProps) {
 	}, [signal?.asset?.id]);
 
 	return (
-		<div className="w-full h-[40rem]" ref={container}>
-			<div className=" w-full h-[40rem]"></div>
+		<div className="w-full h-[30rem]" ref={container}>
+			<div className=" w-full h-[10rem]"></div>
 			<div>
 				<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
 					<span className="blue-text">Track all markets on TradingView</span>
