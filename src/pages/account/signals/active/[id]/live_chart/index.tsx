@@ -5,18 +5,25 @@ import TradingViewWidget from "~/components/TradingViewWidget";
 import { useFetchActiveSignals } from "~/apis/handlers/assets/hooks";
 import { ISignal } from "~/apis/handlers/assets/interfaces";
 
-type Signal = {
-	signal: {
+interface Signal {
+	asset: {
 		id: string;
 		name: string;
 		symbol: string;
 		logo: string;
 	};
-};
+}
 
 const LiveChart = () => {
 	const { isLoading, isSuccess, activeSignals } = useFetchActiveSignals({});
-	const [selectedsignal, setSelectedsignal] = useState<Signal | ISignal>({});
+	const [selectedsignal, setSelectedsignal] = useState<Signal | ISignal>({
+		asset: {
+			id: "",
+			name: "",
+			symbol: "",
+			logo: "",
+		},
+	});
 	const [activeTab, setActiveTab] = useState("BNB");
 
 	useEffect(() => {

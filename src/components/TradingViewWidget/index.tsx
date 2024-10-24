@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, memo } from "react";
 
 interface Asset {
-	signal: {
+	asset: {
 		id: string;
 		name: string;
 		symbol: string;
@@ -43,16 +43,9 @@ function TradingViewWidget({ signal }: TradingViewWidgetProps) {
 	}, [signal?.asset?.id]);
 
 	return (
-		<div
-			className="tradingview-widget-container"
-			ref={container}
-			style={{ height: "100%", width: "100%" }}
-		>
-			<div
-				className="tradingview-widget-container__widget"
-				style={{ height: "calc(100% - 82px)", width: "100%" }}
-			></div>
-			<div className="tradingview-widget-copyright">
+		<div className="w-full h-[40rem]" ref={container}>
+			<div className=" w-full h-[40rem]"></div>
+			<div>
 				<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
 					<span className="blue-text">Track all markets on TradingView</span>
 				</a>
