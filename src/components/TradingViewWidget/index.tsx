@@ -1,10 +1,27 @@
-// TradingViewWidget.jsx
 import React, { useEffect, useRef, memo } from "react";
 
-function TradingViewWidget() {
+interface Asset {
+	signal: {
+		id: string;
+		name: string;
+		symbol: string;
+		logo: string;
+	};
+}
+
+interface TradingViewWidgetProps {
+	signal: Asset;
+}
+
+function TradingViewWidget({ signal }: TradingViewWidgetProps) {
 	const container = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
+		// Clear previous script instance if exists
+		if (container.current) {
+			container.current.innerHTML = "";
+		}
+
 		const script = document.createElement("script");
 		script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
 		script.type = "text/javascript";
@@ -12,7 +29,7 @@ function TradingViewWidget() {
 		script.innerHTML = `
         {
           "autosize": true,
-          "symbol": "NASDAQ:AAPL",
+          "symbol": "${signal?.asset?.symbol}",
           "interval": "D",
           "timezone": "Etc/UTC",
           "theme": "light",
@@ -22,8 +39,8 @@ function TradingViewWidget() {
           "calendar": false,
           "support_host": "https://www.tradingview.com"
         }`;
-		container?.current?.appendChild(script);
-	}, []);
+		container.current?.appendChild(script);
+	}, [signal?.asset?.id]);
 
 	return (
 		<div
@@ -33,7 +50,7 @@ function TradingViewWidget() {
 		>
 			<div
 				className="tradingview-widget-container__widget"
-				style={{ height: "calc(100% - 32px)", width: "100%" }}
+				style={{ height: "calc(100% - 82px)", width: "100%" }}
 			></div>
 			<div className="tradingview-widget-copyright">
 				<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
