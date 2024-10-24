@@ -1,6 +1,6 @@
 import { ITableActions, ITBody } from "~/components/common/DataTable/config";
 import EditIcon from "~/components/icons/EditIcon";
-import { renderDisplayItem, renderStatus } from "~/helpers";
+import { renderStatus } from "~/helpers";
 import { TaskCenterTableHeadItems } from "./constant";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
@@ -16,13 +16,8 @@ export const taskCenterTableSelector = (
 			return {
 				tBodyColumns: [
 					{
-						displayItem: renderDisplayItem({
-							itemText: {
-								text: task.title,
-								style: "text-base capitalize font-normal",
-							},
-							styles: "!justify-start md:!justify-start",
-						}),
+						displayItem: task.title,
+						styles: "text-lg capitalize",
 					},
 					{ displayItem: task.category },
 					{ displayItem: task.points },

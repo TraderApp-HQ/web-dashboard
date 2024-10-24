@@ -200,3 +200,22 @@ export interface ITaskWithPopulate {
 	dueDate?: Date;
 	status: string;
 }
+
+export interface IGetTasksInput {
+	page?: number;
+	rows?: number;
+	search?: string;
+}
+
+export interface IFetchAllTasks {
+	docs: ITask[];
+	hasNextPage: boolean;
+	hasPrevPage: boolean;
+	limit: number;
+	nextPage: number;
+	page: number;
+	pagingCounter: number;
+	prevPage?: number;
+	totalDocs: number;
+	totalPages: number;
+}

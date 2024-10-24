@@ -20,8 +20,9 @@ import type {
 	IReferralStats,
 	IReferralCommunityStats,
 	ITaskPlatforms,
-	ITask,
 	ITaskWithPopulate,
+	IGetTasksInput,
+	IFetchAllTasks,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
@@ -260,15 +261,15 @@ export class UsersService {
 		return data as ITaskPlatforms[];
 	}
 
-	public async getAllTasks(): Promise<ITask[]> {
+	public async getAllTasks({ rows, page, search }: IGetTasksInput): Promise<IFetchAllTasks> {
 		const response = await this.apiClient.get<IResponse>({
-			url: "/task",
+			url: `/task?page=${page}&rows=${rows}&search=${search}`,
 		});
 
 		if (response.error) throw new Error(response.message || "Error fetching tasks.");
 
 		const { data } = response;
-		return data as ITask[];
+		return data as IFetchAllTasks;
 	}
 
 	public async createTask(data: ICreateTaskFormData): Promise<string> {

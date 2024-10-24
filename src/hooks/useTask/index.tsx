@@ -5,6 +5,7 @@ import { UsersQueryId } from "~/apis/handlers/users/constants";
 import { useFetch } from "../useFetch";
 import { useCallback } from "react";
 import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
+import { IGetTasksInput } from "~/apis/handlers/users/interfaces";
 
 export const useGetTaskPlatforms = () => {
 	const usersService = new UsersService();
@@ -34,20 +35,27 @@ export const useGetTask = (taskId: string) => {
 	return { task, isLoading, isError, error };
 };
 
-export const useGetAllTasks = () => {
+export const useGetAllTasks = ({ search, rows, page }: IGetTasksInput) => {
 	const usersService = new UsersService();
 
+	// Memoized function to fetch users
+	const fetchTasks = useCallback(() => {
+		return usersService.getAllTasks({ rows, page, search });
+	}, [page, rows, search, usersService]);
+
 	const {
-		data: tasks,
+		data: tasksDetails,
 		isLoading,
 		isError,
 		error,
+		isSuccess,
+		refetch,
 	} = useFetch({
-		queryKey: [UsersQueryId.task],
-		queryFn: usersService.getAllTasks.bind(usersService),
+		queryKey: [UsersQueryId.task, page],
+		queryFn: fetchTasks,
 	});
 
-	return { tasks, isLoading, isError, error };
+	return { tasksDetails, isLoading, isError, error, isSuccess, refetch };
 };
 
 export const useCreateTask = () => {

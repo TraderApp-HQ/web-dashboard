@@ -316,7 +316,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 								labelText="Link"
 								type="text"
 								labelClassName="text-textColor"
-								placeholder="www.example.com"
+								placeholder="www://example.com (patttern - http://, https://, or www://)"
 								value={formData?.link ?? ""}
 								onChange={(value) => updateFormData("link", value)}
 							/>
