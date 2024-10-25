@@ -23,11 +23,8 @@ const SendInvite: React.FC<ISendInvitesProps> = ({ onSuccess, onError }) => {
 	};
 
 	return (
-		<section className="mt-5">
-			<h3 className="font-bold text-lg mb-1 text-[#102477]">Invite Your friends </h3>
-			<p className="text-[#414141] font-light">
-				Insert your friends email addresses and send them an invitation to join TraderApp
-			</p>
+		<section className="mt-8">
+			<h3 className="font-bold text-lg mb-1 text-[#0A0D14]">Invite Your friends </h3>
 
 			<div className="rounded-md flex justify-between border border-[#DEE3F6] bg-white text-[#3E57BF] pl-3 mt-3">
 				<div className="py-0.5 flex items-center grow">
