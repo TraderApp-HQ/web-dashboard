@@ -380,4 +380,17 @@ export class UsersService {
 		const { data } = response;
 		return data;
 	}
+
+	public async sendOtp({ userId }: any): Promise<void> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/auth/send-otp",
+			data: {
+				userId,
+			},
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "OTP sending failed");
+		}
+	}
 }
