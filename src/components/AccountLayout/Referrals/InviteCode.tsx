@@ -3,12 +3,10 @@ import { IInviteCodeProps } from "~/apis/handlers/users/interfaces";
 import React from "react";
 import { CopyIcon2 } from "~/components/icons/CopyIcon";
 
-const InviteCode: React.FC<IInviteCodeProps> = ({ code, title, subtext }) => {
+const InviteCode: React.FC<IInviteCodeProps> = ({ code, title }) => {
 	return (
 		<section className="mt-5">
-			<h3 className="font-bold text-lg mb-1 text-[#102477]">{title}</h3>
-			<p className="text-[#414141] font-light">{subtext}</p>
-
+			<h3 className="font-bold text-lg mb-1 text-[#0A0D14]">{title}</h3>
 			<div className="rounded-md flex justify-between border border-[#DEE3F6] bg-white text-[#3E57BF] px-3 py-4 mt-3">
 				{code ? (
 					<>
