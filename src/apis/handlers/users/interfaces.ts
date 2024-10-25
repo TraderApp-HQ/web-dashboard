@@ -155,7 +155,6 @@ export interface IReferrals {
 export interface IInviteCodeProps {
 	code: string;
 	title: string;
-	subtext: string;
 }
 
 export interface ITaskPlatforms {
