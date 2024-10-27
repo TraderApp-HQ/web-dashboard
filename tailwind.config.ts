@@ -17,6 +17,8 @@ const config: Config = {
 				textColor: "#08123B",
 				buttonColor: "#1836B2",
 				textCardBg: "#F9FBFF",
+				textLight: "#667085",
+				textBlack: "#0A0D14",
 			},
 		},
 	},

@@ -7,3 +7,11 @@ export const TaskCenterTableHeadItems: ITHead[] = [
 	{ displayItem: "Status" },
 	{ displayItem: "Due Date" },
 ];
+
+export const UserTaskCenterTableHeadItems: ITHead[] = [
+	{ displayItem: "Task Name" },
+	{ displayItem: "Point" },
+	{ displayItem: "Task Type" },
+	{ displayItem: "Due Date" },
+	{ displayItem: "Status" },
+];

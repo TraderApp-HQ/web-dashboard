@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { renderStatus } from "~/helpers";
 import { ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
-import React from "react";
 
 interface IViewTaskProps {
 	selectedTask: ITaskWithPopulate;
@@ -23,25 +22,27 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 				</section>
 				<section className="flex items-center justify-between py-3">
 					<h3 className="text-textBlack text-base font-bold">Platform</h3>
-					<section className="flex items-center gap-4">
+					<section className="flex items-center gap-2">
 						{selectedTask && selectedTask.platformId && (
 							<Image
 								src={selectedTask.platformId.logoUrl}
-								width={28}
-								height={28}
+								width={24}
+								height={24}
 								alt={selectedTask.platformName || "Icon"}
 								className="rounded-lg"
 							/>
 						)}
-						<p className="text-textColor text-base font-bold capitalize">
+						<p className="text-textColor text-base font-medium capitalize">
 							{selectedTask?.platformName}
 						</p>
 					</section>
 				</section>
 			</section>
-			<section className="bg-textCardBg px-3 rounded-xl space-y-3">
-				<h3 className="text-textBlack text-base font-bold">TaskType</h3>
-				<p className="text-textLight text-base font-normal">{selectedTask?.taskType}</p>
+			<section className="bg-textCardBg p-3 rounded-xl flex items-center justify-between">
+				<h3 className="text-textBlack text-base font-bold">Task Type</h3>
+				<p className="text-textColor text-base font-medium capitalize">
+					{selectedTask?.taskType}
+				</p>
 			</section>
 
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">

@@ -3,4 +3,5 @@ export const UsersQueryId = {
 	countries: "countries",
 	taskPlatform: "task-platform",
 	task: "task",
+	activeTasks: "active-tasks",
 };

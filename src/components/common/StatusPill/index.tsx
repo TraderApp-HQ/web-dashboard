@@ -35,6 +35,11 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 			statusContainerStyles = "bg-[#FEF1F2] text-[#E02D3C]";
 			break;
 		}
+		case ColourTheme.REVIEW: {
+			roundedIconStyles = "bg-[#082DC7]";
+			statusContainerStyles = "bg-[#F3F6FF] text-[#082DC7]";
+			break;
+		}
 		default: {
 			roundedIconStyles = "";
 			statusContainerStyles = "";

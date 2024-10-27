@@ -8,9 +8,10 @@ interface TabProps {
 	title: string;
 	query?: string;
 	isActive: boolean;
+	docCount?: number;
 }
 
-function Tab({ href, title, query, isActive }: TabProps) {
+function Tab({ href, title, query, isActive, docCount }: TabProps) {
 	const router = useRouter();
 
 	const handleQueryParam = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -30,16 +31,19 @@ function Tab({ href, title, query, isActive }: TabProps) {
 			aria-label={title}
 			onClick={query ? handleQueryParam : undefined}
 		>
-			<div className="whitespace-nowrap px-2">{title}</div>
+			<div className="whitespace-nowrap px-2">
+				{title} <span className="text-base pl-2">{isActive && docCount}</span>
+			</div>
 		</Link>
 	);
 }
 
 interface PageTabProps {
 	tabs: { title: string; href: string; query?: string }[];
+	docCount?: number;
 }
 
-const PageTab: React.FC<PageTabProps> = ({ tabs }) => {
+const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 	const router = useRouter();
 	return (
 		<div className="md:overflow-visible overflow-x-auto py-4">
@@ -50,6 +54,7 @@ const PageTab: React.FC<PageTabProps> = ({ tabs }) => {
 						title={tab.title}
 						href={tab.href}
 						query={tab.query}
+						docCount={docCount}
 						isActive={
 							tab.query
 								? tab.query === router.query.task

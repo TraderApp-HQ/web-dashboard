@@ -4,6 +4,7 @@ export enum ColourTheme {
 	WARNING = "WARNING",
 	PRIMARY = "PRIMARY",
 	SECONDARY = "SECONDARY",
+	REVIEW = "REVIEW",
 }
 
 export enum OperationStatus {

@@ -6,7 +6,12 @@ import { ColourTheme, HTMLElements, OperationStatus, UserStatus } from "~/config
 import TargetPill from "~/components/common/TargetPill";
 import type { IDisplayItem, TartgetProfit } from "~/lib/types";
 import DisplayItem from "~/components/common/DisplayItem";
-import { TaskStatus } from "~/components/AdminLayout/taskCenter/taskFormData";
+import {
+	TaskCategory,
+	TaskStatus,
+	UserTaskStatus,
+} from "~/components/AdminLayout/taskCenter/taskFormData";
+import CategoryPill from "~/components/common/CategoryPill";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -58,17 +63,23 @@ export function renderTargetProfits({
 export function renderStatus(status: string, style?: { justify?: string }) {
 	let theme: ColourTheme;
 	switch (status) {
+		case UserTaskStatus.DONE:
 		case TaskStatus.STARTED:
-		case TaskStatus.COMPLETED:
 		case OperationStatus.ACTIVE:
 		case OperationStatus.COMPLETED: {
 			theme = ColourTheme.SUCCESS;
 			break;
 		}
+		case UserTaskStatus.PENDING:
 		case TaskStatus.NOT_STARTED:
 		case OperationStatus.PAUSED:
 		case OperationStatus.PROCESSING: {
 			theme = ColourTheme.WARNING;
+			break;
+		}
+		case TaskStatus.COMPLETED:
+		case UserTaskStatus.IN_REVIEW: {
+			theme = ColourTheme.REVIEW;
 			break;
 		}
 		case OperationStatus.FAILED: {
@@ -83,6 +94,32 @@ export function renderStatus(status: string, style?: { justify?: string }) {
 			theme = ColourTheme.PRIMARY;
 	}
 	return React.createElement(StatusPill, { status, theme, style });
+}
+
+export function renderCategory(category: TaskCategory) {
+	let theme: string;
+	switch (category) {
+		case TaskCategory.CONTENT: {
+			theme = "bg-[#E7ECFF] text-[#3E57BF]";
+			break;
+		}
+		case TaskCategory.SOCIAL: {
+			theme = "bg-[#BFEFFF33] text-[#234475]";
+			break;
+		}
+		case TaskCategory.MARKET: {
+			theme = "bg-[#FEF6F7] text-[#E02D3C]";
+			break;
+		}
+		case TaskCategory.REFERRAL: {
+			theme = "bg-[#EDFDF8] text-[#08875D]";
+			break;
+		}
+		default: {
+			theme = "";
+		}
+	}
+	return React.createElement(CategoryPill, { category, theme });
 }
 
 export const serverRedirect = (destination: string): GetServerSidePropsResult<{}> => {

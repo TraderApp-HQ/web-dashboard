@@ -28,7 +28,7 @@ const CreateTask = () => {
 				</p>
 			}
 			description={
-				<span className="font-normal text-sm md:text-base text-[#808080]">
+				<span className="font-normal text-sm md:text-base tracking-wider leading-6 text-[#808080]">
 					Please provide the information below
 				</span>
 			}

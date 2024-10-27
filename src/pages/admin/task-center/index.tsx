@@ -21,8 +21,8 @@ const TaskCenter = () => {
 	const [searchTerm, setSearchTerm] = useState<string>(
 		Array.isArray(search) ? search[0] : search || "",
 	);
-	const [rowsPerPage, setRowsPerPage] = useState<number>(rows ? +rows : 10);
-	const [currentPage, setCurrentPage] = useState<number>(page ? +page : 1);
+	const [rowsPerPage, setRowsPerPage] = useState<number>(rows ? Number(rows) : 10);
+	const [currentPage, setCurrentPage] = useState<number>(page ? Number(page) : 1);
 
 	const {
 		tasksDetails,
