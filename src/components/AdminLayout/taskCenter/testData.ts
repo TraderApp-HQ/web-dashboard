@@ -1,8 +1,11 @@
-import { ITaskPlatforms } from "~/apis/handlers/users/interfaces";
+import { IFetchAllActiveTasks, ITaskPlatforms } from "~/apis/handlers/users/interfaces";
 import {
 	Platform,
 	PlatformActions,
 	TaskCategory,
+	// TaskStatus,
+	// TaskType,
+	// UserTaskStatus,
 } from "~/components/AdminLayout/taskCenter/taskFormData";
 
 export const platformsMockData: ITaskPlatforms[] = [
@@ -88,3 +91,30 @@ export const platformsMockData: ITaskPlatforms[] = [
 		categories: [TaskCategory.CONTENT, TaskCategory.MARKET, TaskCategory.REFERRAL],
 	},
 ];
+
+export const activeTasksTest: IFetchAllActiveTasks = {
+	allTask: {
+		docs: [],
+		hasNextPage: false,
+		hasPrevPage: false,
+		limit: 10,
+		nextPage: 0,
+		page: 1,
+		pagingCounter: 1,
+		prevPage: 0,
+		totalDocs: 0,
+		totalPages: 1,
+	},
+	userTask: {
+		docs: [],
+		hasNextPage: false,
+		hasPrevPage: false,
+		limit: 10,
+		nextPage: 0,
+		page: 1,
+		pagingCounter: 1,
+		prevPage: 0,
+		totalDocs: 1,
+		totalPages: 1,
+	},
+};

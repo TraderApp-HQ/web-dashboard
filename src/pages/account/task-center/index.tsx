@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { IFetchAllActiveTasks, ITaskTableData } from "~/apis/handlers/users/interfaces";
 import Card from "~/components/AccountLayout/Card";
 import DropdownMenu from "~/components/AccountLayout/DropdownMenu";
-import IconButton from "~/components/AccountLayout/IconButton";
 import AccountLayout from "~/components/AccountLayout/Layout";
 import PageTab from "~/components/AccountLayout/Tabs";
 import RedeemPointsForm from "~/components/AccountLayout/task-center/RedeemPointsForm";
@@ -91,9 +90,12 @@ const UserTaskDashboard = () => {
 
 				<DropdownMenu
 					trigger={
-						<IconButton btnClass="bg-buttonColor gap-2 px-5 py-2 rounded-lg text-white">
+						<div
+							data-testid="redeem-points-button"
+							className="bg-buttonColor flex items-center gap-2 px-5 py-2 rounded-lg text-white"
+						>
 							Redeem Points <RightLongArrowIcon />{" "}
-						</IconButton>
+						</div>
 					}
 					position="left"
 				>
