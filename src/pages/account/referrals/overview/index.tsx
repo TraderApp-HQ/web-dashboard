@@ -41,17 +41,9 @@ const ReferralsOverview = () => {
 				</div>
 			)}
 
-			<InviteCode
-				code={stats?.referralLink ?? ""}
-				title="Referral Link"
-				subtext="Send your referral link to your friends."
-			/>
+			<InviteCode code={stats?.referralLink ?? ""} title="Referral Link" />
 
-			<InviteCode
-				code={stats?.referralCode ?? ""}
-				title="Referral Code"
-				subtext="Send your Referral code to your friends."
-			/>
+			<InviteCode code={stats?.referralCode ?? ""} title="Referral Code" />
 
 			<SendInvite onError={setIsError} onSuccess={setSuccess} />
 

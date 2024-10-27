@@ -6,7 +6,6 @@ import SearchForm from "~/components/AccountLayout/SearchForm";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import ConnectionsIcons from "~/components/icons/ConnectionsIcons";
 import CurrencySymbolsIcon from "~/components/icons/CurrencySymbolsIcon";
-import DropdownIcon from "~/components/icons/DropdownIcon";
 import Pagination from "~/components/Pagination";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -17,10 +16,11 @@ import { UsersService } from "~/apis/handlers/users";
 import { IReferralCommunityStats } from "~/apis/handlers/users/interfaces";
 import ReferralCommunityCardLoader from "~/components/Loaders/ReferralCommunityCardLoader";
 import useReferrals from "~/hooks/useReferrals";
-import EmptyReferral from "~/components/AccountLayout/Referrals/EmptyReferral";
 import ReferalCard from "~/components/Cards/ReferalCard";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
+import Card from "~/components/AccountLayout/Card";
+import NoTransactionIcon from "~/components/icons/NoTransactionIcon";
 
 const ReferralsCommunity = () => {
 	const router = useRouter();
@@ -128,7 +128,6 @@ const ReferralsCommunity = () => {
 								<div className="text-sky-900 text-base font-normal leading-snug">
 									Filter
 								</div>
-								<DropdownIcon />
 							</>
 						}
 						position="left"
@@ -140,9 +139,19 @@ const ReferralsCommunity = () => {
 				</div>
 
 				{referrals.length === 0 && !isLoading ? (
-					<div className="flex mt-48 justify-center min-h-screen">
-						<EmptyReferral />
-					</div>
+					<>
+						<Card className="flex flex-col justify-center items-center h-[330px]">
+							<NoTransactionIcon />
+							<div className="text-[#414141] text-center mt-4">
+								<h3 className="font-extrabold text-base">
+									No referral recorded yet
+								</h3>
+								<p className="font-normal text-sm ">
+									Once you have a referral, it will be displayed here.
+								</p>
+							</div>
+						</Card>
+					</>
 				) : (
 					<>
 						<h3 className="mb-2">Referrals ({data?.totalDocs ?? 0})</h3>
