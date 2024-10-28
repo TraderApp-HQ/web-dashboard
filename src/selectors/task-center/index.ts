@@ -23,12 +23,11 @@ export const taskCenterTableSelector = (
 					{ displayItem: renderCategory(task.category) },
 					{ displayItem: task.points },
 					{
-						displayItem: renderStatus(task.status!, {
-							justify: "!justify-start w-fit",
-						}),
+						displayItem: renderStatus(task.status!),
 					},
 					{
 						displayItem: task.dueDate ? new Date(task?.dueDate).toDateString() : "",
+						styles: "w-[1.5rem]",
 					},
 				],
 				actions: [
@@ -38,15 +37,14 @@ export const taskCenterTableSelector = (
 					},
 					{
 						icon: EditIcon,
-						label: "Update",
 						url: `${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}/${task.id}${ROUTES.taskcenter.edit}`,
 						styles: "flex items-center",
 					},
 					{
 						icon: DeleteIcon,
-						label: "Delete",
 						styles: "flex items-center gap-2",
 						onClick: () => deleteTask(task.id!),
+						deleteAction: true,
 					},
 				] as ITableActions[],
 			};
@@ -70,11 +68,10 @@ export const userTaskCenterTableSelector = (task: ITaskTableData[]) => {
 					{ displayItem: task.taskType },
 					{
 						displayItem: task.dueDate ? new Date(task?.dueDate).toDateString() : "",
+						styles: "w-[1.5rem]",
 					},
 					{
-						displayItem: renderStatus(task.status!, {
-							justify: "!justify-start w-fit",
-						}),
+						displayItem: renderStatus(task.status!),
 					},
 				],
 				actions: [

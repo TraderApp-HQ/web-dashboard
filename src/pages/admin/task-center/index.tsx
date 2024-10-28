@@ -127,14 +127,13 @@ const TaskCenter = () => {
 					<p className="text-red-400 py-10 mt-6">{`An Error occured: ${error?.message}`}</p>
 				) : tasks && tasks.length >= 1 ? (
 					<section className="overflow-x-auto">
-						<section className="">
-							<DataTable
-								tableHeadStyles="text-justify"
-								tableRowItemStyles="text-justify"
-								tHead={tableHead}
-								tBody={tableBody}
-							/>
-						</section>
+						<DataTable
+							tHead={tableHead}
+							tBody={tableBody}
+							hasMenueItems={true}
+							menueItemType="icon-button"
+							justifyMenueItem="justify-center"
+						/>
 						<section className="mt-3 p-2 rounded-lg">
 							<Pagination
 								currentPage={tasksDetails?.page ?? 1}

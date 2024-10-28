@@ -3,9 +3,6 @@ import {
 	Platform,
 	PlatformActions,
 	TaskCategory,
-	// TaskStatus,
-	// TaskType,
-	// UserTaskStatus,
 } from "~/components/AdminLayout/taskCenter/taskFormData";
 
 export const platformsMockData: ITaskPlatforms[] = [

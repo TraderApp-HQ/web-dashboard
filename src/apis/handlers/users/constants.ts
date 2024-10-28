@@ -4,4 +4,5 @@ export const UsersQueryId = {
 	taskPlatform: "task-platform",
 	task: "task",
 	activeTasks: "active-tasks",
+	pendingTasksCount: "pending-tasks-count",
 };

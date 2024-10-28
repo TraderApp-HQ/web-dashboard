@@ -285,3 +285,7 @@ export interface IFetchAllActiveTasks {
 	allTask: IFetchActiveTasks;
 	userTask: IFetchUserTasks;
 }
+
+export interface IFetchAllPendingTasksCount {
+	pendingTasksCount: number;
+}

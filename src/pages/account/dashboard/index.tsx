@@ -27,6 +27,7 @@ import MessageIcon from "~/components/icons/messageIcon";
 // import Chart from "~/components/Portfolio/PieChart";
 import PortfolioSummary from "~/components/Portfolio/PorfolioSummary";
 import NoTransactionIcon from "~/components/icons/NoTransactionIcon";
+import { useGetAllPendingTasksCount } from "~/hooks/useTask";
 
 const Dashbaord = () => {
 	const router = useRouter();
@@ -42,8 +43,6 @@ const Dashbaord = () => {
 	];
 
 	const COLORS = ["#808080", "#808080", "#808080", "#808080"];
-
-	const numberOfUnreadTasks = 2;
 
 	const supportedOperations = [
 		{
@@ -68,6 +67,12 @@ const Dashbaord = () => {
 		queryKey: [UsersQueryId.userProfile],
 		queryFn: fetchUser,
 	});
+
+	const {
+		isLoading: pendingCountLoading,
+		isSuccess,
+		pendingTasksCount,
+	} = useGetAllPendingTasksCount();
 
 	return (
 		<div>
@@ -158,8 +163,11 @@ const Dashbaord = () => {
 					<div className="flex gap-6">
 						<div className="flex gap-0.5">
 							<MessageIcon />
-							<div className="-mt-2.5 w-[19px] h-[19px] bg-[#FF0808] rounded-full flex justify-center items-center font-semibold text-white text-[10px]">
-								{numberOfUnreadTasks}
+
+							<div
+								className={`-mt-2.5 w-[19px] h-[19px] bg-[#FF0808] rounded-full flex justify-center items-center font-semibold text-white text-[10px] ${pendingCountLoading ? "animate-pulse" : ""}`}
+							>
+								{isSuccess && pendingTasksCount?.pendingTasksCount}
 							</div>
 						</div>
 						<p className="text-base font-normal -mt-1">Tasks</p>

@@ -104,7 +104,7 @@ export function renderCategory(category: TaskCategory) {
 			break;
 		}
 		case TaskCategory.SOCIAL: {
-			theme = "bg-[#BFEFFF33] text-[#234475]";
+			theme = "bg-[#EDFDF8] text-[#234475]";
 			break;
 		}
 		case TaskCategory.MARKET: {

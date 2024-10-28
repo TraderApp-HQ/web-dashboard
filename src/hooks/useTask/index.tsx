@@ -80,6 +80,25 @@ export const useGetAllActiveTasks = ({ rows, page, task }: IGetUserTasksInput) =
 	return { activeTasks, isLoading, isSuccess };
 };
 
+export const useGetAllPendingTasksCount = () => {
+	const usersService = new UsersService();
+	const fetchPendingTasksCount = useCallback(
+		() => usersService.getAllPendingTasksCount(),
+		[usersService],
+	);
+
+	const {
+		data: pendingTasksCount,
+		isLoading,
+		isSuccess,
+	} = useFetch({
+		queryKey: [UsersQueryId.pendingTasksCount],
+		queryFn: fetchPendingTasksCount,
+	});
+
+	return { pendingTasksCount, isLoading, isSuccess };
+};
+
 export const useCreateTask = () => {
 	const usersService = new UsersService();
 	const queryClient = useQueryClient();

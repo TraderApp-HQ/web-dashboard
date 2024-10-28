@@ -126,19 +126,15 @@ const UserTaskDashboard = () => {
 				<section className="bg-white rounded-xl p-2 md:p-6 overflow-x-auto">
 					{isLoading ? (
 						<TableLoader />
-					) : tasks && tasks.length > 1 ? (
+					) : tasks && tasks.length >= 1 ? (
 						<>
-							<section className="">
-								<DataTable
-									tableHeadStyles="text-justify"
-									tableRowItemStyles="text-justify"
-									hasMenueItems={true}
-									menueItemType="icon-button"
-									justifyMenueItem="gap-0 justify-center w-fit px-2"
-									tHead={tableHead}
-									tBody={tableBody}
-								/>
-							</section>
+							<DataTable
+								hasMenueItems={true}
+								menueItemType="icon-button"
+								justifyMenueItem="justify-center"
+								tHead={tableHead}
+								tBody={tableBody}
+							/>
 							<section className="mt-3 p-2 rounded-lg">
 								<Pagination
 									currentPage={curPage ?? 1}

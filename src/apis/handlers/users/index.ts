@@ -26,6 +26,7 @@ import type {
 	IFetchAllActiveTasks,
 	IGetUserTasksInput,
 	IUserTask,
+	IFetchAllPendingTasksCount,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
@@ -289,6 +290,19 @@ export class UsersService {
 		const { data } = response;
 
 		return data as IFetchAllActiveTasks;
+	}
+
+	public async getAllPendingTasksCount(): Promise<IFetchAllPendingTasksCount> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/task/pending-tasks-count",
+		});
+
+		if (response.error)
+			throw new Error(response.message || "Error fetching pending tasks count.");
+
+		const { data } = response;
+
+		return data as IFetchAllPendingTasksCount;
 	}
 
 	public async createTask(data: ICreateTaskFormData): Promise<string> {
