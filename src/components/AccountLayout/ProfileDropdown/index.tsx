@@ -32,7 +32,7 @@ const ProfileDropdown = () => {
 			}
 			position="left"
 			direction="bottom"
-			className="max-w-[419px] w-full min-[768px]:mr-12 "
+			className="min-w-[243px] w-full min-w-[768px]:mr-12 "
 		>
 			<div>
 				<div className="flex flex-row items-center pb-4">
