@@ -12,8 +12,7 @@ interface Asset {
 interface TradingViewWidgetProps {
 	signal: Asset;
 }
-
-function TradingViewWidget({ signal }: TradingViewWidgetProps) {
+const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ signal }) => {
 	const container = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
@@ -35,7 +34,7 @@ function TradingViewWidget({ signal }: TradingViewWidgetProps) {
           "theme": "light",
           "style": "1",
           "locale": "en",
-          "allow_symbol_change": true,
+          "allow_symbol_change": false,
           "calendar": false,
           "support_host": "https://www.tradingview.com"
         }`;
@@ -52,6 +51,6 @@ function TradingViewWidget({ signal }: TradingViewWidgetProps) {
 			</div>
 		</div>
 	);
-}
+};
 
 export default memo(TradingViewWidget);
