@@ -13,6 +13,7 @@ interface Asset {
 interface TradingViewWidgetProps {
 	signal: Asset;
 }
+
 const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ signal }) => {
 	const container = useRef<HTMLDivElement | null>(null);
 
