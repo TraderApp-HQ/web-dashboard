@@ -21,15 +21,27 @@ const TableMenuDropdown: React.FC<ITableMenuDropdown> = ({ dataTableMenuItems })
 				{dataTableMenuItems.map((item, index) => {
 					if (item.onClick) {
 						return (
-							<DropdownMenuItem key={index} onClick={item.onClick} type="button">
+							<DropdownMenuItem
+								key={index}
+								onClick={item.onClick}
+								type="button"
+								className={item.styles}
+							>
 								{item.label}
+								{item.icon && <item.icon />}
 							</DropdownMenuItem>
 						);
 					}
 					if (item.url) {
 						return (
-							<DropdownMenuItem key={index} type="link" to={item.url}>
+							<DropdownMenuItem
+								key={index}
+								type="link"
+								to={item.url}
+								className={item.styles}
+							>
 								{item.label}
+								{item.icon && <item.icon />}
 							</DropdownMenuItem>
 						);
 					}

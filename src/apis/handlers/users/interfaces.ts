@@ -1,5 +1,5 @@
 import type { UserStatus } from "~/config/enum";
-import type { NotificationChannel, UserRole, VerificationType } from "./enums";
+import type { NotificationChannel, ReferralRank, UserRole, VerificationType } from "./enums";
 
 export interface IUserProfile {
 	id: string;
@@ -13,6 +13,7 @@ export interface IUserProfile {
 	isPhoneVerified: boolean;
 	isIdVerified: boolean;
 	role: UserRole[];
+	referralRank: ReferralRank;
 	status: UserStatus;
 	createdAt: string;
 	updatedAt: string;
@@ -36,6 +37,7 @@ export interface IUserSignupInput {
 	password: string;
 	countryId: number;
 	countryName?: string;
+	referralCode?: string;
 }
 export interface IResetPasswordInput {
 	verificationToken: string;
@@ -127,6 +129,32 @@ export interface IFetchAllUsers {
 	prevPage?: number;
 	totalDocs: number;
 	totalPages: number;
+}
+
+export interface IReferralStats {
+	referralCode: string;
+	referralLink: string;
+	currentRank: null | string;
+	currentEarning: number;
+	rankProgress: number;
+}
+
+export interface IReferralCommunityStats {
+	communityMembers: number;
+	communityATC: number;
+	referralTreeLevels: number;
+}
+
+export interface IReferrals {
+	userId: IUserProfile;
+	parentId: IUserProfile;
+	level: number;
+	createdAt: Date;
+}
+
+export interface IInviteCodeProps {
+	code: string;
+	title: string;
 }
 
 export interface ITaskPlatforms {

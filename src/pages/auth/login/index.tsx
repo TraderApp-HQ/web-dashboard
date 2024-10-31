@@ -8,8 +8,12 @@ import VerificationModal from "~/components/AuthLayout/Modal/VerificationModal";
 import { NotificationChannel, VerificationType } from "~/apis/handlers/users/enums";
 import Toast from "~/components/common/Toast";
 import AuthLayout from "../layout";
+import { useSearchParams } from "next/navigation";
+import useUnProtectedRoute from "~/hooks/useUnProtectedRoute";
 
 const Login = () => {
+	const router = useRouter();
+	useUnProtectedRoute({ path: router.pathname });
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordValid, setPasswordValid] = useState(false);
@@ -18,8 +22,8 @@ const Login = () => {
 	const [showVerificationModal, setShowVerificationModal] = useState(false);
 	const [isVerificationSuccess, setIsVerificationSuccess] = useState(false);
 	const [isQueryParamsSet, setIsQueryParamsSet] = useState(false);
+	const redirectTo = useSearchParams().get("redirect_to");
 
-	const router = useRouter();
 	// const [searchParams, setSearchParams] = useState(new URLSearchParams(router.asPath.split('?')[1]));
 	const usersService = new UsersService();
 
@@ -181,7 +185,7 @@ const Login = () => {
 					setIsSuccess={handleVerificationSuccess}
 					notificationChannel={NotificationChannel.EMAIL}
 					verificationType={[VerificationType.AUTHENTICATE]}
-					redirectTo={LAYOUT_ROUTES.account}
+					redirectTo={redirectTo ?? LAYOUT_ROUTES.account}
 				/>
 			)}
 			{isError && (
