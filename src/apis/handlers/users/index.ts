@@ -151,7 +151,8 @@ export class UsersService {
 		} catch (error: any) {
 			removeAccessToken();
 			const params = new URLSearchParams();
-			params.append("redirect_to", window.location.pathname);
+			const redirectTo = new URLSearchParams(window.location.search).get("redirect_to");
+			params.append("redirect_to", redirectTo ?? window.location.pathname);
 			window.location.href = "/auth/login?" + params.toString();
 			throw new Error(`Token refresh failed: ${error.message}`);
 		}
