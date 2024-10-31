@@ -9,6 +9,7 @@ import { DataTable } from "~/components/common/DataTable";
 import Toast from "~/components/common/Toast";
 import DropdownIcon from "~/components/icons/DropdownIcon";
 import TableLoader from "~/components/Loaders/TableLoader";
+import DeleteModal from "~/components/Modal/DeleteModal";
 import Pagination from "~/components/Pagination";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { useDeleteTask, useGetAllTasks } from "~/hooks/useTask";
@@ -16,13 +17,15 @@ import { taskCenterTableSelector } from "~/selectors/task-center";
 
 const TaskCenter = () => {
 	const router = useRouter();
-	const { rows, page, search } = router.query;
+	const { search } = router.query;
 	const searchParams = new URLSearchParams();
 	const [searchTerm, setSearchTerm] = useState<string>(
 		Array.isArray(search) ? search[0] : search || "",
 	);
-	const [rowsPerPage, setRowsPerPage] = useState<number>(rows ? Number(rows) : 10);
-	const [currentPage, setCurrentPage] = useState<number>(page ? Number(page) : 1);
+	const [rowsPerPage, setRowsPerPage] = useState<number>();
+	const [currentPage, setCurrentPage] = useState<number>();
+	const [toggleDeleteModal, setToggleDeleteModal] = useState<boolean>(false);
+	const [deleteTaskId, setDeleteTaskId] = useState<string>("");
 
 	const {
 		tasksDetails,
@@ -43,6 +46,13 @@ const TaskCenter = () => {
 		isError: isDeleteError,
 		isSuccess,
 	} = useDeleteTask();
+
+	useEffect(() => {
+		if (tasksDetails) {
+			setRowsPerPage(tasksDetails.limit);
+			setCurrentPage(tasksDetails.page);
+		}
+	}, [tasksDetails]);
 
 	useEffect(() => {
 		if (currentPage) {
@@ -71,9 +81,22 @@ const TaskCenter = () => {
 
 	const tasks = getAllTaskSuccess ? tasksDetails?.docs : [];
 
+	const handleDeleteTaskModalOpen = (taskId: string) => {
+		setToggleDeleteModal(true);
+		setDeleteTaskId(taskId);
+	};
+	const handleDeleteModalClose = () => {
+		setToggleDeleteModal(false);
+		setDeleteTaskId("");
+	};
+	const handleDeleteTask = () => {
+		deleteTask(deleteTaskId);
+		handleDeleteModalClose();
+	};
+
 	const { tableBody, tableHead } = taskCenterTableSelector(
 		tasks as ICreateTaskFormData[],
-		deleteTask,
+		handleDeleteTaskModalOpen,
 	);
 
 	return (
@@ -136,15 +159,25 @@ const TaskCenter = () => {
 						/>
 						<section className="mt-3 p-2 rounded-lg">
 							<Pagination
-								currentPage={tasksDetails?.page ?? 1}
+								currentPage={currentPage ?? 1}
 								totalPages={tasksDetails?.totalPages ?? 0}
-								rowsPerPage={rowsPerPage}
+								rowsPerPage={rowsPerPage!}
 								totalRecord={tasksDetails?.totalDocs ?? 0}
 								setRowsPerPage={setRowsPerPage}
-								onNext={() => setCurrentPage((prev) => ++prev)}
-								onPrev={() => setCurrentPage((prev) => --prev)}
+								onNext={() => setCurrentPage((prev) => prev && ++prev)}
+								onPrev={() => setCurrentPage((prev) => prev && --prev)}
 							/>
 						</section>
+
+						{/* Delete modal */}
+						<DeleteModal
+							title={"Delete Task"}
+							description={"Are you sure you want to delete this task?"}
+							btnConfirm={handleDeleteTask}
+							btnCancle={handleDeleteModalClose}
+							openModal={toggleDeleteModal}
+							onClose={handleDeleteModalClose}
+						/>
 
 						{/* Alert modal */}
 						{isDeleteError && (

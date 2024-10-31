@@ -1,15 +1,15 @@
 import { ITaskTableData } from "~/apis/handlers/users/interfaces";
-import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
+import { ICreateTaskFormData, TaskStatus } from "~/components/AdminLayout/taskCenter/taskFormData";
 import { ITableActions, ITBody } from "~/components/common/DataTable/config";
 import DeleteIcon from "~/components/icons/DeleteIcon";
 import EditIcon from "~/components/icons/EditIcon";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
-import { renderCategory, renderStatus } from "~/helpers";
+import { renderStatus } from "~/helpers";
 import { TaskCenterTableHeadItems, UserTaskCenterTableHeadItems } from "./constant";
 
 export const taskCenterTableSelector = (
 	tasks: ICreateTaskFormData[],
-	deleteTask: (taskId: string) => void,
+	handleDeleteTaskModalOpen: (taskId: string) => void,
 ) => {
 	const tableHead = [...TaskCenterTableHeadItems];
 	const tableBody: ITBody = {
@@ -20,7 +20,9 @@ export const taskCenterTableSelector = (
 						displayItem: task.title,
 						styles: "text-lg capitalize",
 					},
-					{ displayItem: renderCategory(task.category) },
+					{
+						displayItem: renderStatus(task.category, false),
+					},
 					{ displayItem: task.points },
 					{
 						displayItem: renderStatus(task.status!),
@@ -40,10 +42,10 @@ export const taskCenterTableSelector = (
 						url: `${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}/${task.id}${ROUTES.taskcenter.edit}`,
 						styles: "flex items-center",
 					},
-					{
+					task.status !== TaskStatus.STARTED && {
 						icon: DeleteIcon,
 						styles: "flex items-center gap-2",
-						onClick: () => deleteTask(task.id!),
+						onClick: () => handleDeleteTaskModalOpen(task.id!),
 						deleteAction: true,
 					},
 				] as ITableActions[],

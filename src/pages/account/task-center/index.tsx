@@ -2,17 +2,16 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { IFetchAllActiveTasks, ITaskTableData } from "~/apis/handlers/users/interfaces";
 import Card from "~/components/AccountLayout/Card";
-import DropdownMenu from "~/components/AccountLayout/DropdownMenu";
 import AccountLayout from "~/components/AccountLayout/Layout";
 import PageTab from "~/components/AccountLayout/Tabs";
-import RedeemPointsForm from "~/components/AccountLayout/task-center/RedeemPointsForm";
-import { UserTaskStatus } from "~/components/AdminLayout/taskCenter/taskFormData";
+import { UserTaskPageTab, UserTaskStatus } from "~/components/AdminLayout/taskCenter/taskFormData";
 import { DataTable } from "~/components/common/DataTable";
-import RightLongArrowIcon from "~/components/icons/RightLongArrowIcon";
+import LeftArrowIcon from "~/components/icons/LeftArrowIcon";
 import UserTaskPointIcon from "~/components/icons/UserTaskPointIcon";
 import { Card as CardLoader } from "~/components/Loaders";
 import TableLoader from "~/components/Loaders/TableLoader";
 import Pagination from "~/components/Pagination";
+import { ROUTES } from "~/config/constants";
 import { useGetAllActiveTasks } from "~/hooks/useTask";
 import { userTaskCenterTableSelector } from "~/selectors/task-center";
 
@@ -23,25 +22,19 @@ const UserTaskDashboard = () => {
 		{ title: "Completed Tasks", href: "", query: "completed" },
 	];
 	const router = useRouter();
-	const { rows, page, task } = router.query;
-	const [rowsPerPage, setRowsPerPage] = useState<number>(rows ? Number(rows) : 10);
-	const [currentPage, setCurrentPage] = useState<number>(page ? Number(page) : 1);
+	const { task } = router.query;
+	const searchParams = new URLSearchParams();
+	const [rowsPerPage, setRowsPerPage] = useState<number>();
+	const [currentPage, setCurrentPage] = useState<number>();
 	const [tasks, setTasks] = useState<ITaskTableData[]>([]);
+	const [totalDocs, setTotalDocs] = useState<number>();
+	const [totalPages, setTotalPages] = useState<number>();
 
-	const { activeTasks, isLoading } = useGetAllActiveTasks({
+	const { activeTasks, isLoading, refetch } = useGetAllActiveTasks({
 		rows: rowsPerPage,
 		page: currentPage,
 		task: String(task),
 	});
-
-	// Pagination page count
-	const totalDocs =
-		task === "all" ? activeTasks?.allTask.totalDocs : activeTasks?.userTask.totalDocs;
-
-	const totalPages =
-		task === "all" ? activeTasks?.allTask.totalPages : activeTasks?.userTask.totalPages;
-
-	const curPage = task === "all" ? activeTasks?.allTask.page : activeTasks?.userTask.page;
 
 	// function to filter tasks based on query `all` or `pending` or `completed`
 	const getAllTaskDetails = useCallback((data: IFetchAllActiveTasks) => {
@@ -50,12 +43,21 @@ const UserTaskDashboard = () => {
 		const { docs: userTaskDocs } = userTask;
 
 		// Conditionally filter based on `router.query.task`
-		const modifiedDocs =
-			router.query.task !== "all"
-				? allTaskDocs.filter((doc) =>
+		const modifiedDocs = (() => {
+			switch (router.query.task) {
+				case "pending":
+					return allTaskDocs.filter(
+						(doc) => !userTaskDocs.some((usertask) => usertask.taskId === doc.id),
+					);
+				case "completed":
+					return allTaskDocs.filter((doc) =>
 						userTaskDocs.some((usertask) => usertask.taskId === doc.id),
-					)
-				: allTaskDocs;
+					);
+				case "all":
+				default:
+					return allTaskDocs;
+			}
+		})();
 
 		// modifies tasks status
 		return modifiedDocs.map((doc) => {
@@ -71,37 +73,55 @@ const UserTaskDashboard = () => {
 		}
 	}, [activeTasks]);
 
-	// task refetch handler when page is changed
-	const updateSearchQuery = (page: number) => {
-		if (currentPage && rowsPerPage) {
-			router.replace({ query: { ...router.query, page, rows: rowsPerPage } }, undefined, {
-				scroll: false,
-				shallow: true,
-			});
+	useEffect(() => {
+		if (activeTasks) {
+			if (task === UserTaskPageTab.ALL) {
+				setRowsPerPage(activeTasks.allTask.limit);
+				setCurrentPage(activeTasks.allTask.page);
+				setTotalDocs(activeTasks.allTask.totalDocs);
+				setTotalPages(activeTasks.allTask.totalPages);
+			} else if (task === UserTaskPageTab.PENDING) {
+				setRowsPerPage(activeTasks.allTask.limit);
+				setCurrentPage(activeTasks.allTask.page);
+				setTotalDocs(activeTasks.allTask.totalDocs - activeTasks.userTask.totalDocs);
+				setTotalPages(
+					Math.ceil(
+						(activeTasks.allTask.totalPages - activeTasks.userTask.totalPages) /
+							activeTasks.allTask.limit,
+					),
+				);
+			} else if (task === UserTaskPageTab.COMPLETED) {
+				setRowsPerPage(activeTasks.userTask.limit);
+				setCurrentPage(activeTasks.userTask.page);
+				setTotalDocs(activeTasks.userTask.totalDocs);
+				setTotalPages(activeTasks.userTask.totalPages);
+			}
 		}
-	};
+	}, [activeTasks]);
+
+	useEffect(() => {
+		if (currentPage) {
+			searchParams.set("page", currentPage.toString());
+		}
+		if (rowsPerPage) {
+			searchParams.set("rows", rowsPerPage.toString());
+		}
+
+		refetch();
+	}, [currentPage, rowsPerPage]);
 
 	const { tableBody, tableHead } = userTaskCenterTableSelector(tasks);
 
 	return (
 		<section className="space-y-10">
-			<section className="flex items-center justify-between">
-				<h1 className="font-semibold text-4xl text-[#03033A]">Tasks Center</h1>
-
-				<DropdownMenu
-					trigger={
-						<div
-							data-testid="redeem-points-button"
-							className="bg-buttonColor flex items-center gap-2 px-5 py-2 rounded-lg text-white"
-						>
-							Redeem Points <RightLongArrowIcon />{" "}
-						</div>
-					}
-					position="left"
-				>
-					<RedeemPointsForm />
-				</DropdownMenu>
+			<section
+				className="flex items-center gap-2 cursor-pointer w-fit -my-6"
+				onClick={() => router.replace(`${ROUTES.dashboard.backButton}`)}
+			>
+				<LeftArrowIcon />
+				<p className="font-semibold text-lg text-textColor">Back</p>
 			</section>
+			<h1 className="font-semibold text-4xl text-[#03033A]">Tasks Center</h1>
 
 			{isLoading ? (
 				<section className="bg-white p-3 w-[40%]">
@@ -137,19 +157,13 @@ const UserTaskDashboard = () => {
 							/>
 							<section className="mt-3 p-2 rounded-lg">
 								<Pagination
-									currentPage={curPage ?? 1}
+									currentPage={currentPage ?? 1}
 									totalPages={totalPages ?? 0}
-									rowsPerPage={rowsPerPage}
+									rowsPerPage={rowsPerPage!}
 									totalRecord={totalDocs ?? 0}
 									setRowsPerPage={setRowsPerPage}
-									onNext={() => {
-										setCurrentPage((prev) => ++prev);
-										updateSearchQuery(currentPage + 1);
-									}}
-									onPrev={() => {
-										setCurrentPage((prev) => --prev);
-										updateSearchQuery(currentPage - 1);
-									}}
+									onNext={() => setCurrentPage((prev) => prev && ++prev)}
+									onPrev={() => setCurrentPage((prev) => prev && --prev)}
 								/>
 							</section>
 						</>

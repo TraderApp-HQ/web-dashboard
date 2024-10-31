@@ -19,6 +19,7 @@ const config: Config = {
 				textCardBg: "#F9FBFF",
 				textLight: "#667085",
 				textBlack: "#0A0D14",
+				textGray: "#414141",
 			},
 		},
 	},

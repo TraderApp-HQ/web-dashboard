@@ -42,6 +42,12 @@ export enum UserTaskStatus {
 	DONE = "Done",
 }
 
+export enum UserTaskPageTab {
+	ALL = "all",
+	PENDING = "pending",
+	COMPLETED = "completed",
+}
+
 export interface ITaskCategory {
 	displayText: string;
 	value: TaskCategory;

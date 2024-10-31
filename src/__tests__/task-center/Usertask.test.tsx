@@ -12,6 +12,7 @@ jest.mock("~/hooks/useTask");
 
 describe("User Task Center", () => {
 	const mockPush = jest.fn();
+	const mockRefetch = jest.fn();
 
 	beforeEach(() => {
 		// mock router
@@ -28,6 +29,7 @@ describe("User Task Center", () => {
 		(useGetAllActiveTasks as jest.Mock).mockReturnValue({
 			data: activeTasksTest,
 			isLoading: false,
+			refetch: mockRefetch,
 		});
 	});
 
@@ -45,10 +47,6 @@ describe("User Task Center", () => {
 		// Test for page header
 		const header = screen.getByRole("heading", { level: 1 });
 		expect(header).toHaveTextContent(/tasks center/i);
-
-		// Test for redeem points button
-		const Rbtn = screen.getByTestId("redeem-points-button");
-		expect(Rbtn).toBeInTheDocument();
 
 		// Test for tasks tab
 		const allTaskstabLink = screen.getByLabelText(/all tasks/i);

@@ -7,6 +7,7 @@ import type { IUserProfile } from "~/apis/handlers/users/interfaces";
 
 interface UseUserProfileDataReturn {
 	userProfile: IUserProfile | undefined;
+	userId: string;
 	userFirstName: string;
 	userLastName: string;
 	userEmail: string;
@@ -26,6 +27,7 @@ const useUserProfileData = (): UseUserProfileDataReturn => {
 		queryFn: fetchUser,
 	});
 
+	const userId = userProfile?.id as string;
 	const userFirstName = userProfile?.firstName as string;
 	const userLastName = userProfile?.lastName as string;
 	const userEmail = userProfile ? userProfile?.email : " ";
@@ -42,6 +44,7 @@ const useUserProfileData = (): UseUserProfileDataReturn => {
 
 	return {
 		userProfile,
+		userId,
 		userFirstName,
 		userLastName,
 		userEmail,

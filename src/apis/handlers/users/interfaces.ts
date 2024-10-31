@@ -206,8 +206,7 @@ export interface ITaskWithPopulate {
 	status: string;
 }
 
-export interface IUserTask {
-	id?: string;
+export interface ICreateUserTask {
 	userId: string;
 	taskId: string;
 	taskPoints: number;
@@ -237,7 +236,7 @@ export interface IFetchAllTasks {
 export interface IGetUserTasksInput {
 	page?: number;
 	rows?: number;
-	task: string;
+	task?: string;
 }
 
 export interface ITaskTableData {

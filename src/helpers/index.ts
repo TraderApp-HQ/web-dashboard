@@ -11,7 +11,6 @@ import {
 	TaskStatus,
 	UserTaskStatus,
 } from "~/components/AdminLayout/taskCenter/taskFormData";
-import CategoryPill from "~/components/common/CategoryPill";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -60,9 +59,10 @@ export function renderTargetProfits({
 	);
 }
 
-export function renderStatus(status: string, style?: { justify?: string }) {
+export function renderStatus(status: string, bullet?: boolean, style?: { justify?: string }) {
 	let theme: ColourTheme;
 	switch (status) {
+		case TaskCategory.REFERRAL:
 		case UserTaskStatus.DONE:
 		case TaskStatus.STARTED:
 		case OperationStatus.ACTIVE:
@@ -90,36 +90,22 @@ export function renderStatus(status: string, style?: { justify?: string }) {
 			theme = ColourTheme.DANGER;
 			break;
 		}
-		default:
-			theme = ColourTheme.PRIMARY;
-	}
-	return React.createElement(StatusPill, { status, theme, style });
-}
-
-export function renderCategory(category: TaskCategory) {
-	let theme: string;
-	switch (category) {
 		case TaskCategory.CONTENT: {
-			theme = "bg-[#E7ECFF] text-[#3E57BF]";
+			theme = ColourTheme.CONTENT;
 			break;
 		}
 		case TaskCategory.SOCIAL: {
-			theme = "bg-[#EDFDF8] text-[#234475]";
+			theme = ColourTheme.SOCIAL;
 			break;
 		}
 		case TaskCategory.MARKET: {
-			theme = "bg-[#FEF6F7] text-[#E02D3C]";
+			theme = ColourTheme.MARKET;
 			break;
 		}
-		case TaskCategory.REFERRAL: {
-			theme = "bg-[#EDFDF8] text-[#08875D]";
-			break;
-		}
-		default: {
-			theme = "";
-		}
+		default:
+			theme = ColourTheme.PRIMARY;
 	}
-	return React.createElement(CategoryPill, { category, theme });
+	return React.createElement(StatusPill, { status, theme, bullet, style });
 }
 
 export const serverRedirect = (destination: string): GetServerSidePropsResult<{}> => {

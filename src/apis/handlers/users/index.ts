@@ -25,7 +25,7 @@ import type {
 	IFetchAllTasks,
 	IFetchAllActiveTasks,
 	IGetUserTasksInput,
-	IUserTask,
+	ICreateUserTask,
 	IFetchAllPendingTasksCount,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
@@ -277,9 +277,9 @@ export class UsersService {
 	}
 
 	public async getAllActiveTasks({
-		task,
 		rows,
 		page,
+		task,
 	}: IGetUserTasksInput): Promise<IFetchAllActiveTasks> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/task/active-tasks?task=${task}&page=${page}&rows=${rows}`,
@@ -318,7 +318,7 @@ export class UsersService {
 		return response.message;
 	}
 
-	public async createUserTask(data: IUserTask): Promise<string> {
+	public async createUserTask(data: ICreateUserTask): Promise<string> {
 		const response = await this.apiClient.post<IResponse>({
 			url: "/task/user-task",
 			data,

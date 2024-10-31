@@ -5,8 +5,6 @@ import SideNav from "~/components/AccountLayout/SideNav";
 import TopHeader from "~/components/AccountLayout/TopHeader";
 import { useSideNav } from "~/contexts/NavContext";
 import useProtectedRoute from "~/hooks/useProtectedRoute";
-import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
-import LeftArrowIcon from "~/components/icons/LeftArrowIcon";
 
 type Props = {
 	children: ReactNode;
@@ -30,20 +28,8 @@ const AccountLayout: React.FC<Props> = ({ children }) => {
 			<div className="h-full right-0 md:w-[81%] 2xl:w-[84%] md:absolute">
 				{/* Top header */}
 				<div className="h-[10%] border-b">
-					{router.pathname === `${LAYOUT_ROUTES.account}${ROUTES.taskcenter.home}` ? (
-						<section
-							className="flex items-center gap-2 cursor-pointer w-fit pt-6 pl-12"
-							onClick={() => router.replace(`${ROUTES.dashboard.backButton}`)}
-						>
-							<LeftArrowIcon />
-							<p className="font-semibold text-lg text-textColor">Back</p>
-						</section>
-					) : (
-						<>
-							<TopHeader />
-							<MobileTopHeader />
-						</>
-					)}
+					<TopHeader />
+					<MobileTopHeader />
 				</div>
 				{/* Body */}
 				<div className="h-[90%] overflow-y-auto py-6 px-4 md:px-12 md:py-8">{children}</div>

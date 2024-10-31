@@ -164,11 +164,13 @@ const Dashbaord = () => {
 						<div className="flex gap-0.5">
 							<MessageIcon />
 
-							<div
-								className={`-mt-2.5 w-[19px] h-[19px] bg-[#FF0808] rounded-full flex justify-center items-center font-semibold text-white text-[10px] ${pendingCountLoading ? "animate-pulse" : ""}`}
-							>
-								{isSuccess && pendingTasksCount?.pendingTasksCount}
-							</div>
+							{isSuccess && pendingTasksCount!.pendingTasksCount > 0 && (
+								<div
+									className={`-mt-2.5 w-[19px] h-[19px] bg-[#FF0808] rounded-full flex justify-center items-center font-semibold text-white text-[10px] ${pendingCountLoading ? "animate-pulse" : ""}`}
+								>
+									{pendingTasksCount?.pendingTasksCount}
+								</div>
+							)}
 						</div>
 						<p className="text-base font-normal -mt-1">Tasks</p>
 					</div>

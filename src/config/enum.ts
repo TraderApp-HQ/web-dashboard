@@ -5,6 +5,9 @@ export enum ColourTheme {
 	PRIMARY = "PRIMARY",
 	SECONDARY = "SECONDARY",
 	REVIEW = "REVIEW",
+	CONTENT = "CONTENT",
+	SOCIAL = "SOCIAL",
+	MARKET = "MARKET",
 }
 
 export enum OperationStatus {
