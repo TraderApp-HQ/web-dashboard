@@ -1,7 +1,7 @@
 import type { UserStatus } from "~/config/enum";
 import type { NotificationChannel, ReferralRank, UserRole, VerificationType } from "./enums";
 import {
-	PlatformActions,
+	PlatformAction,
 	TaskStatus,
 	TaskType,
 	UserTaskStatus,
@@ -199,7 +199,7 @@ export interface ITaskWithPopulate {
 	platformId?: ITaskPlatforms;
 	platformName?: string;
 	link?: string;
-	expectedActions?: PlatformActions[];
+	expectedActions?: PlatformAction[];
 	points: number;
 	startDate?: Date;
 	dueDate?: Date;
@@ -210,7 +210,7 @@ export interface ICreateUserTask {
 	userId: string;
 	taskId: string;
 	taskPoints: number;
-	expectedActions?: PlatformActions[];
+	expectedActions?: PlatformAction[];
 	status: UserTaskStatus;
 }
 
