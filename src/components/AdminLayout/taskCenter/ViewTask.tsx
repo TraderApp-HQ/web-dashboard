@@ -1,39 +1,22 @@
 import Image from "next/image";
-import { renderStatus } from "~/helpers";
-import { ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
-import { PlatformActions, TaskCategory } from "./taskFormData";
-import HyperLinkIcon from "~/components/icons/HyperLinkIcon";
 import Link from "next/link";
+import { ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
+import HyperLinkIcon from "~/components/icons/HyperLinkIcon";
+import { renderActionStatement, renderStatus } from "~/helpers";
+import { TaskCategory } from "./taskFormData";
 
 interface IViewTaskProps {
 	selectedTask: ITaskWithPopulate;
 }
 
 const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
-	const renderActionStatement = (action: string) => {
-		switch (action) {
-			case PlatformActions.LIKE:
-				return "Like post.";
-			case PlatformActions.COMMENT:
-				return "Comment on post.";
-			case PlatformActions.SHARE:
-				return "Share post.";
-			case PlatformActions.FOLLOW:
-				return "Follow our page";
-			case PlatformActions.POST:
-				return "Make a post about TraderApp on any social media platform.";
-			case TaskCategory.REFERRAL:
-				return "Refer a new user to TrapperApp.";
-			case TaskCategory.MARKET:
-				return "Create awareness about TraderApp on any social media platform.";
-			default:
-				return "";
-		}
-	};
-
 	return (
 		<section className="space-y-5">
-			<section className="bg-textCardBg px-3 py-2 rounded-xl space-y-4">
+			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
+				<h3 className="text-textBlack text-base font-bold">Objective</h3>
+				<p className="text-textLight text-base font-normal">{selectedTask.objective}</p>
+			</section>
+			<section className="bg-textCardBg px-3 py-2 rounded-xl space-y-3">
 				<section className="flex items-center justify-between border-b-[1px] border-[#D1D7F0] pb-2">
 					<h3 className="text-textGray text-sm font-bold">Task Category</h3>
 					<p className="text-textLight text-base font-semibold capitalize">
@@ -72,10 +55,6 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 			</section>
 
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
-				<h3 className="text-textBlack text-base font-bold">Description</h3>
-				<p className="text-textLight text-base font-normal">{selectedTask?.description}</p>
-			</section>
-			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
 				<h3 className="text-textBlack text-base font-bold">Expected Action</h3>
 				<ul className="list-disc list-inside space-y-2">
 					{selectedTask.expectedActions!.length >= 1 ? (
@@ -86,10 +65,15 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 						))
 					) : (
 						<li className="text-[#4A5264] font-medium text-sm">
-							{renderActionStatement(selectedTask?.category)}
+							{renderActionStatement(selectedTask?.category as TaskCategory)}
 						</li>
 					)}
 				</ul>
+			</section>
+
+			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
+				<h3 className="text-textBlack text-base font-bold">Description</h3>
+				<p className="text-textLight text-base font-normal">{selectedTask?.description}</p>
 			</section>
 
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-5">

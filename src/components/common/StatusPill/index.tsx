@@ -42,19 +42,14 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 			statusContainerStyles = "bg-[#F3F6FF] text-[#082DC7]";
 			break;
 		}
-		case ColourTheme.CONTENT: {
+		case ColourTheme.TERTIARY: {
 			roundedIconStyles = "bg-[#3E57BF]";
 			statusContainerStyles = "bg-[#E7ECFF] text-[#3E57BF]";
 			break;
 		}
-		case ColourTheme.SOCIAL: {
+		case ColourTheme.TERTIARY2: {
 			roundedIconStyles = "bg-[#234475]";
 			statusContainerStyles = "bg-[#F2FCFF] text-[#234475]";
-			break;
-		}
-		case ColourTheme.MARKET: {
-			roundedIconStyles = "bg-[#E02D3C]";
-			statusContainerStyles = "bg-[#FEF6F7] text-[#E02D3C]";
 			break;
 		}
 		default: {

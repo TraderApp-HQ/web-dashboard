@@ -45,15 +45,15 @@ const UserTaskDashboard = () => {
 		// Conditionally filter based on `router.query.task`
 		const modifiedDocs = (() => {
 			switch (router.query.task) {
-				case "pending":
+				case UserTaskPageTab.PENDING:
 					return allTaskDocs.filter(
 						(doc) => !userTaskDocs.some((usertask) => usertask.taskId === doc.id),
 					);
-				case "completed":
+				case UserTaskPageTab.COMPLETED:
 					return allTaskDocs.filter((doc) =>
 						userTaskDocs.some((usertask) => usertask.taskId === doc.id),
 					);
-				case "all":
+				case UserTaskPageTab.ALL:
 				default:
 					return allTaskDocs;
 			}

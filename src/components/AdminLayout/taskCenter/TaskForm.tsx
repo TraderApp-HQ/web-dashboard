@@ -11,7 +11,7 @@ import {
 	ITaskForm,
 	ITaskFormError,
 	Platform,
-	PlatformActions,
+	PlatformAction,
 	taskCategory,
 	TaskStatus,
 	TaskType,
@@ -111,14 +111,14 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 			// This helps to update the expectedActions array
 			if (field === "expectedActions") {
 				const actionsArray = !formData.expectedActions
-					? [value as PlatformActions]
-					: formData.expectedActions.includes(value as PlatformActions)
+					? [value as PlatformAction]
+					: formData.expectedActions.includes(value as PlatformAction)
 						? formData.expectedActions.filter((action) => action !== value)
-						: [...formData.expectedActions, value as PlatformActions];
+						: [...formData.expectedActions, value as PlatformAction];
 
 				return {
 					...prevData,
-					[field]: actionsArray as PlatformActions[],
+					[field]: actionsArray as PlatformAction[],
 				};
 			}
 
@@ -334,7 +334,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 										checked={
 											formData.expectedActions
 												? formData.expectedActions!.includes(
-														action as PlatformActions,
+														action as PlatformAction,
 													)
 												: false
 										}

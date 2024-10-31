@@ -1,15 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
-import { ITaskWithPopulate, ICreateUserTask } from "~/apis/handlers/users/interfaces";
-import {
-	PlatformActions,
-	TaskCategory,
-	UserTaskStatus,
-} from "~/components/AdminLayout/taskCenter/taskFormData";
+import { ICreateUserTask, ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
+import { TaskCategory, UserTaskStatus } from "~/components/AdminLayout/taskCenter/taskFormData";
 import Button from "~/components/common/Button";
 import HyperLinkIcon from "~/components/icons/HyperLinkIcon";
-import { renderStatus } from "~/helpers";
+import { renderActionStatement, renderStatus } from "~/helpers";
 import { useCreateUserTask } from "~/hooks/useTask";
 import useUserProfileData from "~/hooks/useUserProfileData";
 
@@ -35,27 +31,6 @@ const ViewUserTask: React.FC<IViewUserTaskProps> = ({ selectedTask, closeModal }
 		taskPoints: selectedTask.points,
 		expectedActions: selectedTask.expectedActions ? selectedTask.expectedActions : [],
 		status: UserTaskStatus.IN_REVIEW,
-	};
-
-	const renderActionStatement = (action: string) => {
-		switch (action) {
-			case PlatformActions.LIKE:
-				return "Like post.";
-			case PlatformActions.COMMENT:
-				return "Comment on post.";
-			case PlatformActions.SHARE:
-				return "Share post.";
-			case PlatformActions.FOLLOW:
-				return "Follow our page";
-			case PlatformActions.POST:
-				return "Make a post about TraderApp on any social media platform.";
-			case TaskCategory.REFERRAL:
-				return "Refer a new user to TrapperApp.";
-			case TaskCategory.MARKET:
-				return "Create awareness about TraderApp on any social media platform.";
-			default:
-				return "";
-		}
 	};
 
 	return (
@@ -113,7 +88,7 @@ const ViewUserTask: React.FC<IViewUserTaskProps> = ({ selectedTask, closeModal }
 						))
 					) : (
 						<li className="text-[#4A5264] font-medium text-sm">
-							{renderActionStatement(selectedTask?.category)}
+							{renderActionStatement(selectedTask?.category as TaskCategory)}
 						</li>
 					)}
 				</ul>

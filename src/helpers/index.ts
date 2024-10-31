@@ -7,6 +7,7 @@ import TargetPill from "~/components/common/TargetPill";
 import type { IDisplayItem, TartgetProfit } from "~/lib/types";
 import DisplayItem from "~/components/common/DisplayItem";
 import {
+	PlatformAction,
 	TaskCategory,
 	TaskStatus,
 	UserTaskStatus,
@@ -86,20 +87,17 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 			theme = ColourTheme.DANGER;
 			break;
 		}
+		case TaskCategory.MARKET:
 		case UserStatus.INACTIVE: {
 			theme = ColourTheme.DANGER;
 			break;
 		}
 		case TaskCategory.CONTENT: {
-			theme = ColourTheme.CONTENT;
+			theme = ColourTheme.TERTIARY;
 			break;
 		}
 		case TaskCategory.SOCIAL: {
-			theme = ColourTheme.SOCIAL;
-			break;
-		}
-		case TaskCategory.MARKET: {
-			theme = ColourTheme.MARKET;
+			theme = ColourTheme.TERTIARY2;
 			break;
 		}
 		default:
@@ -115,4 +113,25 @@ export const serverRedirect = (destination: string): GetServerSidePropsResult<{}
 			permanent: false,
 		},
 	};
+};
+
+export const renderActionStatement = (action: PlatformAction | TaskCategory) => {
+	switch (action) {
+		case PlatformAction.LIKE:
+			return "Like post.";
+		case PlatformAction.COMMENT:
+			return "Comment on post.";
+		case PlatformAction.SHARE:
+			return "Share post.";
+		case PlatformAction.FOLLOW:
+			return "Follow our page";
+		case PlatformAction.POST:
+			return "Make a post about TraderApp on any social media platform.";
+		case TaskCategory.REFERRAL:
+			return "Refer a new user to TrapperApp.";
+		case TaskCategory.MARKET:
+			return "Create awareness about TraderApp on any social media platform.";
+		default:
+			return "";
+	}
 };

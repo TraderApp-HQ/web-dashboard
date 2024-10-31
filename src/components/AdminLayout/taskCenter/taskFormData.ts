@@ -10,7 +10,7 @@ export enum Platform {
 	OTHERS = "Others",
 }
 
-export enum PlatformActions {
+export enum PlatformAction {
 	LIKE = "Like",
 	FOLLOW = "Follow",
 	COMMENT = "Comment",
@@ -86,7 +86,7 @@ export interface ICreateTaskFormData {
 	platformId?: string;
 	platformName?: Platform;
 	link?: string;
-	expectedActions?: PlatformActions[];
+	expectedActions?: PlatformAction[];
 	points: number;
 	startDate?: Date;
 	dueDate?: Date;
