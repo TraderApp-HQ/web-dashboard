@@ -21,7 +21,11 @@ export const taskCenterTableSelector = (
 						styles: "text-lg capitalize",
 					},
 					{
-						displayItem: renderStatus(task.category, false),
+						displayItem: renderStatus(
+							task.category,
+							{ justify: "justify-center" },
+							false,
+						),
 					},
 					{ displayItem: task.points },
 					{

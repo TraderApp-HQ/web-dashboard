@@ -59,7 +59,7 @@ export function renderTargetProfits({
 	);
 }
 
-export function renderStatus(status: string, bullet?: boolean, style?: { justify?: string }) {
+export function renderStatus(status: string, style?: { justify?: string }, bullet?: boolean) {
 	let theme: ColourTheme;
 	switch (status) {
 		case TaskCategory.REFERRAL:
@@ -105,7 +105,7 @@ export function renderStatus(status: string, bullet?: boolean, style?: { justify
 		default:
 			theme = ColourTheme.PRIMARY;
 	}
-	return React.createElement(StatusPill, { status, theme, bullet, style });
+	return React.createElement(StatusPill, { status, theme, style, bullet });
 }
 
 export const serverRedirect = (destination: string): GetServerSidePropsResult<{}> => {

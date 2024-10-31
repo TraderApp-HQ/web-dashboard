@@ -14,8 +14,8 @@ interface IOperationStatus {
 const OperationStatus: React.FC<IOperationStatus> = ({
 	status,
 	theme,
-	bullet = true, // defaults to true to display bullet
 	style = { justify: "justify-end sm:justify-center" },
+	bullet = true, // defaults to true to display bullet
 }) => {
 	const statusText = capitalizeFirstLetter(status);
 	let roundedIconStyles: string;
