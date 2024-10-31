@@ -20,8 +20,13 @@ import type {
 	IReferralStats,
 	IReferralCommunityStats,
 	ITaskPlatforms,
-	ITask,
 	ITaskWithPopulate,
+	IGetTasksInput,
+	IFetchAllTasks,
+	IFetchAllActiveTasks,
+	IGetUserTasksInput,
+	ICreateUserTask,
+	IFetchAllPendingTasksCount,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
@@ -261,25 +266,67 @@ export class UsersService {
 		return data as ITaskPlatforms[];
 	}
 
-	public async getAllTasks(): Promise<ITask[]> {
+	public async getAllTasks({ rows, page, search }: IGetTasksInput): Promise<IFetchAllTasks> {
 		const response = await this.apiClient.get<IResponse>({
-			url: "/task",
+			url: `/task?page=${page}&rows=${rows}&search=${search}`,
 		});
 
 		if (response.error) throw new Error(response.message || "Error fetching tasks.");
 
 		const { data } = response;
-		return data as ITask[];
+		return data as IFetchAllTasks;
+	}
+
+	public async getAllActiveTasks({
+		rows,
+		page,
+		task,
+	}: IGetUserTasksInput): Promise<IFetchAllActiveTasks> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/task/active-tasks?task=${task}&page=${page}&rows=${rows}`,
+		});
+
+		if (response.error) throw new Error(response.message || "Error fetching tasks.");
+
+		const { data } = response;
+
+		return data as IFetchAllActiveTasks;
+	}
+
+	public async getAllPendingTasksCount(): Promise<IFetchAllPendingTasksCount> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/task/pending-tasks-count",
+		});
+
+		if (response.error)
+			throw new Error(response.message || "Error fetching pending tasks count.");
+
+		const { data } = response;
+
+		return data as IFetchAllPendingTasksCount;
 	}
 
 	public async createTask(data: ICreateTaskFormData): Promise<string> {
 		const response = await this.apiClient.post<IResponse>({
-			url: "/task/create-task",
+			url: "/task",
 			data,
 		});
 
 		if (response.error) {
 			throw new Error(response.message || "Error creating task.");
+		}
+
+		return response.message;
+	}
+
+	public async createUserTask(data: ICreateUserTask): Promise<string> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/task/user-task",
+			data,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Error creating user task.");
 		}
 
 		return response.message;
@@ -307,6 +354,17 @@ export class UsersService {
 	public async getTask({ taskId }: { taskId: string }): Promise<ITaskWithPopulate> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/task/${taskId}`,
+		});
+
+		if (response.error) throw new Error(response.message || "Error updating task.");
+
+		const { data } = response;
+		return data as ITaskWithPopulate;
+	}
+
+	public async getUserTask({ taskId }: { taskId: string }): Promise<ITaskWithPopulate> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/task/user-task/${taskId}`,
 		});
 
 		if (response.error) throw new Error(response.message || "Error updating task.");

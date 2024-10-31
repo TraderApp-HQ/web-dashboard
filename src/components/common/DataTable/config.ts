@@ -19,6 +19,7 @@ export interface ITableActions {
 	onClick?: () => void;
 	setToggle?: () => void;
 	icon?: ComponentType<IconProps>;
+	deleteAction?: boolean;
 }
 
 interface ITBodyRow {

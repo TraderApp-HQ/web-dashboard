@@ -5,6 +5,11 @@ import { UsersQueryId } from "~/apis/handlers/users/constants";
 import { useFetch } from "../useFetch";
 import { useCallback } from "react";
 import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
+import {
+	IGetTasksInput,
+	IGetUserTasksInput,
+	ICreateUserTask,
+} from "~/apis/handlers/users/interfaces";
 
 export const useGetTaskPlatforms = () => {
 	const usersService = new UsersService();
@@ -34,20 +39,69 @@ export const useGetTask = (taskId: string) => {
 	return { task, isLoading, isError, error };
 };
 
-export const useGetAllTasks = () => {
+export const useGetAllTasks = ({ search, rows, page }: IGetTasksInput) => {
 	const usersService = new UsersService();
 
+	// Memoized function to fetch users
+	const fetchTasks = useCallback(
+		() => usersService.getAllTasks({ rows, page, search }),
+		[page, rows, search, usersService],
+	);
+
 	const {
-		data: tasks,
+		data: tasksDetails,
 		isLoading,
 		isError,
 		error,
+		isSuccess,
+		refetch,
 	} = useFetch({
-		queryKey: [UsersQueryId.task],
-		queryFn: usersService.getAllTasks.bind(usersService),
+		queryKey: [UsersQueryId.task, page],
+		queryFn: fetchTasks,
 	});
 
-	return { tasks, isLoading, isError, error };
+	return { tasksDetails, isLoading, isError, error, isSuccess, refetch };
+};
+
+export const useGetAllActiveTasks = ({ rows, page, task }: IGetUserTasksInput) => {
+	const usersService = new UsersService();
+
+	// Memoized function to fetch users
+	const fetchActiveTasks = useCallback(
+		() => usersService.getAllActiveTasks({ rows, page, task }),
+		[page, rows, task, usersService],
+	);
+
+	const {
+		data: activeTasks,
+		isLoading,
+		isSuccess,
+		refetch,
+	} = useFetch({
+		queryKey: [UsersQueryId.activeTasks],
+		queryFn: fetchActiveTasks,
+	});
+
+	return { activeTasks, isLoading, isSuccess, refetch };
+};
+
+export const useGetAllPendingTasksCount = () => {
+	const usersService = new UsersService();
+	const fetchPendingTasksCount = useCallback(
+		() => usersService.getAllPendingTasksCount(),
+		[usersService],
+	);
+
+	const {
+		data: pendingTasksCount,
+		isLoading,
+		isSuccess,
+	} = useFetch({
+		queryKey: [UsersQueryId.pendingTasksCount],
+		queryFn: fetchPendingTasksCount,
+	});
+
+	return { pendingTasksCount, isLoading, isSuccess };
 };
 
 export const useCreateTask = () => {
@@ -110,4 +164,40 @@ export const useDeleteTask = () => {
 	});
 
 	return { deleteTask, isSuccess, deleteMessage, isError, error };
+};
+
+export const useCreateUserTask = () => {
+	const usersService = new UsersService();
+	const queryClient = useQueryClient();
+	const {
+		mutateAsync: createUserTask,
+		isError,
+		error,
+		isSuccess,
+		isPending,
+	} = useCreate({
+		mutationFn: (data: ICreateUserTask) => usersService.createUserTask(data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [UsersQueryId.activeTasks] });
+		},
+	});
+
+	return { createUserTask, isPending, isSuccess, isError, error };
+};
+
+export const useGetUserTask = (taskId: string) => {
+	const usersService = new UsersService();
+
+	const getTask = useCallback(() => usersService.getUserTask({ taskId }), [taskId, usersService]);
+	const {
+		data: task,
+		isLoading,
+		isError,
+		error,
+	} = useFetch({
+		queryKey: [taskId],
+		queryFn: getTask,
+	});
+
+	return { task, isLoading, isError, error };
 };

@@ -1,5 +1,11 @@
 import type { UserStatus } from "~/config/enum";
 import type { NotificationChannel, ReferralRank, UserRole, VerificationType } from "./enums";
+import {
+	PlatformAction,
+	TaskStatus,
+	TaskType,
+	UserTaskStatus,
+} from "~/components/AdminLayout/taskCenter/taskFormData";
 
 export interface IUserProfile {
 	id: string;
@@ -193,9 +199,92 @@ export interface ITaskWithPopulate {
 	platformId?: ITaskPlatforms;
 	platformName?: string;
 	link?: string;
-	expectedActions?: string[];
+	expectedActions?: PlatformAction[];
 	points: number;
 	startDate?: Date;
 	dueDate?: Date;
 	status: string;
+}
+
+export interface ICreateUserTask {
+	userId: string;
+	taskId: string;
+	taskPoints: number;
+	expectedActions?: PlatformAction[];
+	status: UserTaskStatus;
+}
+
+export interface IGetTasksInput {
+	page?: number;
+	rows?: number;
+	search?: string;
+}
+
+export interface IFetchAllTasks {
+	docs: ITask[];
+	hasNextPage: boolean;
+	hasPrevPage: boolean;
+	limit: number;
+	nextPage: number;
+	page: number;
+	pagingCounter: number;
+	prevPage?: number;
+	totalDocs: number;
+	totalPages: number;
+}
+
+export interface IGetUserTasksInput {
+	page?: number;
+	rows?: number;
+	task?: string;
+}
+
+export interface ITaskTableData {
+	id: string;
+	title: string;
+	points: number;
+	taskType: TaskType;
+	dueDate?: Date;
+	status: UserTaskStatus | TaskStatus;
+}
+
+interface IUserTableData {
+	id: string;
+	taskId: string;
+	status: UserTaskStatus;
+}
+
+interface IFetchActiveTasks {
+	docs: ITaskTableData[];
+	hasNextPage: boolean;
+	hasPrevPage: boolean;
+	limit: number;
+	nextPage: number;
+	page: number;
+	pagingCounter: number;
+	prevPage?: number;
+	totalDocs: number;
+	totalPages: number;
+}
+
+interface IFetchUserTasks {
+	docs: IUserTableData[];
+	hasNextPage: boolean;
+	hasPrevPage: boolean;
+	limit: number;
+	nextPage: number;
+	page: number;
+	pagingCounter: number;
+	prevPage?: number;
+	totalDocs: number;
+	totalPages: number;
+}
+
+export interface IFetchAllActiveTasks {
+	allTask: IFetchActiveTasks;
+	userTask: IFetchUserTasks;
+}
+
+export interface IFetchAllPendingTasksCount {
+	pendingTasksCount: number;
 }

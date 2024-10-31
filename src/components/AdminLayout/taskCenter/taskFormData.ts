@@ -10,7 +10,7 @@ export enum Platform {
 	OTHERS = "Others",
 }
 
-export enum PlatformActions {
+export enum PlatformAction {
 	LIKE = "Like",
 	FOLLOW = "Follow",
 	COMMENT = "Comment",
@@ -40,6 +40,12 @@ export enum UserTaskStatus {
 	PENDING = "Pending",
 	IN_REVIEW = "In Review",
 	DONE = "Done",
+}
+
+export enum UserTaskPageTab {
+	ALL = "all",
+	PENDING = "pending",
+	COMPLETED = "completed",
 }
 
 export interface ITaskCategory {
@@ -80,7 +86,7 @@ export interface ICreateTaskFormData {
 	platformId?: string;
 	platformName?: Platform;
 	link?: string;
-	expectedActions?: PlatformActions[];
+	expectedActions?: PlatformAction[];
 	points: number;
 	startDate?: Date;
 	dueDate?: Date;

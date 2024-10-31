@@ -6,7 +6,12 @@ import { ColourTheme, HTMLElements, OperationStatus, UserStatus } from "~/config
 import TargetPill from "~/components/common/TargetPill";
 import type { IDisplayItem, TartgetProfit } from "~/lib/types";
 import DisplayItem from "~/components/common/DisplayItem";
-import { TaskStatus } from "~/components/AdminLayout/taskCenter/taskFormData";
+import {
+	PlatformAction,
+	TaskCategory,
+	TaskStatus,
+	UserTaskStatus,
+} from "~/components/AdminLayout/taskCenter/taskFormData";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -55,34 +60,50 @@ export function renderTargetProfits({
 	);
 }
 
-export function renderStatus(status: string, style?: { justify?: string }) {
+export function renderStatus(status: string, style?: { justify?: string }, bullet?: boolean) {
 	let theme: ColourTheme;
 	switch (status) {
+		case TaskCategory.REFERRAL:
+		case UserTaskStatus.DONE:
 		case TaskStatus.STARTED:
-		case TaskStatus.COMPLETED:
 		case OperationStatus.ACTIVE:
 		case OperationStatus.COMPLETED: {
 			theme = ColourTheme.SUCCESS;
 			break;
 		}
+		case UserTaskStatus.PENDING:
 		case TaskStatus.NOT_STARTED:
 		case OperationStatus.PAUSED:
 		case OperationStatus.PROCESSING: {
 			theme = ColourTheme.WARNING;
 			break;
 		}
+		case TaskStatus.COMPLETED:
+		case UserTaskStatus.IN_REVIEW: {
+			theme = ColourTheme.REVIEW;
+			break;
+		}
 		case OperationStatus.FAILED: {
 			theme = ColourTheme.DANGER;
 			break;
 		}
+		case TaskCategory.MARKET:
 		case UserStatus.INACTIVE: {
 			theme = ColourTheme.DANGER;
+			break;
+		}
+		case TaskCategory.CONTENT: {
+			theme = ColourTheme.TERTIARY;
+			break;
+		}
+		case TaskCategory.SOCIAL: {
+			theme = ColourTheme.TERTIARY2;
 			break;
 		}
 		default:
 			theme = ColourTheme.PRIMARY;
 	}
-	return React.createElement(StatusPill, { status, theme, style });
+	return React.createElement(StatusPill, { status, theme, style, bullet });
 }
 
 export const serverRedirect = (destination: string): GetServerSidePropsResult<{}> => {
@@ -92,4 +113,25 @@ export const serverRedirect = (destination: string): GetServerSidePropsResult<{}
 			permanent: false,
 		},
 	};
+};
+
+export const renderActionStatement = (action: PlatformAction | TaskCategory) => {
+	switch (action) {
+		case PlatformAction.LIKE:
+			return "Like post.";
+		case PlatformAction.COMMENT:
+			return "Comment on post.";
+		case PlatformAction.SHARE:
+			return "Share post.";
+		case PlatformAction.FOLLOW:
+			return "Follow our page";
+		case PlatformAction.POST:
+			return "Make a post about TraderApp on any social media platform.";
+		case TaskCategory.REFERRAL:
+			return "Refer a new user to TrapperApp.";
+		case TaskCategory.MARKET:
+			return "Create awareness about TraderApp on any social media platform.";
+		default:
+			return "";
+	}
 };
