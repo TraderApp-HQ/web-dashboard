@@ -19,15 +19,17 @@ const TradeCenterExchanges = () => {
 			{exchanges && exchanges.length > 0 ? (
 				<>
 					<div className="flex justify-between flex-col md:flex-row">
-						<h1 className="text-slate-900 text-3xl font-semibold mb-4">My Exchanges</h1>
+						<h1 className="text-slate-900 text-3xl font-semibold mb-4">
+							Trading Accounts
+						</h1>
 						<Button
 							onClick={() => {
-								router.push("exchanges/connect");
+								router.push("trading-accounts/connect");
 							}}
 							className="!block"
 							innerClassName="px-4 md:px-4 text-xl md:text-sm"
 						>
-							Connect new Exchange
+							Connect new Account
 						</Button>
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-8">

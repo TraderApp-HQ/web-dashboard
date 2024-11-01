@@ -7,7 +7,7 @@ import ConnectedIcon from "~/components/icons/ConnectedIcon";
 import FailedIcon from "~/components/icons/FailedIcon";
 import TrashIcon from "~/components/icons/TrashIcon";
 import ReplaceIcon from "~/components/icons/ReplaceIcon";
-import { IExchangeConnection } from "~/pages/account/trade-center/exchanges";
+import { IExchangeConnection } from "~/pages/account/trade-center/trading-accounts";
 import SelectBox from "~/components/common/SelectBox";
 import { ISelectBoxOption } from "~/components/interfaces";
 import accountData from "~/data/wallet/data.json";
