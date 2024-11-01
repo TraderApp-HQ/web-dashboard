@@ -59,7 +59,7 @@ export default function DropdownMenu({
 	}, [setIsOpen]);
 
 	return (
-		<div ref={ref} className="ml-3 relative">
+		<div ref={ref} className="ml-3 relative w-fit">
 			<button
 				type="button"
 				onClick={() => {

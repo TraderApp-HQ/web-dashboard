@@ -1,22 +1,41 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
+import { useEffect } from "react";
+import { ICreateUserTask, ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
+import { TaskCategory, UserTaskStatus } from "~/components/AdminLayout/taskCenter/taskFormData";
+import Button from "~/components/common/Button";
 import HyperLinkIcon from "~/components/icons/HyperLinkIcon";
 import { renderActionStatement, renderStatus } from "~/helpers";
-import { TaskCategory } from "./taskFormData";
+import { useCreateUserTask } from "~/hooks/useTask";
+import useUserProfileData from "~/hooks/useUserProfileData";
 
-interface IViewTaskProps {
+interface IViewUserTaskProps {
 	selectedTask: ITaskWithPopulate;
+	closeModal: () => void;
 }
 
-const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
+const ViewUserTask: React.FC<IViewUserTaskProps> = ({ selectedTask, closeModal }) => {
+	const { userId } = useUserProfileData();
+	const { createUserTask, isPending, isSuccess } = useCreateUserTask();
+
+	// function to close modal
+	useEffect(() => {
+		if (isSuccess) {
+			closeModal();
+		}
+	}, [isSuccess]);
+
+	const task: ICreateUserTask = {
+		userId: userId!,
+		taskId: selectedTask.id,
+		taskPoints: selectedTask.points,
+		expectedActions: selectedTask.expectedActions ? selectedTask.expectedActions : [],
+		status: UserTaskStatus.IN_REVIEW,
+	};
+
 	return (
-		<section className="space-y-5">
-			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
-				<h3 className="text-textBlack text-base font-bold">Objective</h3>
-				<p className="text-textLight text-base font-normal">{selectedTask.objective}</p>
-			</section>
-			<section className="bg-textCardBg px-3 py-2 rounded-xl space-y-3">
+		<section className="space-y-5 flex flex-col">
+			<section className="bg-textCardBg px-3 py-2 rounded-xl space-y-4">
 				<section className="flex items-center justify-between border-b-[1px] border-[#D1D7F0] pb-2">
 					<h3 className="text-textGray text-sm font-bold">Task Category</h3>
 					<p className="text-textLight text-base font-semibold capitalize">
@@ -55,6 +74,10 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 			</section>
 
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
+				<h3 className="text-textBlack text-base font-bold">Description</h3>
+				<p className="text-textLight text-base font-normal">{selectedTask?.description}</p>
+			</section>
+			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
 				<h3 className="text-textBlack text-base font-bold">Expected Action</h3>
 				<ul className="list-disc list-inside space-y-2">
 					{selectedTask.expectedActions!.length >= 1 ? (
@@ -69,11 +92,6 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 						</li>
 					)}
 				</ul>
-			</section>
-
-			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
-				<h3 className="text-textBlack text-base font-bold">Description</h3>
-				<p className="text-textLight text-base font-normal">{selectedTask?.description}</p>
 			</section>
 
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-5">
@@ -97,8 +115,19 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 					</section>
 				</section>
 			</section>
+
+			{selectedTask.status === UserTaskStatus.PENDING && (
+				<Button
+					labelText="Mark as completed"
+					onClick={() => {
+						createUserTask(task);
+					}}
+					className="px-10 my-6 text-base w-[40%] font-bold self-center"
+					disabled={isPending}
+				/>
+			)}
 		</section>
 	);
 };
 
-export default ViewTask;
+export default ViewUserTask;

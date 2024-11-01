@@ -1,4 +1,3 @@
-import React from "react";
 import type { ITableActions } from "./config";
 import Button from "~/components/AccountLayout/Button";
 import { useRouter } from "next/router";
@@ -34,7 +33,11 @@ const TableMenuItems: React.FC<tableMenuItemsProps> = ({
 					<IconButton
 						key={item.url}
 						Icon={item.icon}
-						onClick={() => router.push(item.url ? item.url : "#")}
+						onClick={
+							item.deleteAction
+								? item.onClick
+								: () => router.push(item.url ? item.url : "#")
+						}
 						aria-label={item.label}
 						disabled={false}
 					>

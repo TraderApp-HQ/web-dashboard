@@ -1,7 +1,7 @@
-import { ITaskPlatforms } from "~/apis/handlers/users/interfaces";
+import { IFetchAllActiveTasks, ITaskPlatforms } from "~/apis/handlers/users/interfaces";
 import {
 	Platform,
-	PlatformActions,
+	PlatformAction,
 	TaskCategory,
 } from "~/components/AdminLayout/taskCenter/taskFormData";
 
@@ -12,10 +12,10 @@ export const platformsMockData: ITaskPlatforms[] = [
 		logoUrl: "https://aws-s3-dev-users-service.s3.eu-west-1.amazonaws.com/instagram.jpeg",
 		isActive: true,
 		supportedActions: [
-			PlatformActions.LIKE,
-			PlatformActions.FOLLOW,
-			PlatformActions.COMMENT,
-			PlatformActions.SHARE,
+			PlatformAction.LIKE,
+			PlatformAction.FOLLOW,
+			PlatformAction.COMMENT,
+			PlatformAction.SHARE,
 		],
 		categories: [TaskCategory.SOCIAL, TaskCategory.CONTENT],
 	},
@@ -25,10 +25,10 @@ export const platformsMockData: ITaskPlatforms[] = [
 		logoUrl: "https://aws-s3-dev-users-service.s3.eu-west-1.amazonaws.com/twitter.png",
 		isActive: true,
 		supportedActions: [
-			PlatformActions.LIKE,
-			PlatformActions.FOLLOW,
-			PlatformActions.COMMENT,
-			PlatformActions.SHARE,
+			PlatformAction.LIKE,
+			PlatformAction.FOLLOW,
+			PlatformAction.COMMENT,
+			PlatformAction.SHARE,
 		],
 		categories: [TaskCategory.SOCIAL, TaskCategory.CONTENT],
 	},
@@ -38,10 +38,10 @@ export const platformsMockData: ITaskPlatforms[] = [
 		logoUrl: "https://aws-s3-dev-users-service.s3.eu-west-1.amazonaws.com/tiktok.png",
 		isActive: false,
 		supportedActions: [
-			PlatformActions.LIKE,
-			PlatformActions.FOLLOW,
-			PlatformActions.COMMENT,
-			PlatformActions.SHARE,
+			PlatformAction.LIKE,
+			PlatformAction.FOLLOW,
+			PlatformAction.COMMENT,
+			PlatformAction.SHARE,
 		],
 		categories: [TaskCategory.SOCIAL, TaskCategory.CONTENT],
 	},
@@ -51,10 +51,10 @@ export const platformsMockData: ITaskPlatforms[] = [
 		logoUrl: "https://aws-s3-dev-users-service.s3.eu-west-1.amazonaws.com/facebook.png",
 		isActive: true,
 		supportedActions: [
-			PlatformActions.LIKE,
-			PlatformActions.FOLLOW,
-			PlatformActions.COMMENT,
-			PlatformActions.SHARE,
+			PlatformAction.LIKE,
+			PlatformAction.FOLLOW,
+			PlatformAction.COMMENT,
+			PlatformAction.SHARE,
 		],
 		categories: [TaskCategory.SOCIAL, TaskCategory.CONTENT],
 	},
@@ -63,7 +63,7 @@ export const platformsMockData: ITaskPlatforms[] = [
 		name: Platform.WHATSAPP,
 		logoUrl: "https://aws-s3-dev-users-service.s3.eu-west-1.amazonaws.com/whatsapp.jpeg",
 		isActive: true,
-		supportedActions: [PlatformActions.SHARE],
+		supportedActions: [PlatformAction.SHARE],
 		categories: [TaskCategory.SOCIAL, TaskCategory.CONTENT],
 	},
 	{
@@ -72,10 +72,10 @@ export const platformsMockData: ITaskPlatforms[] = [
 		logoUrl: "https://aws-s3-dev-users-service.s3.eu-west-1.amazonaws.com/youtube.jpeg",
 		isActive: false,
 		supportedActions: [
-			PlatformActions.LIKE,
-			PlatformActions.FOLLOW,
-			PlatformActions.COMMENT,
-			PlatformActions.SHARE,
+			PlatformAction.LIKE,
+			PlatformAction.FOLLOW,
+			PlatformAction.COMMENT,
+			PlatformAction.SHARE,
 		],
 		categories: [TaskCategory.SOCIAL, TaskCategory.CONTENT],
 	},
@@ -88,3 +88,30 @@ export const platformsMockData: ITaskPlatforms[] = [
 		categories: [TaskCategory.CONTENT, TaskCategory.MARKET, TaskCategory.REFERRAL],
 	},
 ];
+
+export const activeTasksTest: IFetchAllActiveTasks = {
+	allTask: {
+		docs: [],
+		hasNextPage: false,
+		hasPrevPage: false,
+		limit: 10,
+		nextPage: 0,
+		page: 1,
+		pagingCounter: 1,
+		prevPage: 0,
+		totalDocs: 0,
+		totalPages: 1,
+	},
+	userTask: {
+		docs: [],
+		hasNextPage: false,
+		hasPrevPage: false,
+		limit: 10,
+		nextPage: 0,
+		page: 1,
+		pagingCounter: 1,
+		prevPage: 0,
+		totalDocs: 1,
+		totalPages: 1,
+	},
+};
