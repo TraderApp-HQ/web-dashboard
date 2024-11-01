@@ -6,7 +6,6 @@ import { UsersQueryId } from "~/apis/handlers/users/constants";
 import type { IUserProfile } from "~/apis/handlers/users/interfaces";
 
 interface UseUserProfileDataReturn {
-	userId: string;
 	userProfile: IUserProfile | undefined;
 	userFirstName: string;
 	userLastName: string;
@@ -27,7 +26,6 @@ const useUserProfileData = (): UseUserProfileDataReturn => {
 		queryFn: fetchUser,
 	});
 
-	const userId = userProfile?.id as string;
 	const userFirstName = userProfile?.firstName as string;
 	const userLastName = userProfile?.lastName as string;
 	const userEmail = userProfile ? userProfile?.email : " ";
@@ -43,7 +41,6 @@ const useUserProfileData = (): UseUserProfileDataReturn => {
 		: " ";
 
 	return {
-		userId,
 		userProfile,
 		userFirstName,
 		userLastName,

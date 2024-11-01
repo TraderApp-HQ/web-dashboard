@@ -31,14 +31,14 @@ const ExchangeConnection = () => {
 		setIsOpen(false);
 	};
 
-	const { userId } = useUserProfileData();
+	const { userProfile } = useUserProfileData();
 	const { connectManualTradingAccount, isError, isPending, error, isSuccess, data } =
 		useConnectManualTradingAccount();
 
 	// Make call to backend
 	const handleManualConnection = () => {
 		connectManualTradingAccount({
-			userId,
+			userId: userProfile?.id as string,
 			platformName: platformName as string,
 			platformId: Number(platformId),
 			apiKey: apiKey as string,
