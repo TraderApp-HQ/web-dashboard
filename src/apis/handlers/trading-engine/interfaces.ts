@@ -11,7 +11,7 @@ export interface IConnectManualInput {
 	connectionType: ConnectionType;
 }
 
-export interface IUserTradingAccount extends Document {
+export interface IUserTradingAccount {
 	id: string;
 	userId: string;
 	platformId: number;
