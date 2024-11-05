@@ -100,7 +100,7 @@ export default function VerificationModal({
 		if (inputRefs.current[0]) {
 			inputRefs.current[0].focus();
 		}
-	}
+	};
 
 	/* Check input if some have an empty string as a value */
 	const isInputsEmpty = enteredInput.some((value) => value === "");
@@ -122,14 +122,14 @@ export default function VerificationModal({
 	}, []);
 
 	useEffect(() => {
-		focusFirstInputField()
+		focusFirstInputField();
 	}, [inputRefs.current[0]]);
 
 	const resendOtp = () => {
-		sendOtp({ userId: userId! })
+		sendOtp({ userId: userId! });
 		setCountdown(initialCountdownTime);
-		setEnteredInput(["", "", "", "", "", ""])
-		focusFirstInputField()
+		setEnteredInput(["", "", "", "", "", ""]);
+		focusFirstInputField();
 	};
 
 	useEffect(() => {
@@ -152,10 +152,8 @@ export default function VerificationModal({
 		mutationFn: usersService.verifyOtp.bind(usersService),
 	});
 
-	const {
-		mutate: sendOtp,
-	} = useCreate({
-		mutationFn: usersService.sendOtp.bind(usersService)
+	const { mutate: sendOtp } = useCreate({
+		mutationFn: usersService.sendOtp.bind(usersService),
 	});
 
 	const handleVerification = async () => {
@@ -264,7 +262,7 @@ export default function VerificationModal({
 									Didn’t receive your code?{" "}
 									<strong
 										className={`text-[#102477] font-bold ${countdown === 0 && "cursor-pointer"}`}
-										onClick={() => countdown === 0 && resendOtp() }
+										onClick={() => countdown === 0 && resendOtp()}
 									>
 										{countdown !== 0 ? "Retry in" : "Resend code."}
 									</strong>
@@ -272,7 +270,8 @@ export default function VerificationModal({
 								<div>
 									{openModal && countdown !== 0 && (
 										<p className="text-[#102477] font-bold ml-2">
-											{Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}
+											{Math.floor(countdown / 60)}:
+											{String(countdown % 60).padStart(2, "0")}
 										</p>
 									)}
 								</div>

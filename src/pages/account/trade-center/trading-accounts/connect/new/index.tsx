@@ -1,62 +1,63 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import MessageModal from "~/components/Modal/MessageModal";
 import SuccessIcon from "~/components/icons/SuccessIcon";
 import Modal from "~/components/Modal";
 import ExchangeTile from "~/components/AccountLayout/TradeCenter/ExchangeTile";
 import ContentTab from "~/components/AccountLayout/ContentTab";
-import { NestedTradeCenterLayout } from "../..";
-import useExchanges from "~/hooks/useExchanges";
-import { ISelectBoxOption } from "~/components/interfaces";
-import { TradeStatus } from "~/apis/handlers/assets/enums";
+import { NestedTradeCenterLayout } from "../../..";
 import FastConnection from "~/components/AccountLayout/TradeCenter/FastConnection";
 import ManualConnection from "~/components/AccountLayout/TradeCenter/ManualConnection";
+import { Category } from "~/config/enum";
+import { useConnectManualTradingAccount } from "~/hooks/useConnectManualTradingAccount";
+import useUserProfileData from "~/hooks/useUserProfileData";
+import { ConnectionType } from "~/apis/handlers/trading-engine/enums";
 
 const ExchangeConnection = () => {
 	const router = useRouter();
+	const { categoryName, platformName, platformId, imgUrl } = router.query;
 	const [toggleSuccess, setToggleSuccess] = useState(false);
 	const [isOpen, setIsOpen] = useState(true);
 
-	const [selectedExchange, setSelectedExchange] = useState<ISelectBoxOption | undefined>(
-		undefined,
-	);
 	const [apiKey, setApiKey] = useState<string | undefined>();
 	const [secretKey, setSecretKey] = useState<string | undefined>();
 
-	const [exchangeOptions, setExchangeOptions] = useState<ISelectBoxOption[]>([]);
 	const tabs = [{ label: "Manual Connection" }, { label: "Fast Connection" }];
 	const ipAddress = ["2345678901mj940485686505940400", "940485686505940l4002345678901m"];
 	const ipString = ipAddress.join(", ");
-
-	const {
-		data: exchanges,
-		isSuccess: isExchangeSuccess,
-		isError,
-		error,
-		isLoading,
-	} = useExchanges({
-		status: TradeStatus.active,
-	});
-
-	useEffect(() => {
-		if (isExchangeSuccess && exchanges) {
-			const options = exchanges.map((exchange) => ({
-				displayText: exchange.name?.toString(),
-				value: exchange._id,
-				imgUrl: exchange.logo?.toString(),
-			}));
-			setExchangeOptions(options);
-		}
-	}, [isExchangeSuccess, exchanges]);
-
-	const isSubmitDisabled = !(secretKey && apiKey && selectedExchange);
 
 	const handleModalClose = () => {
 		router.back();
 		setIsOpen(false);
 	};
 
-	const handleSuccessClose = () => setToggleSuccess(false);
+	const { userProfile } = useUserProfileData();
+	const { connectManualTradingAccount, isError, isPending, error, isSuccess, data } =
+		useConnectManualTradingAccount();
+
+	// Make call to backend
+	const handleManualConnection = () => {
+		connectManualTradingAccount({
+			userId: userProfile?.id as string,
+			platformName: platformName as string,
+			platformId: Number(platformId),
+			apiKey: apiKey as string,
+			apiSecret: secretKey as string,
+			category: categoryName as Category,
+			connectionType: ConnectionType.MANUAL,
+		});
+	};
+
+	// Check success status to close modal and open success message
+	if (isSuccess && data && !toggleSuccess) {
+		setIsOpen(false); // Close initial modal
+		setToggleSuccess(true); // Open success message modal
+	}
+
+	const handleSuccessClose = () => {
+		setToggleSuccess(false);
+	};
+	const isSubmitDisabled = !secretKey || !apiKey || isPending;
 
 	return (
 		<>
@@ -66,30 +67,27 @@ const ExchangeConnection = () => {
 				title="Connect New Exchange"
 				onClose={handleModalClose}
 			>
-				<ExchangeTile imageUrl={selectedExchange?.imgUrl} />
+				<ExchangeTile imageUrl={imgUrl as string} />
 				<ContentTab tabs={tabs}>
 					<ManualConnection
-						isLoading={isLoading}
-						isError={isError}
-						error={error}
-						selectedExchange={selectedExchange}
-						exchangeOptions={exchangeOptions}
-						setSelectedExchange={setSelectedExchange}
 						setApiKey={setApiKey}
 						setSecretKey={setSecretKey}
 						isSubmitDisabled={isSubmitDisabled}
 						ipString={ipString}
+						handleManualConnection={handleManualConnection}
+						isError={isError}
+						error={error}
 					/>
 					<FastConnection />
 				</ContentTab>
-				<MessageModal
-					title={"Successful"}
-					description={"Connection successful"}
-					icon={SuccessIcon}
-					openModal={toggleSuccess}
-					onClose={handleSuccessClose}
-				/>
 			</Modal>
+			<MessageModal
+				title={"Connection Success"}
+				description={"Your account is now linked."}
+				icon={SuccessIcon}
+				openModal={toggleSuccess}
+				onClose={handleSuccessClose}
+			/>
 		</>
 	);
 };

@@ -1,36 +1,28 @@
-import SelectBox from "~/components/common/SelectBox";
 import InputField from "~/components/common/InputField";
 import Button from "~/components/AccountLayout/Button";
 import Link from "next/link";
-import { ISelectBoxOption } from "~/components/interfaces";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import Toast from "~/components/common/Toast";
 import CopyIcon from "~/components/icons/CopyIcon";
 
 interface ManualConnectionProps {
-	selectedExchange: ISelectBoxOption | undefined;
-	exchangeOptions: ISelectBoxOption[];
-	setSelectedExchange: (option: ISelectBoxOption | undefined) => void;
 	setApiKey: (apiKey: string | undefined) => void;
 	setSecretKey: (secretKey: string | undefined) => void;
 	isSubmitDisabled: boolean;
 	ipString: string;
 	isError: boolean;
 	error: Error | null;
-	isLoading: boolean;
+	handleManualConnection: () => void;
 }
 
 const ManualConnection: React.FC<ManualConnectionProps> = ({
-	isError,
-	error,
-	isLoading,
-	selectedExchange,
-	exchangeOptions,
-	setSelectedExchange,
 	setApiKey,
 	setSecretKey,
 	isSubmitDisabled,
 	ipString,
+	isError,
+	error,
+	handleManualConnection,
 }) => {
 	const { copyToClipboard, copyMessage } = useCopyToClipboard();
 
@@ -40,17 +32,6 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 
 	return (
 		<div className="flex flex-col gap-y-4">
-			<SelectBox
-				option={selectedExchange}
-				labelText="Exchange"
-				options={exchangeOptions}
-				placeholder={
-					(isError && error?.message) ||
-					(isLoading && "loading...") ||
-					"Select Exchange Channel"
-				}
-				setOption={setSelectedExchange}
-			/>
 			<InputField
 				type="text"
 				labelText="API Keys"
@@ -86,6 +67,7 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 				fluid
 				className="mt-2 flex justify-center"
 				innerClassName="px-[20%] py-4 capitalize"
+				onClick={handleManualConnection}
 			>
 				Connect
 			</Button>
@@ -99,6 +81,16 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 					title="Success"
 					message={copyMessage}
 					autoVanish
+				/>
+			)}
+			{isError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Account Connection Error"
+					message={error?.message ?? "Connection failed"}
+					autoVanish
+					autoVanishTimeout={10}
 				/>
 			)}
 		</div>
