@@ -1,17 +1,8 @@
 import React, { useEffect, useRef, memo } from "react";
-
-interface Asset {
-	asset: {
-		id: string;
-		symbol: string;
-	};
-	baseCurrency: {
-		symbol: string;
-	};
-}
+import { ISignal } from "~/apis/handlers/assets/interfaces";
 
 interface TradingViewWidgetProps {
-	signal: Asset;
+	signal?: ISignal;
 }
 
 const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ signal }) => {
