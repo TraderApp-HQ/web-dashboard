@@ -43,9 +43,13 @@ const ProfileDropdown = () => {
 							size={{ width: "39px", height: "39px" }}
 						/>
 					</div>
-					<div className="flex flex-col">
-						<p className="text-[#3C3C3F] font-bold text-[14px] pb-1">{userFullName}</p>
-						<p className="text-[14px] color-[#311A0A]">{userEmail}</p>
+					<div className="flex flex-col max-w-[180px]">
+						<p className="text-[#3C3C3F] font-bold text-[14px] pb-1 overflow-hidden text-ellipsis whitespace-nowrap">
+							{userFullName}
+						</p>
+						<p className="text-[14px] text-[#311A0A] overflow-hidden text-ellipsis whitespace-nowrap">
+							{userEmail}
+						</p>
 					</div>
 				</div>
 				<hr className="pb-4" />
