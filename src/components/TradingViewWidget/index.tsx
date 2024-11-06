@@ -1,17 +1,10 @@
 import React, { useEffect, useRef, memo } from "react";
-
-interface Asset {
-	asset: {
-		id: string;
-		name: string;
-		symbol: string;
-		logo: string;
-	};
-}
+import { ISignal } from "~/apis/handlers/assets/interfaces";
 
 interface TradingViewWidgetProps {
-	signal: Asset;
+	signal?: ISignal;
 }
+
 const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ signal }) => {
 	const container = useRef<HTMLDivElement | null>(null);
 
@@ -28,7 +21,7 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ signal }) => {
 		script.innerHTML = `
         {
           "autosize": true,
-          "symbol": "${signal?.asset?.symbol}",
+          "symbol": "${signal?.asset?.symbol}${signal?.baseCurrency?.symbol}",
           "interval": "D",
           "timezone": "Etc/UTC",
           "theme": "light",
@@ -42,7 +35,7 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ signal }) => {
 	}, [signal?.asset?.id]);
 
 	return (
-		<div className="w-full h-[30rem]" ref={container}>
+		<div className="w-full h-[580px]" ref={container}>
 			<div className=" w-full h-[10rem]"></div>
 			<div>
 				<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
