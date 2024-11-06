@@ -4,6 +4,9 @@ export enum ColourTheme {
 	WARNING = "WARNING",
 	PRIMARY = "PRIMARY",
 	SECONDARY = "SECONDARY",
+	REVIEW = "REVIEW",
+	TERTIARY = "TERTIARY",
+	TERTIARY2 = "TERTIARY2",
 }
 
 export enum OperationStatus {
@@ -30,4 +33,9 @@ export enum HTMLElements {
 export enum UserStatus {
 	ACTIVE = "ACTIVE",
 	INACTIVE = "INACTIVE",
+}
+
+export enum Category {
+	FOREX = "FOREX",
+	CRYPTO = "CRYPTO",
 }

@@ -13,6 +13,7 @@ type Props = {
 const AccountLayout: React.FC<Props> = ({ children }) => {
 	const router = useRouter();
 	useProtectedRoute({ path: router.pathname });
+
 	const { showSideNav } = useSideNav();
 	return (
 		<div className="h-screen relative md:flex bg-[#F6F8FE]">

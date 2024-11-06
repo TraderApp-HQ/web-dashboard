@@ -15,7 +15,7 @@ import IconButton from "~/components/AccountLayout/IconButton";
 import DepositIcon from "~/components/icons/DepositIcon";
 import { useRouter } from "next/router";
 import WithdrawIcon from "~/components/icons/WithdrawIcon";
-import { ROUTES } from "~/config/constants";
+import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { useFetch } from "~/hooks/useFetch";
 import { UsersService } from "~/apis/handlers/users";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
@@ -27,6 +27,7 @@ import MessageIcon from "~/components/icons/messageIcon";
 // import Chart from "~/components/Portfolio/PieChart";
 import PortfolioSummary from "~/components/Portfolio/PorfolioSummary";
 import NoTransactionIcon from "~/components/icons/NoTransactionIcon";
+import { useGetAllPendingTasksCount } from "~/hooks/useTask";
 
 const Dashbaord = () => {
 	const router = useRouter();
@@ -42,8 +43,6 @@ const Dashbaord = () => {
 	];
 
 	const COLORS = ["#808080", "#808080", "#808080", "#808080"];
-
-	const numberOfUnreadTasks = 2;
 
 	const supportedOperations = [
 		{
@@ -68,6 +67,12 @@ const Dashbaord = () => {
 		queryKey: [UsersQueryId.userProfile],
 		queryFn: fetchUser,
 	});
+
+	const {
+		isLoading: pendingCountLoading,
+		isSuccess,
+		pendingTasksCount,
+	} = useGetAllPendingTasksCount();
 
 	return (
 		<div>
@@ -158,13 +163,26 @@ const Dashbaord = () => {
 					<div className="flex gap-6">
 						<div className="flex gap-0.5">
 							<MessageIcon />
-							<div className="-mt-2.5 w-[19px] h-[19px] bg-[#FF0808] rounded-full flex justify-center items-center font-semibold text-white text-[10px]">
-								{numberOfUnreadTasks}
-							</div>
+
+							{isSuccess && pendingTasksCount!.pendingTasksCount > 0 && (
+								<div
+									className={`-mt-2.5 w-[19px] h-[19px] bg-[#FF0808] rounded-full flex justify-center items-center font-semibold text-white text-[10px] ${pendingCountLoading ? "animate-pulse" : ""}`}
+								>
+									{pendingTasksCount?.pendingTasksCount}
+								</div>
+							)}
 						</div>
 						<p className="text-base font-normal -mt-1">Tasks</p>
 					</div>
-					<div className="-mt-4 bg-[#F3F5F6] w-[40%] md:w-[20%] h-[49px] flex justify-center items-center rounded cursor-pointer">
+					<div
+						onClick={() =>
+							router.push({
+								pathname: `${LAYOUT_ROUTES.account}${ROUTES.taskcenter.home}`,
+								query: { task: "all" },
+							})
+						}
+						className="-mt-4 bg-[#F3F5F6] w-[40%] md:w-[20%] h-[49px] flex justify-center items-center rounded cursor-pointer"
+					>
 						View Tasks
 					</div>
 				</div>

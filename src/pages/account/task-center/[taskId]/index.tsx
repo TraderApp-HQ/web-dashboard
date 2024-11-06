@@ -1,19 +1,19 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import AdminLayout from "~/components/AdminLayout/Layout";
-import ViewTask from "~/components/AdminLayout/taskCenter/ViewTask";
+import AccountLayout from "~/components/AccountLayout/Layout";
+import ViewUserTask from "~/components/AccountLayout/task-center/ViewUserTask";
 import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
-import { useGetTask } from "~/hooks/useTask";
+import { useGetUserTask } from "~/hooks/useTask";
 
 const ViewTaskModal = () => {
 	const [openTaskModal, setOpenTaskModal] = useState(true);
 	const router = useRouter();
 	const { taskId } = router.query;
-	const { task, isLoading, isError, error } = useGetTask(taskId as string);
+	const { task, isLoading, isError, error } = useGetUserTask(taskId as string);
 
 	const closeModal = () => {
-		router.push("../");
+		router.back();
 		setOpenTaskModal(false);
 	};
 
@@ -34,11 +34,11 @@ const ViewTaskModal = () => {
 					{error?.message}
 				</section>
 			) : (
-				task && <ViewTask selectedTask={task} />
+				task && <ViewUserTask selectedTask={task} closeModal={closeModal} />
 			)}
 		</Modal>
 	);
 };
 
-ViewTaskModal.getLayout = (page: React.ReactElement) => <AdminLayout>{page}</AdminLayout>;
+ViewTaskModal.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
 export default ViewTaskModal;

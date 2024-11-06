@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { ISelectBoxOption } from "~/components/interfaces";
 import ManualConnection from ".";
 
 // Mock the custom hook
@@ -12,32 +11,26 @@ jest.mock("~/hooks/useCopyToClipboard", () => ({
 }));
 
 describe("ManualConnection", () => {
-	const mockSetSelectedExchange = jest.fn();
+	const mockHandleManualConnection = jest.fn();
 	const mockSetApiKey = jest.fn();
 	const mockSetSecretKey = jest.fn();
 
-	const exchangeOptions: ISelectBoxOption[] = [
-		{ value: "1", displayText: "Exchange 1" },
-		{ value: "2", displayText: "Exchange 2" },
-	];
-
 	const defaultProps = {
-		selectedExchange: exchangeOptions[0],
-		exchangeOptions,
-		setSelectedExchange: mockSetSelectedExchange,
+		handleManualConnection: mockHandleManualConnection,
 		setApiKey: mockSetApiKey,
 		setSecretKey: mockSetSecretKey,
-		isSubmitDisabled: false,
 		ipString: "192.168.1.1, 172.168.1.1",
 	};
 
 	it("renders the component and displays the correct elements", () => {
 		render(
-			<ManualConnection isError={false} error={null} isLoading={false} {...defaultProps} />,
+			<ManualConnection
+				isError={false}
+				error={null}
+				isSubmitDisabled={false}
+				{...defaultProps}
+			/>,
 		);
-
-		// Check if SelectBox is rendered
-		expect(screen.getByLabelText("Exchange")).toBeInTheDocument();
 
 		// Check if InputFields are rendered
 		expect(screen.getByLabelText("API Keys")).toBeInTheDocument();
@@ -56,7 +49,12 @@ describe("ManualConnection", () => {
 
 	it("handles the copy functionality correctly", async () => {
 		render(
-			<ManualConnection isError={false} error={null} isLoading={false} {...defaultProps} />,
+			<ManualConnection
+				isError={false}
+				error={null}
+				isSubmitDisabled={false}
+				{...defaultProps}
+			/>,
 		);
 
 		// Simulate the copy icon click
@@ -70,7 +68,12 @@ describe("ManualConnection", () => {
 
 	it("handles form inputs changes", () => {
 		render(
-			<ManualConnection isError={false} error={null} isLoading={false} {...defaultProps} />,
+			<ManualConnection
+				isError={false}
+				error={null}
+				isSubmitDisabled={false}
+				{...defaultProps}
+			/>,
 		);
 
 		// Simulate entering text in API Key input field
@@ -91,9 +94,8 @@ describe("ManualConnection", () => {
 			<ManualConnection
 				isError={false}
 				error={null}
-				isLoading={false}
-				{...defaultProps}
 				isSubmitDisabled={true}
+				{...defaultProps}
 			/>,
 		);
 

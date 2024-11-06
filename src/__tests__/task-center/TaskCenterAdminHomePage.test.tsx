@@ -17,7 +17,14 @@ describe("Task Center - Admin Home Page", () => {
 	const mockMutate = jest.fn();
 
 	beforeEach(() => {
-		(useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+		(useRouter as jest.Mock).mockReturnValue({
+			push: mockPush,
+			query: {
+				rows: "10",
+				page: "1",
+				search: "",
+			},
+		});
 	});
 
 	afterEach(() => {
