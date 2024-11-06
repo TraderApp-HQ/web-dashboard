@@ -12,6 +12,7 @@ import { Category } from "~/config/enum";
 import { useConnectManualTradingAccount } from "~/hooks/useConnectManualTradingAccount";
 import useUserProfileData from "~/hooks/useUserProfileData";
 import { ConnectionType } from "~/apis/handlers/trading-engine/enums";
+import BackBtnIcon from "~/components/icons/BackBtnIcon";
 
 const ExchangeConnection = () => {
 	const router = useRouter();
@@ -27,7 +28,7 @@ const ExchangeConnection = () => {
 	const ipString = ipAddress.join(", ");
 
 	const handleModalClose = () => {
-		router.back();
+		router.push("..");
 		setIsOpen(false);
 	};
 
@@ -64,7 +65,8 @@ const ExchangeConnection = () => {
 			<Modal
 				openModal={isOpen}
 				width="md:w-[653px]"
-				title="Connect New Exchange"
+				title="Connect Trading Account"
+				backBtnIcon={<BackBtnIcon onClick={() => router.back()} />}
 				onClose={handleModalClose}
 			>
 				<ExchangeTile imageUrl={imgUrl as string} />

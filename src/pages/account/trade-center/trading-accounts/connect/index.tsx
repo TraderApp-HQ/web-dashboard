@@ -12,50 +12,55 @@ import useExchanges from "~/hooks/useExchanges";
 const ConnectTradingAccount = () => {
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState(true);
-
 	const [selectedCategory, setSelectedCategory] = useState<ISelectBoxOption>();
 	const [categoryOptions, setCategoryOptions] = useState<ISelectBoxOption[]>([]);
-
 	const [selectedPlatform, setSelectedPlatform] = useState<ISelectBoxOption>();
 	const [platformOptions, setPlatformOptions] = useState<ISelectBoxOption[]>([]);
+	const [resetSelectedPlatform, setResetSelectedPlatform] = useState(false);
 
 	const categories = [
 		{ name: Category.CRYPTO, id: Category.CRYPTO },
 		{ name: Category.FOREX, id: Category.FOREX },
 	];
 
+	// Trigger fetching platforms only when the category is Crypto
+	const isCryptoSelected = selectedCategory?.value === Category.CRYPTO;
 	const {
 		data: platforms,
-		isSuccess: isPlaformSuccess,
+		isSuccess: isPlatformSuccess,
 		isError,
 		error,
 		isLoading,
-	} = useExchanges({
-		status: TradeStatus.active,
-	});
+	} = useExchanges(
+		{ status: TradeStatus.active },
+		isCryptoSelected, // Only enable fetching when Crypto is selected
+	);
 
+	// Set category options on mount
 	useEffect(() => {
-		const categoryOptions = categories.map((category) => ({
-			displayText: category.name,
-			value: category.id,
-		}));
-		setCategoryOptions(categoryOptions);
+		setCategoryOptions(
+			categories.map(({ name, id }) => ({
+				displayText: name,
+				value: id,
+			})),
+		);
 	}, []);
 
+	// Update platform options based on selected category
 	useEffect(() => {
-		if (selectedCategory?.value === Category.CRYPTO) {
-			if (isPlaformSuccess && platforms.length > 0) {
-				const platformOptions = platforms.map((platform) => ({
-					displayText: platform.name?.toString(),
-					value: platform._id,
-					imgUrl: platform.logo?.toString(),
-				}));
-				setPlatformOptions(platformOptions);
-			}
+		if (isPlatformSuccess && platforms.length > 0 && isCryptoSelected) {
+			setPlatformOptions(
+				platforms.map(({ name, _id, logo }) => ({
+					displayText: name?.toString(),
+					value: _id,
+					imgUrl: logo?.toString(),
+				})),
+			);
 		} else {
 			setPlatformOptions([]);
+			setResetSelectedPlatform(true);
 		}
-	}, [isPlaformSuccess, platforms, selectedCategory]);
+	}, [isPlatformSuccess, platforms, isCryptoSelected]);
 
 	const handleModalClose = () => {
 		router.back();
@@ -63,59 +68,73 @@ const ConnectTradingAccount = () => {
 	};
 
 	const handleAccountConnection = () => {
+		if (selectedCategory && selectedPlatform) {
+			router.push({
+				pathname: "connect/new",
+				query: {
+					categoryName: selectedCategory.displayText,
+					platformName: selectedPlatform.displayText.toUpperCase(),
+					platformId: selectedPlatform.value,
+					imgUrl: selectedPlatform.imgUrl,
+				},
+			});
+		}
 		setIsOpen(false);
-		router.push({
-			pathname: "connect/new",
-			query: {
-				categoryName: selectedCategory?.displayText,
-				platformName: selectedPlatform?.displayText.toUpperCase(),
-				platformId: selectedPlatform?.value,
-				imgUrl: selectedPlatform?.imgUrl,
-			},
-		});
+	};
+
+	const handleCategoryChange = (option: ISelectBoxOption) => {
+		setSelectedCategory(option);
+		setSelectedPlatform(undefined); // Clear platform selection when category changes
+		setResetSelectedPlatform(true);
+	};
+
+	const handlePlatformChange = (option: ISelectBoxOption) => {
+		setSelectedPlatform(option);
+		setResetSelectedPlatform(false);
 	};
 
 	const isSubmitDisabled = !selectedCategory || !selectedPlatform;
+	const platformPlaceholder = isError
+		? error?.message
+		: isLoading
+			? "Loading..."
+			: "Select Platform";
+
 	return (
-		<>
-			<Modal
-				openModal={isOpen}
-				width="md:w-[507px]"
-				title="Connect Trading Account"
-				onClose={handleModalClose}
-			>
-				<div className="flex flex-col gap-y-3">
-					<SelectBox
-						option={selectedCategory}
-						labelText="Category"
-						options={categoryOptions}
-						placeholder={"Select Category"}
-						setOption={setSelectedCategory}
-					/>
-					<SelectBox
-						option={selectedPlatform}
-						labelText="Platform"
-						options={platformOptions}
-						placeholder={
-							(isError && error?.message) ||
-							(isLoading && "loading...") ||
-							"Select Platform"
-						}
-						setOption={setSelectedPlatform}
-					/>
-					<Button
-						disabled={isSubmitDisabled}
-						type="submit"
-						fluid
-						className="mt-2 flex justify-center"
-						innerClassName="px-[20%] py-4 capitalize"
-						onClick={handleAccountConnection}
-					>
-						Continue
-					</Button>
-				</div>
-			</Modal>
-		</>
+		<Modal
+			openModal={isOpen}
+			width="md:w-[507px]"
+			title="Connect Trading Account"
+			onClose={handleModalClose}
+		>
+			<div className="flex flex-col gap-y-3">
+				<SelectBox
+					option={selectedCategory}
+					labelText="Category"
+					options={categoryOptions}
+					placeholder="Select Category"
+					setOption={handleCategoryChange}
+				/>
+				<SelectBox
+					option={selectedPlatform}
+					labelText="Platform"
+					options={platformOptions}
+					placeholder={platformPlaceholder}
+					setOption={handlePlatformChange}
+					clear={resetSelectedPlatform}
+				/>
+				<Button
+					disabled={isSubmitDisabled}
+					type="submit"
+					fluid
+					className="mt-2 flex justify-center"
+					innerClassName="px-[20%] py-4 capitalize"
+					onClick={handleAccountConnection}
+				>
+					Continue
+				</Button>
+			</div>
+		</Modal>
 	);
 };
 
