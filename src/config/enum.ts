@@ -39,3 +39,13 @@ export enum Category {
 	FOREX = "FOREX",
 	CRYPTO = "CRYPTO",
 }
+
+export enum AccountType {
+	SPOT = "SPOT",
+	FUTURES = "FUTURES",
+}
+
+export enum Currency {
+	USDT = "USDT",
+	BTC = "BTC",
+}

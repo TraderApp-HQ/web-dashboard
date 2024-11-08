@@ -5,7 +5,6 @@ import SuccessIcon from "~/components/icons/SuccessIcon";
 import Modal from "~/components/Modal";
 import ExchangeTile from "~/components/AccountLayout/TradeCenter/ExchangeTile";
 import ContentTab from "~/components/AccountLayout/ContentTab";
-import { NestedTradeCenterLayout } from "../../..";
 import FastConnection from "~/components/AccountLayout/TradeCenter/FastConnection";
 import ManualConnection from "~/components/AccountLayout/TradeCenter/ManualConnection";
 import { Category } from "~/config/enum";
@@ -14,9 +13,21 @@ import useUserProfileData from "~/hooks/useUserProfileData";
 import { ConnectionType } from "~/apis/handlers/trading-engine/enums";
 import BackBtnIcon from "~/components/icons/BackBtnIcon";
 
-const ExchangeConnection = () => {
+interface IAccountConnection {
+	categoryName: string;
+	platformName: string;
+	platformId: string;
+	imgUrl: string;
+	handleAccountConnection: () => void;
+}
+const AccountConnection = ({
+	categoryName,
+	platformName,
+	platformId,
+	imgUrl,
+	handleAccountConnection,
+}: IAccountConnection) => {
 	const router = useRouter();
-	const { categoryName, platformName, platformId, imgUrl } = router.query;
 	const [toggleSuccess, setToggleSuccess] = useState(false);
 	const [isOpen, setIsOpen] = useState(true);
 
@@ -28,7 +39,7 @@ const ExchangeConnection = () => {
 	const ipString = ipAddress.join(", ");
 
 	const handleModalClose = () => {
-		router.push("..");
+		router.back();
 		setIsOpen(false);
 	};
 
@@ -42,6 +53,7 @@ const ExchangeConnection = () => {
 			userId: userProfile?.id as string,
 			platformName: platformName as string,
 			platformId: Number(platformId),
+			plaformLogo: imgUrl as string,
 			apiKey: apiKey as string,
 			apiSecret: secretKey as string,
 			category: categoryName as Category,
@@ -66,7 +78,7 @@ const ExchangeConnection = () => {
 				openModal={isOpen}
 				width="md:w-[653px]"
 				title="Connect Trading Account"
-				backBtnIcon={<BackBtnIcon onClick={() => router.back()} />}
+				backBtnIcon={<BackBtnIcon onClick={handleAccountConnection} />}
 				onClose={handleModalClose}
 			>
 				<ExchangeTile imageUrl={imgUrl as string} />
@@ -94,8 +106,4 @@ const ExchangeConnection = () => {
 	);
 };
 
-ExchangeConnection.getLayout = (page: React.ReactElement) => (
-	<NestedTradeCenterLayout>{page}</NestedTradeCenterLayout>
-);
-
-export default ExchangeConnection;
+export default AccountConnection;

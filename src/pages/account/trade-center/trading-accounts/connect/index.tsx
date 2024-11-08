@@ -8,6 +8,7 @@ import { NestedTradeCenterLayout } from "../..";
 import { Category } from "~/config/enum";
 import { TradeStatus } from "~/apis/handlers/assets/enums";
 import useExchanges from "~/hooks/useExchanges";
+import AccountConnection from "~/components/AccountLayout/TradeCenter/AccountConnection";
 
 const ConnectTradingAccount = () => {
 	const router = useRouter();
@@ -17,6 +18,7 @@ const ConnectTradingAccount = () => {
 	const [selectedPlatform, setSelectedPlatform] = useState<ISelectBoxOption>();
 	const [platformOptions, setPlatformOptions] = useState<ISelectBoxOption[]>([]);
 	const [resetSelectedPlatform, setResetSelectedPlatform] = useState(false);
+	const [isConnectTradingAccount, setIsConnectTradingAccount] = useState(true);
 
 	const categories = [
 		{ name: Category.CRYPTO, id: Category.CRYPTO },
@@ -68,18 +70,8 @@ const ConnectTradingAccount = () => {
 	};
 
 	const handleAccountConnection = () => {
-		if (selectedCategory && selectedPlatform) {
-			router.push({
-				pathname: "connect/new",
-				query: {
-					categoryName: selectedCategory.displayText,
-					platformName: selectedPlatform.displayText.toUpperCase(),
-					platformId: selectedPlatform.value,
-					imgUrl: selectedPlatform.imgUrl,
-				},
-			});
-		}
-		setIsOpen(false);
+		setIsConnectTradingAccount((prev) => !prev);
+		setIsOpen(true);
 	};
 
 	const handleCategoryChange = (option: ISelectBoxOption) => {
@@ -101,40 +93,52 @@ const ConnectTradingAccount = () => {
 			: "Select Platform";
 
 	return (
-		<Modal
-			openModal={isOpen}
-			width="md:w-[507px]"
-			title="Connect Trading Account"
-			onClose={handleModalClose}
-		>
-			<div className="flex flex-col gap-y-3">
-				<SelectBox
-					option={selectedCategory}
-					labelText="Category"
-					options={categoryOptions}
-					placeholder="Select Category"
-					setOption={handleCategoryChange}
-				/>
-				<SelectBox
-					option={selectedPlatform}
-					labelText="Platform"
-					options={platformOptions}
-					placeholder={platformPlaceholder}
-					setOption={handlePlatformChange}
-					clear={resetSelectedPlatform}
-				/>
-				<Button
-					disabled={isSubmitDisabled}
-					type="submit"
-					fluid
-					className="mt-2 flex justify-center"
-					innerClassName="px-[20%] py-4 capitalize"
-					onClick={handleAccountConnection}
+		<>
+			{isConnectTradingAccount ? (
+				<Modal
+					openModal={isOpen}
+					width="md:w-[507px]"
+					title="Connect Trading Account"
+					onClose={handleModalClose}
 				>
-					Continue
-				</Button>
-			</div>
-		</Modal>
+					<div className="flex flex-col gap-y-3">
+						<SelectBox
+							option={selectedCategory}
+							labelText="Category"
+							options={categoryOptions}
+							placeholder="Select Category"
+							setOption={handleCategoryChange}
+						/>
+						<SelectBox
+							option={selectedPlatform}
+							labelText="Platform"
+							options={platformOptions}
+							placeholder={platformPlaceholder}
+							setOption={handlePlatformChange}
+							clear={resetSelectedPlatform}
+						/>
+						<Button
+							disabled={isSubmitDisabled}
+							type="submit"
+							fluid
+							className="mt-2 flex justify-center"
+							innerClassName="px-[20%] py-4 capitalize"
+							onClick={handleAccountConnection}
+						>
+							Continue
+						</Button>
+					</div>
+				</Modal>
+			) : (
+				<AccountConnection
+					categoryName={selectedCategory?.displayText ?? ""}
+					platformName={selectedPlatform?.displayText.toUpperCase() ?? ""}
+					platformId={selectedPlatform?.value ?? ""}
+					imgUrl={selectedPlatform?.imgUrl ?? ""}
+					handleAccountConnection={handleAccountConnection}
+				/>
+			)}
+		</>
 	);
 };
 

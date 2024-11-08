@@ -1,22 +1,40 @@
 import { NestedTradeCenterLayout } from "..";
-import myExchangeData from "~/data/wallet/data.json";
 import EmptyExchange from "~/components/AccountLayout/TradeCenter/EmptyExchange";
 import Button from "~/components/AccountLayout/Button";
 import MyExchangeCard from "~/components/AccountLayout/TradeCenter/MyExchangeCard";
-import { IExchange } from "~/apis/handlers/assets/interfaces";
 import { useRouter } from "next/router";
-
-export interface IExchangeConnection extends IExchange {
-	isConnected: boolean;
-}
+import { TradingEngineService } from "~/apis/handlers/trading-engine";
+import { useFetch } from "~/hooks/useFetch";
+import { useCallback } from "react";
+import useUserProfileData from "~/hooks/useUserProfileData";
+import { TradingEngineQueryId } from "~/apis/handlers/trading-engine/constants";
 
 const TradeCenterExchanges = () => {
+	const tradingEngineService = new TradingEngineService();
 	const router = useRouter();
-	const exchanges: IExchangeConnection[] = myExchangeData.exchanges;
+
+	const { userProfile } = useUserProfileData();
+	const userId = userProfile?.id;
+
+	const fetchTradingAccounts = useCallback(
+		() => tradingEngineService.getUserTradingAccounts(`${userId}`),
+		[userId, tradingEngineService],
+	);
+
+	const {
+		data: accounts,
+		isLoading,
+		isSuccess,
+		refetch,
+	} = useFetch({
+		queryKey: [TradingEngineQueryId.accounts],
+		queryFn: fetchTradingAccounts,
+	});
 
 	return (
 		<div className="flex flex-col gap-y-8">
-			{exchanges && exchanges.length > 0 ? (
+			{isLoading && <div>loading ....</div>}
+			{isSuccess && accounts && accounts.length > 0 ? (
 				<>
 					<div className="flex justify-between flex-col md:flex-row">
 						<h1 className="text-slate-900 text-3xl font-semibold mb-4">
@@ -33,13 +51,17 @@ const TradeCenterExchanges = () => {
 						</Button>
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-8">
-						{exchanges.map((exchange) => (
-							<MyExchangeCard key={exchange._id} {...exchange} />
+						{accounts.map((account) => (
+							<MyExchangeCard
+								key={account.id}
+								{...account}
+								refetchAccounts={refetch}
+							/>
 						))}
 					</div>
 				</>
 			) : (
-				<EmptyExchange />
+				!isLoading && <EmptyExchange />
 			)}
 		</div>
 	);
