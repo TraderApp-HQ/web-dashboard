@@ -53,7 +53,7 @@ const Modal: React.FC<ModalOptions> = ({
 		>
 			<div
 				ref={ref}
-				className={clsx("w-full relative max-w-4xl p-4", width)}
+				className={clsx("w-full relative max-w-2xl p-4", width)}
 				style={{ maxHeight: "90vh" }} // Modal height is limited to 90% of the viewport height
 			>
 				<div

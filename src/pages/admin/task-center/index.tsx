@@ -155,7 +155,7 @@ const TaskCenter = () => {
 							tBody={tableBody}
 							hasMenueItems={true}
 							menueItemType="icon-button"
-							justifyMenueItem="justify-center"
+							justifyMenueItem="justify-start pl-20"
 						/>
 						<section className="mt-3 p-2 rounded-lg">
 							<Pagination

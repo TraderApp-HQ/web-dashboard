@@ -46,7 +46,7 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 						<Link
 							href={selectedTask.link}
 							target="_blank"
-							className="text-buttonColor font-bold text-base cursor-pointer flex items-center gap-2 border-b-[1px] border-buttonColor"
+							className="text-buttonColor md:font-bold md:text-base text-nowrap text-sm cursor-pointer flex items-center gap-2 border-b-[1px] border-buttonColor"
 						>
 							Click here to visit post <HyperLinkIcon />
 						</Link>

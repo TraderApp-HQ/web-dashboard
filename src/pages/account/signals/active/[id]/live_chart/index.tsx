@@ -6,25 +6,9 @@ import { useFetchActiveSignals } from "~/apis/handlers/assets/hooks";
 import { ISignal } from "~/apis/handlers/assets/interfaces";
 import { useRouter } from "next/router";
 
-interface Signal {
-	asset: {
-		id: string;
-		name: string;
-		symbol: string;
-		logo: string;
-	};
-}
-
 const LiveChart = () => {
 	const { isLoading, isSuccess, activeSignals } = useFetchActiveSignals({});
-	const [selectedsignal, setSelectedsignal] = useState<Signal | ISignal>({
-		asset: {
-			id: "",
-			name: "",
-			symbol: "",
-			logo: "",
-		},
-	});
+	const [selectedsignal, setSelectedsignal] = useState<ISignal>();
 	const router = useRouter();
 
 	const id = router.query.id as string;

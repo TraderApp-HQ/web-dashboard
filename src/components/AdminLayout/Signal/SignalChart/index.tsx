@@ -30,7 +30,7 @@ const SignalChart = () => {
 						src={signal?.chartUrl}
 						style={{
 							width: "100%",
-							height: "auto",
+							height: "580px",
 						}}
 						width={100}
 						height={100}
