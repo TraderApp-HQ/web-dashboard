@@ -43,6 +43,6 @@ describe("EmptyExchange Component", () => {
 		fireEvent.click(button);
 
 		// Assert that the router push method was called with the correct route
-		expect(mockPush).toHaveBeenCalledWith("exchanges/connect");
+		expect(mockPush).toHaveBeenCalledWith("trading-accounts/connect");
 	});
 });
