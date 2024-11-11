@@ -69,7 +69,7 @@ const ExchangeDropdownMenu = ({ selectedAccountId, refetchAccounts }: IExchangeD
 		isPending,
 		isSuccess: isAccountDeletedSuccessful,
 	} = useCreate({
-		mutationFn: tradingEngineService.DeleteUserTradingAccount.bind(tradingEngineService),
+		mutationFn: tradingEngineService.deleteUserTradingAccount.bind(tradingEngineService),
 	});
 
 	useEffect(() => {

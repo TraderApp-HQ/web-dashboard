@@ -50,7 +50,7 @@ export class TradingEngineService {
 		return data as IUserAccountWithBalance[];
 	}
 
-	public async DeleteUserTradingAccount(account: IDeleteAccountInput): Promise<string> {
+	public async deleteUserTradingAccount(account: IDeleteAccountInput): Promise<string> {
 		const response = await this.apiClient.patch<IResponse>({
 			url: `/account/delete/${account.id}`,
 			data: {},
