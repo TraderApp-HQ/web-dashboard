@@ -17,7 +17,7 @@ const EmptyExchange = () => {
 			</div>
 			<Button
 				onClick={() => {
-					router.push("exchanges/connect");
+					router.push("trading-accounts/connect");
 				}}
 				innerClassName="w-96"
 			>

@@ -11,6 +11,7 @@ export interface ModalOptions {
 	title?: string | ReactNode;
 	description?: string | ReactNode;
 	headerDivider?: boolean;
+	backBtnIcon?: React.ReactNode;
 }
 
 const Modal: React.FC<ModalOptions> = ({
@@ -21,6 +22,7 @@ const Modal: React.FC<ModalOptions> = ({
 	title,
 	description,
 	headerDivider = false,
+	backBtnIcon,
 }) => {
 	function close() {
 		if (onClose) {
@@ -62,7 +64,10 @@ const Modal: React.FC<ModalOptions> = ({
 						className={`flex items-center justify-between pb-4 ${headerDivider && "border-b-2 border-[#D1D7F0]"}`}
 					>
 						<div className="space-y-3 flex-col">
-							<h1 className="text-xl font-semibold text-[#414141]">{title}</h1>
+							<h1 className="text-xl flex items-center gap-x-1 font-semibold text-[#414141]">
+								{backBtnIcon && backBtnIcon}
+								{title}
+							</h1>
 							<p className="text-[12px] text-[#BEBFC1]">{description}</p>
 						</div>
 						<div className="cursor-pointer" onClick={close}>
