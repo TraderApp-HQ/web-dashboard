@@ -34,7 +34,7 @@ export default function VerificationModal({
 	const [countdown, setCountdown] = useState(initialCountdownTime);
 	const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 	const [searchParams] = useState(new URLSearchParams(router.asPath.split("?")[1]));
-	const [isVerificationError, setIsVerificationError] = useState<boolean>(false);
+	const [otpError, setOtpError] = useState<Error | null>(null);
 
 	const usersService = new UsersService();
 	const userId = searchParams.get("userid");
@@ -148,13 +148,26 @@ export default function VerificationModal({
 		isError: isVerificationErrorFlag,
 		isPending,
 		isSuccess: isVerificationSuccess,
+		error: verifyOtpError,
 	} = useCreate({
 		mutationFn: usersService.verifyOtp.bind(usersService),
 	});
 
-	const { mutate: sendOtp } = useCreate({
+	const {
+		mutate: sendOtp,
+		error: sendOtpError,
+		isError: isSendOtpErrorFlag,
+	} = useCreate({
 		mutationFn: usersService.sendOtp.bind(usersService),
 	});
+
+	useEffect(() => {
+		setOtpError(isVerificationErrorFlag ? verifyOtpError : null);
+	}, [isVerificationErrorFlag]);
+
+	useEffect(() => {
+		setOtpError(isSendOtpErrorFlag ? sendOtpError : null);
+	}, [isSendOtpErrorFlag]);
 
 	const handleVerification = async () => {
 		// verify otp
@@ -184,13 +197,15 @@ export default function VerificationModal({
 	}, [isVerificationSuccess, redirectTo, router, setOpenModal, setIsSuccess]);
 
 	useEffect(() => {
-		if (isVerificationErrorFlag) {
-			setIsVerificationError(true);
-			setTimeout(() => {
-				setIsVerificationError(false);
+		let timeoutId: NodeJS.Timeout | undefined;
+		if (otpError) {
+			timeoutId = setTimeout(() => {
+				setOtpError(null);
 			}, 10000);
 		}
-	}, [isVerificationErrorFlag]);
+
+		return () => clearTimeout(timeoutId);
+	}, [otpError]);
 
 	return (
 		<Modal open={openModal} setOpen={setOpenModal} data-testId="otp-modal">
@@ -237,8 +252,16 @@ export default function VerificationModal({
 								/>
 							))}
 						</div>
+						{otpError && (
+							<span className="text-[red] flex justify-center">
+								{otpError.message}
+							</span>
+						)}
 						{/* action button */}
-						<div className="p-[16px] space-y-[16px] flex flex-col items-center">
+						<div
+							className="p-[16px] space-y-[16px] flex flex-col items-center"
+							style={{ marginTop: otpError ? "0px" : undefined }}
+						>
 							<button
 								type="button"
 								className="max-w-[364px] rounded-2xl p-[10px] font-semibold w-full text-white"
@@ -252,11 +275,6 @@ export default function VerificationModal({
 							>
 								Confirm
 							</button>
-							{isVerificationError && (
-								<p className="text-[red] flex justify-center">
-									Otp could not be verfied
-								</p>
-							)}
 							<div style={{ display: "flex" }}>
 								<div className="text-[#08123B] text-center">
 									Didn’t receive your code?{" "}

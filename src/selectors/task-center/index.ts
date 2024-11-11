@@ -18,7 +18,7 @@ export const taskCenterTableSelector = (
 				tBodyColumns: [
 					{
 						displayItem: task.title,
-						styles: "text-lg capitalize",
+						styles: "text-lg capitalize text-left",
 					},
 					{
 						displayItem: renderStatus(
@@ -29,7 +29,7 @@ export const taskCenterTableSelector = (
 					},
 					{ displayItem: task.points },
 					{
-						displayItem: renderStatus(task.status!),
+						displayItem: renderStatus(task.status!, { justify: "justify-center" }),
 					},
 					{
 						displayItem: task.dueDate ? new Date(task?.dueDate).toDateString() : "",
@@ -68,7 +68,7 @@ export const userTaskCenterTableSelector = (task: ITaskTableData[]) => {
 				tBodyColumns: [
 					{
 						displayItem: task.title,
-						styles: "text-lg capitalize",
+						styles: "text-lg capitalize text-left",
 					},
 					{ displayItem: task.points },
 					{ displayItem: task.taskType },
@@ -77,7 +77,7 @@ export const userTaskCenterTableSelector = (task: ITaskTableData[]) => {
 						styles: "w-[1.5rem]",
 					},
 					{
-						displayItem: renderStatus(task.status!),
+						displayItem: renderStatus(task.status!, { justify: "justify-center" }),
 					},
 				],
 				actions: [

@@ -124,11 +124,11 @@ const UserTaskDashboard = () => {
 			<h1 className="font-semibold text-4xl text-[#03033A]">Tasks Center</h1>
 
 			{isLoading ? (
-				<section className="bg-white p-3 w-[40%]">
+				<section className="bg-white p-3 w-[30%]">
 					<CardLoader />
 				</section>
 			) : (
-				<Card className="max-w-[40%] flex items-start justify-between px-4 py-2">
+				<Card className="sm:max-w-[30%] flex items-start justify-between px-4 py-2">
 					<section className="space-y-10">
 						<p className="font-semibold">Accumulated Points</p>
 						<p className="font-bold text-2xl">00</p>
