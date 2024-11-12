@@ -1,7 +1,12 @@
 import { APIClient } from "~/apis/apiClient";
 import type { IResponse } from "~/apis/handlers/interfaces";
 import { UsersService } from "~/apis/handlers/users";
-import type { IConnectManualInput, IUserTradingAccount } from "./interfaces";
+import type {
+	IConnectManualInput,
+	IDeleteAccountInput,
+	IUserAccountWithBalance,
+	IUserTradingAccount,
+} from "./interfaces";
 
 export class TradingEngineService {
 	private apiClient: APIClient;
@@ -31,5 +36,30 @@ export class TradingEngineService {
 
 		const { data } = response;
 		return data as IUserTradingAccount;
+	}
+
+	public async getUserTradingAccounts(userId: string): Promise<IUserAccountWithBalance[]> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/account/${userId}`,
+		});
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch trading accounts");
+		}
+
+		const { data } = response;
+		return data as IUserAccountWithBalance[];
+	}
+
+	public async deleteUserTradingAccount(account: IDeleteAccountInput): Promise<string> {
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/account/delete/${account.id}`,
+			data: {},
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to delete account");
+		}
+
+		return response.message;
 	}
 }

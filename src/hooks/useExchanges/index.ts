@@ -8,10 +8,11 @@ interface IUseExchanges {
 	rowsPerPage?: number;
 	orderBy?: "asc" | "desc";
 	status?: TradeStatus;
+	enabled?: boolean;
 }
 
 // Custom hook to fetch users data based on search keyword, current page, and rows per page
-const useExchanges = ({ page, rowsPerPage, orderBy, status }: IUseExchanges) => {
+const useExchanges = ({ page, rowsPerPage, orderBy, status }: IUseExchanges, enabled = true) => {
 	const assetsService = new AssetsService();
 
 	// Memoized function to fetch users
@@ -23,6 +24,7 @@ const useExchanges = ({ page, rowsPerPage, orderBy, status }: IUseExchanges) => 
 	return useFetch({
 		queryKey: [rowsPerPage, orderBy, status],
 		queryFn: fetchExchanges,
+		enabled,
 	});
 };
 

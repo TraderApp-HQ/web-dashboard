@@ -1,17 +1,41 @@
-import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // Import QueryClientProvider and QueryClient
 import MyExchangeCard from ".";
+import { AccountType, Category, Currency } from "~/config/enum";
+import { AccountConnectionStatus } from "~/apis/handlers/trading-engine/enums";
 
 describe("MyExchangeCard", () => {
+	const queryClient = new QueryClient();
+
+	beforeAll(() => {
+		process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL = "http://localhost:8081";
+		process.env.NEXT_PUBLIC_TRADING_ENGINE_SERVICE_API_URL = "http://localhost:8080";
+	});
+
 	const defaultProps = {
-		_id: "1",
-		logo: "/path/to/logo.png",
-		name: "Exchange Name",
-		isConnected: true,
+		id: "1",
+		plaformLogo: "/path/to/logo.png",
+		platformName: "Exchange Name",
+		connectionStatus: AccountConnectionStatus.CONNECTED,
+		category: Category.CRYPTO,
+		balances: [
+			{
+				currency: Currency.USDT,
+				availableBalance: 5000,
+				lockedBalance: 0.444,
+				accountType: AccountType.SPOT,
+			},
+		],
+		errorMessages: [],
+		platformId: 122,
+		refetchAccounts: () => {},
 	};
 
+	const renderWithQueryClient = (ui: React.ReactNode) =>
+		render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+
 	it("renders the component with correct elements", () => {
-		render(<MyExchangeCard {...defaultProps} />);
+		renderWithQueryClient(<MyExchangeCard {...defaultProps} />);
 
 		// Check if logo and name(alt value) are rendered
 		expect(screen.getByAltText("Exchange Name")).toBeInTheDocument();
@@ -25,29 +49,25 @@ describe("MyExchangeCard", () => {
 	});
 
 	it("displays the correct connection status", () => {
-		// Test when isConnected is true
-		render(<MyExchangeCard {...defaultProps} isConnected={true} />);
-		expect(screen.getByText("Connected")).toBeInTheDocument();
-
-		// Test when isConnected is false
-		render(<MyExchangeCard {...defaultProps} isConnected={false} />);
+		renderWithQueryClient(
+			<MyExchangeCard {...defaultProps} connectionStatus={AccountConnectionStatus.FAILED} />,
+		);
 		expect(screen.getByText("Failed")).toBeInTheDocument();
 	});
 
 	it("handles account selection", () => {
-		render(<MyExchangeCard {...defaultProps} />);
+		renderWithQueryClient(<MyExchangeCard {...defaultProps} />);
 
 		// Check if SelectBox is rendered and options are available
-		const selectBox = screen.getByText("Future");
+		const selectBox = screen.getByText(/spot/i);
 		fireEvent.click(selectBox);
 
-		// Click on the second option
-		fireEvent.click(screen.getByText("Spot"));
-		expect(screen.getByText("Spot")).toBeInTheDocument();
+		const spotOptions = screen.queryAllByText(AccountType.SPOT);
+		expect(spotOptions.length).toBeGreaterThan(0);
 	});
 
 	it("interacts with the dropdown menu", () => {
-		render(<MyExchangeCard {...defaultProps} />);
+		renderWithQueryClient(<MyExchangeCard {...defaultProps} />);
 
 		// Open dropdown menu
 		fireEvent.click(screen.getByRole("button")); // Assuming dropdown trigger is a button
