@@ -23,21 +23,26 @@ const DataTableMobile: FC<IDataTableMobile> = ({ data, hasActions }) => {
 							</div>
 						)}
 					</div>
-					{dataItem.tBody.map((tb, index) => (
-						<div
-							key={index}
-							className={`flex justify-between items-center ${
-								index < dataItem.tBody.length - 1 ? "border-b mb-6" : ""
-							} border-[#E5E7EB] border-opacity-20 pb-3 py-2 ${tb.styles ?? ""}`}
-						>
-							<div className="text-sm text-[#9CA3AF] w-[40%]">
-								{tb.displayItemTitle}
+					{dataItem.tBody.map((tb, index) => {
+						if (!tb) {
+							return;
+						}
+						return (
+							<div
+								key={index}
+								className={`flex justify-between items-center ${
+									index < dataItem.tBody.length - 1 ? "border-b mb-6" : ""
+								} border-[#E5E7EB] border-opacity-20 pb-3 py-2 ${tb.styles ?? ""}`}
+							>
+								<div className="text-sm text-[#9CA3AF] w-[40%]">
+									{tb.displayItemTitle}
+								</div>
+								<div className="mr-4 text-base text-[#0C394B] font-semibold w-[60%] text-right">
+									{tb.displayItemValue}
+								</div>
 							</div>
-							<div className="mr-4 text-base text-[#0C394B] font-semibold w-[60%] text-right">
-								{tb.displayItemValue}
-							</div>
-						</div>
-					))}
+						);
+					})}
 				</div>
 			))}
 		</div>

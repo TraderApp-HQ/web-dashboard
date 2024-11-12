@@ -1,19 +1,28 @@
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { IFetchAllActiveTasks, ITaskTableData } from "~/apis/handlers/users/interfaces";
+import { PAGINATION } from "~/apis/handlers/users/constants";
+import { UserTaskPageTab, UserTaskStatus } from "~/apis/handlers/users/enums";
+import {
+	IDocsLength,
+	IFetchAllActiveTasks,
+	ITaskTableData,
+} from "~/apis/handlers/users/interfaces";
 import Card from "~/components/AccountLayout/Card";
 import AccountLayout from "~/components/AccountLayout/Layout";
 import PageTab from "~/components/AccountLayout/Tabs";
-import { UserTaskPageTab, UserTaskStatus } from "~/components/AdminLayout/taskCenter/taskFormData";
-import { DataTable } from "~/components/common/DataTable";
+import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import LeftArrowIcon from "~/components/icons/LeftArrowIcon";
 import UserTaskPointIcon from "~/components/icons/UserTaskPointIcon";
 import { Card as CardLoader } from "~/components/Loaders";
+import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
 import Pagination from "~/components/Pagination";
 import { ROUTES } from "~/config/constants";
 import { useGetAllActiveTasks } from "~/hooks/useTask";
-import { userTaskCenterTableSelector } from "~/selectors/task-center";
+import {
+	userTaskCenterMobileTableSelector,
+	userTaskCenterTableSelector,
+} from "~/selectors/task-center";
 
 const UserTaskDashboard = () => {
 	const taskTabs = [
@@ -23,94 +32,78 @@ const UserTaskDashboard = () => {
 	];
 	const router = useRouter();
 	const { task } = router.query;
-	const searchParams = new URLSearchParams();
-	const [rowsPerPage, setRowsPerPage] = useState<number>();
-	const [currentPage, setCurrentPage] = useState<number>();
+	// Check if the query matches one of the expected keys in IDocsLength interface
+	const queryKey = task as keyof IDocsLength;
+	const [rowsPerPage, setRowsPerPage] = useState<number>(PAGINATION.LIMIT);
+	const [currentPage, setCurrentPage] = useState<number>(PAGINATION.PAGE);
 	const [tasks, setTasks] = useState<ITaskTableData[]>([]);
-	const [totalDocs, setTotalDocs] = useState<number>();
-	const [totalPages, setTotalPages] = useState<number>();
+	const [docsLength, setDocsLength] = useState<IDocsLength>();
+	const [firstPageIndex, setFirstPageIndex] = useState<number>();
+	const [lastPageIndex, setLastPageIndex] = useState<number>();
 
-	const { activeTasks, isLoading, refetch } = useGetAllActiveTasks({
-		rows: rowsPerPage,
-		page: currentPage,
-		task: String(task),
-	});
+	const { activeTasks, isLoading } = useGetAllActiveTasks();
+
+	// function to get all docs length
+	const getAllDocsLength = (data: IFetchAllActiveTasks) => {
+		const { allTask, userTask } = data;
+		const allTasksLength = allTask.length;
+		const userTasksLength = userTask.length;
+		const pendingTasksLength = allTask.length - userTask.length;
+
+		const lenData = {
+			all: allTasksLength,
+			pending: pendingTasksLength,
+			completed: userTasksLength,
+		};
+
+		return lenData;
+	};
 
 	// function to filter tasks based on query `all` or `pending` or `completed`
 	const getAllTaskDetails = useCallback((data: IFetchAllActiveTasks) => {
 		const { allTask, userTask } = data;
-		const { docs: allTaskDocs } = allTask;
-		const { docs: userTaskDocs } = userTask;
 
 		// Conditionally filter based on `router.query.task`
 		const modifiedDocs = (() => {
 			switch (router.query.task) {
 				case UserTaskPageTab.PENDING:
-					return allTaskDocs.filter(
-						(doc) => !userTaskDocs.some((usertask) => usertask.taskId === doc.id),
+					return allTask.filter(
+						(doc) => !userTask.some((task) => task.taskId === doc.id),
 					);
 				case UserTaskPageTab.COMPLETED:
-					return allTaskDocs.filter((doc) =>
-						userTaskDocs.some((usertask) => usertask.taskId === doc.id),
-					);
+					return allTask.filter((doc) => userTask.some((task) => task.taskId === doc.id));
 				case UserTaskPageTab.ALL:
 				default:
-					return allTaskDocs;
+					return allTask;
 			}
 		})();
 
 		// modifies tasks status
 		return modifiedDocs.map((doc) => {
-			const userTaskStatus = userTaskDocs.find((utc) => utc.taskId === doc.id)?.status;
+			const userTaskStatus = userTask.find((utc) => utc.taskId === doc.id)?.status;
 			return { ...doc, status: userTaskStatus || UserTaskStatus.PENDING };
 		});
 	}, []);
 
+	useEffect(() => setCurrentPage(PAGINATION.PAGE), [rowsPerPage]); // resets the page when rows per page is changed.
+
 	useEffect(() => {
 		if (activeTasks) {
+			const docsLength = getAllDocsLength(activeTasks);
 			const taskDetails = getAllTaskDetails(activeTasks);
-			setTasks(taskDetails);
-		}
-	}, [activeTasks]);
 
-	useEffect(() => {
-		if (activeTasks) {
-			if (task === UserTaskPageTab.ALL) {
-				setRowsPerPage(activeTasks.allTask.limit);
-				setCurrentPage(activeTasks.allTask.page);
-				setTotalDocs(activeTasks.allTask.totalDocs);
-				setTotalPages(activeTasks.allTask.totalPages);
-			} else if (task === UserTaskPageTab.PENDING) {
-				setRowsPerPage(activeTasks.allTask.limit);
-				setCurrentPage(activeTasks.allTask.page);
-				setTotalDocs(activeTasks.allTask.totalDocs - activeTasks.userTask.totalDocs);
-				setTotalPages(
-					Math.ceil(
-						(activeTasks.allTask.totalPages - activeTasks.userTask.totalPages) /
-							activeTasks.allTask.limit,
-					),
-				);
-			} else if (task === UserTaskPageTab.COMPLETED) {
-				setRowsPerPage(activeTasks.userTask.limit);
-				setCurrentPage(activeTasks.userTask.page);
-				setTotalDocs(activeTasks.userTask.totalDocs);
-				setTotalPages(activeTasks.userTask.totalPages);
-			}
-		}
-	}, [activeTasks]);
+			const firstIndex = (currentPage - 1) * rowsPerPage;
+			const lastIndex = Math.min(rowsPerPage * currentPage, docsLength[queryKey]);
 
-	useEffect(() => {
-		if (currentPage) {
-			searchParams.set("page", currentPage.toString());
+			setDocsLength(docsLength);
+			setFirstPageIndex(firstIndex);
+			setLastPageIndex(lastIndex);
+			setTasks(taskDetails.slice(firstIndex, lastIndex));
 		}
-		if (rowsPerPage) {
-			searchParams.set("rows", rowsPerPage.toString());
-		}
-
-		refetch();
-	}, [currentPage, rowsPerPage]);
+	}, [activeTasks, currentPage, rowsPerPage]);
 
 	const { tableBody, tableHead } = userTaskCenterTableSelector(tasks);
+	const mobileData = userTaskCenterMobileTableSelector(tasks);
 
 	return (
 		<section className="space-y-10">
@@ -124,11 +117,11 @@ const UserTaskDashboard = () => {
 			<h1 className="font-semibold text-4xl text-[#03033A]">Tasks Center</h1>
 
 			{isLoading ? (
-				<section className="bg-white p-3 w-[30%]">
+				<section className="bg-white p-3 w-[20rem]">
 					<CardLoader />
 				</section>
 			) : (
-				<Card className="sm:max-w-[30%] flex items-start justify-between px-4 py-2">
+				<Card className="sm:max-w-[20rem] flex items-start justify-between px-4 py-2">
 					<section className="space-y-10">
 						<p className="font-semibold">Accumulated Points</p>
 						<p className="font-bold text-2xl">00</p>
@@ -141,26 +134,38 @@ const UserTaskDashboard = () => {
 			)}
 
 			<section className="space-y-5">
-				<PageTab tabs={taskTabs} docCount={totalDocs} />
+				<PageTab tabs={taskTabs} docCount={docsLength} />
 
 				<section className="bg-white rounded-xl p-2 md:p-6 overflow-x-auto">
 					{isLoading ? (
-						<TableLoader />
+						<>
+							<section className="w-full hidden md:block">
+								<TableLoader />
+							</section>
+							<section className="w-full md:hidden">
+								<MobileTableLoader />
+							</section>
+						</>
 					) : tasks && tasks.length >= 1 ? (
 						<>
-							<DataTable
-								hasMenueItems={true}
-								menueItemType="icon-button"
-								justifyMenueItem="justify-center"
-								tHead={tableHead}
-								tBody={tableBody}
-							/>
+							<section className="hidden md:block">
+								<DataTable
+									hasMenueItems={true}
+									menueItemType="icon-button"
+									justifyMenueItem="justify-center"
+									tHead={tableHead}
+									tBody={tableBody}
+								/>
+							</section>
+							<section className="md:hidden">
+								<DataTableMobile data={mobileData} />
+							</section>
 							<section className="mt-3 p-2 rounded-lg">
 								<Pagination
-									currentPage={currentPage ?? 1}
-									totalPages={totalPages ?? 0}
+									currentPage={(firstPageIndex as number) + 1}
+									totalPages={lastPageIndex as number}
 									rowsPerPage={rowsPerPage!}
-									totalRecord={totalDocs ?? 0}
+									totalRecord={docsLength![queryKey]}
 									setRowsPerPage={setRowsPerPage}
 									onNext={() => setCurrentPage((prev) => prev && ++prev)}
 									onPrev={() => setCurrentPage((prev) => prev && --prev)}

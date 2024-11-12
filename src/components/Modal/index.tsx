@@ -51,11 +51,11 @@ const Modal: React.FC<ModalOptions> = ({
 		>
 			<div
 				ref={ref}
-				className={clsx("w-full relative max-w-2xl p-4", width)}
+				className={clsx("w-full relative max-w-2xl p-2 md:p-4", width)}
 				style={{ maxHeight: "90vh" }} // Modal height is limited to 90% of the viewport height
 			>
 				<div
-					className="bg-white relative rounded-xl py-6 px-8 shadow"
+					className="bg-white relative rounded-xl py-6 md:px-8 px-2 shadow"
 					style={{ maxHeight: "100%", display: "flex", flexDirection: "column" }}
 				>
 					<div

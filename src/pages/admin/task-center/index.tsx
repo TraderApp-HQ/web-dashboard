@@ -1,19 +1,21 @@
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
+import { PAGINATION } from "~/apis/handlers/users/constants";
+import { ITaskData } from "~/apis/handlers/users/interfaces";
 import DropdownMenu from "~/components/AccountLayout/DropdownMenu";
 import SearchForm from "~/components/AccountLayout/SearchForm";
 import AdminLayout from "~/components/AdminLayout/Layout";
-import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
 import Button from "~/components/common/Button";
-import { DataTable } from "~/components/common/DataTable";
+import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import Toast from "~/components/common/Toast";
 import DropdownIcon from "~/components/icons/DropdownIcon";
+import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
 import DeleteModal from "~/components/Modal/DeleteModal";
 import Pagination from "~/components/Pagination";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { useDeleteTask, useGetAllTasks } from "~/hooks/useTask";
-import { taskCenterTableSelector } from "~/selectors/task-center";
+import { taskCenterMobileTableSelector, taskCenterTableSelector } from "~/selectors/task-center";
 
 const TaskCenter = () => {
 	const router = useRouter();
@@ -22,10 +24,16 @@ const TaskCenter = () => {
 	const [searchTerm, setSearchTerm] = useState<string>(
 		Array.isArray(search) ? search[0] : search || "",
 	);
-	const [rowsPerPage, setRowsPerPage] = useState<number>();
-	const [currentPage, setCurrentPage] = useState<number>();
+	const [rowsPerPage, setRowsPerPage] = useState<number>(PAGINATION.LIMIT);
+	const [currentPage, setCurrentPage] = useState<number>(PAGINATION.PAGE);
+	const [totalDocsLength, setTotalDocsLength] = useState<number>(PAGINATION.LIMIT); // Defaults to 10 to calculate page index for initial render.
 	const [toggleDeleteModal, setToggleDeleteModal] = useState<boolean>(false);
 	const [deleteTaskId, setDeleteTaskId] = useState<string>("");
+	const [selectedTasks, setSelectedTasks] = useState<ITaskData[]>([]);
+
+	// For Pagination
+	const firstPageIndex = (currentPage - 1) * rowsPerPage;
+	const lastPageIndex = Math.min(rowsPerPage * currentPage, totalDocsLength);
 
 	const {
 		tasksDetails,
@@ -35,8 +43,6 @@ const TaskCenter = () => {
 		isSuccess: getAllTaskSuccess,
 		refetch,
 	} = useGetAllTasks({
-		rows: rowsPerPage,
-		page: currentPage,
 		search: searchTerm,
 	});
 	const {
@@ -47,24 +53,20 @@ const TaskCenter = () => {
 		isSuccess,
 	} = useDeleteTask();
 
-	useEffect(() => {
-		if (tasksDetails) {
-			setRowsPerPage(tasksDetails.limit);
-			setCurrentPage(tasksDetails.page);
-		}
-	}, [tasksDetails]);
+	useEffect(() => setCurrentPage(PAGINATION.PAGE), [rowsPerPage]); // resets the page when rows per page is changed.
 
 	useEffect(() => {
-		if (currentPage) {
-			searchParams.set("page", currentPage.toString());
+		if (getAllTaskSuccess && tasksDetails) {
+			setTotalDocsLength(tasksDetails.length);
+			setSelectedTasks(tasksDetails.slice(firstPageIndex, lastPageIndex));
 		}
-		if (rowsPerPage) {
-			searchParams.set("rows", rowsPerPage.toString());
-		}
+	}, [tasksDetails, rowsPerPage, currentPage]);
+
+	useEffect(() => {
 		if (searchTerm) {
 			searchParams.set("search", searchTerm);
 		}
-	}, [currentPage, rowsPerPage, searchTerm]);
+	}, [searchTerm]);
 
 	const handleSearch = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -78,8 +80,6 @@ const TaskCenter = () => {
 			refetch();
 		}
 	};
-
-	const tasks = getAllTaskSuccess ? tasksDetails?.docs : [];
 
 	const handleDeleteTaskModalOpen = (taskId: string) => {
 		setToggleDeleteModal(true);
@@ -95,15 +95,20 @@ const TaskCenter = () => {
 	};
 
 	const { tableBody, tableHead } = taskCenterTableSelector(
-		tasks as ICreateTaskFormData[],
+		selectedTasks as ITaskData[],
+		handleDeleteTaskModalOpen,
+	);
+
+	const mobileData = taskCenterMobileTableSelector(
+		selectedTasks as ITaskData[],
 		handleDeleteTaskModalOpen,
 	);
 
 	return (
 		<section className="">
-			<section className="flex items-center justify-between">
-				<h1 className="mb-8 text-2xl font-bold leading-loose">Task Center</h1>
-				{tasks && tasks.length >= 1 && (
+			<section className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+				<h1 className="md:mb-8 text-lg md:text-2xl font-bold leading-loose">Task Center</h1>
+				{selectedTasks && selectedTasks.length >= 1 && (
 					<Button
 						labelText="create new task"
 						onClick={() =>
@@ -141,28 +146,38 @@ const TaskCenter = () => {
 				</DropdownMenu>
 			</section>
 
-			<section className="bg-white flex items-center justify-center rounded-xl p-2 md:p-6">
+			<section className="bg-white w-full rounded-xl p-2 md:p-6">
 				{isLoading ? (
-					<section className="w-full">
-						<TableLoader />
-					</section>
-				) : isError && !tasks ? (
-					<p className="text-red-400 py-10 mt-6">{`An Error occured: ${error?.message}`}</p>
-				) : tasks && tasks.length >= 1 ? (
+					<>
+						<section className="w-full hidden md:block">
+							<TableLoader />
+						</section>
+						<section className="w-full md:hidden">
+							<MobileTableLoader />
+						</section>
+					</>
+				) : isError && !selectedTasks ? (
+					<p className="text-red-400 py-10 m-auto">{`An Error occured: ${error?.message}`}</p>
+				) : selectedTasks && selectedTasks.length >= 1 ? (
 					<section className="overflow-x-auto">
-						<DataTable
-							tHead={tableHead}
-							tBody={tableBody}
-							hasMenueItems={true}
-							menueItemType="icon-button"
-							justifyMenueItem="justify-start pl-20"
-						/>
+						<section className="hidden md:block">
+							<DataTable
+								tHead={tableHead}
+								tBody={tableBody}
+								hasMenueItems={true}
+								menueItemType="icon-button"
+								justifyMenueItem="justify-start pl-20"
+							/>
+						</section>
+						<section className="md:hidden">
+							<DataTableMobile data={mobileData} />
+						</section>
 						<section className="mt-3 p-2 rounded-lg">
 							<Pagination
-								currentPage={currentPage ?? 1}
-								totalPages={tasksDetails?.totalPages ?? 0}
+								currentPage={firstPageIndex + 1}
+								totalPages={lastPageIndex!}
 								rowsPerPage={rowsPerPage!}
-								totalRecord={tasksDetails?.totalDocs ?? 0}
+								totalRecord={totalDocsLength ?? 0}
 								setRowsPerPage={setRowsPerPage}
 								onNext={() => setCurrentPage((prev) => prev && ++prev)}
 								onPrev={() => setCurrentPage((prev) => prev && --prev)}
@@ -202,7 +217,7 @@ const TaskCenter = () => {
 						)}
 					</section>
 				) : (
-					<section className="text-center p-[2rem] max-w-[32rem] my-8">
+					<section className="text-center p-[2rem] max-w-[32rem] m-auto">
 						<h3 className="font-semibold text-xl text-textColor mb-2">
 							No task recorded yet
 						</h3>

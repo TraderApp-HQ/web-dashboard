@@ -1,11 +1,16 @@
 import type { UserStatus } from "~/config/enum";
-import type { NotificationChannel, ReferralRank, UserRole, VerificationType } from "./enums";
-import {
+import type {
+	NotificationChannel,
+	Platform,
 	PlatformAction,
+	ReferralRank,
+	TaskCategory,
 	TaskStatus,
 	TaskType,
+	UserRole,
 	UserTaskStatus,
-} from "~/components/AdminLayout/taskCenter/taskFormData";
+	VerificationType,
+} from "./enums";
 
 export interface IUserProfile {
 	id: string;
@@ -220,25 +225,6 @@ export interface IGetTasksInput {
 	search?: string;
 }
 
-export interface IFetchAllTasks {
-	docs: ITask[];
-	hasNextPage: boolean;
-	hasPrevPage: boolean;
-	limit: number;
-	nextPage: number;
-	page: number;
-	pagingCounter: number;
-	prevPage?: number;
-	totalDocs: number;
-	totalPages: number;
-}
-
-export interface IGetUserTasksInput {
-	page?: number;
-	rows?: number;
-	task?: string;
-}
-
 export interface ITaskTableData {
 	id: string;
 	title: string;
@@ -254,37 +240,67 @@ interface IUserTableData {
 	status: UserTaskStatus;
 }
 
-interface IFetchActiveTasks {
-	docs: ITaskTableData[];
-	hasNextPage: boolean;
-	hasPrevPage: boolean;
-	limit: number;
-	nextPage: number;
-	page: number;
-	pagingCounter: number;
-	prevPage?: number;
-	totalDocs: number;
-	totalPages: number;
-}
-
-interface IFetchUserTasks {
-	docs: IUserTableData[];
-	hasNextPage: boolean;
-	hasPrevPage: boolean;
-	limit: number;
-	nextPage: number;
-	page: number;
-	pagingCounter: number;
-	prevPage?: number;
-	totalDocs: number;
-	totalPages: number;
-}
-
 export interface IFetchAllActiveTasks {
-	allTask: IFetchActiveTasks;
-	userTask: IFetchUserTasks;
+	allTask: ITaskTableData[];
+	userTask: IUserTableData[];
 }
 
 export interface IFetchAllPendingTasksCount {
 	pendingTasksCount: number;
+}
+
+export interface ITaskCategory {
+	displayText: string;
+	value: TaskCategory;
+}
+
+export interface ITaskPlatform {
+	displayText: string;
+	value: Platform;
+}
+
+export interface ITaskType {
+	displayText: string;
+	value: TaskType;
+}
+
+export interface ITaskForm {
+	onClose: () => void;
+	isLoading: boolean;
+	platforms: ITaskPlatforms[];
+	task?: ITaskData;
+}
+
+export interface IUpdateTaskFormProps {
+	onClose: () => void;
+	isLoading: boolean;
+	task: ITaskData;
+}
+
+export interface ITaskData {
+	id?: string;
+	title: string;
+	description: string;
+	objective?: string;
+	taskType: TaskType;
+	category: TaskCategory;
+	platformId?: string;
+	platformName?: Platform;
+	link?: string;
+	expectedActions?: PlatformAction[];
+	points: number;
+	startDate?: Date;
+	dueDate?: Date;
+	status?: TaskStatus;
+}
+
+export interface ITaskFormError {
+	startDate?: string;
+	dueDate?: string;
+}
+
+export interface IDocsLength {
+	all: number;
+	pending: number;
+	completed: number;
 }

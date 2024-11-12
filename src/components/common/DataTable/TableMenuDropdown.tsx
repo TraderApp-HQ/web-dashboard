@@ -45,6 +45,11 @@ const TableMenuDropdown: React.FC<ITableMenuDropdown> = ({ dataTableMenuItems })
 							</DropdownMenuItem>
 						);
 					}
+
+					if (!item) {
+						return;
+					}
+
 					return (
 						<DropdownMenuItem key={index} type="text">
 							<Toggle
