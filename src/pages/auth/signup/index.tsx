@@ -94,11 +94,11 @@ const Signup = () => {
 
 	// handle form field changes
 	const handleFirstNameChange = (value: string) => {
-		setFirstName(value.trim());
+		setFirstName(value);
 	};
 
 	const handleLastNameChange = (value: string) => {
-		setLastName(value.trim());
+		setLastName(value);
 	};
 
 	const handleReferralCodeChange = (value: string) => {
