@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import { TaskCategory } from "~/apis/handlers/users/enums";
 import { ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
 import HyperLinkIcon from "~/components/icons/HyperLinkIcon";
 import { renderActionStatement, renderStatus } from "~/helpers";
-import { TaskCategory } from "./taskFormData";
 
 interface IViewTaskProps {
 	selectedTask: ITaskWithPopulate;
@@ -12,16 +12,20 @@ interface IViewTaskProps {
 const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 	return (
 		<section className="space-y-5">
-			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
-				<h3 className="text-textBlack text-base font-bold">Objective</h3>
-				<p className="text-textLight text-base font-normal">{selectedTask.objective}</p>
-			</section>
+			{selectedTask.objective && (
+				<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
+					<h3 className="text-textBlack text-base font-bold">Objective</h3>
+					<p className="text-textLight text-sm md:text-base font-normal">
+						{selectedTask.objective}
+					</p>
+				</section>
+			)}
 			<section className="bg-textCardBg px-3 py-2 rounded-xl space-y-3">
 				<section className="flex items-center justify-between border-b-[1px] border-[#D1D7F0] pb-2">
 					<h3 className="text-textGray text-sm font-bold">Task Category</h3>
-					<p className="text-textLight text-base font-semibold capitalize">
+					<section className="text-textLight text-sm md:text-base font-semibold capitalize">
 						{renderStatus(selectedTask?.category)}
-					</p>
+					</section>
 				</section>
 				<section className="flex items-center justify-between py-3">
 					<h3 className="text-textGray text-sm font-bold">Platform</h3>
@@ -55,7 +59,9 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 			</section>
 
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
-				<h3 className="text-textBlack text-base font-bold">Expected Action</h3>
+				<h3 className="text-textBlack text-base font-semibold md:font-bold">
+					Expected Action
+				</h3>
 				<ul className="list-disc list-inside space-y-2">
 					{selectedTask.expectedActions!.length >= 1 ? (
 						selectedTask.expectedActions?.map((action, index) => (
@@ -72,27 +78,31 @@ const ViewTask: React.FC<IViewTaskProps> = ({ selectedTask }) => {
 			</section>
 
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-3">
-				<h3 className="text-textBlack text-base font-bold">Description</h3>
-				<p className="text-textLight text-base font-normal">{selectedTask?.description}</p>
+				<h3 className="text-textBlack text-base font-semibold md:font-bold">Description</h3>
+				<p className="text-textLight text-sm md:text-base font-normal">
+					{selectedTask?.description}
+				</p>
 			</section>
 
 			<section className="bg-textCardBg px-3 py-4 rounded-xl space-y-5">
 				<section className="flex items-center justify-between border-b-[1px] border-[#D1D7F0] pb-2">
 					<h3 className="text-textGray text-sm font-bold">Point</h3>
-					<p className="text-textColor text-base font-semibold capitalize">
+					<p className="text-textColor text-sm md:text-base font-semibold capitalize">
 						{selectedTask?.points} points
 					</p>
 				</section>
-				<section className="flex items-center justify-between border-b-[1px] border-[#D1D7F0] pb-2">
-					<h3 className="text-textGray text-sm font-bold">Due Date</h3>
-					<p className="text-[#4A5264] text-base font-semibold capitalize">
-						{selectedTask.dueDate && new Date(selectedTask.dueDate).toDateString()}
-					</p>
-				</section>
+				{selectedTask.dueDate && (
+					<section className="flex items-center justify-between border-b-[1px] border-[#D1D7F0] pb-2">
+						<h3 className="text-textGray text-sm font-bold">Due Date</h3>
+						<p className="text-[#4A5264] text-sm md:text-base font-semibold capitalize">
+							{selectedTask.dueDate && new Date(selectedTask.dueDate).toDateString()}
+						</p>
+					</section>
+				)}
 
 				<section className="flex items-center justify-between pb-2">
 					<h3 className="text-textGray text-sm font-bold">Status</h3>
-					<section className="text-textLight text-base font-medium capitalize">
+					<section className="text-textLight text-sm md:text-base font-medium capitalize">
 						{renderStatus(selectedTask.status)}
 					</section>
 				</section>

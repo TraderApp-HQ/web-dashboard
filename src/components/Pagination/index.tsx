@@ -103,7 +103,7 @@ const Pagination: React.FC<PaginationProps> = ({
 					data-testid="next-btn"
 					onClick={handleNext}
 					className="px-3 py-1 mx-1 rounded disabled:bg-gray-100 disabled:cursor-not-allowed text-[14px]"
-					disabled={currentPage === totalPages}
+					disabled={currentPage === totalPages || totalPages === totalRecord}
 				>
 					<FiChevronRight size={20} color="#AAB7C6" />
 				</button>

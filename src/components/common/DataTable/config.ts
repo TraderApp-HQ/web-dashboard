@@ -32,7 +32,7 @@ interface ITBodyColumns {
 	styles?: string;
 }
 
-interface ITableMobileItem {
+export interface ITableMobileItem {
 	displayItemTitle: string | JSX.Element | ReactNode;
 	displayItemValue: string | JSX.Element | ReactNode;
 	styles?: string;
