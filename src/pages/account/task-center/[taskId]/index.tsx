@@ -20,7 +20,7 @@ const ViewTaskModal = () => {
 	return (
 		<Modal
 			title={
-				<p className="capitalize font-bold text-xl md:text-2xl text-[#414141]">
+				<p className="capitalize md:font-bold text-base md:text-2xl pl-2 text-[#414141]">
 					{task ? task.title : "Task Title"}
 				</p>
 			}
