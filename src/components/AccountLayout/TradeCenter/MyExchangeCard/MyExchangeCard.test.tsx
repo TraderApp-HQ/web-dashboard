@@ -3,8 +3,22 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // Imp
 import MyExchangeCard from ".";
 import { AccountType, Category, Currency } from "~/config/enum";
 import { AccountConnectionStatus } from "~/apis/handlers/trading-engine/enums";
+import { useRouter } from "next/router";
+
+// Mock the next/router module
+jest.mock("next/router", () => ({
+	useRouter: jest.fn(),
+}));
 
 describe("MyExchangeCard", () => {
+	let mockPush: jest.Mock;
+
+	beforeEach(() => {
+		mockPush = jest.fn();
+		(useRouter as jest.Mock).mockReturnValue({
+			push: mockPush,
+		});
+	});
 	const queryClient = new QueryClient();
 
 	beforeAll(() => {
