@@ -17,7 +17,7 @@ const TradeCenterExchanges = () => {
 	const userId = userProfile?.id;
 
 	const fetchTradingAccounts = useCallback(
-		() => tradingEngineService.getUserTradingAccounts(`${userId}`),
+		() => tradingEngineService.getUserTradingAccounts(userId as string),
 		[userId, tradingEngineService],
 	);
 
@@ -25,11 +25,16 @@ const TradeCenterExchanges = () => {
 		data: accounts,
 		isLoading,
 		isSuccess,
+		isError,
 		refetch,
 	} = useFetch({
 		queryKey: [TradingEngineQueryId.accounts],
 		queryFn: fetchTradingAccounts,
 	});
+
+	if (isError) {
+		return <div>Failed to load trading accounts. Please try again later.</div>;
+	}
 
 	return (
 		<div className="flex flex-col gap-y-8">

@@ -30,7 +30,7 @@ describe("EmptyExchange Component", () => {
 
 		// Check for the correct headings and texts
 		expect(screen.getByText("Not connected")).toBeInTheDocument();
-		expect(screen.getByText("You don’t have any connected exchange")).toBeInTheDocument();
+		expect(screen.getByText("You don’t have any connected account")).toBeInTheDocument();
 
 		// Check for the presence of the button
 		expect(screen.getByText("Connect new Exchange")).toBeInTheDocument();

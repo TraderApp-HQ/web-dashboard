@@ -5,7 +5,7 @@ export interface IConnectManualInput {
 	userId: string;
 	platformName: string;
 	platformId: number;
-	plaformLogo: string;
+	platformLogo: string;
 	apiKey: string;
 	apiSecret: string;
 	category: Category;
@@ -16,6 +16,8 @@ export interface IUserTradingAccount {
 	id: string;
 	userId: string;
 	platformId: number;
+	platformName: string;
+	platformLogo: string;
 	apiKey: string;
 	apiSecret: string;
 	externalAccountUserId: string;
@@ -55,4 +57,9 @@ export interface IDeleteAccountInput {
 export interface IExchangeDropdownMenu {
 	selectedAccountId: string;
 	refetchAccounts: () => void;
+}
+
+export interface IUpdateAccountInput {
+	id: string;
+	accountData: IConnectManualInput;
 }

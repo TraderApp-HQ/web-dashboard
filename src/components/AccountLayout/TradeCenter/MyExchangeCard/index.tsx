@@ -17,6 +17,7 @@ import { AccountConnectionStatus } from "~/apis/handlers/trading-engine/enums";
 import { Currency } from "~/config/enum";
 import { useCreate } from "~/hooks/useCreate";
 import { TradingEngineService } from "~/apis/handlers/trading-engine";
+import { useRouter } from "next/router";
 
 interface IConnectionStatus {
 	isConnected: boolean;
@@ -63,6 +64,7 @@ const ConnectionStatus: React.FC<IConnectionStatus> = ({ isConnected, errorMessa
 };
 
 const ExchangeDropdownMenu = ({ selectedAccountId, refetchAccounts }: IExchangeDropdownMenu) => {
+	const router = useRouter();
 	const tradingEngineService = useMemo(() => new TradingEngineService(), []);
 	const {
 		mutate: deleteAccount,
@@ -83,8 +85,17 @@ const ExchangeDropdownMenu = ({ selectedAccountId, refetchAccounts }: IExchangeD
 	}, [deleteAccount, selectedAccountId]);
 
 	return (
-		<DropdownMenu trigger={<DottedIcon />} position="left" direction="bottom">
-			<DropdownMenuItem type="link" to="" className="pl-0 text-neutral-700">
+		<DropdownMenu
+			trigger={<DottedIcon />}
+			position="left"
+			direction="bottom"
+			className="w-44 !p-2"
+		>
+			<DropdownMenuItem
+				type="button"
+				onClick={() => router.push(`trading-accounts/connect/${selectedAccountId}`)}
+				className="pl-0 text-neutral-700"
+			>
 				<div className="flex items-center gap-x-2">
 					<ReplaceIcon />
 					<span>Replace API Key</span>
