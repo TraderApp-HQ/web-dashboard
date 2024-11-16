@@ -21,15 +21,12 @@ import type {
 	IReferralCommunityStats,
 	ITaskPlatforms,
 	ITaskWithPopulate,
-	IGetTasksInput,
-	IFetchAllTasks,
 	IFetchAllActiveTasks,
-	IGetUserTasksInput,
 	ICreateUserTask,
 	IFetchAllPendingTasksCount,
+	ITaskData,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
-import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
 
 export class UsersService {
 	private apiClient: APIClient;
@@ -266,24 +263,20 @@ export class UsersService {
 		return data as ITaskPlatforms[];
 	}
 
-	public async getAllTasks({ rows, page, search }: IGetTasksInput): Promise<IFetchAllTasks> {
+	public async getAllTasks({ search }: { search?: string }): Promise<ITaskData[]> {
 		const response = await this.apiClient.get<IResponse>({
-			url: `/task?page=${page}&rows=${rows}&search=${search}`,
+			url: `/task?search=${search}`,
 		});
 
 		if (response.error) throw new Error(response.message || "Error fetching tasks.");
 
 		const { data } = response;
-		return data as IFetchAllTasks;
+		return data as ITaskData[];
 	}
 
-	public async getAllActiveTasks({
-		rows,
-		page,
-		task,
-	}: IGetUserTasksInput): Promise<IFetchAllActiveTasks> {
+	public async getAllActiveTasks(): Promise<IFetchAllActiveTasks> {
 		const response = await this.apiClient.get<IResponse>({
-			url: `/task/active-tasks?task=${task}&page=${page}&rows=${rows}`,
+			url: "/task/active-tasks",
 		});
 
 		if (response.error) throw new Error(response.message || "Error fetching tasks.");
@@ -306,7 +299,7 @@ export class UsersService {
 		return data as IFetchAllPendingTasksCount;
 	}
 
-	public async createTask(data: ICreateTaskFormData): Promise<string> {
+	public async createTask(data: ITaskData): Promise<string> {
 		const response = await this.apiClient.post<IResponse>({
 			url: "/task",
 			data,
@@ -337,7 +330,7 @@ export class UsersService {
 		data,
 	}: {
 		taskId: string;
-		data: ICreateTaskFormData;
+		data: ITaskData;
 	}): Promise<string> {
 		const response = await this.apiClient.patch<IResponse>({
 			url: `/task/${taskId}`,

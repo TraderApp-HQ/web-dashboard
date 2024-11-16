@@ -6,20 +6,12 @@ import SelectBox from "~/components/common/SelectBox";
 import TextArea from "~/components/common/TextArea";
 import Toast from "~/components/common/Toast";
 import { useCreateTask, useUpdateTask } from "~/hooks/useTask";
-import {
-	ICreateTaskFormData,
-	ITaskForm,
-	ITaskFormError,
-	Platform,
-	PlatformAction,
-	taskCategory,
-	TaskStatus,
-	TaskType,
-	taskType,
-} from "./taskFormData";
+import { taskCategory, taskType } from "./taskFormData";
+import { ITaskData, ITaskForm, ITaskFormError } from "~/apis/handlers/users/interfaces";
+import { Platform, PlatformAction, TaskStatus, TaskType } from "~/apis/handlers/users/enums";
 
 const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) => {
-	const [formData, setFormData] = useState<ICreateTaskFormData>({} as ICreateTaskFormData);
+	const [formData, setFormData] = useState<ITaskData>({} as ITaskData);
 	const [formInputError, setFormInputError] = useState<ITaskFormError>({} as ITaskFormError);
 	const [validFormData, setValidFormData] = useState<boolean>(false);
 	const [taskSubmittionError, setTaskSubmittionError] = useState<boolean>(false);
@@ -93,7 +85,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 	}, [formData.platformId]);
 
 	// Handler for form input update
-	const updateFormData = (field: keyof ICreateTaskFormData, value: string | number | Date) => {
+	const updateFormData = (field: keyof ITaskData, value: string | number | Date) => {
 		setFormData((prevData) => {
 			// This helps to update both platformName and platformId
 			if (field === "platformName" && platformOptions.platformList) {
@@ -241,7 +233,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 			!taskId ? await createTask(data) : await updateTask({ taskId, data });
 
 			// Reset form if request is successful
-			setFormData({} as ICreateTaskFormData);
+			setFormData({} as ITaskData);
 
 			// close form
 			onClose();

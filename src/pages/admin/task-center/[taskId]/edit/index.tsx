@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { ITaskData } from "~/apis/handlers/users/interfaces";
 import AdminLayout from "~/components/AdminLayout/Layout";
 import TaskForm from "~/components/AdminLayout/taskCenter/TaskForm";
-import { ICreateTaskFormData } from "~/components/AdminLayout/taskCenter/taskFormData";
 import Modal from "~/components/Modal";
 import { useGetTask, useGetTaskPlatforms } from "~/hooks/useTask";
 
@@ -41,7 +41,7 @@ const UpdateTaskModal = () => {
 				onClose={closeModal}
 				isLoading={isLoading}
 				platforms={platforms!}
-				task={task as ICreateTaskFormData}
+				task={task as ITaskData}
 			/>
 		</Modal>
 	);

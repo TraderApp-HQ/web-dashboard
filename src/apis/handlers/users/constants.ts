@@ -6,3 +6,8 @@ export const UsersQueryId = {
 	activeTasks: "active-tasks",
 	pendingTasksCount: "pending-tasks-count",
 };
+
+export const PAGINATION = {
+	PAGE: 1,
+	LIMIT: 10,
+};
