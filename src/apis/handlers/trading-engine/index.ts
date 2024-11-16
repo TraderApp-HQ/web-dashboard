@@ -4,6 +4,7 @@ import { UsersService } from "~/apis/handlers/users";
 import type {
 	IConnectManualInput,
 	IDeleteAccountInput,
+	IUpdateAccountInput,
 	IUserAccountWithBalance,
 	IUserTradingAccount,
 } from "./interfaces";
@@ -58,6 +59,31 @@ export class TradingEngineService {
 
 		if (response.error) {
 			throw new Error(response.message || "Failed to delete account");
+		}
+
+		return response.message;
+	}
+
+	public async getUserTradingAccountsById(id: string): Promise<IUserTradingAccount> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/account/trading/account/${id}`,
+		});
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch trading account");
+		}
+
+		const { data } = response;
+		return data as IUserTradingAccount;
+	}
+
+	public async updateUserTradingAccount(account: IUpdateAccountInput): Promise<string> {
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/account/update/${account.id}`,
+			data: account.accountData,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to update account");
 		}
 
 		return response.message;

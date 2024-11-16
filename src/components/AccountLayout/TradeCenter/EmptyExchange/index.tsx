@@ -12,7 +12,7 @@ const EmptyExchange = () => {
 			<div>
 				<h1 className="text-blue-900 text-2xl font-bold leading-loose">Not connected</h1>
 				<h3 className="text-neutral-600 text-base font-normal leading-normal">
-					You don’t have any connected exchange
+					You don’t have any connected account
 				</h3>
 			</div>
 			<Button
@@ -21,7 +21,7 @@ const EmptyExchange = () => {
 				}}
 				innerClassName="w-96"
 			>
-				Connect new Exchange
+				Connect new trading account
 			</Button>
 		</div>
 	);

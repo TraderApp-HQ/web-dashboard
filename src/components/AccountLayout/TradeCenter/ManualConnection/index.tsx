@@ -12,6 +12,8 @@ interface ManualConnectionProps {
 	ipString: string;
 	isError: boolean;
 	error: Error | null;
+	apiKey?: string;
+	secretKey?: string;
 	handleManualConnection: () => void;
 }
 
@@ -22,6 +24,8 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 	ipString,
 	isError,
 	error,
+	apiKey,
+	secretKey,
 	handleManualConnection,
 }) => {
 	const { copyToClipboard, copyMessage } = useCopyToClipboard();
@@ -33,6 +37,7 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 	return (
 		<div className="flex flex-col gap-y-4">
 			<InputField
+				value={apiKey}
 				type="text"
 				labelText="API Keys"
 				props={{ name: "apikey" }}
@@ -40,6 +45,7 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 				onChange={setApiKey}
 			/>
 			<InputField
+				value={secretKey}
 				type="text"
 				labelText="Secret Keys"
 				props={{ name: "secretkey" }}
