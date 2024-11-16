@@ -63,7 +63,7 @@ const TradeCenterExchanges = () => {
 					</div>
 				</>
 			) : (
-				<EmptyExchange />
+				!isLoading && !isError && <EmptyExchange />
 			)}
 		</div>
 	);
