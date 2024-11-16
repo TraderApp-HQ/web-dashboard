@@ -25,6 +25,7 @@ const TradeCenterExchanges = () => {
 		data: accounts,
 		isLoading,
 		isSuccess,
+		isError,
 		refetch,
 	} = useFetch({
 		queryKey: [TradingEngineQueryId.accounts],
@@ -34,6 +35,7 @@ const TradeCenterExchanges = () => {
 	return (
 		<div className="flex flex-col gap-y-8">
 			{isLoading && <div>loading ....</div>}
+			{isError && <div>Something went wrong, please try again later!</div>}
 			{isSuccess && accounts && accounts.length > 0 ? (
 				<>
 					<div className="flex justify-between flex-col md:flex-row">
@@ -61,7 +63,7 @@ const TradeCenterExchanges = () => {
 					</div>
 				</>
 			) : (
-				!isLoading && <EmptyExchange />
+				<EmptyExchange />
 			)}
 		</div>
 	);
