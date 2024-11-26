@@ -33,7 +33,7 @@ const SendInvite: React.FC<ISendInvitesProps> = ({ onSuccess, onError }) => {
 	};
 
 	const addEmail = (email: string) => {
-		const trimmedEmail = email.trim();
+		const trimmedEmail = email.trim().toLowerCase();
 		if (trimmedEmail && !emails.includes(trimmedEmail)) {
 			if (validateEmail(trimmedEmail)) {
 				setEmails([...emails, trimmedEmail]);
@@ -42,7 +42,7 @@ const SendInvite: React.FC<ISendInvitesProps> = ({ onSuccess, onError }) => {
 			} else {
 				setEmailError("Please enter a valid email address.");
 			}
-		} else if (email.includes(trimmedEmail)) {
+		} else if (emails.includes(trimmedEmail)) {
 			setEmailError("This email has already been added.");
 		}
 	};
