@@ -112,8 +112,7 @@ const Toast: React.FC<ToastProps> = ({
 	React.useEffect(() => {
 		if (autoVanish) {
 			const timeout = setTimeout(() => {
-				setShow(false);
-				onToastClose && onToastClose();
+				handleClose();
 			}, autoVanishTimeout * 1000);
 
 			return () => clearTimeout(timeout);

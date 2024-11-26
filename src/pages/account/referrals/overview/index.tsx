@@ -72,6 +72,7 @@ const ReferralsOverview = () => {
 					message={"Invites have been successfully sent out"}
 					autoVanish
 					autoVanishTimeout={10}
+					onToastClose={() => setSuccess(false)}
 				/>
 			)}
 
@@ -83,6 +84,7 @@ const ReferralsOverview = () => {
 					message={"Failed to send invites to friends"}
 					autoVanish
 					autoVanishTimeout={10}
+					onToastClose={() => setIsError(false)}
 				/>
 			)}
 		</div>
