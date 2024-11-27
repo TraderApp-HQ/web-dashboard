@@ -13,9 +13,13 @@ import ReferalCard from "~/components/Cards/ReferalCard";
 const ReferralsOverview = () => {
 	const [stats, setStats] = useState<IReferralStats | null>(null);
 	const [success, setSuccess] = useState(false);
-	const [isError, setIsError] = useState(false);
+	const [error, setError] = useState<Error | null>(null);
 	const usersService = new UsersService();
 	const fetchReferralsStats = useCallback(() => usersService.getReferralsStats(), [usersService]);
+
+	const handleError = (err: Error) => {
+		setError(err);
+	};
 
 	useEffect(() => {
 		fetchReferralsStats().then((data) => {
@@ -45,7 +49,7 @@ const ReferralsOverview = () => {
 
 			<InviteCode code={stats?.referralCode ?? ""} title="Referral Code" />
 
-			<SendInvite onError={setIsError} onSuccess={setSuccess} />
+			<SendInvite onError={handleError} onSuccess={setSuccess} />
 
 			<section className="mt-5 rounded-md bg-white text-[#3E57BF] px-4 py-4">
 				<h3 className="font-bold text-lg mb-1 text-[#102477]">Referral Progress </h3>
@@ -76,15 +80,15 @@ const ReferralsOverview = () => {
 				/>
 			)}
 
-			{isError && (
+			{error && (
 				<Toast
 					type="error"
 					variant="filled"
 					title="Referral Error"
-					message={"Failed to send invites to friends"}
+					message={error.message || "Failed to send invites to friends"}
 					autoVanish
 					autoVanishTimeout={10}
-					onToastClose={() => setIsError(false)}
+					onToastClose={() => setError(null)}
 				/>
 			)}
 		</div>

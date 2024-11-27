@@ -7,7 +7,7 @@ import { EmailValidation } from "~/config/constants";
 import { useCreate } from "~/hooks/useCreate";
 
 interface ISendInvitesProps {
-	onError: Dispatch<SetStateAction<boolean>>;
+	onError: (error: Error) => void;
 	onSuccess: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -57,8 +57,8 @@ const SendInvite: React.FC<ISendInvitesProps> = ({ onSuccess, onError }) => {
 			onSuccess(true);
 			setEmails([]);
 		},
-		onError: () => {
-			onError(true);
+		onError: (error: Error) => {
+			onError(error);
 		},
 	});
 
