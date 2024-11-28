@@ -12,6 +12,7 @@ const useUnProtectedRoute = ({ path }: IUseUnProtectedRoute) => {
 	useEffect(() => {
 		const usersService = new UsersService();
 		const userData = usersService.getDataFromToken();
+		console.log("access token from use unprotected route hook: ", userData);
 		if (userData) {
 			router.push(`${LAYOUT_ROUTES.account}${ROUTES.dashboard.homepage}`);
 			return;

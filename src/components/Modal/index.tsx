@@ -12,6 +12,7 @@ export interface ModalOptions {
 	description?: string | ReactNode;
 	headerDivider?: boolean;
 	backBtnIcon?: React.ReactNode;
+	showBackButton?: boolean;
 }
 
 const Modal: React.FC<ModalOptions> = ({
@@ -23,6 +24,7 @@ const Modal: React.FC<ModalOptions> = ({
 	description,
 	headerDivider = false,
 	backBtnIcon,
+	showBackButton,
 }) => {
 	function close() {
 		if (onClose) {
@@ -65,7 +67,7 @@ const Modal: React.FC<ModalOptions> = ({
 					>
 						<div className="space-y-3 flex-col">
 							<h1 className="text-xl flex items-center gap-x-1 font-semibold text-[#414141]">
-								{backBtnIcon && backBtnIcon}
+								{showBackButton && backBtnIcon && backBtnIcon}
 								{title}
 							</h1>
 							<p className="text-[12px] text-[#BEBFC1]">{description}</p>

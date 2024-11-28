@@ -109,7 +109,7 @@ export class AssetsService {
 	}
 
 	//Exchanges
-	public async getAllExchanges({
+	public async getAllTradingPlatforms({
 		page,
 		rowsPerPage,
 		orderBy,

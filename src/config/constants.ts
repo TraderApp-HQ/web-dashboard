@@ -1,3 +1,6 @@
+import { TradingPlatform } from "~/apis/handlers/trading-engine/enums";
+import { AccountType, Category } from "./enum";
+
 export const LAYOUT_ROUTES = {
 	account: "/account",
 	auth: "/auth",
@@ -67,3 +70,17 @@ export const ItemType: Record<string, string> = Object.freeze({
 });
 
 export const EmailValidation = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+
+export const TradingPlatformCategoryValues: Record<Category, string> = {
+	[Category.CRYPTO]: "Crypto",
+	[Category.FOREX]: "Forex",
+};
+
+export const AccountTypeValues: Record<AccountType, string> = {
+	[AccountType.FUTURES]: "Futures",
+	[AccountType.SPOT]: "Spot",
+};
+
+export const TradingPlatformValues: Record<TradingPlatform, string> = {
+	[TradingPlatform.BINANCE]: "Binance",
+};

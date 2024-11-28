@@ -63,7 +63,7 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 							isActive={
 								tab.query
 									? tab.query === router.query.task
-									: router.asPath.endsWith(tab.href)
+									: router.asPath.includes(tab.href)
 							}
 						/>
 					);

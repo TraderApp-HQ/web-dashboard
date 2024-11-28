@@ -1,3 +1,4 @@
 export const TradingEngineQueryId = {
-	accounts: "user-accounts",
+	tradingAccounts: "user-trading-accounts",
+	tradingAccount: "user-trading-account",
 };

@@ -4,9 +4,9 @@ import { UsersService } from "~/apis/handlers/users";
 import type {
 	IConnectManualInput,
 	IDeleteAccountInput,
+	IGetTradingAccountInput,
+	ITradingAccountInfo,
 	IUpdateAccountInput,
-	IUserAccountWithBalance,
-	IUserTradingAccount,
 } from "./interfaces";
 
 export class TradingEngineService {
@@ -23,9 +23,7 @@ export class TradingEngineService {
 		);
 	}
 
-	public async connectManualTradingAccount(
-		TradingAccount: IConnectManualInput,
-	): Promise<IUserTradingAccount> {
+	public async connectManualTradingAccount(TradingAccount: IConnectManualInput) {
 		const response = await this.apiClient.post<IResponse>({
 			url: "/account/connect/manual",
 			data: TradingAccount,
@@ -35,25 +33,28 @@ export class TradingEngineService {
 			throw new Error(response.message || "Failed to connect Account");
 		}
 
-		const { data } = response;
-		return data as IUserTradingAccount;
+		const { message } = response;
+		return message;
 	}
 
-	public async getUserTradingAccounts(userId: string): Promise<IUserAccountWithBalance[]> {
+	public async getUserTradingAccounts(userId: string): Promise<ITradingAccountInfo[]> {
 		const response = await this.apiClient.get<IResponse>({
-			url: `/account/${userId}`,
+			url: `/account/all?userId=${userId}`,
 		});
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch trading accounts");
 		}
 
 		const { data } = response;
-		return data as IUserAccountWithBalance[];
+		return data as ITradingAccountInfo[];
 	}
 
-	public async deleteUserTradingAccount(account: IDeleteAccountInput): Promise<string> {
+	public async deleteUserTradingAccount({
+		userId,
+		platformName,
+	}: IDeleteAccountInput): Promise<string> {
 		const response = await this.apiClient.patch<IResponse>({
-			url: `/account/delete/${account.id}`,
+			url: `/account/delete?userId=${userId}&platformName=${platformName}`,
 			data: {},
 		});
 
@@ -64,16 +65,20 @@ export class TradingEngineService {
 		return response.message;
 	}
 
-	public async getUserTradingAccountsById(id: string): Promise<IUserTradingAccount> {
+	public async getUserTradingAccount({
+		userId,
+		platformName,
+	}: IGetTradingAccountInput): Promise<ITradingAccountInfo> {
+		console.log("inside api caller just before call to backend: ", platformName);
 		const response = await this.apiClient.get<IResponse>({
-			url: `/account/trading/account/${id}`,
+			url: `/account/one?userId=${userId}&platformName=${platformName}`,
 		});
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch trading account");
 		}
 
 		const { data } = response;
-		return data as IUserTradingAccount;
+		return data as ITradingAccountInfo;
 	}
 
 	public async updateUserTradingAccount(account: IUpdateAccountInput): Promise<string> {

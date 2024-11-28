@@ -7,11 +7,16 @@ import { ISelectBoxOption } from "~/components/interfaces";
 import { NestedTradeCenterLayout } from "../..";
 import { Category } from "~/config/enum";
 import { TradeStatus } from "~/apis/handlers/assets/enums";
-import useExchanges from "~/hooks/useExchanges";
+import useGetTradingPlatforms from "~/hooks/useGetTradingPlatforms";
 import AccountConnection from "~/components/AccountLayout/TradeCenter/AccountConnection";
+import { TradingPlatform } from "~/apis/handlers/trading-engine/enums";
+import { useGetUserTradingAccount } from "~/hooks/useGetUserTradingAccount";
+import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
+import useUserProfileData from "~/hooks/useUserProfileData";
 
 const ConnectTradingAccount = () => {
 	const router = useRouter();
+	const { userProfile } = useUserProfileData();
 	const [isOpen, setIsOpen] = useState(true);
 	const [selectedCategory, setSelectedCategory] = useState<ISelectBoxOption>();
 	const [categoryOptions, setCategoryOptions] = useState<ISelectBoxOption[]>([]);
@@ -19,24 +24,51 @@ const ConnectTradingAccount = () => {
 	const [platformOptions, setPlatformOptions] = useState<ISelectBoxOption[]>([]);
 	const [resetSelectedPlatform, setResetSelectedPlatform] = useState(false);
 	const [isConnectTradingAccount, setIsConnectTradingAccount] = useState(true);
+	const [userTradingAccount, setUserTradingAccount] = useState<ITradingAccountInfo | undefined>();
+	const [validatedPlatformName, setValidatedPlatformName] = useState<TradingPlatform>();
 
+	const { platformName } = router.query;
 	const categories = [
 		{ name: Category.CRYPTO, id: Category.CRYPTO },
 		{ name: Category.FOREX, id: Category.FOREX },
 	];
 
+	// Validate the platformName from query params
+	useEffect(() => {
+		if (!router.isReady || !platformName) return; // Wait until router and query are ready
+
+		const isValidPlatform = Object.values(TradingPlatform).includes(
+			platformName as TradingPlatform,
+		);
+		if (!isValidPlatform) {
+			router.push("/account/trade-center/trading-accounts?platform_error=true");
+		} else {
+			setValidatedPlatformName(platformName as TradingPlatform);
+		}
+	}, [router.isReady, platformName]);
+
+	// fetch user trading account infor
+	const { userTradingAccount: data, isUserTradingAccountSuccess } = useGetUserTradingAccount({
+		userId: userProfile?.id ?? "",
+		platformName: validatedPlatformName!,
+		enabled: !!validatedPlatformName && !!userProfile?.id,
+	});
+
+	useEffect(() => {
+		if (isUserTradingAccountSuccess) {
+			setUserTradingAccount(data);
+		}
+	}, [data]);
+
 	// Trigger fetching platforms only when the category is Crypto
 	const isCryptoSelected = selectedCategory?.value === Category.CRYPTO;
 	const {
-		data: platforms,
-		isSuccess: isPlatformSuccess,
-		isError,
-		error,
-		isLoading,
-	} = useExchanges(
-		{ status: TradeStatus.active },
-		isCryptoSelected, // Only enable fetching when Crypto is selected
-	);
+		tradingPlatforms,
+		isTradingPlatformsSuccess,
+		isTradingPlatformsError,
+		isTradingPlatformsLoading,
+		tradingPlatformsError,
+	} = useGetTradingPlatforms({ status: TradeStatus.active, enabled: isCryptoSelected });
 
 	// Set category options on mount
 	useEffect(() => {
@@ -50,19 +82,27 @@ const ConnectTradingAccount = () => {
 
 	// Update platform options based on selected category
 	useEffect(() => {
-		if (isPlatformSuccess && platforms.length > 0 && isCryptoSelected) {
+		if (
+			isTradingPlatformsSuccess &&
+			tradingPlatforms &&
+			tradingPlatforms.length > 0 &&
+			isCryptoSelected
+		) {
 			setPlatformOptions(
-				platforms.map(({ name, _id, logo }) => ({
-					displayText: name?.toString(),
-					value: _id,
-					imgUrl: logo?.toString(),
-				})),
+				tradingPlatforms.map(
+					({ name, _id, logo, isIpAddressWhitelistRequired, connectionTypes }) => ({
+						displayText: name?.toString(),
+						value: _id,
+						imgUrl: logo?.toString(),
+						data: { isIpAddressWhitelistRequired, connectionTypes },
+					}),
+				),
 			);
 		} else {
 			setPlatformOptions([]);
 			setResetSelectedPlatform(true);
 		}
-	}, [isPlatformSuccess, platforms, isCryptoSelected]);
+	}, [isTradingPlatformsSuccess, tradingPlatforms, isCryptoSelected]);
 
 	const handleModalClose = () => {
 		router.back();
@@ -86,15 +126,15 @@ const ConnectTradingAccount = () => {
 	};
 
 	const isSubmitDisabled = !selectedCategory || !selectedPlatform;
-	const platformPlaceholder = isError
-		? error?.message
-		: isLoading
+	const platformPlaceholder = isTradingPlatformsError
+		? tradingPlatformsError?.message
+		: isTradingPlatformsLoading
 			? "Loading..."
 			: "Select Platform";
 
 	return (
 		<>
-			{isConnectTradingAccount ? (
+			{isConnectTradingAccount && !platformName ? (
 				<Modal
 					openModal={isOpen}
 					width="md:w-[507px]"
@@ -131,11 +171,29 @@ const ConnectTradingAccount = () => {
 				</Modal>
 			) : (
 				<AccountConnection
-					categoryName={selectedCategory?.displayText ?? ""}
-					platformName={selectedPlatform?.displayText.toUpperCase() ?? ""}
-					platformId={selectedPlatform?.value ?? ""}
-					imgUrl={selectedPlatform?.imgUrl ?? ""}
+					userId={userProfile?.id ?? ""}
+					categoryName={
+						!platformName
+							? (selectedCategory?.displayText as Category)
+							: (userTradingAccount?.category as Category)
+					}
+					platformName={
+						!platformName
+							? (selectedPlatform?.displayText.toUpperCase() as TradingPlatform)
+							: (userTradingAccount?.platformName as TradingPlatform)
+					}
+					platformLogo={
+						!platformName
+							? (selectedPlatform?.imgUrl ?? "")
+							: (userTradingAccount?.platformLogo ?? "")
+					}
 					handleAccountConnection={handleAccountConnection}
+					isUpdateMode={platformName ? true : false}
+					tradingAccount={userTradingAccount}
+					connectionTypes={selectedPlatform?.data.connectionTypes}
+					isIpAddressWhitelistRequired={
+						selectedPlatform?.data.isIpAddressWhitelistRequired
+					}
 				/>
 			)}
 		</>

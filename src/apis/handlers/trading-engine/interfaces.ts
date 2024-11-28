@@ -1,11 +1,11 @@
 import { AccountType, Category, Currency } from "~/config/enum";
-import type { AccountConnectionStatus, ConnectionType } from "./enums";
+import type { AccountConnectionStatus, ConnectionType, TradingPlatform } from "./enums";
 
 export interface IConnectManualInput {
 	userId: string;
 	platformName: string;
-	platformId: number;
-	platformLogo: string;
+	// platformId: number;
+	// platformLogo: string;
 	apiKey: string;
 	apiSecret: string;
 	category: Category;
@@ -50,13 +50,49 @@ export interface IUserAccountWithBalance {
 	refetchAccounts: () => void;
 }
 
-export interface IDeleteAccountInput {
-	id: string;
+export interface ITradingAccountBalances {
+	currency: Currency;
+	accountType: AccountType;
+	availableBalance: number;
+	lockedBalance?: number;
 }
 
-export interface IExchangeDropdownMenu {
-	selectedAccountId: string;
-	refetchAccounts: () => void;
+export interface ITradingAccountInfo {
+	accountId: string;
+	userId: string; // Reference to the user who owns these credentials
+	platformName: TradingPlatform;
+	platformId: number; // e.g., 112
+	platformLogo: string;
+	apiKey?: string;
+	apiSecret?: string;
+	accessToken?: string;
+	refreshToken?: string;
+	externalAccountUserId: string; // Unique identifier returned by trading plaforms like Binance
+	isWithdrawalEnabled: boolean;
+	isFuturesTradingEnabled: boolean;
+	isSpotTradingEnabled: boolean;
+	isIpAddressWhitelisted?: boolean;
+	connectionStatus: AccountConnectionStatus;
+	errorMessages: string[]; // List of reasons/messages for the unhealthy status
+	category: Category;
+	connectionType: ConnectionType;
+	balances: ITradingAccountBalances[];
+}
+
+export interface IDeleteAccountInput {
+	userId: string;
+	platformName: TradingPlatform;
+}
+
+export interface IGetTradingAccountInput {
+	userId: string;
+	platformName: TradingPlatform;
+}
+
+export interface ITradingAccountDropdownMenu {
+	userId: string;
+	platformName: TradingPlatform;
+	refetchUserTradingAccounts: () => void;
 }
 
 export interface IUpdateAccountInput {

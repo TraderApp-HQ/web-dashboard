@@ -8,3 +8,7 @@ export enum ConnectionType {
 	MANUAL = "MANUAL",
 	FAST = "FAST",
 }
+
+export enum TradingPlatform {
+	BINANCE = "BINANCE",
+}

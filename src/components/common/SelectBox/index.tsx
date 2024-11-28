@@ -20,6 +20,7 @@ interface ISelectBoxProps {
 	isSearchable?: boolean;
 	clear?: boolean | undefined;
 	inputError?: string;
+	fontStyles?: string;
 }
 
 /**
@@ -43,6 +44,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	isSearchable,
 	clear,
 	inputError,
+	fontStyles,
 }: ISelectBoxProps): JSX.Element => {
 	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -112,7 +114,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					// data-testid={options.map(({ displayText }) => displayText).join("")}
 					className={`p-[16px] placeholder-[#808080] w-full text-[#102477] invalid:text-[#808080] rounded-lg font-normal outline-[1px] outline-[#6579CC] appearance-none bg-no-repeat bg-[center_right_1em] invalid:[&:not(:empty)]:visited:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${
 						isOpen ? "border-[#7949FF]" : "border-gray-100"
-					} rounded-md p-2 flex justify-between items-center cursor-pointer ${bgColor ? bgColor : "bg-[#F5F8FE]"}`}
+					} rounded-md p-2 flex justify-between items-center cursor-pointer space-x-2 ${bgColor ? bgColor : "bg-[#F5F8FE]"}`}
 					onClick={() => setIsOpen(!isOpen)}
 					data-testid={placeholder}
 				>
@@ -124,6 +126,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 						<SelectBoxOption
 							displayText={selectedOption.displayText}
 							imgUrl={selectedOption.imgUrl}
+							className={fontStyles}
 						/>
 					)}
 					{/* {(!clear || selectedOption) && (
@@ -163,6 +166,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 									<SelectBoxOption
 										displayText={option.displayText}
 										imgUrl={option.imgUrl}
+										className={fontStyles}
 									/>
 								</li>
 							))}
@@ -203,7 +207,7 @@ const SelectBoxOption: React.FC<ISelectBoxOptionProps> = ({
 					height={20}
 				/>
 			)}
-			<p>{displayText}</p>
+			<p className={className}>{displayText}</p>
 		</div>
 	);
 };
