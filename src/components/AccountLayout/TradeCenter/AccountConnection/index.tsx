@@ -7,63 +7,49 @@ import FastConnection from "~/components/AccountLayout/TradeCenter/FastConnectio
 import ManualConnection from "~/components/AccountLayout/TradeCenter/ManualConnection";
 import { Category } from "~/config/enum";
 import { useConnectManualTradingAccount } from "~/hooks/useConnectManualTradingAccount";
-import useUserProfileData from "~/hooks/useUserProfileData";
-import { ConnectionType } from "~/apis/handlers/trading-engine/enums";
+import { ConnectionType, TradingPlatform } from "~/apis/handlers/trading-engine/enums";
 import BackBtnIcon from "~/components/icons/BackBtnIcon";
-import { TradingEngineService } from "~/apis/handlers/trading-engine";
-import { useCreate } from "~/hooks/useCreate";
-import { IUserTradingAccount } from "~/apis/handlers/trading-engine/interfaces";
-import Toast from "~/components/common/Toast";
+import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
 
 interface IAccountConnection {
-	categoryName: string;
-	platformName: string;
-	platformId: string;
-	imgUrl: string;
-	id?: string;
-	fetchSuccess?: boolean;
-	fetchAccount?: IUserTradingAccount;
+	userId: string;
+	categoryName: Category;
+	platformName: TradingPlatform;
+	platformLogo: string;
+	isUpdateMode?: boolean;
+	isUserTradingAccountSuccess?: boolean;
+	tradingAccount?: ITradingAccountInfo;
+	connectionTypes: ConnectionType[];
+	isIpAddressWhitelistRequired: boolean;
 	handleAccountConnection?: () => void;
 }
 
-const AccountConnection = ({
+const AccountConnection: React.FC<IAccountConnection> = ({
+	userId,
 	categoryName,
 	platformName,
-	platformId,
-	imgUrl,
-	id,
-	fetchSuccess,
-	fetchAccount,
+	platformLogo,
+	isUpdateMode,
+	tradingAccount,
 	handleAccountConnection,
-}: IAccountConnection) => {
+	connectionTypes,
+	isIpAddressWhitelistRequired,
+}) => {
 	const router = useRouter();
-	const tradingEngineService = new TradingEngineService();
 	const [isOpen, setIsOpen] = useState(true);
 
 	const [apiKey, setApiKey] = useState<string | undefined>();
 	const [secretKey, setSecretKey] = useState<string | undefined>();
+	const [isFastConnectionSupported, setIsFastConnectionSupported] = useState(false);
+	const [tabs, setTabs] = useState<{ label: string }[]>([{ label: "Manual Connection" }]);
 
-	const tabs = [{ label: "Manual Connection" }, { label: "Fast Connection" }];
-	const ipAddress = ["2345678901mj940485686505940400", "940485686505940l4002345678901m"];
-	const ipString = ipAddress.join(", ");
+	const ipAddress = ["18.201.27.185"];
+	const ipString = ipAddress.join(" ");
 
 	const handleModalClose = () => {
-		router.back();
+		router.push("/account/trade-center/trading-accounts");
 		setIsOpen(false);
 	};
-
-	const { userProfile } = useUserProfileData();
-
-	const {
-		mutate: updateManualTradingAccount,
-		isError: isUpdateError,
-		isPending: isUpdatePending,
-		error: updateError,
-		isSuccess: isUpdateSuccess,
-		data: updateData,
-	} = useCreate({
-		mutationFn: tradingEngineService.updateUserTradingAccount.bind(tradingEngineService),
-	});
 
 	const {
 		connectManualTradingAccount,
@@ -76,50 +62,57 @@ const AccountConnection = ({
 
 	const handleManualConnection = () => {
 		const payload = {
-			userId: userProfile?.id as string,
+			userId: userId,
 			platformName: platformName as string,
-			platformId: Number(platformId),
-			platformLogo: imgUrl as string,
 			apiKey: apiKey as string,
 			apiSecret: secretKey as string,
 			category: categoryName as Category,
 			connectionType: ConnectionType.MANUAL,
 		};
-		if (id) {
-			updateManualTradingAccount({ id: id as string, accountData: payload });
-		} else {
-			connectManualTradingAccount(payload);
-		}
+		connectManualTradingAccount(payload);
 	};
 
 	useEffect(() => {
-		if ((isAddSuccess && addData) || (isUpdateSuccess && updateData)) {
+		if (isAddSuccess && addData) {
 			setApiKey("");
 			setSecretKey("");
+			router.push(
+				`/account/trade-center/trading-accounts?success=true${isUpdateMode ? "&update=true" : ""}`,
+			);
 		}
-	}, [isAddSuccess, addData, isUpdateSuccess, updateData]);
+	}, [isAddSuccess, addData]);
 
 	useEffect(() => {
-		if (fetchAccount && fetchSuccess) {
-			setApiKey(fetchAccount.apiKey);
-			setSecretKey(fetchAccount.apiSecret);
+		if (tradingAccount) {
+			setApiKey(tradingAccount.apiKey);
+			setSecretKey(tradingAccount.apiSecret);
 		}
-	}, [fetchSuccess, fetchAccount]);
+	}, [tradingAccount]);
 
-	const isSubmitDisabled = !secretKey || !apiKey || isAddPending || isUpdatePending;
-	const isError = id ? isUpdateError : isAddError;
-	const error = id ? updateError : addError;
+	useEffect(() => {
+		const isFastConnectionSupported = connectionTypes?.includes(ConnectionType.FAST);
+		setIsFastConnectionSupported(isFastConnectionSupported);
+
+		if (isFastConnectionSupported) {
+			setTabs([{ label: "Manual Connection" }, { label: "Fast Connection" }]);
+		} else {
+			setTabs([{ label: "Manual Connection" }]);
+		}
+	}, [connectionTypes]);
+
+	const isSubmitDisabled = !secretKey || !apiKey || isAddPending;
 
 	return (
 		<>
 			<Modal
 				openModal={isOpen}
 				width="md:w-[653px]"
-				title={id ? "Update Trading Account" : "Connect Trading Account"}
+				title={isUpdateMode ? "Update Trading Account" : "Connect Trading Account"}
 				backBtnIcon={<BackBtnIcon onClick={handleAccountConnection} />}
 				onClose={handleModalClose}
+				showBackButton={isUpdateMode ? false : true}
 			>
-				<ExchangeTile imageUrl={imgUrl as string} />
+				<ExchangeTile imageUrl={platformLogo} />
 				<ContentTab tabs={tabs}>
 					<ManualConnection
 						apiKey={apiKey}
@@ -129,26 +122,15 @@ const AccountConnection = ({
 						isSubmitDisabled={isSubmitDisabled}
 						ipString={ipString}
 						handleManualConnection={handleManualConnection}
-						isError={isError}
-						error={error}
+						isError={isAddError}
+						error={addError}
+						isLoading={isAddPending}
+						isUpdateMode={isUpdateMode}
+						isIpAddressWhitelistRequired={isIpAddressWhitelistRequired}
 					/>
-					<FastConnection />
+					{isFastConnectionSupported && <FastConnection />}
 				</ContentTab>
 			</Modal>
-			{(isAddSuccess || isUpdateSuccess) && (
-				<Toast
-					type="success"
-					variant="filled"
-					title={id ? "Update Success" : "Connection Success"}
-					message={
-						id
-							? "Your account connection has been updated."
-							: "Your account is now linked."
-					}
-					autoVanish
-					autoVanishTimeout={10}
-				/>
-			)}
 		</>
 	);
 };

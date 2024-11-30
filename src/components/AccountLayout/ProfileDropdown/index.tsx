@@ -9,8 +9,7 @@ import UserTile from "../UserTile";
 
 const ProfileDropdown = () => {
 	const usersService = new UsersService();
-	const { userEmail, userFirstNameInitials, userLastNameInitials, userFullName } =
-		useUserProfileData();
+	const { userEmail, userFullName, userInitials } = useUserProfileData();
 
 	// Setup query to backend
 	const { mutate: logoutUser } = useCreate({
@@ -24,11 +23,7 @@ const ProfileDropdown = () => {
 	return (
 		<DropdownMenu
 			trigger={
-				<UserTile
-					firstName={userFirstNameInitials}
-					lastName={userLastNameInitials}
-					size={{ width: "39px", height: "39px" }}
-				/>
+				<UserTile nameIntitials={userInitials} size={{ width: "39px", height: "39px" }} />
 			}
 			position="left"
 			direction="bottom"
@@ -38,8 +33,7 @@ const ProfileDropdown = () => {
 				<div className="flex flex-row items-center pb-4">
 					<div className="mr-2">
 						<UserTile
-							firstName={userFirstNameInitials}
-							lastName={userLastNameInitials}
+							nameIntitials={userInitials}
 							size={{ width: "39px", height: "39px" }}
 						/>
 					</div>

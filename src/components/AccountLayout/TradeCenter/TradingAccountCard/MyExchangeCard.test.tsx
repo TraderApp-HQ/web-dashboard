@@ -2,8 +2,14 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // Import QueryClientProvider and QueryClient
 import MyExchangeCard from ".";
 import { AccountType, Category, Currency } from "~/config/enum";
-import { AccountConnectionStatus } from "~/apis/handlers/trading-engine/enums";
+import {
+	AccountConnectionStatus,
+	ConnectionType,
+	TradingPlatform,
+} from "~/apis/handlers/trading-engine/enums";
 import { useRouter } from "next/router";
+import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
+import { AccountTypeValues, TradingPlatformValues } from "~/config/constants";
 
 // Mock the next/router module
 jest.mock("next/router", () => ({
@@ -26,23 +32,41 @@ describe("MyExchangeCard", () => {
 		process.env.NEXT_PUBLIC_TRADING_ENGINE_SERVICE_API_URL = "http://localhost:8080";
 	});
 
-	const defaultProps = {
-		id: "1",
-		plaformLogo: "/path/to/logo.png",
-		platformName: "Exchange Name",
+	const tradingAccount: ITradingAccountInfo = {
+		accountId: "1",
+		userId: "user-1",
+		platformName: TradingPlatform.BINANCE,
+		platformId: 270,
+		platformLogo: "/path/to/logo.png",
+		apiKey: "onsfovnosbsb",
+		apiSecret: "bkdlbsnbs",
+		externalAccountUserId: "binance-user-1",
+		isWithdrawalEnabled: false,
+		isFuturesTradingEnabled: true,
+		isSpotTradingEnabled: true,
+		isIpAddressWhitelisted: true,
 		connectionStatus: AccountConnectionStatus.CONNECTED,
+		errorMessages: [],
 		category: Category.CRYPTO,
+		connectionType: ConnectionType.MANUAL,
 		balances: [
 			{
 				currency: Currency.USDT,
-				availableBalance: 5000,
-				lockedBalance: 0.444,
-				accountType: AccountType.SPOT,
+				availableBalance: 0,
+				lockedBalance: 0,
+				accountType: AccountType.FUTURES,
 			},
 		],
-		errorMessages: [],
-		platformId: 122,
-		refetchAccounts: () => {},
+	};
+
+	const tradingAccount2: ITradingAccountInfo = {
+		...tradingAccount,
+		connectionStatus: AccountConnectionStatus.FAILED,
+	};
+
+	const defaultProps = {
+		tradingAccount,
+		refetchTradingAccounts: () => {},
 	};
 
 	const renderWithQueryClient = (ui: React.ReactNode) =>
@@ -52,8 +76,10 @@ describe("MyExchangeCard", () => {
 		renderWithQueryClient(<MyExchangeCard {...defaultProps} />);
 
 		// Check if logo and name(alt value) are rendered
-		expect(screen.getByAltText("Exchange Name")).toBeInTheDocument();
-		expect(screen.getByText("Exchange Name")).toBeInTheDocument();
+		expect(screen.getByAltText(tradingAccount.platformName)).toBeInTheDocument();
+		expect(
+			screen.getByText(TradingPlatformValues[tradingAccount.platformName]),
+		).toBeInTheDocument();
 
 		// Check if the dropdown menu is rendered
 		expect(screen.getByRole("button")).toBeInTheDocument(); // Assuming DropdownMenu trigger is a button
@@ -64,7 +90,7 @@ describe("MyExchangeCard", () => {
 
 	it("displays the correct connection status", () => {
 		renderWithQueryClient(
-			<MyExchangeCard {...defaultProps} connectionStatus={AccountConnectionStatus.FAILED} />,
+			<MyExchangeCard tradingAccount={tradingAccount2} refetchTradingAccounts={() => {}} />,
 		);
 		expect(screen.getByText("Failed")).toBeInTheDocument();
 	});
@@ -73,10 +99,10 @@ describe("MyExchangeCard", () => {
 		renderWithQueryClient(<MyExchangeCard {...defaultProps} />);
 
 		// Check if SelectBox is rendered and options are available
-		const selectBox = screen.getByText(/spot/i);
+		const selectBox = screen.getByText(/Futures/i);
 		fireEvent.click(selectBox);
 
-		const spotOptions = screen.queryAllByText(AccountType.SPOT);
+		const spotOptions = screen.queryAllByText(AccountTypeValues[AccountType.FUTURES]);
 		expect(spotOptions.length).toBeGreaterThan(0);
 	});
 
@@ -87,7 +113,7 @@ describe("MyExchangeCard", () => {
 		fireEvent.click(screen.getByRole("button")); // Assuming dropdown trigger is a button
 
 		// Check if menu items are rendered
-		expect(screen.getByText("Replace API Key")).toBeInTheDocument();
+		expect(screen.getByText("Update connection")).toBeInTheDocument();
 		expect(screen.getByText("Delete")).toBeInTheDocument();
 		expect(screen.getByTestId("trash-icon")).toBeInTheDocument();
 		expect(screen.getByTestId("replace-icon")).toBeInTheDocument();

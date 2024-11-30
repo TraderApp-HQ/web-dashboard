@@ -4,17 +4,21 @@ import Link from "next/link";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import Toast from "~/components/common/Toast";
 import CopyIcon from "~/components/icons/CopyIcon";
+import { useEffect } from "react";
 
 interface ManualConnectionProps {
 	setApiKey: (apiKey: string | undefined) => void;
 	setSecretKey: (secretKey: string | undefined) => void;
 	isSubmitDisabled: boolean;
+	isLoading?: boolean;
 	ipString: string;
 	isError: boolean;
 	error: Error | null;
 	apiKey?: string;
 	secretKey?: string;
+	isUpdateMode?: boolean;
 	handleManualConnection: () => void;
+	isIpAddressWhitelistRequired: boolean;
 }
 
 const ManualConnection: React.FC<ManualConnectionProps> = ({
@@ -26,7 +30,10 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 	error,
 	apiKey,
 	secretKey,
+	isLoading,
+	isUpdateMode,
 	handleManualConnection,
+	isIpAddressWhitelistRequired,
 }) => {
 	const { copyToClipboard, copyMessage } = useCopyToClipboard();
 
@@ -34,8 +41,10 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 		copyToClipboard(ipString);
 	};
 
+	useEffect(() => {}, [apiKey, secretKey]);
+
 	return (
-		<div className="flex flex-col gap-y-4">
+		<div className="flex flex-col space-y-6">
 			<InputField
 				value={apiKey}
 				type="text"
@@ -52,21 +61,25 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 				placeholder="Enter Secret Keys"
 				onChange={setSecretKey}
 			/>
-			<div>
-				<h3 className="text-gray-950 text-base font-bold uppercase">Important</h3>
-				<span className="text-zinc-500 text-sm font-bold leading-tight">
-					You must add TraderApp IP Address from below to your list of trusted IPs.
-					Otherwise, if there are some days of inactivity, your IP key will be deleted by
-					the exchange.
-				</span>
-			</div>
-			<InputField
-				type="text"
-				icon={{ name: <CopyIcon color="#1836B2" />, onClick: handleExchangeCopy }}
-				labelText="IP Address"
-				props={{ name: "ipaddress", disabled: true }}
-				placeholder={ipString}
-			/>
+			{isIpAddressWhitelistRequired && (
+				<div className="space-y-6">
+					<div>
+						<h3 className="text-gray-950 text-base font-bold uppercase">Important</h3>
+						<span className="text-zinc-500 text-sm font-bold leading-tight">
+							You must add TraderApp IP Addresses from below to your list of trusted
+							IPs. Otherwise, if there are some days of inactivity, your API key will
+							be deleted by the exchange.
+						</span>
+					</div>
+					<InputField
+						type="text"
+						icon={{ name: <CopyIcon color="#1836B2" />, onClick: handleExchangeCopy }}
+						labelText="IP Addresses"
+						props={{ name: "ipaddress", disabled: true }}
+						placeholder={ipString}
+					/>
+				</div>
+			)}
 			<Button
 				disabled={isSubmitDisabled}
 				type="submit"
@@ -74,8 +87,9 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 				className="mt-2 flex justify-center"
 				innerClassName="px-[20%] py-4 capitalize"
 				onClick={handleManualConnection}
+				isLoading={isLoading}
 			>
-				Connect
+				{isUpdateMode ? "Update" : "Connect"}
 			</Button>
 			<Link className="mt-2 flex justify-center text-blue-800" href={""}>
 				How to Connect

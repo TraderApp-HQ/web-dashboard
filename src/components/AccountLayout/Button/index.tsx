@@ -13,6 +13,7 @@ interface ButtonProps {
 	color?: string;
 	size?: "small" | "medium";
 	type?: "submit" | "reset" | "button";
+	isLoading?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -26,6 +27,7 @@ const Button: React.FC<ButtonProps> = ({
 	type = "button",
 	color,
 	bgColor,
+	isLoading,
 }) => {
 	const sizeClassnames = useMemo<string>(() => {
 		switch (size) {
@@ -56,7 +58,7 @@ const Button: React.FC<ButtonProps> = ({
 				onClick={onClick}
 				disabled={disabled}
 			>
-				{children}
+				{isLoading ? "Processing..." : children}
 			</button>
 		</span>
 	);

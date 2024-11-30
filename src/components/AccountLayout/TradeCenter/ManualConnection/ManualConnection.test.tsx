@@ -10,7 +10,7 @@ jest.mock("~/hooks/useCopyToClipboard", () => ({
 	}),
 }));
 
-describe("ManualConnection", () => {
+describe("Given trading account manual connection", () => {
 	const mockHandleManualConnection = jest.fn();
 	const mockSetApiKey = jest.fn();
 	const mockSetSecretKey = jest.fn();
@@ -20,14 +20,16 @@ describe("ManualConnection", () => {
 		setApiKey: mockSetApiKey,
 		setSecretKey: mockSetSecretKey,
 		ipString: "192.168.1.1, 172.168.1.1",
+		// isIpAddressWhitelistRequired: false,
 	};
 
-	it("renders the component and displays the correct elements", () => {
+	it("renders the component and displays the correct elements with ip address whitelist supported", () => {
 		render(
 			<ManualConnection
 				isError={false}
 				error={null}
 				isSubmitDisabled={false}
+				isIpAddressWhitelistRequired={true}
 				{...defaultProps}
 			/>,
 		);
@@ -47,12 +49,36 @@ describe("ManualConnection", () => {
 		expect(screen.getByText("How to Connect")).toBeInTheDocument();
 	});
 
+	it("renders the component and displays the correct elements with ip address whitelist not supported", () => {
+		render(
+			<ManualConnection
+				isError={false}
+				error={null}
+				isSubmitDisabled={false}
+				isIpAddressWhitelistRequired={false}
+				{...defaultProps}
+			/>,
+		);
+
+		// Check if InputFields are rendered
+		expect(screen.getByLabelText("API Keys")).toBeInTheDocument();
+		expect(screen.getByLabelText("Secret Keys")).toBeInTheDocument();
+
+		// Check if Button is rendered and not disabled
+		expect(screen.getByText("Connect")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: /connect/i })).toBeEnabled();
+
+		// Check if Link is rendered
+		expect(screen.getByText("How to Connect")).toBeInTheDocument();
+	});
+
 	it("handles the copy functionality correctly", async () => {
 		render(
 			<ManualConnection
 				isError={false}
 				error={null}
 				isSubmitDisabled={false}
+				isIpAddressWhitelistRequired={true}
 				{...defaultProps}
 			/>,
 		);
@@ -72,6 +98,7 @@ describe("ManualConnection", () => {
 				isError={false}
 				error={null}
 				isSubmitDisabled={false}
+				isIpAddressWhitelistRequired={true}
 				{...defaultProps}
 			/>,
 		);
@@ -95,6 +122,7 @@ describe("ManualConnection", () => {
 				isError={false}
 				error={null}
 				isSubmitDisabled={true}
+				isIpAddressWhitelistRequired={true}
 				{...defaultProps}
 			/>,
 		);

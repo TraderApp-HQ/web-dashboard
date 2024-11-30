@@ -24,7 +24,6 @@ export const useFetch = <T>({
 	enabled = true,
 }: QueryOptions<T> & { enabled?: boolean }): UseQueryResult<T, Error> => {
 	const combinedQueryKey = [...queryKey, ...dependencies];
-
 	return useQuery<T, Error>({
 		queryKey: combinedQueryKey,
 		queryFn,

@@ -1,46 +1,48 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { UsersService } from "~/apis/handlers/users";
 import { capitalizeFirstLetter } from "~/helpers";
 import { useFetch } from "../useFetch";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
-import type { IUserProfile } from "~/apis/handlers/users/interfaces";
 
-interface UseUserProfileDataReturn {
-	userProfile: IUserProfile | undefined;
-	userId: string;
-	userFirstName: string;
-	userLastName: string;
-	userEmail: string;
-	userInitials: string;
-	userFirstNameInitials: string;
-	userLastNameInitials: string;
-	userFullName: string;
-	userPhoneNumber: string;
-	userCountryName: string;
-}
+const useUserProfileData = () => {
+	const [userId, setUserId] = useState("");
+	const [userFirstName, setUserFirstName] = useState("");
+	const [userLastName, setUserLastName] = useState("");
+	const [userEmail, setUserEamil] = useState("");
+	const [userPhoneNumber, setUserPhoneNumber] = useState("");
+	const [userCountryName, setUserCountryName] = useState("");
+	const [userInitials, setUserInitials] = useState("");
+	const [userFullName, setUserFullName] = useState("");
 
-const useUserProfileData = (): UseUserProfileDataReturn => {
 	const usersService = new UsersService();
 	const fetchUser = useCallback(() => usersService.getUser({}), [usersService]);
-	const { data: userProfile } = useFetch({
+	const {
+		data: userProfile,
+		isSuccess: isUserProfileSuccess,
+		isLoading: isUserProfileLoading,
+		isError: isUserProfileError,
+		error: userProfileError,
+	} = useFetch({
 		queryKey: [UsersQueryId.userProfile],
 		queryFn: fetchUser,
 	});
 
-	const userId = userProfile?.id as string;
-	const userFirstName = userProfile?.firstName as string;
-	const userLastName = userProfile?.lastName as string;
-	const userEmail = userProfile ? userProfile?.email : " ";
-	const userPhoneNumber = userProfile ? userProfile?.phone : " ";
-	const userCountryName = userProfile ? userProfile?.countryName : " ";
-
-	const userFirstNameInitials = userFirstName?.[0]?.toUpperCase();
-	const userLastNameInitials = userLastName?.[0]?.toUpperCase();
-	const userInitials = userProfile ? `${userFirstNameInitials}${userLastNameInitials}` : " ";
-
-	const userFullName = userProfile
-		? `${capitalizeFirstLetter(userFirstName)} ${capitalizeFirstLetter(userLastName)}`
-		: " ";
+	useEffect(() => {
+		if (userProfile && isUserProfileSuccess) {
+			setUserId(userProfile.id);
+			setUserFirstName(userProfile.firstName);
+			setUserLastName(userProfile.lastName);
+			setUserEamil(userProfile.email);
+			setUserPhoneNumber(userProfile.phone);
+			setUserCountryName(userProfile.countryName);
+			setUserInitials(
+				`${userProfile.firstName?.[0]?.toUpperCase()}${userProfile.lastName?.[0]?.toUpperCase()}`,
+			);
+			setUserFullName(
+				`${capitalizeFirstLetter(userProfile.firstName)} ${capitalizeFirstLetter(userProfile.lastName)}`,
+			);
+		}
+	}, [userProfile, isUserProfileSuccess]);
 
 	return {
 		userProfile,
@@ -49,11 +51,13 @@ const useUserProfileData = (): UseUserProfileDataReturn => {
 		userLastName,
 		userEmail,
 		userInitials,
-		userFirstNameInitials,
-		userLastNameInitials,
 		userFullName,
 		userPhoneNumber,
 		userCountryName,
+		isUserProfileSuccess,
+		isUserProfileLoading,
+		isUserProfileError,
+		userProfileError,
 	};
 };
 
