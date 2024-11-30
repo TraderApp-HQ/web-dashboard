@@ -13,6 +13,8 @@ import { TradingPlatform } from "~/apis/handlers/trading-engine/enums";
 import { useGetUserTradingAccount } from "~/hooks/useGetUserTradingAccount";
 import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
 import useUserProfileData from "~/hooks/useUserProfileData";
+import { IFetchExchanges } from "~/apis/handlers/assets/interfaces";
+import { useUserTradingAccounts } from "~/contexts/UserTradingAccountsContext";
 
 const ConnectTradingAccount = () => {
 	const router = useRouter();
@@ -26,6 +28,7 @@ const ConnectTradingAccount = () => {
 	const [isConnectTradingAccount, setIsConnectTradingAccount] = useState(true);
 	const [userTradingAccount, setUserTradingAccount] = useState<ITradingAccountInfo | undefined>();
 	const [validatedPlatformName, setValidatedPlatformName] = useState<TradingPlatform>();
+	const { userTradingAccounts } = useUserTradingAccounts();
 
 	const { platformName } = router.query;
 	const categories = [
@@ -61,14 +64,17 @@ const ConnectTradingAccount = () => {
 	}, [data]);
 
 	// Trigger fetching platforms only when the category is Crypto
-	const isCryptoSelected = selectedCategory?.value === Category.CRYPTO;
+	// const isCryptoSelected = selectedCategory?.value === Category.CRYPTO;
 	const {
 		tradingPlatforms,
 		isTradingPlatformsSuccess,
 		isTradingPlatformsError,
 		isTradingPlatformsLoading,
 		tradingPlatformsError,
-	} = useGetTradingPlatforms({ status: TradeStatus.active, enabled: isCryptoSelected });
+	} = useGetTradingPlatforms({
+		status: TradeStatus.active,
+		enabled: !!selectedCategory || !!validatedPlatformName,
+	});
 
 	// Set category options on mount
 	useEffect(() => {
@@ -81,31 +87,44 @@ const ConnectTradingAccount = () => {
 	}, []);
 
 	// Update platform options based on selected category
+	// TODO: make a call to trading-engine-service to fetch all user already connected platforms and filter them out from the array
 	useEffect(() => {
-		if (
-			isTradingPlatformsSuccess &&
-			tradingPlatforms &&
-			tradingPlatforms.length > 0 &&
-			isCryptoSelected
-		) {
-			setPlatformOptions(
-				tradingPlatforms.map(
-					({ name, _id, logo, isIpAddressWhitelistRequired, connectionTypes }) => ({
-						displayText: name?.toString(),
-						value: _id,
-						imgUrl: logo?.toString(),
-						data: { isIpAddressWhitelistRequired, connectionTypes },
-					}),
-				),
-			);
+		if (isTradingPlatformsSuccess && tradingPlatforms && tradingPlatforms.length > 0) {
+			const activeCategoryPlatforms = tradingPlatforms
+				.map((platform) => ({
+					displayText: platform.name,
+					value: platform._id,
+					imgUrl: platform.logo,
+					data: {
+						isIpAddressWhitelistRequired: platform.isIpAddressWhitelistRequired,
+						connectionTypes: platform.connectionTypes,
+						category: platform.category,
+					},
+				}))
+				.filter((platform) => platform.data.category === selectedCategory?.value)
+				.filter(
+					(platform) =>
+						!userTradingAccounts
+							?.map((platform) => platform.platformName.toLowerCase())
+							.includes(platform.displayText.toLowerCase()),
+				);
+			setPlatformOptions(activeCategoryPlatforms);
+
+			// auto select first option in activeCategoryPlatforms array
+			if (activeCategoryPlatforms[0]) {
+				handleSetSelectedPlatform(
+					activeCategoryPlatforms[0].displayText as TradingPlatform,
+					tradingPlatforms,
+				);
+			}
 		} else {
 			setPlatformOptions([]);
 			setResetSelectedPlatform(true);
 		}
-	}, [isTradingPlatformsSuccess, tradingPlatforms, isCryptoSelected]);
+	}, [isTradingPlatformsSuccess, tradingPlatforms, selectedCategory, userTradingAccounts]);
 
 	const handleModalClose = () => {
-		router.back();
+		router.push("/account/trade-center/trading-accounts");
 		setIsOpen(false);
 	};
 
@@ -124,6 +143,33 @@ const ConnectTradingAccount = () => {
 		setSelectedPlatform(option);
 		setResetSelectedPlatform(false);
 	};
+
+	// helper function to set platform
+	const handleSetSelectedPlatform = (
+		validatedPlatformName: TradingPlatform,
+		tradingPlatforms: IFetchExchanges[],
+	) => {
+		const activePlatform = tradingPlatforms.find(
+			(platform) => platform.name.toLowerCase() === validatedPlatformName.toLowerCase(),
+		);
+		setSelectedPlatform({
+			displayText: activePlatform?.name ?? "",
+			value: activePlatform?._id ?? "",
+			imgUrl: activePlatform?.logo,
+			data: {
+				isIpAddressWhitelistRequired: activePlatform?.isIpAddressWhitelistRequired,
+				connectionTypes: activePlatform?.connectionTypes,
+				category: activePlatform?.category,
+			},
+		});
+	};
+
+	// set platform on update mode
+	useEffect(() => {
+		if (validatedPlatformName && tradingPlatforms) {
+			handleSetSelectedPlatform(validatedPlatformName, tradingPlatforms);
+		}
+	}, [validatedPlatformName, tradingPlatforms]);
 
 	const isSubmitDisabled = !selectedCategory || !selectedPlatform;
 	const platformPlaceholder = isTradingPlatformsError

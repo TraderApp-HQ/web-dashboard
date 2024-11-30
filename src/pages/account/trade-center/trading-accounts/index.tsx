@@ -7,6 +7,7 @@ import { useGetUserTradingAccounts } from "~/hooks/useGetUserTradingAccounts";
 import { useEffect, useState } from "react";
 import Toast from "~/components/common/Toast";
 import useUserProfileData from "~/hooks/useUserProfileData";
+import { useUserTradingAccounts } from "~/contexts/UserTradingAccountsContext";
 
 const TradeCenterExchanges = () => {
 	const router = useRouter();
@@ -16,6 +17,7 @@ const TradeCenterExchanges = () => {
 	const [isConnectionSuccess, setIsConnectionSuccess] = useState(false);
 	const [isUpdateMode, setIsUpdateMode] = useState(false);
 	const [isPlatformValid, setIsPlatformValid] = useState(true);
+	const { setUserTradingAccounts } = useUserTradingAccounts();
 
 	// get query params
 	useEffect(() => {
@@ -36,6 +38,12 @@ const TradeCenterExchanges = () => {
 		isUserTradingAccountsSuccess,
 		refetchUserTradingAccounts,
 	} = useGetUserTradingAccounts({ userId: userId ?? "", enabled: !!userId });
+
+	useEffect(() => {
+		if (userTradingAccounts) {
+			setUserTradingAccounts(userTradingAccounts);
+		}
+	}, [userTradingAccounts]);
 
 	return (
 		<div className="flex flex-col gap-y-8">

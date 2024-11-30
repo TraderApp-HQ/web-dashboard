@@ -154,7 +154,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 								<li
 									key={index}
 									className={`p-3 hover:bg-gray-100 cursor-pointer ${
-										option.value === selectedOption?.value ? "bg-gray-100" : ""
+										option.displayText === selectedOption?.displayText
+											? "bg-gray-100"
+											: ""
 									}`}
 									onClick={() => {
 										setSelectedOption(option);

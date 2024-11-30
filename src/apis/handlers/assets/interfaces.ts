@@ -1,3 +1,4 @@
+import { Category } from "~/config/enum";
 import { ConnectionType } from "../trading-engine/enums";
 import type { Candlestick, SignalRisk, SignalStatus, TradeStatus } from "./enums";
 
@@ -76,6 +77,7 @@ export interface IFetchExchanges {
 	logo: string;
 	isIpAddressWhitelistRequired: boolean;
 	connectionTypes: ConnectionType[];
+	category: Category;
 }
 
 export interface IGetExchangesInput {

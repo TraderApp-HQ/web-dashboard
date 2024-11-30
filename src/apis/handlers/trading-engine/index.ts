@@ -69,7 +69,6 @@ export class TradingEngineService {
 		userId,
 		platformName,
 	}: IGetTradingAccountInput): Promise<ITradingAccountInfo> {
-		console.log("inside api caller just before call to backend: ", platformName);
 		const response = await this.apiClient.get<IResponse>({
 			url: `/account/one?userId=${userId}&platformName=${platformName}`,
 		});

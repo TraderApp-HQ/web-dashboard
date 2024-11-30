@@ -56,7 +56,7 @@ const TradingAccountCard: React.FC<ITradingAccountCardProps> = ({
 	}, []);
 
 	const handleAccountChange = useCallback((option: ISelectBoxOption) => {
-		setAccount({ name: option.displayText, value: option.value });
+		setAccount({ name: option.displayText, value: option.value.toString() });
 	}, []);
 
 	return (

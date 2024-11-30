@@ -32,7 +32,7 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 	isUpdateMode,
 	tradingAccount,
 	handleAccountConnection,
-	// connectionTypes,
+	connectionTypes,
 	isIpAddressWhitelistRequired,
 }) => {
 	const router = useRouter();
@@ -40,8 +40,9 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 
 	const [apiKey, setApiKey] = useState<string | undefined>();
 	const [secretKey, setSecretKey] = useState<string | undefined>();
+	const [isFastConnectionSupported, setIsFastConnectionSupported] = useState(false);
+	const [tabs, setTabs] = useState<{ label: string }[]>([{ label: "Manual Connection" }]);
 
-	const tabs = [{ label: "Manual Connection" }, { label: "Fast Connection" }];
 	const ipAddress = ["18.201.27.185"];
 	const ipString = ipAddress.join(" ");
 
@@ -88,6 +89,17 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 		}
 	}, [tradingAccount]);
 
+	useEffect(() => {
+		const isFastConnectionSupported = connectionTypes?.includes(ConnectionType.FAST);
+		setIsFastConnectionSupported(isFastConnectionSupported);
+
+		if (isFastConnectionSupported) {
+			setTabs([{ label: "Manual Connection" }, { label: "Fast Connection" }]);
+		} else {
+			setTabs([{ label: "Manual Connection" }]);
+		}
+	}, [connectionTypes]);
+
 	const isSubmitDisabled = !secretKey || !apiKey || isAddPending;
 
 	return (
@@ -116,7 +128,7 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 						isUpdateMode={isUpdateMode}
 						isIpAddressWhitelistRequired={isIpAddressWhitelistRequired}
 					/>
-					<FastConnection />
+					{isFastConnectionSupported && <FastConnection />}
 				</ContentTab>
 			</Modal>
 		</>

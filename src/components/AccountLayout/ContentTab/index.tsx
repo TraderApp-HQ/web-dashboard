@@ -38,12 +38,18 @@ const ContentTab: React.FC<IcontentTabProps> = ({ tabs, children }) => {
 			</div>
 			<div>
 				{children.map((child, index) => (
-					<div
-						key={tabs[index].label}
-						className={clsx(`${activeTab === tabs[index].label ? "block" : "hidden"}`)}
-					>
-						{child}
-					</div>
+					<>
+						{tabs[index] && (
+							<div
+								key={tabs[index].label}
+								className={clsx(
+									`${activeTab === tabs[index].label ? "block" : "hidden"}`,
+								)}
+							>
+								{child}
+							</div>
+						)}
+					</>
 				))}
 			</div>
 		</div>
