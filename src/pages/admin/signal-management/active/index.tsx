@@ -84,6 +84,8 @@ function ActiveSignals() {
 		handleResumeSignal,
 	});
 
+	console.log(activeSignals);
+
 	const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setSelectedDate(event.target.value);
 	};

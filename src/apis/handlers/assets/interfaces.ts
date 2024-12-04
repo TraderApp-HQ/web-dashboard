@@ -25,7 +25,9 @@ export interface IExchange {
 export interface ISignal {
 	id: string;
 	asset: ISignalAsset;
+	assetName: string;
 	baseCurrency: ISignalAsset;
+	baseCurrencyName: string;
 	targetProfits: ISignalMilestone[];
 	stopLoss: ISignalMilestone;
 	entryPrice: number;
@@ -63,7 +65,9 @@ export interface ICreateSignalInput {
 	chart: string;
 	supportedExchanges: number[];
 	asset: number;
+	assetName: string;
 	baseCurrency: number;
+	baseCurrencyName: string;
 }
 
 export interface ISignalUpdateInput {

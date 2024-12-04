@@ -146,9 +146,14 @@ export default function CreateSignal() {
 	};
 
 	const handleStopLoss = (value: string) => {
+		const entryValue = Number(entryPrice);
+		const stopValue = Number(value);
+		const stopPercentage = parseFloat(
+			((Math.abs(stopValue - entryValue) / entryValue) * 100).toFixed(2),
+		);
 		setStopLoss({
-			price: Number(value),
-			percent: 1,
+			price: stopValue,
+			percent: stopPercentage,
 			isReached: false,
 		});
 	};
@@ -222,6 +227,7 @@ export default function CreateSignal() {
 		selectedRisk &&
 		targetProfits &&
 		targetProfits[0].price !== 0 &&
+		targetProfits.length === 4 &&
 		selectedSupportedExchange &&
 		selectedSupportedExchange.length > 0 &&
 		tradeNote;
@@ -247,7 +253,9 @@ export default function CreateSignal() {
 	const handleCreateSignal = () => {
 		createSignal({
 			asset: Number(selectedAsset?.id ?? 0),
+			assetName: selectedAsset?.symbol as string,
 			baseCurrency: Number(selectedBaseCurrency?.id ?? 0),
+			baseCurrencyName: selectedBaseCurrency?.symbol as string,
 			targetProfits: targetProfits as ISignalMilestone[],
 			stopLoss: stopLoss as ISignalMilestone,
 			entryPrice: Number(entryPrice),
@@ -274,20 +282,31 @@ export default function CreateSignal() {
 	};
 
 	const handleFirstTargetProfit = (index: number, newValue: number) => {
+		const entryValue = Number(entryPrice);
+		const ftpPercentage = parseFloat(
+			((Math.abs(newValue - entryValue) / entryValue) * 100).toFixed(2),
+		);
+
 		setTargetProfits((prevTargetProfits) => {
 			if (prevTargetProfits == undefined) {
-				return [{ price: newValue, percent: 1, isReached: false }];
+				return [{ price: newValue, percent: ftpPercentage, isReached: false }];
 			} else {
 				return prevTargetProfits?.map((profit, i) =>
-					i === index ? { ...profit, price: newValue } : profit,
+					i === index ? { ...profit, price: newValue, percent: ftpPercentage } : profit,
 				);
 			}
 		});
 	};
 
 	const handleValueChange = (index: number, newValue: number) => {
+		const entryValue = Number(entryPrice);
+		const ftpPercentage = parseFloat(
+			((Math.abs(newValue - entryValue) / entryValue) * 100).toFixed(2),
+		);
 		setTargetProfits((prev) =>
-			prev?.map((profit, i) => (i === index ? { ...profit, price: newValue } : profit)),
+			prev?.map((profit, i) =>
+				i === index ? { ...profit, price: newValue, percent: ftpPercentage } : profit,
+			),
 		);
 	};
 
@@ -373,8 +392,9 @@ export default function CreateSignal() {
 								onChange={(value) => handleFirstTargetProfit(0, Number(value))}
 								props={{ name: "targetProfit", step: "0.01" }}
 								placeholder="Enter target profit"
-								className="no-spin-buttons my-2"
+								className="no-spin-buttons my-2 disabled:cursor-not-allowed"
 								onKeyDown={handleKeyDown}
+								disable={!Number(entryPrice)}
 							/>
 							{targetProfits?.slice(1).map((profit, index) => (
 								<div key={index + 1}>
@@ -411,7 +431,7 @@ export default function CreateSignal() {
 									}
 									aria-label="add target profit"
 								>
-									Add another target profit
+									Add another target profit (Target profit must be 4)
 								</IconButton>
 							)}
 						</div>
@@ -422,8 +442,9 @@ export default function CreateSignal() {
 							placeholder="Input trade stop loss"
 							value={String(stopLoss?.price) ?? ""}
 							onChange={(value: string) => handleStopLoss(value)}
-							className="no-spin-buttons"
+							className="no-spin-buttons disabled:cursor-not-allowed"
 							onKeyDown={handleKeyDown}
+							disable={!Number(entryPrice)}
 						/>
 						<TextArea
 							label="Trade Note"
