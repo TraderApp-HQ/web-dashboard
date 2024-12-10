@@ -9,6 +9,59 @@ import Toast from "~/components/common/Toast";
 import { InviteCode } from "~/components/AccountLayout/Referrals/InviteCode";
 import { SendInvite } from "~/components/AccountLayout/Referrals/SendInvite";
 import ReferalCard from "~/components/Cards/ReferalCard";
+import ProgressTracker from "~/components/common/ProgressTracker";
+import { ProgressTrackerProps } from "~/components/common/ProgressTracker/types";
+
+const progressData: ProgressTrackerProps = {
+	title: "Referral Progress",
+	body: "Move form on step to another by sending an invitation to your friend.",
+	tiers: {
+		"TA-Recruit": {
+			title: "TA-Recruit",
+			text: "To finalize your registration and unlock full access, please verify your email address.",
+			milestones: [
+				{
+					title: "Verify Email",
+					hoverText: "Please verify your email address to proceed.",
+					completed: true,
+				},
+				{
+					title: "Invite 1 Friend",
+					hoverText: "Invite one friend to join your community.",
+					completed: true,
+				},
+				{
+					title: "Personal ATC $100",
+					hoverText: "Invite one friend to join your community.",
+					completed: true,
+				},
+			],
+			completed: false,
+		},
+		"TA-Lieutenant": {
+			title: "TA-Lieutenant",
+			text: "Build momentum by growing your community size to progress further.",
+			milestones: [
+				{
+					title: "Invite 5 Friends",
+					hoverText: "Expand your network by inviting five friends.",
+					completed: true,
+				},
+				{
+					title: "Community Size 50+",
+					hoverText: "Grow your community to over 50 members.",
+					completed: false,
+				},
+				{
+					title: "Personal ATC $200",
+					hoverText: "Invite one friend to join your community.",
+					completed: false,
+				},
+			],
+			completed: false,
+		},
+	},
+};
 
 const ReferralsOverview = () => {
 	const [stats, setStats] = useState<IReferralStats | null>(null);
@@ -51,22 +104,11 @@ const ReferralsOverview = () => {
 
 			<SendInvite onError={handleError} onSuccess={setSuccess} />
 
-			<section className="mt-5 rounded-md bg-white text-[#3E57BF] px-4 py-4">
-				<h3 className="font-bold text-lg mb-1 text-[#102477]">Referral Progress </h3>
-				<p className="text-[#414141] font-light">
-					Move form on step to another by sending an invitation to your friend.
-				</p>
-				{/* <ProgressBar /> */}
-				<div className="progressContainer">
-					<div className="barContainer bg-[#EEEDEC] rounded-md my-2">
-						<div
-							className="bar bg-[#DA7B07] rounded-md"
-							style={{ width: "10%", height: "13px" }}
-						></div>
-					</div>
-					<p className="text-right text-[#344054]">10% Completed</p>
-				</div>
-			</section>
+			<ProgressTracker
+				title={progressData.title}
+				body={progressData.body}
+				tiers={progressData.tiers}
+			/>
 
 			{success && (
 				<Toast
