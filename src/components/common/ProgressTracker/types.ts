@@ -9,6 +9,7 @@ export interface Tier {
 	text: string;
 	milestones: Milestone[];
 	completed?: boolean;
+	actionButton?: boolean;
 }
 
 export interface ProgressTrackerProps {

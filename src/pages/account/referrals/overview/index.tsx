@@ -26,11 +26,6 @@ const progressData: ProgressTrackerProps = {
 					completed: true,
 				},
 				{
-					title: "Invite 1 Friend",
-					hoverText: "Invite one friend to join your community.",
-					completed: true,
-				},
-				{
 					title: "Personal ATC $100",
 					hoverText: "Invite one friend to join your community.",
 					completed: true,
@@ -45,7 +40,7 @@ const progressData: ProgressTrackerProps = {
 				{
 					title: "Invite 5 Friends",
 					hoverText: "Expand your network by inviting five friends.",
-					completed: true,
+					completed: false,
 				},
 				{
 					title: "Community Size 50+",
@@ -58,6 +53,13 @@ const progressData: ProgressTrackerProps = {
 					completed: false,
 				},
 			],
+			completed: false,
+		},
+		"TA-Major": {
+			title: "TA-Major",
+			text: "Build momentum by growing your community size to progress further.",
+			milestones: [],
+			actionButton: true,
 			completed: false,
 		},
 	},
