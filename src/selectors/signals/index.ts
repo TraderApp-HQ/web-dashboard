@@ -174,8 +174,9 @@ export function activeSignalsPerfomanceSumary(signals: ISignal[]): ISignalPerfor
 
 	for (const signal of signals) {
 		if (signal.currentPrice !== undefined) {
-			signal.currentChange =
-				((signal.currentPrice - signal.entryPrice) / signal.entryPrice) * 100;
+			signal.currentChange = parseInt(
+				(((signal.currentPrice - signal.entryPrice) / signal.entryPrice) * 100).toFixed(2),
+			);
 		}
 
 		if (
