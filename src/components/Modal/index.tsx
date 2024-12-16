@@ -63,7 +63,7 @@ const Modal: React.FC<ModalOptions> = ({
 					style={{ maxHeight: "100%", display: "flex", flexDirection: "column" }}
 				>
 					<div
-						className={`flex items-center justify-between pb-4 ${headerDivider && "border-b-2 border-[#D1D7F0]"}`}
+						className={`flex items-center justify-between pb-2 ${headerDivider && "border-b-2 border-[#D1D7F0]"}`}
 					>
 						<div className="space-y-3 flex-col">
 							<h1 className="text-xl flex items-center gap-x-1 font-semibold text-[#414141]">

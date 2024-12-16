@@ -154,10 +154,11 @@ export class AssetsService {
 		rowsPerPage,
 		orderBy,
 		sortBy,
+		category,
 	}: IGetAssetsInput): Promise<ISignalAsset[]> {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
-			url: `/coins?page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&sortBy=${sortBy}`,
+			url: `/coins?category=${category}&page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&sortBy=${sortBy}`,
 			options: { credentials: "include" },
 		});
 

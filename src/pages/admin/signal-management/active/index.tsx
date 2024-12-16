@@ -234,7 +234,7 @@ const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
 	const signalPerformer = activeSignalsPerfomanceSumary(signals);
 	return (
 		signals.length > 0 && (
-			<div className="flex flex-col md:flex-row gap-2">
+			<div className="flex flex-col md:flex-row gap-4">
 				{signalPerformer.map((performance) => (
 					<PerformanceSummaryCard key={performance.id} data={performance} />
 				))}
