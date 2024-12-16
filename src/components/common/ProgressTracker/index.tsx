@@ -1,14 +1,11 @@
+import { isTierCompleted } from "~/helpers";
 import { TierComponent } from "./TierComponent";
 import { ProgressTrackerProps, Tier } from "./types";
 
 const ProgressTracker: React.FC<ProgressTrackerProps> = ({ title, body, tiers }) => {
 	const calculateProgress = (tiers: Record<string, Tier>): number => {
 		const totalTiers = Object.keys(tiers).length;
-		const completedTiers = Object.values(tiers).filter((tier) =>
-			tier.milestones.length
-				? tier.milestones.every((milestone) => milestone.completed)
-				: tier.completed,
-		).length;
+		const completedTiers = Object.values(tiers).filter(isTierCompleted).length;
 		return Math.round((completedTiers / totalTiers) * 100);
 	};
 
