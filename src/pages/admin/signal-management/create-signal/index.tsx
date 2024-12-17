@@ -78,10 +78,10 @@ function CreateSignal() {
 	// handle modal change
 	const handleModalChange = (modal: TradeSignalModalScreen) => {
 		const updateState = {
-			tradeAsset: modal === TradeSignalModalScreen.TRADEASSET,
-			tradeType: modal === TradeSignalModalScreen.TRADETYPE,
-			tradePrice: modal === TradeSignalModalScreen.TRADEPRICE,
-			tradeChart: modal === TradeSignalModalScreen.TRADECHART,
+			tradeAsset: modal === TradeSignalModalScreen.TRADE_ASSET,
+			tradeType: modal === TradeSignalModalScreen.TRADE_TYPE,
+			tradePrice: modal === TradeSignalModalScreen.TRADE_PRICE,
+			tradeChart: modal === TradeSignalModalScreen.TRADE_CHART,
 		};
 
 		setIsModalOpen(updateState);
@@ -449,8 +449,8 @@ function CreateSignal() {
 							onClick={() =>
 								handleModalChange(
 									assetCategory?.value === Category.CRYPTO
-										? TradeSignalModalScreen.TRADETYPE
-										: TradeSignalModalScreen.TRADEPRICE,
+										? TradeSignalModalScreen.TRADE_TYPE
+										: TradeSignalModalScreen.TRADE_PRICE,
 								)
 							}
 							disabled={!assetModalButton}
@@ -475,7 +475,9 @@ function CreateSignal() {
 						>
 							<span
 								className="mr-4"
-								onClick={() => handleModalChange(TradeSignalModalScreen.TRADEASSET)}
+								onClick={() =>
+									handleModalChange(TradeSignalModalScreen.TRADE_ASSET)
+								}
 							>
 								{" "}
 								<BackBtnIcon />
@@ -519,7 +521,7 @@ function CreateSignal() {
 							/>
 						)}
 						<Button
-							onClick={() => handleModalChange(TradeSignalModalScreen.TRADEPRICE)}
+							onClick={() => handleModalChange(TradeSignalModalScreen.TRADE_PRICE)}
 							disabled={!tradeTypeModalButton}
 							type="submit"
 							className="mt-2 flex justify-center"
@@ -545,8 +547,8 @@ function CreateSignal() {
 								onClick={() =>
 									handleModalChange(
 										assetCategory?.value === Category.CRYPTO
-											? TradeSignalModalScreen.TRADETYPE
-											: TradeSignalModalScreen.TRADEASSET,
+											? TradeSignalModalScreen.TRADE_TYPE
+											: TradeSignalModalScreen.TRADE_ASSET,
 									)
 								}
 							>
@@ -649,7 +651,7 @@ function CreateSignal() {
 						</div>
 
 						<Button
-							onClick={() => handleModalChange(TradeSignalModalScreen.TRADECHART)}
+							onClick={() => handleModalChange(TradeSignalModalScreen.TRADE_CHART)}
 							disabled={!tradePriceModalButton}
 							type="submit"
 							className="mt-2 flex justify-center"
@@ -672,7 +674,9 @@ function CreateSignal() {
 						>
 							<span
 								className="mr-4"
-								onClick={() => handleModalChange(TradeSignalModalScreen.TRADEPRICE)}
+								onClick={() =>
+									handleModalChange(TradeSignalModalScreen.TRADE_PRICE)
+								}
 							>
 								{" "}
 								<BackBtnIcon />

@@ -61,8 +61,8 @@ export enum TradeSide {
 }
 
 export enum TradeSignalModalScreen {
-	TRADEASSET = "TRADE-ASSET",
-	TRADETYPE = "TRADE-TYPE",
-	TRADEPRICE = "TRADE-PRICE",
-	TRADECHART = "TRADE-CHART",
+	TRADE_ASSET = "Trade Asset",
+	TRADE_TYPE = "Trade Type",
+	TRADE_PRICE = "Trade Price",
+	TRADE_CHART = "Trade Chart",
 }
