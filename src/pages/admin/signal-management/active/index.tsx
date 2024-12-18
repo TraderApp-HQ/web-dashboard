@@ -23,9 +23,12 @@ import Toast from "~/components/common/Toast";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
 import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
+import { useQueryClient } from "@tanstack/react-query";
+import { AssetsQueryId } from "~/apis/handlers/assets/constants";
 
 function ActiveSignals() {
 	const signalsService = new AssetsService();
+	const queryClient = useQueryClient();
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 	const router = useRouter();
 	const { term } = router.query;
@@ -50,12 +53,8 @@ function ActiveSignals() {
 		data,
 	} = useCreate({
 		mutationFn: signalsService.updateSignal.bind(signalsService),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: [AssetsQueryId.signals] }),
 	});
-
-	const handleSetToggleDeleteModal = (id: string) => {
-		setSelectedSignalId(id);
-		setToggleDeleteModal(!toggleDeleteModal);
-	};
 
 	const handleDeleteModalConfirm = () => {
 		if (selectedSignalId) {
@@ -63,6 +62,11 @@ function ActiveSignals() {
 			setToggleDeleteModal(false);
 			setSelectedSignalId(null);
 		}
+	};
+
+	const handleSetToggleDeleteModal = (id: string) => {
+		setSelectedSignalId(id);
+		setToggleDeleteModal(!toggleDeleteModal);
 	};
 
 	const handleResumeSignal = (id: string, currentStatus: SignalStatus) => {
