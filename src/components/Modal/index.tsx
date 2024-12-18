@@ -80,7 +80,10 @@ const Modal: React.FC<ModalOptions> = ({
 					{/* Scrollable content & hides scrollbar*/}
 					<div
 						className="overflow-y-auto scrollbar-hide"
-						style={{ maxHeight: "calc(100vh - 200px)" }}
+						style={{
+							maxHeight: "calc(100vh - 200px)",
+							minHeight: "40vh",
+						}}
 					>
 						{children}
 					</div>

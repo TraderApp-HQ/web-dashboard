@@ -31,7 +31,7 @@ function ActiveSignals() {
 	const queryClient = useQueryClient();
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 	const router = useRouter();
-	const { term } = router.query;
+	const { term, signal } = router.query;
 	const urlTerm = term as string | undefined;
 
 	const [asset, setAsset] = useState<string>("");
@@ -220,12 +220,12 @@ function ActiveSignals() {
 					autoVanishTimeout={10}
 				/>
 			)}
-			{data && isSignalUpdateSuccessful && (
+			{((data && isSignalUpdateSuccessful) || signal) && (
 				<Toast
-					type="info"
+					type="success"
 					variant="filled"
-					title="Signal successfully updated"
-					message="Successful!"
+					title="Success"
+					message={`Signal ${signal ? "created" : "updated"} successfully.`}
 					autoVanish
 					autoVanishTimeout={10}
 				/>

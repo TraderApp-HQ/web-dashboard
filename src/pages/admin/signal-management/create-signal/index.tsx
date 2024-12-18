@@ -7,7 +7,6 @@ import IconButton from "~/components/AccountLayout/IconButton";
 import UploadButton from "~/components/AccountLayout/UploadButton";
 import AdminLayout from "~/components/AdminLayout/Layout";
 import Modal from "~/components/Modal";
-import MessageModal from "~/components/Modal/MessageModal";
 import Checkbox from "~/components/common/CheckBox";
 import InputField from "~/components/common/InputField";
 import SelectBox from "~/components/common/SelectBox";
@@ -17,7 +16,6 @@ import Button from "~/components/common/old/Button";
 import BackBtnIcon from "~/components/icons/BackBtnIcon";
 import CancelIcon from "~/components/icons/CancelIcon";
 import PlusIcon from "~/components/icons/PlusIcon";
-import SuccessIcon from "~/components/icons/SuccessIcon";
 import type { ICheckedBoxOption, ISelectBoxOption } from "~/components/interfaces";
 import { Category, TradeSide, TradeSignalModalScreen, TradeType } from "~/config/enum";
 import useGetAssets from "~/hooks/useAssets";
@@ -28,7 +26,6 @@ import { convertEnumToOptions, handleKeyDown } from "~/lib/utils";
 
 function CreateSignal() {
 	const router = useRouter();
-	const [toggleSuccess, setToggleSuccess] = useState(false);
 
 	// Modal state handler
 	const [isModalOpen, setIsModalOpen] = useState({
@@ -270,10 +267,6 @@ function CreateSignal() {
 
 	const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-	const handleSuccessClose = () => {
-		setToggleSuccess(false);
-	};
-
 	const onReset = () => {
 		setSignalImage("");
 		setTargetProfits(undefined);
@@ -286,6 +279,7 @@ function CreateSignal() {
 		setResetSelectedRisk(true);
 		setSelectedSupportedExchange(undefined);
 		setTradeNote(undefined);
+		setSelectedAsset(undefined);
 	};
 
 	// Setup query to backend
@@ -314,12 +308,21 @@ function CreateSignal() {
 		});
 	};
 
-	// signal creation successful. Display success toast
+	// Close signal modal after successful signal creation.
 	useEffect(() => {
 		if (isSuccess && data) {
-			setToggleSuccess(!toggleSuccess);
+			router.push(`/admin/signal-management/active?signal=${isSuccess}`);
+			setIsModalOpen({
+				tradeAsset: false,
+				tradeType: false,
+				tradePrice: false,
+				tradeChart: false,
+			});
 		}
 	}, [isSuccess, data]);
+
+	// Resets asset when category is changed
+	useEffect(() => onReset(), [assetCategory]);
 
 	const handleRemoveTargetProfit = (index: number) => {
 		setTargetProfits((prev) => prev?.filter((_, i) => i !== index));
@@ -374,7 +377,10 @@ function CreateSignal() {
 							]}
 							placeholder={"Select Asset Category"}
 							option={assetCategory}
-							setOption={(opt) => setAssetCategory(opt)}
+							setOption={(opt) => {
+								setAssetOptions([]);
+								setAssetCategory(opt);
+							}}
 						/>
 
 						<SelectBox
@@ -386,7 +392,9 @@ function CreateSignal() {
 									? "Loading..."
 									: isAssetError
 										? `${assetError} `
-										: "Select Quote Asset"
+										: assets?.length === 0
+											? "No asset found"
+											: "Select Quote Asset"
 							}
 							option={assetOptions.find(
 								(opt) => opt.displayText === selectedAsset?.name,
@@ -488,7 +496,7 @@ function CreateSignal() {
 					headerDivider={true}
 					onClose={handleModalClose}
 				>
-					<section className="flex flex-col gap-y-4 pt-4">
+					<section className="flex flex-col gap-y-5 pt-3">
 						<SelectBox
 							labelText="Trade Type"
 							isSearchable={false}
@@ -496,7 +504,7 @@ function CreateSignal() {
 								{ displayText: TradeType.SPOT, value: TradeType.SPOT },
 								{ displayText: TradeType.FUTURES, value: TradeType.FUTURES },
 							]}
-							placeholder={"Select trade type"}
+							placeholder="Select trade type"
 							option={{
 								displayText: tradeType as string,
 								value: tradeType as string,
@@ -512,7 +520,7 @@ function CreateSignal() {
 									{ displayText: TradeSide.LONG, value: TradeSide.LONG },
 									{ displayText: TradeSide.SHORT, value: TradeSide.SHORT },
 								]}
-								placeholder={"Select trade side"}
+								placeholder="Select trade side"
 								option={{
 									displayText: tradeSide as string,
 									value: tradeSide as string,
@@ -520,11 +528,12 @@ function CreateSignal() {
 								setOption={(opt) => setTradeSide(opt.value as TradeSide)}
 							/>
 						)}
+
 						<Button
 							onClick={() => handleModalChange(TradeSignalModalScreen.TRADE_PRICE)}
 							disabled={!tradeTypeModalButton}
 							type="submit"
-							className="mt-2 flex justify-center"
+							className="flex justify-center"
 							innerClassName="px-[20%] py-4 capitalize"
 						>
 							Continue
@@ -561,7 +570,7 @@ function CreateSignal() {
 					headerDivider={true}
 					onClose={handleModalClose}
 				>
-					<section className="flex flex-col gap-y-4 pt-4">
+					<section className="flex flex-col gap-y-4 pt-4 px-2">
 						<InputField
 							type="number"
 							labelText="Entry Price"
@@ -732,7 +741,7 @@ function CreateSignal() {
 							className="mt-2 flex justify-center"
 							innerClassName="px-[20%] py-4 capitalize"
 						>
-							Create Signal
+							{isPending ? "Creating Signal..." : "Create Signal"}
 						</Button>
 						<Button
 							onClick={onReset}
@@ -748,16 +757,6 @@ function CreateSignal() {
 				</Modal>
 			)}
 
-			{/* ////////////////////////////////////////////////////////// */}
-			{isSuccess && data && (
-				<MessageModal
-					title={"Successful"}
-					description={"You have successfully created a new signal"}
-					icon={SuccessIcon}
-					openModal={toggleSuccess}
-					onClose={handleSuccessClose}
-				/>
-			)}
 			{isError && (
 				<Toast
 					type="error"
