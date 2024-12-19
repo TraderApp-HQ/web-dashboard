@@ -6,7 +6,7 @@ import DropdownIcon from "~/components/icons/DropdownIcon";
 import Date from "~/components/common/Date";
 import Button from "~/components/common/old/Button";
 import type { ChangeEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import signalsData from "~/pages/account/signals/data.json";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import DeleteModal from "~/components/Modal/DeleteModal";
@@ -41,7 +41,17 @@ function ActiveSignals() {
 	const [searchterm, setSearchTerm] = useState<string>(urlTerm ?? "");
 	const [toggleDeleteModal, setToggleDeleteModal] = useState(false);
 	const [selectedSignalId, setSelectedSignalId] = useState<string | null>(null);
+	const [showSignalCreationToast, setShowSignalCreationToast] = useState(false);
 	// const [isToggle, setToggle] = useState(false);
+
+	useEffect(() => {
+		if (signal && signal === "true") setShowSignalCreationToast(true);
+
+		if (signal === "true") {
+			const url = window.location.pathname; // Get the current pathname
+			window.history.replaceState(null, "", url); // Clears query params
+		}
+	}, [signal]);
 
 	// Setup query to backend
 	const {
@@ -220,12 +230,12 @@ function ActiveSignals() {
 					autoVanishTimeout={10}
 				/>
 			)}
-			{((data && isSignalUpdateSuccessful) || signal) && (
+			{((data && isSignalUpdateSuccessful) || showSignalCreationToast) && (
 				<Toast
 					type="success"
 					variant="filled"
 					title="Success"
-					message={`Signal ${signal ? "created" : "updated"} successfully.`}
+					message={`Signal ${showSignalCreationToast ? "created" : "updated"} successfully.`}
 					autoVanish
 					autoVanishTimeout={10}
 				/>
