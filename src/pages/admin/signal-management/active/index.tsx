@@ -6,7 +6,7 @@ import DropdownIcon from "~/components/icons/DropdownIcon";
 import Date from "~/components/common/Date";
 import Button from "~/components/common/old/Button";
 import type { ChangeEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import signalsData from "~/pages/account/signals/data.json";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import DeleteModal from "~/components/Modal/DeleteModal";
@@ -23,12 +23,15 @@ import Toast from "~/components/common/Toast";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
 import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
+import { useQueryClient } from "@tanstack/react-query";
+import { AssetsQueryId } from "~/apis/handlers/assets/constants";
 
 function ActiveSignals() {
 	const signalsService = new AssetsService();
+	const queryClient = useQueryClient();
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 	const router = useRouter();
-	const { term } = router.query;
+	const { term, signal } = router.query;
 	const urlTerm = term as string | undefined;
 
 	const [asset, setAsset] = useState<string>("");
@@ -38,7 +41,17 @@ function ActiveSignals() {
 	const [searchterm, setSearchTerm] = useState<string>(urlTerm ?? "");
 	const [toggleDeleteModal, setToggleDeleteModal] = useState(false);
 	const [selectedSignalId, setSelectedSignalId] = useState<string | null>(null);
+	const [showSignalCreationToast, setShowSignalCreationToast] = useState(false);
 	// const [isToggle, setToggle] = useState(false);
+
+	useEffect(() => {
+		if (signal && signal === "true") setShowSignalCreationToast(true);
+
+		if (signal === "true") {
+			const url = window.location.pathname; // Get the current pathname
+			window.history.replaceState(null, "", url); // Clears query params
+		}
+	}, [signal]);
 
 	// Setup query to backend
 	const {
@@ -50,12 +63,8 @@ function ActiveSignals() {
 		data,
 	} = useCreate({
 		mutationFn: signalsService.updateSignal.bind(signalsService),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: [AssetsQueryId.signals] }),
 	});
-
-	const handleSetToggleDeleteModal = (id: string) => {
-		setSelectedSignalId(id);
-		setToggleDeleteModal(!toggleDeleteModal);
-	};
 
 	const handleDeleteModalConfirm = () => {
 		if (selectedSignalId) {
@@ -63,6 +72,11 @@ function ActiveSignals() {
 			setToggleDeleteModal(false);
 			setSelectedSignalId(null);
 		}
+	};
+
+	const handleSetToggleDeleteModal = (id: string) => {
+		setSelectedSignalId(id);
+		setToggleDeleteModal(!toggleDeleteModal);
 	};
 
 	const handleResumeSignal = (id: string, currentStatus: SignalStatus) => {
@@ -216,12 +230,12 @@ function ActiveSignals() {
 					autoVanishTimeout={10}
 				/>
 			)}
-			{data && isSignalUpdateSuccessful && (
+			{((data && isSignalUpdateSuccessful) || showSignalCreationToast) && (
 				<Toast
-					type="info"
+					type="success"
 					variant="filled"
-					title="Signal successfully updated"
-					message="Successful!"
+					title="Success"
+					message={`Signal ${showSignalCreationToast ? "created" : "updated"} successfully.`}
 					autoVanish
 					autoVanishTimeout={10}
 				/>
@@ -234,7 +248,7 @@ const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
 	const signalPerformer = activeSignalsPerfomanceSumary(signals);
 	return (
 		signals.length > 0 && (
-			<div className="flex flex-col md:flex-row gap-2">
+			<div className="flex flex-col md:flex-row gap-4">
 				{signalPerformer.map((performance) => (
 					<PerformanceSummaryCard key={performance.id} data={performance} />
 				))}

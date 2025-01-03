@@ -1,4 +1,4 @@
-import { Category } from "~/config/enum";
+import { Category, TradeSide, TradeType } from "~/config/enum";
 import { ConnectionType } from "../trading-engine/enums";
 import type { Candlestick, SignalRisk, SignalStatus, TradeStatus } from "./enums";
 
@@ -64,6 +64,10 @@ export interface ICreateSignalInput {
 	supportedExchanges: number[];
 	asset: number;
 	baseCurrency: number;
+	category: Category;
+	tradeSide?: TradeSide;
+	tradeType?: TradeType;
+	leverage?: number;
 }
 
 export interface ISignalUpdateInput {
@@ -92,6 +96,7 @@ export interface IGetAssetsInput {
 	rowsPerPage: number;
 	orderBy: "asc" | "desc";
 	sortBy: string;
+	category: Category;
 }
 
 export interface ISupportedExchangeInput {

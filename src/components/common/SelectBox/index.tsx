@@ -95,7 +95,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 			{labelText && (
 				<label
 					aria-label={labelText}
-					className={`text-sm text-[#08123B] font-normal ${labelClassName}`}
+					className={`text-sm text-textColor font-normal ${labelClassName}`}
 				>
 					{labelText}
 				</label>

@@ -39,7 +39,6 @@ export const useFetchActiveSignals = ({
 		isLoading,
 		isSuccess,
 		isError,
-		refetch,
 	} = useFetch({
 		queryKey: [AssetsQueryId.signals],
 		queryFn: fetchSignals,
@@ -59,10 +58,6 @@ export const useFetchActiveSignals = ({
 		setSignalsTableBody(tableBody);
 		setSignalsMobileTableBody(dataMobile);
 	}, [isLoading, isSuccess, allSignals]);
-
-	useEffect(() => {
-		refetch();
-	}, [handleResumeSignal, handleSetToggleDeleteModal]);
 
 	// const { sendMessage, lastMessage, readyState, getWebSocket } = useWebSocket("ws://localhost:8080/stream/signals", {
 	//   onOpen: () => console.log("WebSocket opened"),
@@ -89,11 +84,7 @@ export const useFetchActiveSignals = ({
 	};
 };
 
-export const useSignalHistory = ({
-	isAdmin = false, // eslint-disable-line
-	handleSetToggleDeleteModal,
-	handleResumeSignal,
-}: UseFetchActiveSignalsProps) => {
+export const useSignalHistory = () => {
 	const signalsService = new AssetsService();
 	const [signalHistory, setHistory] = useState<ISignal[]>([]);
 	const [signalsTableHead, setSignalsTableHead] = useState<ITHead[]>([]);
@@ -107,7 +98,6 @@ export const useSignalHistory = ({
 		isLoading,
 		isSuccess,
 		isError,
-		refetch,
 	} = useFetch({
 		queryKey: [AssetsQueryId.history],
 		queryFn: fetchSignals,
@@ -122,10 +112,6 @@ export const useSignalHistory = ({
 		setSignalsTableBody(tableBody);
 		setSignalsMobileTableBody(dataMobile);
 	}, [isLoading, isSuccess, allSignals]);
-
-	useEffect(() => {
-		refetch();
-	}, [handleResumeSignal, handleSetToggleDeleteModal]);
 
 	// const { sendMessage, lastMessage, readyState, getWebSocket } = useWebSocket("ws://localhost:8080/stream/signals", {
 	//   onOpen: () => console.log("WebSocket opened"),
