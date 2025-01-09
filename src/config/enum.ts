@@ -49,3 +49,20 @@ export enum Currency {
 	USDT = "USDT",
 	BTC = "BTC",
 }
+
+export enum TradeType {
+	SPOT = "SPOT",
+	FUTURES = "FUTURES",
+}
+
+export enum TradeSide {
+	SHORT = "SHORT",
+	LONG = "LONG",
+}
+
+export enum TradeSignalModalScreen {
+	TRADE_ASSET = "Trade Asset",
+	TRADE_TYPE = "Trade Type",
+	TRADE_PRICE = "Trade Price",
+	TRADE_CHART = "Trade Chart",
+}

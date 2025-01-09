@@ -19,7 +19,7 @@ function SignalsHistory() {
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
-	} = useSignalHistory({});
+	} = useSignalHistory();
 
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 
