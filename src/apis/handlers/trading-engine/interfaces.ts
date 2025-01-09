@@ -4,12 +4,12 @@ import type { AccountConnectionStatus, ConnectionType, TradingPlatform } from ".
 export interface IConnectManualInput {
 	userId: string;
 	platformName: string;
-	// platformId: number;
-	// platformLogo: string;
-	apiKey: string;
-	apiSecret: string;
+	apiKey?: string;
+	apiSecret?: string;
+	passphrase?: string;
 	category: Category;
 	connectionType: ConnectionType;
+	isRefreshMode?: boolean;
 }
 
 export interface IUserTradingAccount {
@@ -65,6 +65,7 @@ export interface ITradingAccountInfo {
 	platformLogo: string;
 	apiKey?: string;
 	apiSecret?: string;
+	passphrase?: string;
 	accessToken?: string;
 	refreshToken?: string;
 	externalAccountUserId: string; // Unique identifier returned by trading plaforms like Binance
