@@ -3,37 +3,45 @@ import Button from "~/components/AccountLayout/Button";
 import Link from "next/link";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import Toast from "~/components/common/Toast";
-import CopyIcon from "~/components/icons/CopyIcon";
-import { useEffect } from "react";
+// import CopyIcon from "~/components/icons/CopyIcon";
+import IpAddressesList from "../IpAddressesList";
 
 interface ManualConnectionProps {
-	setApiKey: (apiKey: string | undefined) => void;
-	setSecretKey: (secretKey: string | undefined) => void;
+	setApiKey?: (apiKey?: string) => void;
+	setApiSecret?: (apiSecret?: string) => void;
+	setPassphrase?: (passphrase?: string) => void;
 	isSubmitDisabled: boolean;
 	isLoading?: boolean;
 	ipString: string;
 	isError: boolean;
 	error: Error | null;
 	apiKey?: string;
-	secretKey?: string;
+	apiSecret?: string;
+	passphrase?: string;
 	isUpdateMode?: boolean;
+	isRefreshMode?: boolean;
 	handleManualConnection: () => void;
 	isIpAddressWhitelistRequired: boolean;
+	isPassphraseRequired?: boolean;
 }
 
 const ManualConnection: React.FC<ManualConnectionProps> = ({
 	setApiKey,
-	setSecretKey,
+	setApiSecret,
+	setPassphrase,
 	isSubmitDisabled,
 	ipString,
 	isError,
 	error,
 	apiKey,
-	secretKey,
+	apiSecret,
+	passphrase,
 	isLoading,
 	isUpdateMode,
+	isRefreshMode,
 	handleManualConnection,
 	isIpAddressWhitelistRequired,
+	isPassphraseRequired,
 }) => {
 	const { copyToClipboard, copyMessage } = useCopyToClipboard();
 
@@ -41,44 +49,40 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 		copyToClipboard(ipString);
 	};
 
-	useEffect(() => {}, [apiKey, secretKey]);
-
 	return (
 		<div className="flex flex-col space-y-6">
-			<InputField
-				value={apiKey}
-				type="text"
-				labelText="API Keys"
-				props={{ name: "apikey" }}
-				placeholder="Enter API Keys"
-				onChange={setApiKey}
-			/>
-			<InputField
-				value={secretKey}
-				type="text"
-				labelText="Secret Keys"
-				props={{ name: "secretkey" }}
-				placeholder="Enter Secret Keys"
-				onChange={setSecretKey}
-			/>
+			{!isRefreshMode && (
+				<InputField
+					value={apiKey}
+					type="text"
+					labelText="API Key"
+					props={{ name: "apikey" }}
+					placeholder="Enter API Key"
+					onChange={setApiKey}
+				/>
+			)}
+			{!isRefreshMode && (
+				<InputField
+					value={apiSecret}
+					type="text"
+					labelText="API Secret"
+					props={{ name: "secretkey" }}
+					placeholder="Enter API Secret"
+					onChange={setApiSecret}
+				/>
+			)}
+			{!isRefreshMode && isPassphraseRequired && (
+				<InputField
+					value={passphrase}
+					type="text"
+					labelText="Passphrase"
+					props={{ name: "passphrase" }}
+					placeholder="Enter Passphrase"
+					onChange={setPassphrase}
+				/>
+			)}
 			{isIpAddressWhitelistRequired && (
-				<div className="space-y-6">
-					<div>
-						<h3 className="text-gray-950 text-base font-bold uppercase">Important</h3>
-						<span className="text-zinc-500 text-sm font-bold leading-tight">
-							You must add TraderApp IP Addresses from below to your list of trusted
-							IPs. Otherwise, if there are some days of inactivity, your API key will
-							be deleted by the exchange.
-						</span>
-					</div>
-					<InputField
-						type="text"
-						icon={{ name: <CopyIcon color="#1836B2" />, onClick: handleExchangeCopy }}
-						labelText="IP Addresses"
-						props={{ name: "ipaddress", disabled: true }}
-						placeholder={ipString}
-					/>
-				</div>
+				<IpAddressesList ipString={ipString} handleCopy={handleExchangeCopy} />
 			)}
 			<Button
 				disabled={isSubmitDisabled}
@@ -89,11 +93,13 @@ const ManualConnection: React.FC<ManualConnectionProps> = ({
 				onClick={handleManualConnection}
 				isLoading={isLoading}
 			>
-				{isUpdateMode ? "Update" : "Connect"}
+				{!isUpdateMode ? "Connect" : isRefreshMode ? "Refresh" : "Replace"}
 			</Button>
-			<Link className="mt-2 flex justify-center text-blue-800" href={""}>
-				How to Connect
-			</Link>
+			{!isRefreshMode && (
+				<Link className="mt-2 flex justify-center text-blue-800" href={""}>
+					How to Connect
+				</Link>
+			)}
 			{copyMessage && (
 				<Toast
 					type="success"
