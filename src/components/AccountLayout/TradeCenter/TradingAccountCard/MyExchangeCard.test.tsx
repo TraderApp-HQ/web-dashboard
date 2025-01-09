@@ -113,9 +113,11 @@ describe("MyExchangeCard", () => {
 		fireEvent.click(screen.getByRole("button")); // Assuming dropdown trigger is a button
 
 		// Check if menu items are rendered
-		expect(screen.getByText("Update connection")).toBeInTheDocument();
-		expect(screen.getByText("Delete")).toBeInTheDocument();
+		expect(screen.getByText("Refresh Connection")).toBeInTheDocument();
+		expect(screen.getByText("Replace API Keys")).toBeInTheDocument();
+		expect(screen.getByText("Delete Account")).toBeInTheDocument();
 		expect(screen.getByTestId("trash-icon")).toBeInTheDocument();
 		expect(screen.getByTestId("replace-icon")).toBeInTheDocument();
+		expect(screen.getByTestId("refresh-icon")).toBeInTheDocument();
 	});
 });

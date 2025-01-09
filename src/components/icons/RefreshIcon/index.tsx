@@ -3,6 +3,7 @@ import React from "react";
 const RefreshIcon = () => {
 	return (
 		<svg
+			data-testid="refresh-icon"
 			width="24"
 			height="24"
 			viewBox="0 0 24 24"
