@@ -23,10 +23,14 @@ export class TradingEngineService {
 		);
 	}
 
-	public async connectManualTradingAccount(TradingAccount: IConnectManualInput) {
+	public async connectManualTradingAccount(tradingAccount: IConnectManualInput) {
+		const url = tradingAccount.isRefreshMode
+			? "/account/refresh/manual"
+			: "/account/connect/manual";
+
 		const response = await this.apiClient.post<IResponse>({
-			url: "/account/connect/manual",
-			data: TradingAccount,
+			url,
+			data: { ...tradingAccount, isRefreshMode: undefined },
 		});
 
 		if (response.error) {

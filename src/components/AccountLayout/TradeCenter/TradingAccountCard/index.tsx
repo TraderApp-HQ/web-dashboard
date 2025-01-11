@@ -24,6 +24,7 @@ import {
 	TradingPlatformValues,
 } from "~/config/constants";
 import StatusPill from "~/components/common/StatusPill";
+import RefreshIcon from "~/components/icons/RefreshIcon";
 
 interface IConnectionStatus {
 	isConnected: boolean;
@@ -50,7 +51,7 @@ const TradingAccountCard: React.FC<ITradingAccountCardProps> = ({
 	useEffect(() => {
 		const options: ISelectBoxOption[] = filterUsdBalance.map((account) => ({
 			displayText: AccountTypeValues[account.accountType],
-			value: `${account.availableBalance.toString()} ${account.currency}`,
+			value: `${account.availableBalance.toFixed(2)} ${account.currency}`,
 		}));
 		setAccountOptions(options);
 	}, []);
@@ -70,7 +71,7 @@ const TradingAccountCard: React.FC<ITradingAccountCardProps> = ({
 						width={45}
 						height={45}
 					/>
-					<p className="text-neutral-700 text-sm md:text-sm font-bold leading-none">
+					<p className="text-neutral-700 text-base md:text-base font-bold leading-none">
 						{TradingPlatformValues[tradingAccount.platformName]}
 					</p>
 				</div>
@@ -184,13 +185,28 @@ const TradingAccountDropdownMenu: React.FC<ITradingAccountDropdownMenu> = ({
 				type="button"
 				onClick={async () => {
 					await router.replace("/account/trade-center/trading-accounts", undefined);
+					router.push(
+						`trading-accounts/connect?platformName=${platformName}&refresh=true`,
+					);
+				}}
+				className="pl-0 text-neutral-700"
+			>
+				<div className="flex items-center space-x-2 min-w-44">
+					<RefreshIcon />
+					<span>Refresh Connection</span>
+				</div>
+			</DropdownMenuItem>
+			<DropdownMenuItem
+				type="button"
+				onClick={async () => {
+					await router.replace("/account/trade-center/trading-accounts", undefined);
 					router.push(`trading-accounts/connect?platformName=${platformName}`);
 				}}
 				className="pl-0 text-neutral-700"
 			>
 				<div className="flex items-center space-x-2 min-w-40">
 					<ReplaceIcon />
-					<span>Update connection</span>
+					<span>Replace API Keys</span>
 				</div>
 			</DropdownMenuItem>
 			<DropdownMenuItem
@@ -201,7 +217,7 @@ const TradingAccountDropdownMenu: React.FC<ITradingAccountDropdownMenu> = ({
 			>
 				<div className="flex items-center space-x-2 min-w-40">
 					<TrashIcon />
-					<span>Delete</span>
+					<span>Delete Account</span>
 				</div>
 			</DropdownMenuItem>
 		</DropdownMenu>

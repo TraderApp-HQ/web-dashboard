@@ -13,12 +13,12 @@ jest.mock("~/hooks/useCopyToClipboard", () => ({
 describe("Given trading account manual connection", () => {
 	const mockHandleManualConnection = jest.fn();
 	const mockSetApiKey = jest.fn();
-	const mockSetSecretKey = jest.fn();
+	const mockSetApiSecret = jest.fn();
 
 	const defaultProps = {
 		handleManualConnection: mockHandleManualConnection,
 		setApiKey: mockSetApiKey,
-		setSecretKey: mockSetSecretKey,
+		setApiSecret: mockSetApiSecret,
 		ipString: "192.168.1.1, 172.168.1.1",
 		// isIpAddressWhitelistRequired: false,
 	};
@@ -35,8 +35,8 @@ describe("Given trading account manual connection", () => {
 		);
 
 		// Check if InputFields are rendered
-		expect(screen.getByLabelText("API Keys")).toBeInTheDocument();
-		expect(screen.getByLabelText("Secret Keys")).toBeInTheDocument();
+		expect(screen.getByLabelText("API Key")).toBeInTheDocument();
+		expect(screen.getByLabelText("API Secret")).toBeInTheDocument();
 
 		// Check if IP Address InputField is rendered with the correct placeholder
 		expect(screen.getByPlaceholderText("192.168.1.1, 172.168.1.1")).toBeInTheDocument();
@@ -61,8 +61,8 @@ describe("Given trading account manual connection", () => {
 		);
 
 		// Check if InputFields are rendered
-		expect(screen.getByLabelText("API Keys")).toBeInTheDocument();
-		expect(screen.getByLabelText("Secret Keys")).toBeInTheDocument();
+		expect(screen.getByLabelText("API Key")).toBeInTheDocument();
+		expect(screen.getByLabelText("API Secret")).toBeInTheDocument();
 
 		// Check if Button is rendered and not disabled
 		expect(screen.getByText("Connect")).toBeInTheDocument();
@@ -104,16 +104,16 @@ describe("Given trading account manual connection", () => {
 		);
 
 		// Simulate entering text in API Key input field
-		fireEvent.change(screen.getByPlaceholderText("Enter API Keys"), {
+		fireEvent.change(screen.getByPlaceholderText("Enter API Key"), {
 			target: { value: "new-api-key" },
 		});
 		expect(mockSetApiKey).toHaveBeenCalledWith("new-api-key");
 
 		// Simulate entering text in Secret Key input field
-		fireEvent.change(screen.getByPlaceholderText("Enter Secret Keys"), {
+		fireEvent.change(screen.getByPlaceholderText("Enter API Secret"), {
 			target: { value: "new-secret-key" },
 		});
-		expect(mockSetSecretKey).toHaveBeenCalledWith("new-secret-key");
+		expect(mockSetApiSecret).toHaveBeenCalledWith("new-secret-key");
 	});
 
 	it("handles disabled state of the submit button", () => {
