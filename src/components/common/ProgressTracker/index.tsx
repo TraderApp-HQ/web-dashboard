@@ -1,15 +1,15 @@
 import { isTierCompleted } from "~/helpers";
 import { TierComponent } from "./TierComponent";
-import { ProgressTrackerProps, Tier } from "./types";
+import { ProgressTrackerProps } from "./types";
+import { useMemo } from "react";
 
 const ProgressTracker: React.FC<ProgressTrackerProps> = ({ title, body, tiers }) => {
-	const calculateProgress = (tiers: Record<string, Tier>): number => {
+	const progress = useMemo(() => {
 		const totalTiers = Object.keys(tiers).length;
+		if (!totalTiers) return 0;
 		const completedTiers = Object.values(tiers).filter(isTierCompleted).length;
 		return Math.round((completedTiers / totalTiers) * 100);
-	};
-
-	const progress = calculateProgress(tiers);
+	}, [tiers]);
 
 	return (
 		<section className="mt-5 border border-[#DEE3F6] rounded-md bg-white text-[#3E57BF] px-4 py-4">
