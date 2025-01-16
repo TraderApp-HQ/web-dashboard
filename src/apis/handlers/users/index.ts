@@ -417,6 +417,19 @@ export class UsersService {
 		return data as IReferralCommunityStats;
 	}
 
+	public async getReferralOverview(): Promise<IReferralStats & IReferralCommunityStats> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/users/referral-overview",
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to fetch referral overview data");
+		}
+
+		const { data } = response;
+		return data as IReferralStats & IReferralCommunityStats;
+	}
+
 	public async inviteFriends(emails: string[]): Promise<{ message: string }> {
 		const response = await this.apiClient.post<IResponse>({
 			url: "/users/invite-friends",
