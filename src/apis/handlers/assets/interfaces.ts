@@ -1,6 +1,6 @@
 import { Category, TradeSide, TradeType } from "~/config/enum";
 import { ConnectionType } from "../trading-engine/enums";
-import type { Candlestick, SignalRisk, SignalStatus, TradeStatus } from "./enums";
+import type { Candlestick, Exchange, SignalRisk, SignalStatus, TradeStatus } from "./enums";
 
 export interface ISignalAsset {
 	id: string;
@@ -106,4 +106,28 @@ export interface IGetAssetsInput {
 export interface ISupportedExchangeInput {
 	coinId: number;
 	currencyId: number;
+}
+
+interface IActiveSignalsData {
+	signalId: string;
+	stopLoss: ISignalMilestone;
+	targetProfits: ISignalMilestone[];
+	entryPrice: number;
+	isSignalTradable: boolean;
+	assetName: string;
+	baseCurrencyName: string;
+	assetPair: string;
+	exchanges: Exchange[];
+}
+
+interface ISignalPriceData {
+	asset: IActiveSignalsData;
+	assetPrice: number;
+	priceWs: WebSocket;
+}
+
+export interface ISignalPrice {
+	signalId: string;
+	exchange: Exchange;
+	signalData: ISignalPriceData;
 }
