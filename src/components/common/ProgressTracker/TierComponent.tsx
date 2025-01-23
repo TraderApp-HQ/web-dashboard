@@ -4,6 +4,7 @@ import { Tier } from "./types";
 import DropdownIcon from "~/components/icons/DropdownIcon";
 import { useMemo, useState } from "react";
 import { isTierCompleted } from "~/helpers";
+import TierIcon from "~/components/icons/TierIcon";
 
 export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
 	const [isExpanded, setIsExpanded] = useState(false);
@@ -13,7 +14,9 @@ export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
 			<div className="flex flex-col gap-5 my-4">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-4">
-						<div className="w-[30px] h-[30px] bg-[#eff4ff] rounded-full" />
+						<div className="w-[30px] h-[30px] bg-[#eff4ff] rounded-full flex items-center justify-center">
+							<TierIcon tier={tier.title} />
+						</div>
 						<div className="text-[#08123b] text-sm font-bold">{tier.title}</div>
 					</div>
 					<div

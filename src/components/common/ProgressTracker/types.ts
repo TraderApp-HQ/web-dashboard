@@ -7,7 +7,7 @@ export interface Milestone {
 }
 
 export interface Tier {
-	title: string;
+	title: ReferralRankType;
 	text: string;
 	milestones: Milestone[];
 	completed?: boolean;
