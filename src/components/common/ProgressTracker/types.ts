@@ -17,7 +17,7 @@ export interface Tier {
 export interface ProgressTrackerProps {
 	title: string;
 	body: string;
-	tiers: Record<string, Tier>;
+	tiers: Record<ReferralRankType, Tier>;
 }
 
 export type ReferralRankType = (typeof ReferralRank)[keyof typeof ReferralRank];

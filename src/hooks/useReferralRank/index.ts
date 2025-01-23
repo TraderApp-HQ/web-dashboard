@@ -4,7 +4,7 @@ import { RANK_REQUIREMENTS } from "~/config/constants";
 type RankRequirements = Record<
 	ReferralRankType,
 	{
-		title: string;
+		title: ReferralRankType;
 		text: string;
 		milestones: Array<{
 			title: string;
