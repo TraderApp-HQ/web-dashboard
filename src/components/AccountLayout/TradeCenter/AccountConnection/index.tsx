@@ -17,10 +17,12 @@ interface IAccountConnection {
 	platformName: TradingPlatform;
 	platformLogo: string;
 	isUpdateMode?: boolean;
+	isRefreshMode?: boolean;
 	isUserTradingAccountSuccess?: boolean;
-	tradingAccount?: ITradingAccountInfo;
+	userTradingAccount?: ITradingAccountInfo;
 	connectionTypes: ConnectionType[];
 	isIpAddressWhitelistRequired: boolean;
+	isPassphraseRequired: boolean;
 	handleAccountConnection?: () => void;
 }
 
@@ -30,20 +32,24 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 	platformName,
 	platformLogo,
 	isUpdateMode,
-	tradingAccount,
+	isRefreshMode,
+	// userTradingAccount,
 	handleAccountConnection,
 	connectionTypes,
 	isIpAddressWhitelistRequired,
+	isPassphraseRequired,
 }) => {
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState(true);
 
-	const [apiKey, setApiKey] = useState<string | undefined>();
-	const [secretKey, setSecretKey] = useState<string | undefined>();
+	const [apiKey, setApiKey] = useState<string>();
+	const [apiSecret, setApiSecret] = useState<string>();
+	const [passphrase, setPassphrase] = useState<string>();
 	const [isFastConnectionSupported, setIsFastConnectionSupported] = useState(false);
 	const [tabs, setTabs] = useState<{ label: string }[]>([{ label: "Manual Connection" }]);
+	const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false);
 
-	const ipAddress = ["18.201.27.185"];
+	const ipAddress = ["34.246.94.230"];
 	const ipString = ipAddress.join(" ");
 
 	const handleModalClose = () => {
@@ -64,30 +70,26 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 		const payload = {
 			userId: userId,
 			platformName: platformName as string,
-			apiKey: apiKey as string,
-			apiSecret: secretKey as string,
+			apiKey: apiKey,
+			apiSecret: apiSecret,
+			passphrase,
 			category: categoryName as Category,
 			connectionType: ConnectionType.MANUAL,
+			isRefreshMode,
 		};
 		connectManualTradingAccount(payload);
 	};
 
 	useEffect(() => {
 		if (isAddSuccess && addData) {
-			setApiKey("");
-			setSecretKey("");
+			setApiKey(undefined);
+			setApiSecret(undefined);
+			setPassphrase(undefined);
 			router.push(
 				`/account/trade-center/trading-accounts?success=true${isUpdateMode ? "&update=true" : ""}`,
 			);
 		}
 	}, [isAddSuccess, addData]);
-
-	useEffect(() => {
-		if (tradingAccount) {
-			setApiKey(tradingAccount.apiKey);
-			setSecretKey(tradingAccount.apiSecret);
-		}
-	}, [tradingAccount]);
 
 	useEffect(() => {
 		const isFastConnectionSupported = connectionTypes?.includes(ConnectionType.FAST);
@@ -100,25 +102,42 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 		}
 	}, [connectionTypes]);
 
-	const isSubmitDisabled = !secretKey || !apiKey || isAddPending;
+	useEffect(() => {
+		if (isPassphraseRequired) {
+			setIsSubmitDisabled(
+				(!apiKey || !apiSecret || !passphrase || isAddPending) && !isRefreshMode,
+			);
+		} else {
+			setIsSubmitDisabled((!apiKey || !apiSecret || isAddPending) && !isRefreshMode);
+		}
+	}, [apiKey, apiSecret, passphrase, isAddPending, isPassphraseRequired, isRefreshMode]);
 
 	return (
 		<>
 			<Modal
 				openModal={isOpen}
 				width="md:w-[653px]"
-				title={isUpdateMode ? "Update Trading Account" : "Connect Trading Account"}
+				title={
+					!isUpdateMode
+						? "Connect Trading Account"
+						: isRefreshMode
+							? "Refresh Connection"
+							: "Replace API Keys"
+				}
 				backBtnIcon={<BackBtnIcon onClick={handleAccountConnection} />}
 				onClose={handleModalClose}
 				showBackButton={isUpdateMode ? false : true}
 			>
 				<ExchangeTile imageUrl={platformLogo} />
+
 				<ContentTab tabs={tabs}>
 					<ManualConnection
 						apiKey={apiKey}
-						secretKey={secretKey}
+						apiSecret={apiSecret}
+						passphrase={passphrase}
 						setApiKey={setApiKey}
-						setSecretKey={setSecretKey}
+						setApiSecret={setApiSecret}
+						setPassphrase={setPassphrase}
 						isSubmitDisabled={isSubmitDisabled}
 						ipString={ipString}
 						handleManualConnection={handleManualConnection}
@@ -126,9 +145,11 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 						error={addError}
 						isLoading={isAddPending}
 						isUpdateMode={isUpdateMode}
+						isRefreshMode={isRefreshMode}
 						isIpAddressWhitelistRequired={isIpAddressWhitelistRequired}
+						isPassphraseRequired={isPassphraseRequired}
 					/>
-					{isFastConnectionSupported && <FastConnection />}
+					{!isRefreshMode && isFastConnectionSupported && <FastConnection />}
 				</ContentTab>
 			</Modal>
 		</>

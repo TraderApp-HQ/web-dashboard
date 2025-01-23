@@ -4,7 +4,7 @@ import { UsersService } from "~/apis/handlers/users";
 import type {
 	ICreateSignalInput,
 	IExchange,
-	IFetchExchanges,
+	IFetchTradingPlatform,
 	IFetchSignals,
 	IGetAssetsInput,
 	IGetExchangesInput,
@@ -114,7 +114,7 @@ export class AssetsService {
 		rowsPerPage,
 		orderBy,
 		status,
-	}: IGetExchangesInput): Promise<IFetchExchanges[]> {
+	}: IGetExchangesInput): Promise<IFetchTradingPlatform[]> {
 		// Construct query parameters
 		const queryParams = new URLSearchParams();
 
@@ -145,7 +145,7 @@ export class AssetsService {
 		}
 
 		const { data } = response;
-		return data as IFetchExchanges[];
+		return data as IFetchTradingPlatform[];
 	}
 
 	//Exchanges

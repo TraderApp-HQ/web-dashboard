@@ -79,13 +79,24 @@ export interface ISignalUpdateInput {
 	status: SignalStatus;
 }
 
-export interface IFetchExchanges {
+export interface IFetchTradingPlatform {
 	_id: string;
 	name: string;
 	logo: string;
 	isIpAddressWhitelistRequired: boolean;
 	connectionTypes: ConnectionType[];
 	category: Category;
+	slug: string;
+	description?: string;
+	status: TradeStatus;
+	urls: string;
+	makerFee: number;
+	takerFee: number;
+	dateLaunched: Date;
+	isSpotTradingSupported: boolean;
+	isFuturesTradingSupported: boolean;
+	isMarginTradingSupported: boolean;
+	isPassphraseRequired?: boolean;
 }
 
 export interface IGetExchangesInput {

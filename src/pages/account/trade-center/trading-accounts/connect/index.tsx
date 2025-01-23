@@ -13,7 +13,7 @@ import { TradingPlatform } from "~/apis/handlers/trading-engine/enums";
 import { useGetUserTradingAccount } from "~/hooks/useGetUserTradingAccount";
 import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
 import useUserProfileData from "~/hooks/useUserProfileData";
-import { IFetchExchanges } from "~/apis/handlers/assets/interfaces";
+import { IFetchTradingPlatform } from "~/apis/handlers/assets/interfaces";
 import { useUserTradingAccounts } from "~/contexts/UserTradingAccountsContext";
 
 const ConnectTradingAccount = () => {
@@ -22,15 +22,18 @@ const ConnectTradingAccount = () => {
 	const [isOpen, setIsOpen] = useState(true);
 	const [selectedCategory, setSelectedCategory] = useState<ISelectBoxOption>();
 	const [categoryOptions, setCategoryOptions] = useState<ISelectBoxOption[]>([]);
-	const [selectedPlatform, setSelectedPlatform] = useState<ISelectBoxOption>();
-	const [platformOptions, setPlatformOptions] = useState<ISelectBoxOption[]>([]);
+	const [selectedPlatform, setSelectedPlatform] =
+		useState<ISelectBoxOption<IFetchTradingPlatform>>();
+	const [platformOptions, setPlatformOptions] = useState<
+		ISelectBoxOption<IFetchTradingPlatform>[]
+	>([]);
 	const [resetSelectedPlatform, setResetSelectedPlatform] = useState(false);
 	const [isConnectTradingAccount, setIsConnectTradingAccount] = useState(true);
 	const [userTradingAccount, setUserTradingAccount] = useState<ITradingAccountInfo | undefined>();
 	const [validatedPlatformName, setValidatedPlatformName] = useState<TradingPlatform>();
 	const { userTradingAccounts } = useUserTradingAccounts();
 
-	const { platformName } = router.query;
+	const { platformName, refresh } = router.query;
 	const categories = [
 		{ name: Category.CRYPTO, id: Category.CRYPTO },
 		{ name: Category.FOREX, id: Category.FOREX },
@@ -50,7 +53,7 @@ const ConnectTradingAccount = () => {
 		}
 	}, [router.isReady, platformName]);
 
-	// fetch user trading account infor
+	// fetch user trading account info
 	const { userTradingAccount: data, isUserTradingAccountSuccess } = useGetUserTradingAccount({
 		userId: userProfile?.id ?? "",
 		platformName: validatedPlatformName!,
@@ -63,8 +66,6 @@ const ConnectTradingAccount = () => {
 		}
 	}, [data]);
 
-	// Trigger fetching platforms only when the category is Crypto
-	// const isCryptoSelected = selectedCategory?.value === Category.CRYPTO;
 	const {
 		tradingPlatforms,
 		isTradingPlatformsSuccess,
@@ -87,7 +88,6 @@ const ConnectTradingAccount = () => {
 	}, []);
 
 	// Update platform options based on selected category
-	// TODO: make a call to trading-engine-service to fetch all user already connected platforms and filter them out from the array
 	useEffect(() => {
 		if (isTradingPlatformsSuccess && tradingPlatforms && tradingPlatforms.length > 0) {
 			const activeCategoryPlatforms = tradingPlatforms
@@ -95,14 +95,11 @@ const ConnectTradingAccount = () => {
 					displayText: platform.name,
 					value: platform._id,
 					imgUrl: platform.logo,
-					data: {
-						isIpAddressWhitelistRequired: platform.isIpAddressWhitelistRequired,
-						connectionTypes: platform.connectionTypes,
-						category: platform.category,
-					},
+					data: platform,
 				}))
 				.filter((platform) => platform.data.category === selectedCategory?.value)
 				.filter(
+					// filter out user's already connected accounts
 					(platform) =>
 						!userTradingAccounts
 							?.map((platform) => platform.platformName.toLowerCase())
@@ -147,7 +144,7 @@ const ConnectTradingAccount = () => {
 	// helper function to set platform
 	const handleSetSelectedPlatform = (
 		validatedPlatformName: TradingPlatform,
-		tradingPlatforms: IFetchExchanges[],
+		tradingPlatforms: IFetchTradingPlatform[],
 	) => {
 		const activePlatform = tradingPlatforms.find(
 			(platform) => platform.name.toLowerCase() === validatedPlatformName.toLowerCase(),
@@ -156,11 +153,7 @@ const ConnectTradingAccount = () => {
 			displayText: activePlatform?.name ?? "",
 			value: activePlatform?._id ?? "",
 			imgUrl: activePlatform?.logo,
-			data: {
-				isIpAddressWhitelistRequired: activePlatform?.isIpAddressWhitelistRequired,
-				connectionTypes: activePlatform?.connectionTypes,
-				category: activePlatform?.category,
-			},
+			data: activePlatform,
 		});
 	};
 
@@ -184,10 +177,10 @@ const ConnectTradingAccount = () => {
 				<Modal
 					openModal={isOpen}
 					width="md:w-[507px]"
-					title="Connect Trading Account"
+					title="Select Trading Platform"
 					onClose={handleModalClose}
 				>
-					<div className="flex flex-col gap-y-3">
+					<div className="flex flex-col space-y-8 min-h-[340px] justify-center">
 						<SelectBox
 							option={selectedCategory}
 							labelText="Category"
@@ -235,11 +228,13 @@ const ConnectTradingAccount = () => {
 					}
 					handleAccountConnection={handleAccountConnection}
 					isUpdateMode={platformName ? true : false}
-					tradingAccount={userTradingAccount}
-					connectionTypes={selectedPlatform?.data.connectionTypes}
+					isRefreshMode={refresh === "true"}
+					userTradingAccount={userTradingAccount}
+					connectionTypes={selectedPlatform?.data?.connectionTypes ?? []}
 					isIpAddressWhitelistRequired={
-						selectedPlatform?.data.isIpAddressWhitelistRequired
+						selectedPlatform?.data?.isIpAddressWhitelistRequired ?? false
 					}
+					isPassphraseRequired={selectedPlatform?.data?.isPassphraseRequired ?? false}
 				/>
 			)}
 		</>
