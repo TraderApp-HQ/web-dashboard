@@ -45,19 +45,20 @@ export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
 							)}
 						</div>
 
-						<div className="flex gap-2">
+						<div className="flex flex-col md:flex-row gap-4 md:gap-2">
 							{tier.milestones.map((milestone, index) => (
-								<label key={index} className="flex items-center gap-1.5 mr-6">
-									<div className="relative w-5 h-5">
+								<label
+									key={index}
+									className="flex items-center gap-1.5 py-1 md:mr-6 md:py-0"
+								>
+									<div className="relative w-5 h-5 flex-shrink-0">
 										{milestone.completed ? (
 											<CheckIcon className="absolute inset-0" />
 										) : (
 											<div className="w-5 h-5 rounded-md border border-[#1836B2] bg-[#F9F5FF]" />
 										)}
 									</div>
-									<div className="text-[#414141] text-sm w-full">
-										{milestone.title}
-									</div>
+									<div className="text-[#414141] text-sm">{milestone.title}</div>
 								</label>
 							))}
 						</div>
