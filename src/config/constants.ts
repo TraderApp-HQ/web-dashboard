@@ -85,3 +85,58 @@ export const TradingPlatformValues: Record<TradingPlatform, string> = {
 	[TradingPlatform.BINANCE]: "Binance",
 	[TradingPlatform.KUCOIN]: "Kucoin",
 };
+
+export const ReferralRank = {
+	TA_RECRUIT: "TA-Recruit",
+	TA_LIEUTENANT: "TA-Lieutenant",
+	TA_CAPTAIN: "TA-Captain",
+	TA_MAJOR: "TA-Major",
+	TA_COLONEL: "TA-Colonel",
+	TA_GENERAL: "TA-General",
+	TA_FIELD_MARSHAL: "TA-Field-Marshal",
+} as const;
+
+export const RANK_REQUIREMENTS = {
+	[ReferralRank.TA_RECRUIT]: {
+		personalATC: 50,
+		communityATC: 0,
+		communityMembers: 0,
+		text: "Start your journey by investing your first trading capital.",
+	},
+	[ReferralRank.TA_LIEUTENANT]: {
+		personalATC: 100,
+		communityATC: 1000,
+		communityMembers: 20,
+		text: "Build momentum by growing your community size to progress further.",
+	},
+	[ReferralRank.TA_CAPTAIN]: {
+		personalATC: 500,
+		communityATC: 5000,
+		communityMembers: 100,
+		text: "Reach a new leadership level by expanding your network and capital.",
+	},
+	[ReferralRank.TA_MAJOR]: {
+		personalATC: 1000,
+		communityATC: 20000,
+		communityMembers: 400,
+		text: "Achieve significant growth and unlock advanced benefits.",
+	},
+	[ReferralRank.TA_COLONEL]: {
+		personalATC: 2000,
+		communityATC: 50000,
+		communityMembers: 800,
+		text: "Command a strong community with high engagement and trading capital.",
+	},
+	[ReferralRank.TA_GENERAL]: {
+		personalATC: 5000,
+		communityATC: 100000,
+		communityMembers: 1500,
+		text: "Join the elite ranks with an expansive network and high capital influence.",
+	},
+	[ReferralRank.TA_FIELD_MARSHAL]: {
+		personalATC: 10000,
+		communityATC: 500000,
+		communityMembers: 5000,
+		text: "Reach the pinnacle of leadership and community growth, leading a vast trading empire.",
+	},
+} as const;

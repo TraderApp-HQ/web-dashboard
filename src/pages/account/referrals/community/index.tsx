@@ -7,13 +7,11 @@ import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import ConnectionsIcons from "~/components/icons/ConnectionsIcons";
 import CurrencySymbolsIcon from "~/components/icons/CurrencySymbolsIcon";
 import Pagination from "~/components/Pagination";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	communityUsersDataTableSelector,
 	communityUsersMobileDataTableSelector,
 } from "~/selectors/referrals";
-import { UsersService } from "~/apis/handlers/users";
-import { IReferralCommunityStats } from "~/apis/handlers/users/interfaces";
 import ReferralCommunityCardLoader from "~/components/Loaders/ReferralCommunityCardLoader";
 import useReferrals from "~/hooks/useReferrals";
 import ReferalCard from "~/components/Cards/ReferalCard";
@@ -21,21 +19,12 @@ import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
 import Card from "~/components/AccountLayout/Card";
 import NoTransactionIcon from "~/components/icons/NoTransactionIcon";
+import { useReferralOverview } from "~/hooks/useReferralOverview";
 
 const ReferralsCommunity = () => {
 	const router = useRouter();
-	const [stats, setStats] = useState<IReferralCommunityStats | null>(null);
-	const usersService = new UsersService();
-	const fetchCommunitysStats = useCallback(
-		() => usersService.getCommunityStats(),
-		[usersService],
-	);
 
-	useEffect(() => {
-		fetchCommunitysStats().then((data) => {
-			setStats(data);
-		});
-	}, []);
+	const { data: stats, isLoading: isLoadingStats } = useReferralOverview();
 	const searchKeywordInitial = Array.isArray(router.query.query)
 		? router.query.query[0]
 		: router.query.query || "";
@@ -90,7 +79,7 @@ const ReferralsCommunity = () => {
 
 	return (
 		<div>
-			{!stats && <ReferralCommunityCardLoader />}
+			{isLoadingStats && <ReferralCommunityCardLoader />}
 			{stats && (
 				<div className="flex flex-col md:flex-row gap-2">
 					<ReferalCard

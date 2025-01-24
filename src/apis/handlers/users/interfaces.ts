@@ -3,7 +3,6 @@ import type {
 	NotificationChannel,
 	Platform,
 	PlatformAction,
-	ReferralRank,
 	TaskCategory,
 	TaskStatus,
 	TaskType,
@@ -11,6 +10,7 @@ import type {
 	UserTaskStatus,
 	VerificationType,
 } from "./enums";
+import { ReferralRankType } from "~/components/common/ProgressTracker/types";
 
 export interface IUserProfile {
 	id: string;
@@ -24,7 +24,7 @@ export interface IUserProfile {
 	isPhoneVerified: boolean;
 	isIdVerified: boolean;
 	role: UserRole[];
-	referralRank: ReferralRank;
+	referralRank: ReferralRankType;
 	status: UserStatus;
 	createdAt: string;
 	updatedAt: string;
