@@ -1,19 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useState } from "react";
-import { AssetsService } from "..";
-import { useFetch } from "~/hooks/useFetch";
 import { AssetsQueryId } from "~/apis/handlers/assets/constants";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
+import { ISignal } from "~/apis/handlers/assets/interfaces";
+import type { ITBody, ITHead, ITableMobile } from "~/components/common/DataTable/config";
+import { useFetch } from "~/hooks/useFetch";
 import {
 	activeSignalsDataTableMobileSelector,
 	activeSignalsDataTableSelector,
 	signalsHistoryDataTableMobileSelector,
 	signalsHistoryDataTableSelector,
 } from "~/selectors/signals";
-import type { ITBody, ITHead, ITableMobile } from "~/components/common/DataTable/config";
-import { ISignal, ISignalPrice } from "~/apis/handlers/assets/interfaces";
-import { SignalStatus } from "~/apis/handlers/assets/enums";
-import useCustomWebSocket from "~/hooks/useCustomWebSocket";
-import useUserProfileData from "~/hooks/useUserProfileData";
+import { AssetsService } from "..";
 
 interface UseFetchActiveSignalsProps {
 	handleSetToggleDeleteModal?: (id: string) => void;
@@ -45,6 +42,8 @@ export const useFetchActiveSignals = ({
 	} = useFetch({
 		queryKey: [AssetsQueryId.signals],
 		queryFn: fetchSignals,
+		refetch: true,
+		refetchTime: 120000, // Refetches from database every 2 minutes
 	});
 
 	useEffect(() => {

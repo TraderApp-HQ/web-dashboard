@@ -13,6 +13,8 @@ interface QueryOptions<T> {
 	dependencies?: any[];
 	onSuccess?: (data: T) => void;
 	onError?: (error: unknown) => void;
+	refetch?: boolean;
+	refetchTime?: number;
 }
 
 export const useFetch = <T>({
@@ -22,8 +24,14 @@ export const useFetch = <T>({
 	onSuccess,
 	onError,
 	enabled = true,
+	refetch = false,
+	refetchTime = 0,
 }: QueryOptions<T> & { enabled?: boolean }): UseQueryResult<T, Error> => {
 	const combinedQueryKey = [...queryKey, ...dependencies];
+
+	// Ensure valid refetchTime if refetch is enabled
+	const interval = refetch && refetchTime > 0 ? refetchTime : false;
+
 	return useQuery<T, Error>({
 		queryKey: combinedQueryKey,
 		queryFn,
@@ -31,5 +39,6 @@ export const useFetch = <T>({
 		onError,
 		refetchOnWindowFocus: false,
 		enabled,
+		refetchInterval: interval, // This line helps to refetch query at a given interval (refetchTime in milliseconds)
 	} as UseQueryOptions<T, Error>);
 };
