@@ -58,6 +58,8 @@ export interface ICreateSignalInput {
 	targetProfits: ISignalMilestone[];
 	stopLoss: ISignalMilestone;
 	entryPrice: number;
+	lowerBound: number;
+	upperBound: number;
 	tradeNote: string;
 	candlestick: Candlestick;
 	risk: SignalRisk;

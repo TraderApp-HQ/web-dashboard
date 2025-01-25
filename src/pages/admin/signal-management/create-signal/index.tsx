@@ -46,6 +46,8 @@ function CreateSignal() {
 	const [selectedBaseCurrency, setSelectedBaseCurrency] = useState<ISignalAsset>();
 	const [selectedSupportedExchange, setSelectedSupportedExchange] = useState<IExchange[]>();
 	const [entryPrice, setEntryPrice] = useState<string>();
+	const [upperBound, setUpperBound] = useState<string>();
+	const [lowerBound, setLowerBound] = useState<string>();
 	const [stopLoss, setStopLoss] = useState<ISignalMilestone>();
 	const [leverage, setLeverage] = useState<number>();
 	const [targetProfits, setTargetProfits] = useState<ISignalMilestone[]>();
@@ -98,6 +100,8 @@ function CreateSignal() {
 
 	const tradePriceModalButton =
 		entryPrice &&
+		upperBound &&
+		lowerBound &&
 		stopLoss &&
 		leverage &&
 		targetProfits &&
@@ -277,6 +281,8 @@ function CreateSignal() {
 		setResetSelectedBaseCurrency(true);
 		setResetSelectedCandle(true);
 		setEntryPrice(undefined);
+		setUpperBound(undefined);
+		setLowerBound(undefined);
 		setStopLoss(undefined);
 		setSelectedBaseCurrency(undefined);
 		setResetSelectedRisk(true);
@@ -298,6 +304,8 @@ function CreateSignal() {
 			targetProfits: targetProfits as ISignalMilestone[],
 			stopLoss: stopLoss as ISignalMilestone,
 			entryPrice: Number(entryPrice),
+			upperBound: Number(upperBound),
+			lowerBound: Number(lowerBound),
 			tradeNote: tradeNote as string,
 			candlestick: selectedCandle?.value as Candlestick,
 			risk: selectedRisk?.value as SignalRisk,
@@ -593,6 +601,29 @@ function CreateSignal() {
 							className="no-spin-buttons"
 							onKeyDown={handleKeyDown}
 						/>
+
+						<section className="flex items-center gap-4 justify-between">
+							<InputField
+								type="number"
+								labelText="Price Upper Bound"
+								props={{ name: "upperBound", step: "0.01" }}
+								placeholder="Price upper bound"
+								value={upperBound ?? ""}
+								onChange={(value: string) => setUpperBound(value)}
+								className="no-spin-buttons"
+								onKeyDown={handleKeyDown}
+							/>
+							<InputField
+								type="number"
+								labelText="Price Lower bound"
+								props={{ name: "lowerBound", step: "0.01" }}
+								placeholder="Price lower bound"
+								value={lowerBound ?? ""}
+								onChange={(value: string) => setLowerBound(value)}
+								className="no-spin-buttons"
+								onKeyDown={handleKeyDown}
+							/>
+						</section>
 
 						<InputField
 							type="number"
