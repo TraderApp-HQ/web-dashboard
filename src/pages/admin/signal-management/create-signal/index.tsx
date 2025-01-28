@@ -217,7 +217,7 @@ function CreateSignal() {
 	const handleStopLoss = (value: string) => {
 		const entryValue = Number(entryPrice);
 		const stopValue = Number(value);
-		const stopPercentage = Math.round(((stopValue - entryValue) / entryValue) * 100);
+		const stopPercentage = Math.round((Math.abs(stopValue - entryValue) / entryValue) * 100);
 		setStopLoss({
 			price: stopValue,
 			percent: stopPercentage,
@@ -343,7 +343,7 @@ function CreateSignal() {
 
 	const handleFirstTargetProfit = (index: number, newValue: number) => {
 		const entryValue = Number(entryPrice);
-		const ftpPercentage = Math.round(((newValue - entryValue) / entryValue) * 100);
+		const ftpPercentage = Math.round((Math.abs(newValue - entryValue) / entryValue) * 100);
 
 		setTargetProfits((prevTargetProfits) => {
 			if (prevTargetProfits == undefined) {
@@ -358,7 +358,7 @@ function CreateSignal() {
 
 	const handleValueChange = (index: number, newValue: number) => {
 		const entryValue = Number(entryPrice);
-		const ftpPercentage = Math.round(((newValue - entryValue) / entryValue) * 100);
+		const ftpPercentage = Math.round((Math.abs(newValue - entryValue) / entryValue) * 100);
 		setTargetProfits((prev) =>
 			prev?.map((profit, i) =>
 				i === index ? { ...profit, price: newValue, percent: ftpPercentage } : profit,
