@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
 import type { AppProps } from "next/app";
-import { ReactElement, ReactNode } from "react";
+import { ReactElement, ReactNode, useEffect } from "react";
 import { NextPage } from "next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NavProvider } from "~/contexts/NavContext";
@@ -32,6 +32,15 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 		// }
 		return <>{children}</>;
 	};
+
+	useEffect(() => {
+		if ("serviceWorker" in navigator) {
+			navigator.serviceWorker.register("/sw.js").catch((err) => {
+				console.error("Service Worker registration failed:", err);
+			});
+		}
+	}, []);
+
 	return (
 		<NavProvider>
 			<QueryClientProvider client={queryClient}>
