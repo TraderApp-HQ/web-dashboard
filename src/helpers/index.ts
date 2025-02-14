@@ -12,6 +12,7 @@ import {
 	TaskStatus,
 	UserTaskStatus,
 } from "~/apis/handlers/users/enums";
+import { Tier } from "~/components/common/ProgressTracker/types";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -134,4 +135,10 @@ export const renderActionStatement = (action: PlatformAction | TaskCategory) => 
 		default:
 			return "";
 	}
+};
+
+export const isTierCompleted = (tier: Tier): boolean => {
+	return tier.milestones.length
+		? tier.milestones.every((milestone) => milestone.completed)
+		: !!tier.completed;
 };
