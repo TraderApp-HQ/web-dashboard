@@ -37,7 +37,7 @@ export function activeSignalsDataTableSelector(
 						// containerStyles: "!justify-start md:!pl-24",
 					}),
 				},
-				{ displayItem: signal.createdAt },
+				{ displayItem: new Date(signal.createdAt).toDateString() },
 				{ displayItem: renderStatus(signal.status) },
 			],
 			actions: [
@@ -99,7 +99,7 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			},
 			{
 				displayItemTitle: "Date / Time",
-				displayItemValue: signal.createdAt,
+				displayItemValue: new Date(signal.createdAt).toDateString(),
 			},
 			{
 				displayItemTitle: "Change",
@@ -174,8 +174,9 @@ export function activeSignalsPerfomanceSumary(signals: ISignal[]): ISignalPerfor
 
 	for (const signal of signals) {
 		if (signal.currentPrice !== undefined) {
-			signal.currentChange =
-				((signal.currentPrice - signal.entryPrice) / signal.entryPrice) * 100;
+			signal.currentChange = parseFloat(
+				(((signal.currentPrice - signal.entryPrice) / signal.entryPrice) * 100).toFixed(2),
+			);
 		}
 
 		if (

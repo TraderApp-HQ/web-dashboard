@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
-import { AssetsService } from "..";
-import { useFetch } from "~/hooks/useFetch";
 import { AssetsQueryId } from "~/apis/handlers/assets/constants";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
+import { ISignal } from "~/apis/handlers/assets/interfaces";
+import type { ITBody, ITHead, ITableMobile } from "~/components/common/DataTable/config";
+import { useFetch } from "~/hooks/useFetch";
 import {
 	activeSignalsDataTableMobileSelector,
 	activeSignalsDataTableSelector,
 	signalsHistoryDataTableMobileSelector,
 	signalsHistoryDataTableSelector,
 } from "~/selectors/signals";
-import type { ITBody, ITHead, ITableMobile } from "~/components/common/DataTable/config";
-import { ISignal } from "~/apis/handlers/assets/interfaces";
-import { SignalStatus } from "~/apis/handlers/assets/enums";
+import { AssetsService } from "..";
 
 interface UseFetchActiveSignalsProps {
 	handleSetToggleDeleteModal?: (id: string) => void;
@@ -42,35 +42,62 @@ export const useFetchActiveSignals = ({
 	} = useFetch({
 		queryKey: [AssetsQueryId.signals],
 		queryFn: fetchSignals,
+		refetch: true,
+		refetchTime: 120000, // Refetches from database every 2 minutes
 	});
 
 	useEffect(() => {
+		setActiveSignals(allSignals?.signals ?? []);
+	}, [isLoading, isSuccess, allSignals]);
+
+	useEffect(() => {
 		const { tableHead, tableBody } = activeSignalsDataTableSelector(
-			allSignals?.signals ?? [],
+			activeSignals ?? [],
 			isAdmin,
 			handleSetToggleDeleteModal,
 			handleResumeSignal,
 		);
-		const dataMobile = activeSignalsDataTableMobileSelector(allSignals?.signals ?? []);
+		const dataMobile = activeSignalsDataTableMobileSelector(activeSignals ?? []);
 
-		setActiveSignals(allSignals?.signals ?? []);
 		setSignalsTableHead(tableHead);
 		setSignalsTableBody(tableBody);
 		setSignalsMobileTableBody(dataMobile);
-	}, [isLoading, isSuccess, allSignals]);
+	}, [activeSignals]);
 
-	// const { sendMessage, lastMessage, readyState, getWebSocket } = useWebSocket("ws://localhost:8080/stream/signals", {
-	//   onOpen: () => console.log("WebSocket opened"),
-	//   onClose: () => console.log("WebSocket closed"),
-	//   onError: (error) => console.log("WebSocket error", error),
-	//   onMessage: (message) => console.log("WebSocket message", message),
-	//   shouldReconnect: (closeEvent) => true, // Will attempt to reconnect on all close events
-	// });
+	// const { userId } = useUserProfileData();
+	// const { data } = useCustomWebSocket(
+	// 	`ws://localhost:8082/stream/assets-update-ws?userId=${userId}`,
+	// );
 	// useEffect(() => {
-	//   if (lastMessage !== null) {
-	//     setMessageHistory((prev) => prev.concat(lastMessage));
-	//   }
-	// }, [lastMessage]);
+	// 	if (data) {
+	// 		try {
+	// 			const priceData = JSON.parse(data.toString()); // Parse the JSON string to an array of objects
+
+	// 			const updatedActiveSignals = activeSignals.map((signal) => {
+	// 				const updatedSignal = priceData.find(
+	// 					(data: ISignalPrice) =>
+	// 						signal.id === data.signalId &&
+	// 						signal.supportedExchanges.find(
+	// 							(exchange) => exchange.name.toLowerCase() === data.exchange,
+	// 						),
+	// 				);
+	// 				if (updatedSignal) {
+	// 					return {
+	// 						...signal,
+	// 						currentPrice: updatedSignal.signalData.assetPrice,
+	// 					};
+	// 				}
+
+	// 				return signal;
+	// 			});
+
+	// 			// Update your state with the new data
+	// 			setActiveSignals(updatedActiveSignals);
+	// 		} catch (error) {
+	// 			console.error("Error parsing the data:", error);
+	// 		}
+	// 	}
+	// }, [data]);
 
 	return {
 		isError,
