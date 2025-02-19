@@ -40,7 +40,7 @@ export default function DeleteModal({
 					Confirm
 				</Button>
 				<Button onClick={btnCancle} innerClassName="bg-gray-300 text-zinc-500">
-					Cancle
+					Cancel
 				</Button>
 			</div>
 			{/* </div> */}
