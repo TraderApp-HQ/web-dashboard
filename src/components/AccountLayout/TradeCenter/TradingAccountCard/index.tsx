@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Card from "../../Card";
 import Image from "next/image";
@@ -228,7 +227,6 @@ const TradingAccountDropdownMenu: React.FC<ITradingAccountDropdownMenu> = ({
 				<DropdownMenuItem
 					type="button"
 					disabled={isPending}
-					// onClick={handleDeleteTradingAccount}
 					onClick={handleDeleteTaskModalOpen}
 					className="pl-0 text-neutral-700"
 				>

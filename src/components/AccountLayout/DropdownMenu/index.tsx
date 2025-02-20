@@ -66,6 +66,7 @@ export default function DropdownMenu({
 					setIsOpen(!isOpen);
 				}}
 				className={btnClass}
+				data-testid="drop-down-button"
 			>
 				<div className="justify-center items-center gap-2.5 inline-flex">{trigger}</div>
 			</button>
