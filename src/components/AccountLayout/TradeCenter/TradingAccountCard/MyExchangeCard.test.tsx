@@ -82,7 +82,7 @@ describe("MyExchangeCard", () => {
 		).toBeInTheDocument();
 
 		// Check if the dropdown menu is rendered
-		expect(screen.getByRole("button")).toBeInTheDocument(); // Assuming DropdownMenu trigger is a button
+		expect(screen.getByTestId("drop-down-button")).toBeInTheDocument(); // Assuming DropdownMenu trigger is a button with testid: "drop-down-button"
 
 		// Check if the connection status is rendered correctly
 		expect(screen.getByText("Connected")).toBeInTheDocument();
@@ -110,7 +110,7 @@ describe("MyExchangeCard", () => {
 		renderWithQueryClient(<MyExchangeCard {...defaultProps} />);
 
 		// Open dropdown menu
-		fireEvent.click(screen.getByRole("button")); // Assuming dropdown trigger is a button
+		fireEvent.click(screen.getByTestId("drop-down-button")); // Assuming dropdown trigger is a button with testid: "drop-down-button"
 
 		// Check if menu items are rendered
 		expect(screen.getByText("Refresh Connection")).toBeInTheDocument();
