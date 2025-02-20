@@ -1,13 +1,14 @@
-import { NestedTradeCenterLayout } from "..";
-import EmptyExchange from "~/components/AccountLayout/TradeCenter/EmptyExchange";
-import Button from "~/components/AccountLayout/Button";
-import TradingAccountCard from "~/components/AccountLayout/TradeCenter/TradingAccountCard";
 import { useRouter } from "next/router";
-import { useGetUserTradingAccounts } from "~/hooks/useGetUserTradingAccounts";
 import { useEffect, useState } from "react";
+import Button from "~/components/AccountLayout/Button";
+import EmptyExchange from "~/components/AccountLayout/TradeCenter/EmptyExchange";
+import TradingAccountCard from "~/components/AccountLayout/TradeCenter/TradingAccountCard";
 import Toast from "~/components/common/Toast";
-import useUserProfileData from "~/hooks/useUserProfileData";
+import TradeCenterLoader from "~/components/Loaders/TradeCenterLoader";
 import { useUserTradingAccounts } from "~/contexts/UserTradingAccountsContext";
+import { useGetUserTradingAccounts } from "~/hooks/useGetUserTradingAccounts";
+import useUserProfileData from "~/hooks/useUserProfileData";
+import { NestedTradeCenterLayout } from "..";
 
 const TradeCenterExchanges = () => {
 	const router = useRouter();
@@ -50,7 +51,7 @@ const TradeCenterExchanges = () => {
 			{isUserTradingAccountsError && (
 				<div>Failed to fetch trading accounts. Please try again later.</div>
 			)}
-			{isUserTradingAccountsLoading && <div>Loading...</div>}
+			{isUserTradingAccountsLoading && <TradeCenterLoader />}
 			{isUserTradingAccountsSuccess && (
 				<>
 					{userTradingAccounts && userTradingAccounts.length > 0 ? (
