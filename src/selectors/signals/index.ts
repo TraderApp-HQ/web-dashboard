@@ -35,7 +35,6 @@ export function activeSignalsDataTableSelector(
 					}),
 				},
 				{ displayItem: `${signal.currentPrice ?? "-"} USDT` },
-				// { displayItem: `${signal.currentChange ?? "-"} %` },
 				{ displayItem: renderPercentageChange(signal.currentChange) },
 				{
 					displayItem: renderTargetProfits({
