@@ -13,6 +13,7 @@ export interface ModalOptions {
 	headerDivider?: boolean;
 	backBtnIcon?: React.ReactNode;
 	showBackButton?: boolean;
+	className?: string;
 }
 
 const Modal: React.FC<ModalOptions> = ({
@@ -25,6 +26,7 @@ const Modal: React.FC<ModalOptions> = ({
 	headerDivider = false,
 	backBtnIcon,
 	showBackButton,
+	className,
 }) => {
 	function close() {
 		if (onClose) {
@@ -79,10 +81,9 @@ const Modal: React.FC<ModalOptions> = ({
 
 					{/* Scrollable content & hides scrollbar*/}
 					<div
-						className="overflow-y-auto scrollbar-hide"
+						className={`overflow-y-auto scrollbar-hide ${className}`}
 						style={{
 							maxHeight: "calc(100vh - 200px)",
-							minHeight: "30vh",
 						}}
 					>
 						{children}
