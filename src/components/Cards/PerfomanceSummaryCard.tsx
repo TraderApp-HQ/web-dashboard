@@ -36,7 +36,7 @@ const PerformanceSummaryCard: React.FC<IPerformanceSummaryCardProps> = ({ data }
 							height={12}
 						/>
 						<span className="text-emerald-700 text-base font-normal">
-							{Math.abs(data.percentage ?? 10).toFixed(2)}%
+							{data.percentage ?? "10"}%
 						</span>
 					</div>
 				</div>
