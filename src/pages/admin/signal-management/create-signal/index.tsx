@@ -515,7 +515,7 @@ function CreateSignal() {
 					}
 					headerDivider={true}
 					onClose={handleModalClose}
-					minheight="min-h-[40vh]"
+					className="min-h-[40vh]"
 				>
 					<section className="flex flex-col gap-y-5 pt-3">
 						<SelectBox
