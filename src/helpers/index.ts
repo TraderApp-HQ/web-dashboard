@@ -13,6 +13,7 @@ import {
 	UserTaskStatus,
 } from "~/apis/handlers/users/enums";
 import { Tier } from "~/components/common/ProgressTracker/types";
+import DisplayChange from "~/components/common/DisplayChange";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -59,6 +60,10 @@ export function renderTargetProfits({
 		},
 		targetProfitPills,
 	);
+}
+
+export function renderPercentageChange(currentChange?: number) {
+	return React.createElement(DisplayChange, { currentChange });
 }
 
 export function renderStatus(status: string, style?: { justify?: string }, bullet?: boolean) {

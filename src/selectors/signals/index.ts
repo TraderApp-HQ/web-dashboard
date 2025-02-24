@@ -6,7 +6,12 @@ import type {
 	ITableMobile,
 } from "~/components/common/DataTable/config";
 import { ActiveSignalsTableHeadItems, SignalsHistoryTableHeadItems } from "./constants";
-import { renderDisplayItem, renderStatus, renderTargetProfits } from "~/helpers";
+import {
+	renderDisplayItem,
+	renderPercentageChange,
+	renderStatus,
+	renderTargetProfits,
+} from "~/helpers";
 import type { ISignal } from "~/apis/handlers/assets/interfaces";
 import { SignalStatus } from "~/apis/handlers/assets/enums";
 import { format } from "date-fns";
@@ -30,7 +35,7 @@ export function activeSignalsDataTableSelector(
 					}),
 				},
 				{ displayItem: `${signal.currentPrice ?? "-"} USDT` },
-				{ displayItem: `${signal.currentChange ?? "-"} %` },
+				{ displayItem: renderPercentageChange(signal.currentChange) },
 				{
 					displayItem: renderTargetProfits({
 						targetProfits: signal.targetProfits,
