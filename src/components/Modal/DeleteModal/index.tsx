@@ -35,7 +35,7 @@ export default function DeleteModal({
 			{/* <div className="flex flex-col gap-5 text-center">
         <h2 className="text-slate-900 text-2xl font-semibold leading-10">{title}</h2>
         <h3 className="text-center text-gray-700 text-base font-medium">{description}</h3> */}
-			<div className="flex gap-3 justify-center mt-10">
+			<div className="flex gap-3 justify-center mt-5">
 				<Button onClick={btnConfirm} innerClassName="text-white bg-rose-700">
 					Confirm
 				</Button>
