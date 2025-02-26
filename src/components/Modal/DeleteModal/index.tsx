@@ -8,6 +8,7 @@ interface DeleteModalProps extends IModalOptions {
 	description: string;
 	btnConfirm: () => void;
 	btnCancle: () => void;
+	isDeleting?: boolean;
 }
 
 export default function DeleteModal({
@@ -17,6 +18,7 @@ export default function DeleteModal({
 	btnCancle,
 	openModal,
 	onClose,
+	isDeleting,
 }: DeleteModalProps) {
 	const handleMeClose = () => {
 		if (onClose) {
@@ -36,8 +38,12 @@ export default function DeleteModal({
         <h2 className="text-slate-900 text-2xl font-semibold leading-10">{title}</h2>
         <h3 className="text-center text-gray-700 text-base font-medium">{description}</h3> */}
 			<div className="flex gap-3 justify-center mt-5">
-				<Button onClick={btnConfirm} innerClassName="text-white bg-rose-700">
-					Confirm
+				<Button
+					onClick={btnConfirm}
+					innerClassName="text-white bg-rose-700 disabled:cursor-pointer"
+					disabled={isDeleting}
+				>
+					{isDeleting ? "Deleting..." : "Confirm"}
 				</Button>
 				<Button onClick={btnCancle} innerClassName="bg-gray-300 text-zinc-500">
 					Cancel

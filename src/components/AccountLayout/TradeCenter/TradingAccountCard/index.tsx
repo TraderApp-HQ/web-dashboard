@@ -245,6 +245,7 @@ const TradingAccountDropdownMenu: React.FC<ITradingAccountDropdownMenu> = ({
 				btnCancle={handleDeleteModalClose}
 				openModal={toggleDeleteModal}
 				onClose={handleDeleteModalClose}
+				isDeleting={isPending}
 			/>
 		</>
 	);

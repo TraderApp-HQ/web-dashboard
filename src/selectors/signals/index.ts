@@ -108,7 +108,7 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			},
 			{
 				displayItemTitle: "Change",
-				displayItemValue: `${signal.currentChange ?? "-"}%`,
+				displayItemValue: renderPercentageChange(signal.currentChange),
 			},
 			{
 				displayItemTitle: "Status",

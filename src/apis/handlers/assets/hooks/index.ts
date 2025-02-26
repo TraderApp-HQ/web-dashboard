@@ -32,7 +32,8 @@ export const useFetchActiveSignals = ({
 	// const [socketUrl, setSocketUrl] = useState("ws://localhost:8080/signals/stream");
 	// const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
 
-	const fetchSignals = useCallback(() => signalsService.getActiveSignals(), [signalsService]);
+	// const fetchSignals = useCallback(() => signalsService.getActiveSignals(), [signalsService]);
+	const fetchSignals = () => signalsService.getActiveSignals();
 	const {
 		data: allSignals,
 		error,
@@ -47,22 +48,19 @@ export const useFetchActiveSignals = ({
 	});
 
 	useEffect(() => {
-		setActiveSignals(allSignals?.signals ?? []);
-	}, [isLoading, isSuccess, allSignals]);
-
-	useEffect(() => {
 		const { tableHead, tableBody } = activeSignalsDataTableSelector(
-			activeSignals ?? [],
+			allSignals?.signals ?? [],
 			isAdmin,
 			handleSetToggleDeleteModal,
 			handleResumeSignal,
 		);
-		const dataMobile = activeSignalsDataTableMobileSelector(activeSignals ?? []);
+		const dataMobile = activeSignalsDataTableMobileSelector(allSignals?.signals ?? []);
 
 		setSignalsTableHead(tableHead);
 		setSignalsTableBody(tableBody);
 		setSignalsMobileTableBody(dataMobile);
-	}, [activeSignals]);
+		setActiveSignals(allSignals?.signals ?? []);
+	}, [allSignals, isSuccess, isLoading]);
 
 	// const { userId } = useUserProfileData();
 	// const { data } = useCustomWebSocket(
