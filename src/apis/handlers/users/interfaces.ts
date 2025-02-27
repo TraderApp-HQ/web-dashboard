@@ -10,7 +10,7 @@ import type {
 	UserTaskStatus,
 	VerificationType,
 } from "./enums";
-import { ReferralRankType } from "~/components/common/ProgressTracker/types";
+import { IRankData, ReferralRankType } from "~/components/common/ProgressTracker/types";
 
 export interface IUserProfile {
 	id: string;
@@ -148,10 +148,13 @@ export interface IReferralStats {
 	currentRank: null | string;
 	currentEarning: number;
 	rankProgress: number;
+	personalATC: number;
+	rankData: IRankData;
+	isTestReferralTrackingInProgress: boolean;
 }
 
 export interface IReferralCommunityStats {
-	communityMembers: number;
+	communitySize: number;
 	communityATC: number;
 	referralTreeLevels: number;
 }

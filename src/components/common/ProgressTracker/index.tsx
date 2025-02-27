@@ -3,13 +3,23 @@ import { TierComponent } from "./TierComponent";
 import { ProgressTrackerProps } from "./types";
 import { useMemo } from "react";
 
-const ProgressTracker: React.FC<ProgressTrackerProps> = ({ title, body, tiers }) => {
+const ProgressTracker: React.FC<ProgressTrackerProps> = ({
+	title,
+	body,
+	tiers,
+	isLoading,
+	loadingComponent: LoadingComponent,
+}) => {
 	const progress = useMemo(() => {
 		const totalTiers = Object.keys(tiers).length;
 		if (!totalTiers) return 0;
 		const completedTiers = Object.values(tiers).filter(isTierCompleted).length;
 		return Math.round((completedTiers / totalTiers) * 100);
 	}, [tiers]);
+
+	if (isLoading && LoadingComponent) {
+		return <LoadingComponent />;
+	}
 
 	return (
 		<section className="mt-5 border border-[#DEE3F6] rounded-md bg-white text-[#3E57BF] px-4 py-4">
