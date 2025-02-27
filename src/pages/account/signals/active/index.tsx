@@ -61,11 +61,7 @@ const ActiveSignals = () => {
 	//  Paginaion configurations
 	const [currentPage, setCurrentPage] = React.useState<number>(1);
 	const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
-
-	// Signal data pagination
-	const paginatedData = activeSignals;
-
-	const totalRecord = paginatedData.length; // Example total rows
+	const totalRecord = activeSignals.length; // Example total rows
 	const totalPages = Math.ceil(totalRecord / rowsPerPage);
 
 	// Calculate the rows to display
