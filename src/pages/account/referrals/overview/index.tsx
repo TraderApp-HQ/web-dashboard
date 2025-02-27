@@ -1,7 +1,7 @@
 import { NestedReferralsLayout } from "..";
 import CardIcon from "~/components/icons/CardIcon";
 import RankIcon from "~/components/icons/RankIcon";
-import { useState } from "react";
+import React, { useState } from "react";
 import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
 import Toast from "~/components/common/Toast";
 import { InviteCode } from "~/components/AccountLayout/Referrals/InviteCode";
@@ -10,16 +10,22 @@ import ReferalCard from "~/components/Cards/ReferalCard";
 import ProgressTracker from "~/components/common/ProgressTracker";
 import { useReferralOverview } from "~/hooks/useReferralOverview";
 import { useReferralRank } from "~/hooks/useReferralRank";
+import { MdRefresh } from "react-icons/md";
+import { ProgressTrackerLoader } from "~/components/Loaders/ReferralProgressLoader";
 
 const ReferralsOverview = () => {
 	const [success, setSuccess] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
-	const { data: stats, isLoading, error: referralError } = useReferralOverview();
-	const { rankRequirements } = useReferralRank({
-		personalATC: stats?.currentEarning ?? 0,
-		communityATC: stats?.communityATC ?? 0,
-		communityMembers: stats?.communityMembers ?? 0,
-	});
+
+	const {
+		data: stats,
+		isLoading,
+		error: referralError,
+		refetch,
+		isRefetching,
+	} = useReferralOverview();
+
+	const { rankRequirements } = useReferralRank(stats?.rankData);
 
 	const handleError = (err: Error) => {
 		setError(err);
@@ -42,7 +48,7 @@ const ReferralsOverview = () => {
 				<div className="flex flex-col md:flex-row gap-2">
 					<ReferalCard
 						title="Current Rank"
-						subtext={stats?.currentRank ?? ""}
+						subtext={stats?.currentRank ?? "---"}
 						Icon={RankIcon}
 					/>
 					<ReferalCard
@@ -59,11 +65,43 @@ const ReferralsOverview = () => {
 
 			<SendInvite onError={handleError} onSuccess={setSuccess} />
 
-			<ProgressTracker
-				title="Referral Progress"
-				body="Move from one step to another by sending an invitation to your friend."
-				tiers={rankRequirements}
-			/>
+			{stats?.isTestReferralTrackingInProgress ? (
+				<section className="mt-5 border border-[#DEE3F6] rounded-md bg-white text-[#3E57BF] px-4 py-4">
+					<div className="flex flex-col items-center justify-center p-6">
+						<p className="text-[#102477] text-lg font-medium mb-3">
+							Referral tracking is in progress...
+						</p>
+
+						<p className="text-[#414141] text-sm mb-4">
+							This may take a few moments. Please click the refresh button to check
+							for updates.
+						</p>
+						<button
+							onClick={() => refetch()}
+							disabled={isRefetching}
+							className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
+								isRefetching
+									? "bg-[#E7ECFE]/70 cursor-not-allowed"
+									: "bg-[#E7ECFE] hover:bg-[#D9E1FD]"
+							}`}
+						>
+							<MdRefresh
+								className={`text-[#1836B2] ${isRefetching ? "animate-spin" : ""}`}
+								size={18}
+							/>
+							<span className="text-[#1836B2] font-medium">Refresh</span>
+						</button>
+					</div>
+				</section>
+			) : (
+				<ProgressTracker
+					title="Referral Progress"
+					body="Move from one step to another by sending an invitation to your friend."
+					tiers={rankRequirements}
+					isLoading={isLoading}
+					loadingComponent={ProgressTrackerLoader}
+				/>
+			)}
 
 			{success && (
 				<Toast
