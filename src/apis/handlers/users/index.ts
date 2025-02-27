@@ -458,4 +458,17 @@ export class UsersService {
 			throw new Error(response.message || "OTP sending failed");
 		}
 	}
+
+	public async trackUserReferrals({ userId }: { userId: string }): Promise<void> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/users/track-referrals",
+			data: {
+				userId,
+			},
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Referral tracking failed");
+		}
+	}
 }
