@@ -26,7 +26,7 @@ export interface TierNoAction extends TierBase {
 export type Tier = TierWithAction | TierNoAction;
 
 export interface ProgressTrackerProps {
-	title: string;
+	title: string | React.ReactElement;
 	body: string;
 	tiers: Record<ReferralRankType, Tier> | Record<string, never>;
 	isLoading?: boolean;

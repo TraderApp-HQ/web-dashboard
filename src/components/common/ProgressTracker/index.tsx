@@ -22,7 +22,7 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
 	}
 
 	return (
-		<section className="mt-5 border border-[#DEE3F6] rounded-md bg-white text-[#3E57BF] px-4 py-4">
+		<section className="mt-5 border border-[#DEE3F6] rounded-md bg-white text-[#3E57BF] p-5">
 			{/* Header */}
 			<h3 className="font-bold text-lg mb-1 text-[#102477]">{title}</h3>
 			<p className="text-[#414141] font-light">{body}</p>
