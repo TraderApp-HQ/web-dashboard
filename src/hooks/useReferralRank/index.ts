@@ -1,4 +1,4 @@
-import { ReferralOverview, ReferralRankType } from "~/components/common/ProgressTracker/types";
+import { IRankData, ReferralRankType } from "~/components/common/ProgressTracker/types";
 import { RANK_REQUIREMENTS } from "~/config/constants";
 
 type RankRequirements = Record<
@@ -15,47 +15,49 @@ type RankRequirements = Record<
 	}
 >;
 
-export const useReferralRank = (overview: ReferralOverview) => {
-	const generateRankRequirements = (overview: ReferralOverview): RankRequirements => {
-		return Object.entries(RANK_REQUIREMENTS).reduce((acc, [rank, reqs]) => {
-			acc[rank as ReferralRankType] = {
-				title: rank as ReferralRankType,
-				text: reqs.text,
+export const useReferralRank = (rankData: IRankData | undefined) => {
+	if (!rankData) return { rankRequirements: {} };
+	const generateRankRequirements = (rankData: IRankData): RankRequirements => {
+		return Object.entries(rankData).reduce((acc, [_rank, value]) => {
+			const rank = _rank as ReferralRankType;
+			acc[rank] = {
+				title: rank,
+				text: RANK_REQUIREMENTS[rank].text,
 				milestones: [
 					{
-						title: `Personal ATC ($${reqs.personalATC}+)`,
+						title: `Personal ATC ($${value.personalATC.minValue}+)`,
 						hoverText: "Minimum Active Trading Capital in your account",
-						completed: overview.personalATC >= reqs.personalATC,
+						completed: value.personalATC.completed,
 					},
-					...(reqs.communityATC > 0
+					...(value.communityATC.minValue > 0
 						? [
 								{
-									title: `Community TTC ($${reqs.communityATC}+)`,
-									hoverText: `Minimum cumulative Total Trading Capital of $${reqs.communityATC}`,
-									completed: overview.communityATC >= reqs.communityATC,
+									title: `Community TTC ($${value.communityATC.minValue}+)`,
+									hoverText: `Minimum cumulative Total Trading Capital of $${value.communityATC.minValue}`,
+									completed: value.personalATC.completed,
 								},
 							]
 						: []),
-					...(reqs.communityMembers > 0
+					...(value.communitySize.minValue > 0
 						? [
 								{
-									title: `Community Size (${reqs.communityMembers}+)`,
-									hoverText: `Grow your community to over ${reqs.communityMembers} active referrals.`,
-									completed: overview.communityMembers >= reqs.communityMembers,
+									title: `Community Size (${value.communitySize.minValue}+)`,
+									hoverText: `Grow your community to over ${value.communitySize.minValue} active referrals.`,
+									completed: value.communitySize.completed,
 								},
 							]
 						: []),
 				],
 				completed:
-					overview.personalATC >= reqs.personalATC &&
-					overview.communityATC >= reqs.communityATC &&
-					overview.communityMembers >= reqs.communityMembers,
+					rankData[rank].personalATC.completed &&
+					rankData[rank].communityATC.completed &&
+					rankData[rank].communitySize.completed,
 			};
 			return acc;
 		}, {} as RankRequirements);
 	};
 
-	const rankRequirements = generateRankRequirements(overview);
+	const rankRequirements = generateRankRequirements(rankData as IRankData);
 
 	return { rankRequirements };
 };

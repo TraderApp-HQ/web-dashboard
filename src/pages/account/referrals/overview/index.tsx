@@ -1,7 +1,7 @@
 import { NestedReferralsLayout } from "..";
 import CardIcon from "~/components/icons/CardIcon";
 import RankIcon from "~/components/icons/RankIcon";
-import { useState } from "react";
+import React, { useMemo, useState } from "react";
 import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
 import Toast from "~/components/common/Toast";
 import { InviteCode } from "~/components/AccountLayout/Referrals/InviteCode";
@@ -10,16 +10,23 @@ import ReferalCard from "~/components/Cards/ReferalCard";
 import ProgressTracker from "~/components/common/ProgressTracker";
 import { useReferralOverview } from "~/hooks/useReferralOverview";
 import { useReferralRank } from "~/hooks/useReferralRank";
+import { ProgressTrackerLoader } from "~/components/Loaders/ReferralProgressLoader";
+import useUserProfileData from "~/hooks/useUserProfileData";
 
 const ReferralsOverview = () => {
 	const [success, setSuccess] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
+
 	const { data: stats, isLoading, error: referralError } = useReferralOverview();
-	const { rankRequirements } = useReferralRank({
-		personalATC: stats?.currentEarning ?? 0,
-		communityATC: stats?.communityATC ?? 0,
-		communityMembers: stats?.communityMembers ?? 0,
-	});
+
+	const { rankRequirements } = useReferralRank(stats?.rankData);
+
+	const { isAdmin } = useUserProfileData();
+
+	const isTestReferralTrackingInProgress = useMemo(
+		() => stats?.isTestReferralTrackingInProgress && isAdmin,
+		[isAdmin, stats?.isTestReferralTrackingInProgress],
+	);
 
 	const handleError = (err: Error) => {
 		setError(err);
@@ -42,7 +49,7 @@ const ReferralsOverview = () => {
 				<div className="flex flex-col md:flex-row gap-2">
 					<ReferalCard
 						title="Current Rank"
-						subtext={stats?.currentRank ?? ""}
+						subtext={stats?.currentRank ?? "---"}
 						Icon={RankIcon}
 					/>
 					<ReferalCard
@@ -60,9 +67,20 @@ const ReferralsOverview = () => {
 			<SendInvite onError={handleError} onSuccess={setSuccess} />
 
 			<ProgressTracker
-				title="Referral Progress"
+				title={
+					<div className="flex items-center gap-1">
+						<span>Referral Progress</span>
+						{isTestReferralTrackingInProgress && (
+							<span className="text-sm font-normal text-[#414141]">
+								(Referral stats updating, refresh page to check progress)
+							</span>
+						)}
+					</div>
+				}
 				body="Move from one step to another by sending an invitation to your friend."
 				tiers={rankRequirements}
+				isLoading={isLoading}
+				loadingComponent={ProgressTrackerLoader}
 			/>
 
 			{success && (

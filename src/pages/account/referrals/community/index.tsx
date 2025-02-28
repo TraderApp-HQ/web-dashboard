@@ -84,7 +84,7 @@ const ReferralsCommunity = () => {
 				<div className="flex flex-col md:flex-row gap-2">
 					<ReferalCard
 						title="Community Members"
-						subtext={`${stats.communityMembers}`}
+						subtext={`${stats.communitySize}`}
 						Icon={() => <FaUsers color="#102477" size={"24"} />}
 					/>
 					<ReferalCard
