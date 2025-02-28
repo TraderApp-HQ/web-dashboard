@@ -287,7 +287,7 @@ export default function VerificationModal({
 								</div>
 								<div>
 									{openModal && countdown !== 0 && (
-										<p className="text-[#102477] font-bold ml-2">
+										<p className="text-[#102477] font-bold ml-1">
 											{Math.floor(countdown / 60)}:
 											{String(countdown % 60).padStart(2, "0")}
 										</p>
