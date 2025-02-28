@@ -32,9 +32,9 @@ export const useReferralRank = (rankData: IRankData | undefined) => {
 					...(value.communityATC.minValue > 0
 						? [
 								{
-									title: `Community TTC ($${value.communityATC.minValue}+)`,
+									title: `Community ATC ($${value.communityATC.minValue}+)`,
 									hoverText: `Minimum cumulative Total Trading Capital of $${value.communityATC.minValue}`,
-									completed: value.personalATC.completed,
+									completed: value.communityATC.completed,
 								},
 							]
 						: []),
