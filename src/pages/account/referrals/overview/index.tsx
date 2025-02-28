@@ -14,6 +14,8 @@ import { ProgressTrackerLoader } from "~/components/Loaders/ReferralProgressLoad
 import useUserProfileData from "~/hooks/useUserProfileData";
 
 const ReferralsOverview = () => {
+	const INVITE_BUTTON_TEXT = "Invite Friends";
+
 	const [success, setSuccess] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,7 +57,7 @@ const ReferralsOverview = () => {
 						className="md:hidden w-full flex items-center justify-center bg-[#1836B2] hover:bg-[#152b8f] active:bg-[#152b8f] text-white font-bold py-4 px-6 rounded-lg transition-colors duration-200 mb-2"
 						onClick={handleModalOpen}
 					>
-						Invite friends
+						{INVITE_BUTTON_TEXT}
 					</button>
 					<div className="flex flex-col md:flex-row gap-2 relative">
 						<ReferalCard
@@ -73,7 +75,7 @@ const ReferralsOverview = () => {
 							className="hidden md:flex items-center justify-center bg-[#1836B2] hover:bg-[#152b8f] active:bg-[#152b8f] text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 absolute right-0 top-0"
 							onClick={handleModalOpen}
 						>
-							Invite friends
+							{INVITE_BUTTON_TEXT}
 						</button>
 					</div>
 				</div>

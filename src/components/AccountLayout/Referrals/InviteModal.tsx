@@ -24,7 +24,12 @@ const RecipientChip = ({ email, onRemove }: { email: string; onRemove: () => voi
 	</div>
 );
 
-const InviteModal = ({ openModal, onClose, onSuccess, onError }: InviteFriendsModalProps) => {
+const InviteModal: React.FC<InviteFriendsModalProps> = ({
+	openModal,
+	onClose,
+	onSuccess,
+	onError,
+}) => {
 	const [emails, setEmails] = useState<string[]>([]);
 	const [inputValue, setInputValue] = useState("");
 	const [emailError, setEmailError] = useState("");
