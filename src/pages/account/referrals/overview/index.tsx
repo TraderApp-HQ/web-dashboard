@@ -54,12 +54,12 @@ const ReferralsOverview = () => {
 				<div className="flex flex-col gap-2 relative">
 					{/* Mobile Invite Button - Above Cards */}
 					<button
-						className="md:hidden w-full flex items-center justify-center bg-[#1836B2] hover:bg-[#152b8f] active:bg-[#152b8f] text-white font-bold py-4 px-6 rounded-lg transition-colors duration-200 mb-2"
+						className="lg:hidden w-full flex items-center justify-center bg-[#1836B2] hover:bg-[#152b8f] active:bg-[#152b8f] text-white font-bold py-4 px-6 rounded-lg transition-colors duration-200 mb-2"
 						onClick={handleModalOpen}
 					>
 						{INVITE_BUTTON_TEXT}
 					</button>
-					<div className="flex flex-col md:flex-row gap-2 relative">
+					<div className="flex flex-col lg:flex-row gap-2 relative">
 						<ReferalCard
 							title="Current Rank"
 							subtext={stats?.currentRank ?? ""}
@@ -72,7 +72,7 @@ const ReferralsOverview = () => {
 						/>
 						{/* Desktop Invite Button */}
 						<button
-							className="hidden md:flex items-center justify-center bg-[#1836B2] hover:bg-[#152b8f] active:bg-[#152b8f] text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 absolute right-0 top-0"
+							className="hidden lg:flex items-center justify-center bg-[#1836B2] hover:bg-[#152b8f] active:bg-[#152b8f] text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 absolute right-0 top-0"
 							onClick={handleModalOpen}
 						>
 							{INVITE_BUTTON_TEXT}

@@ -94,13 +94,7 @@ const InviteModal: React.FC<InviteFriendsModalProps> = ({
 	};
 
 	return (
-		<Modal
-			openModal={openModal}
-			onClose={onClose}
-			width="md:w-[651px]"
-			title="Invite Friends"
-			headerDivider
-		>
+		<Modal openModal={openModal} onClose={onClose} width="md:w-[651px]" title="Invite Friends">
 			<div className="py-[35px] flex flex-col gap-[50px]">
 				<div className="rounded-md flex flex-col border border-[#DEE3F6] bg-white text-[#3E57BF] p-4">
 					<div className="flex flex-wrap min-h-[2.5rem] gap-2.5">
