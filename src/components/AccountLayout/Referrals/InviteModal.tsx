@@ -16,7 +16,7 @@ interface InviteFriendsModalProps {
 const MAX_EMAILS = 20;
 
 const RecipientChip = ({ email, onRemove }: { email: string; onRemove: () => void }) => (
-	<div className="inline-flex items-center gap-2 px-3 h-8 bg-[#F0F2FD] text-[#08123b] font-semibold rounded-lg">
+	<div className="inline-flex items-center gap-2 px-3 py-1.5 h-11 bg-[#F0F2FD] text-[#08123b] font-semibold rounded-lg">
 		{email}
 		<button onClick={onRemove} className="hover:text-[#465ec1] p-1">
 			<RemoveIcon />
@@ -94,14 +94,12 @@ const InviteModal: React.FC<InviteFriendsModalProps> = ({
 	};
 
 	return (
-		<Modal
-			openModal={openModal}
-			onClose={onClose}
-			width="md:w-[651px]"
-			title="Invite Friends"
-			headerDivider
-		>
-			<div className="py-[35px] flex flex-col gap-[50px]">
+		<Modal openModal={openModal} onClose={onClose} width="md:w-[651px]" title="Invite Friends">
+			<p className="text-[#414141] text-[14px]">
+				Invite your friends to join TraderApp in just one click! Enter up to 20 email
+				addresses and send invites
+			</p>
+			<div className="pt-[20px] pb-[35px] flex flex-col gap-[50px]">
 				<div className="rounded-md flex flex-col border border-[#DEE3F6] bg-white text-[#3E57BF] p-4">
 					<div className="flex flex-wrap min-h-[2.5rem] gap-2.5">
 						{emails.map((email, index) => (
@@ -115,7 +113,7 @@ const InviteModal: React.FC<InviteFriendsModalProps> = ({
 							<InputField
 								type="email"
 								value={inputValue}
-								className="flex-grow w-full min-w-[210px] px-2.5 py-1"
+								className="flex-grow w-full min-w-[210px] px-2.5 py-2.5 outline-[0] placeholder:text-[14px]"
 								placeholder={
 									emails.length
 										? `Add up to ${MAX_EMAILS - emails.length} more email${MAX_EMAILS - emails.length === 1 ? "" : "s"}`
@@ -131,7 +129,7 @@ const InviteModal: React.FC<InviteFriendsModalProps> = ({
 				<button
 					onClick={sendInvites}
 					disabled={emails.length === 0 || isInvitePending}
-					className="h-[73px] w-full p-2.5 bg-[#1836b2] rounded-[9px] flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed"
+					className="h-[65px] w-full p-2.5 bg-[#1836b2] rounded-[9px] flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed"
 				>
 					<span className="text-white font-semibold">
 						{isInvitePending ? "Sending..." : "Send Invite"}
