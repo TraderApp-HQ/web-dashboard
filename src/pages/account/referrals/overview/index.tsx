@@ -54,7 +54,7 @@ const ReferralsOverview = () => {
 				<div className="flex flex-col gap-2 relative">
 					{/* Mobile Invite Button - Above Cards */}
 					<button
-						className="lg:hidden w-full flex items-center justify-center bg-[#1836B2] hover:bg-[#152b8f] active:bg-[#152b8f] text-white font-bold py-4 px-6 rounded-lg transition-colors duration-200 mb-2"
+						className="lg:hidden md:w-4/12 bg-[#1836B2] hover:bg-[#152b8f] active:bg-[#152b8f] text-white font-bold py-4 px-6 rounded-lg transition-colors duration-200 mb-2"
 						onClick={handleModalOpen}
 					>
 						{INVITE_BUTTON_TEXT}
