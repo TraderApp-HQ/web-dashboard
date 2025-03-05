@@ -1,6 +1,7 @@
 // import type { SignalHistoryItem } from "~/lib/types";
 import type {
 	ISignalPerformance,
+	ISignalPerformanceSummary,
 	ITBody,
 	ITableActions,
 	ITableMobile,
@@ -171,90 +172,31 @@ export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 	return dataMobile;
 }
 
-export function activeSignalsPerfomanceSumary(signals: ISignal[]): ISignalPerformance[] {
-	if (signals.length === 0) return [];
+export function signalsPerfomanceSummary(signals: ISignal[]): ISignalPerformanceSummary {
+	let bestPerformer: ISignal = signals[0];
+	let worstPerformer: ISignal = signals[0];
 
-	let bestPerformer: ISignal | undefined;
-	let worstPerformer: ISignal | undefined;
+	signals.forEach((signal) => {
+		bestPerformer =
+			signal.maxGain > (bestPerformer?.maxGain || -Infinity) ? signal : bestPerformer;
+		worstPerformer =
+			signal.maxGain < (worstPerformer?.maxGain || Infinity) ? signal : worstPerformer;
+	});
 
-	for (const signal of signals) {
-		if (signal.currentPrice !== undefined) {
-			signal.currentChange = parseFloat(
-				(((signal.currentPrice - signal.entryPrice) / signal.entryPrice) * 100).toFixed(2),
-			);
-		}
-
-		if (
-			bestPerformer === undefined ||
-			(signal.currentChange !== undefined &&
-				signal.currentChange > (bestPerformer.currentChange || -Infinity))
-		) {
-			bestPerformer = signal;
-		}
-
-		if (
-			worstPerformer === undefined ||
-			(signal.currentChange !== undefined &&
-				signal.currentChange < (worstPerformer.currentChange || Infinity))
-		) {
-			worstPerformer = signal;
-		}
-	}
-
-	if (bestPerformer === undefined || worstPerformer === undefined) {
-		return signals.slice(0, 2).map((signal, index) => ({
-			id: signal.id,
-			label: index === 0 ? "Best performer" : "Worst performer",
-			asset: {
-				id: signal.asset.id,
-				logo: signal.asset.logo,
-				name: signal.asset.name,
-				symbol: signal.asset.symbol,
-			},
-			price: signal.currentPrice,
-			percentage: signal.currentChange,
-		}));
-	}
-
-	if (bestPerformer.id === worstPerformer.id) {
-		return signals.slice(0, 2).map((signal, index) => ({
-			id: signal.id,
-			label: index === 0 ? "Best performer" : "Worst performer",
-			asset: {
-				id: signal.asset.id,
-				logo: signal.asset.logo,
-				name: signal.asset.name,
-				symbol: signal.asset.symbol,
-			},
-			price: signal.currentPrice,
-			percentage: signal.currentChange,
-		}));
-	}
-
-	return [
-		{
-			id: bestPerformer.id,
-			label: "Best performer",
-			asset: {
-				id: bestPerformer.asset.id,
+	const bestSignal: ISignalPerformance | undefined = bestPerformer
+		? {
 				logo: bestPerformer.asset.logo,
 				name: bestPerformer.asset.name,
-				symbol: bestPerformer.asset.symbol,
-			},
-			price: bestPerformer.currentPrice,
-			percentage: bestPerformer.currentChange,
-		},
-		{
-			id: worstPerformer.id,
-			label: "Worst performer",
-			asset: {
-				id: worstPerformer.asset.id,
+				maxGain: bestPerformer.maxGain,
+			}
+		: undefined;
+	const worstSignal: ISignalPerformance | undefined = worstPerformer
+		? {
 				logo: worstPerformer.asset.logo,
 				name: worstPerformer.asset.name,
-				symbol: worstPerformer.asset.symbol,
-			},
-			price: worstPerformer.currentPrice,
-			percentage: worstPerformer.currentChange,
-		},
-	];
+				maxGain: worstPerformer.maxGain,
+			}
+		: undefined;
+
+	return { bestSignal, worstSignal };
 }

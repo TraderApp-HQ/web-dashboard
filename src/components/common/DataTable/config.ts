@@ -45,14 +45,17 @@ export interface ITableMobile {
 }
 
 export interface ISignalPerformance {
-	id: string;
-	label: string;
-	asset: {
-		id: string;
-		logo: string;
-		name: string;
-		symbol: string;
-	};
-	price?: number;
-	percentage?: number;
+	logo: string;
+	name: string;
+	maxGain: number;
+}
+
+export interface ISignalPerformanceSummary {
+	bestSignal: ISignalPerformance | undefined;
+	worstSignal: ISignalPerformance | undefined;
+}
+
+export interface IActiveSignalCardProps {
+	summary: ISignalPerformanceSummary | undefined;
+	isLoading: boolean;
 }
