@@ -1,7 +1,7 @@
 // import type { SignalHistoryItem } from "~/lib/types";
 import type {
-	ISignalPerformance,
-	ISignalPerformanceSummary,
+	IPerformanceData,
+	ISignalPerformanceSummaryData,
 	ITBody,
 	ITableActions,
 	ITableMobile,
@@ -36,7 +36,7 @@ export function activeSignalsDataTableSelector(
 					}),
 				},
 				{ displayItem: `${signal.currentPrice ?? "-"} USDT` },
-				{ displayItem: renderPercentageChange(signal.currentChange) },
+				{ displayItem: renderPercentageChange({ currentChange: signal.currentChange }) },
 				{
 					displayItem: renderTargetProfits({
 						targetProfits: signal.targetProfits,
@@ -109,7 +109,7 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			},
 			{
 				displayItemTitle: "Change",
-				displayItemValue: renderPercentageChange(signal.currentChange),
+				displayItemValue: renderPercentageChange({ currentChange: signal.currentChange }),
 			},
 			{
 				displayItemTitle: "Status",
@@ -172,7 +172,7 @@ export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 	return dataMobile;
 }
 
-export function signalsPerfomanceSummary(signals: ISignal[]): ISignalPerformanceSummary {
+export function signalsPerfomanceSummary(signals: ISignal[]): ISignalPerformanceSummaryData {
 	let bestPerformer: ISignal = signals[0];
 	let worstPerformer: ISignal = signals[0];
 
@@ -183,18 +183,18 @@ export function signalsPerfomanceSummary(signals: ISignal[]): ISignalPerformance
 			signal.maxGain < (worstPerformer?.maxGain || Infinity) ? signal : worstPerformer;
 	});
 
-	const bestSignal: ISignalPerformance | undefined = bestPerformer
+	const bestSignal: IPerformanceData | undefined = bestPerformer
 		? {
-				logo: bestPerformer.asset.logo,
-				name: bestPerformer.asset.name,
-				maxGain: bestPerformer.maxGain,
+				itemLogo: bestPerformer.asset.logo,
+				itemName: bestPerformer.asset.name,
+				itemMaxGain: bestPerformer.maxGain,
 			}
 		: undefined;
-	const worstSignal: ISignalPerformance | undefined = worstPerformer
+	const worstSignal: IPerformanceData | undefined = worstPerformer
 		? {
-				logo: worstPerformer.asset.logo,
-				name: worstPerformer.asset.name,
-				maxGain: worstPerformer.maxGain,
+				itemLogo: worstPerformer.asset.logo,
+				itemName: worstPerformer.asset.name,
+				itemMaxGain: worstPerformer.maxGain,
 			}
 		: undefined;
 

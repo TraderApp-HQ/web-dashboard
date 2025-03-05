@@ -1,15 +1,16 @@
 import React from "react";
 import Card from "~/components/AccountLayout/Card";
-import { ISignalPerformance } from "../common/DataTable/config";
+import { IPerformanceData } from "../common/DataTable/config";
 import Image from "next/image";
+import { renderPercentageChange } from "~/helpers";
 interface IPerformanceSummaryCardProps {
-	data: ISignalPerformance | undefined;
+	data: IPerformanceData | undefined;
 	label: string;
 }
 
 const PerformanceSummaryCard: React.FC<IPerformanceSummaryCardProps> = ({ data, label }) => {
 	const imgSrc =
-		(data?.maxGain ?? 0) > 0
+		data && data?.itemMaxGain > 0
 			? "/images/percentageIncrease.png"
 			: "/images/percentageDecrease.png";
 
@@ -23,34 +24,20 @@ const PerformanceSummaryCard: React.FC<IPerformanceSummaryCardProps> = ({ data, 
 					<div className="flex items-center gap-2">
 						{data && (
 							<Image
-								src={data.logo}
-								alt={data.name}
+								src={data.itemLogo}
+								alt={data.itemName}
 								width={24}
 								height={24}
 								className="w-6 h-6 relative"
 							/>
 						)}
 						<span className="text-slate-900 text-base font-semibold leading-none">
-							{data?.name ?? "--"}
+							{data?.itemName ?? "--"}
 						</span>
 					</div>
+
 					{/* TODO: change this to svg icon in a different component */}
-					<div className="flex justify-start items-center">
-						{data && (
-							<Image
-								src={imgSrc}
-								alt="Signal Percentage direction"
-								className="p-1.5"
-								width={20}
-								height={20}
-							/>
-						)}
-						<span
-							className={`text-slate-900 text-base font-normal ${data && data?.maxGain < 0 ? "!text-red-500" : "!text-emerald-700"}`}
-						>
-							{data?.maxGain ?? "--"}%
-						</span>
-					</div>
+					{renderPercentageChange({ currentChange: data?.itemMaxGain, imgSrc })}
 				</div>
 			</div>
 		</Card>

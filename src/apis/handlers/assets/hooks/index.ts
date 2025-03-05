@@ -3,7 +3,7 @@ import { AssetsQueryId } from "~/apis/handlers/assets/constants";
 import { SignalStatus } from "~/apis/handlers/assets/enums";
 import { ISignal } from "~/apis/handlers/assets/interfaces";
 import type {
-	ISignalPerformanceSummary,
+	ISignalPerformanceSummaryData,
 	ITBody,
 	ITHead,
 	ITableMobile,
@@ -34,7 +34,7 @@ export const useFetchActiveSignals = ({
 	const [signalsTableHead, setSignalsTableHead] = useState<ITHead[]>([]);
 	const [signalsTableBody, setSignalsTableBody] = useState<ITBody>();
 	const [signalsMobileTableBody, setSignalsMobileTableBody] = useState<ITableMobile[]>([]);
-	const [performanceSummary, setPerformanceSummary] = useState<ISignalPerformanceSummary>();
+	const [performanceSummary, setPerformanceSummary] = useState<ISignalPerformanceSummaryData>();
 
 	// const [socketUrl, setSocketUrl] = useState("ws://localhost:8080/signals/stream");
 	// const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);

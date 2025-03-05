@@ -44,18 +44,20 @@ export interface ITableMobile {
 	actions?: ITableActions[];
 }
 
-export interface ISignalPerformance {
-	logo: string;
-	name: string;
-	maxGain: number;
+export interface IPerformanceData {
+	itemLogo: string;
+	itemName: string;
+	itemMaxGain: number;
 }
 
-export interface ISignalPerformanceSummary {
-	bestSignal: ISignalPerformance | undefined;
-	worstSignal: ISignalPerformance | undefined;
+export interface ISignalPerformanceSummaryData {
+	bestSignal: IPerformanceData | undefined;
+	worstSignal: IPerformanceData | undefined;
 }
 
 export interface IActiveSignalCardProps {
-	summary: ISignalPerformanceSummary | undefined;
+	summary: ISignalPerformanceSummaryData | undefined;
 	isLoading: boolean;
+	isSuccess: boolean;
+	isError: boolean;
 }

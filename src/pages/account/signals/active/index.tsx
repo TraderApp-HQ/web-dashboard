@@ -29,6 +29,7 @@ const ActiveSignals = () => {
 
 	const {
 		isLoading,
+		isError,
 		isSuccess,
 		activeSignals,
 		signalsTableHead,
@@ -73,7 +74,12 @@ const ActiveSignals = () => {
 
 	return (
 		<>
-			<ActiveSignalCard summary={performanceSummary} isLoading={isLoading} />
+			<ActiveSignalCard
+				summary={performanceSummary}
+				isLoading={isLoading}
+				isSuccess={isSuccess}
+				isError={isError}
+			/>
 			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
 				<SearchForm
 					// onChange={(e) => setSearchTerm(e.target.value)}
@@ -182,13 +188,18 @@ const ActiveSignals = () => {
 		</>
 	);
 };
-const ActiveSignalCard: React.FC<IActiveSignalCardProps> = ({ summary, isLoading }) => {
+const ActiveSignalCard: React.FC<IActiveSignalCardProps> = ({
+	summary,
+	isLoading,
+	isError,
+	isSuccess,
+}) => {
 	return (
 		<div>
-			{isLoading ? (
-				<PerformanceSummaryCardLoader />
-			) : (
-				<div className="flex flex-col md:flex-row gap-2">
+			{isLoading && <PerformanceSummaryCardLoader />}
+			{isError && <div>Error fetching data</div>}
+			{isSuccess && (
+				<div className="flex flex-col md:flex-row gap-4">
 					<PerformanceSummaryCard data={summary?.bestSignal} label="best performer" />
 					<PerformanceSummaryCard data={summary?.worstSignal} label="worst performer" />
 				</div>
