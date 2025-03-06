@@ -9,11 +9,6 @@ interface IPerformanceSummaryCardProps {
 }
 
 const PerformanceSummaryCard: React.FC<IPerformanceSummaryCardProps> = ({ data, label }) => {
-	const imgSrc =
-		data && data?.itemPercentageChange > 0
-			? "/images/percentageIncrease.png"
-			: "/images/percentageDecrease.png";
-
 	return (
 		<Card className="w-12/12 md:w-[40%] lg:w-[35%] xl:w-[30%] 2xl:w-[25%] px-3 py-7">
 			<div className="flex-col justify-center items-start space-y-6 ml-0 sm:ml-3">
@@ -37,7 +32,7 @@ const PerformanceSummaryCard: React.FC<IPerformanceSummaryCardProps> = ({ data, 
 					</div>
 
 					{/* TODO: change this to svg icon in a different component */}
-					{renderPercentageChange({ currentChange: data?.itemPercentageChange, imgSrc })}
+					{renderPercentageChange(data?.itemPercentageChange)}
 				</div>
 			</div>
 		</Card>
