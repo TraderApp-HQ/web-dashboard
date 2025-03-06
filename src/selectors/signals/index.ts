@@ -36,7 +36,7 @@ export function activeSignalsDataTableSelector(
 					}),
 				},
 				{ displayItem: `${signal.currentPrice ?? "-"} USDT` },
-				{ displayItem: renderPercentageChange({ currentChange: signal.currentChange }) },
+				{ displayItem: renderPercentageChange(signal.currentChange) },
 				{
 					displayItem: renderTargetProfits({
 						targetProfits: signal.targetProfits,
@@ -109,7 +109,7 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			},
 			{
 				displayItemTitle: "Change",
-				displayItemValue: renderPercentageChange({ currentChange: signal.currentChange }),
+				displayItemValue: renderPercentageChange(signal.currentChange),
 			},
 			{
 				displayItemTitle: "Status",

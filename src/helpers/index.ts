@@ -62,14 +62,8 @@ export function renderTargetProfits({
 	);
 }
 
-export function renderPercentageChange({
-	currentChange,
-	imgSrc,
-}: {
-	currentChange?: number;
-	imgSrc?: string;
-}) {
-	return React.createElement(DisplayChange, { currentChange, imgSrc });
+export function renderPercentageChange(currentChange?: number) {
+	return React.createElement(DisplayChange, { currentChange });
 }
 
 export function renderStatus(status: string, style?: { justify?: string }, bullet?: boolean) {
