@@ -2,13 +2,19 @@ import { useCallback, useEffect, useState } from "react";
 import { AssetsQueryId } from "~/apis/handlers/assets/constants";
 import { SignalStatus } from "~/apis/handlers/assets/enums";
 import { ISignal } from "~/apis/handlers/assets/interfaces";
-import type { ITBody, ITHead, ITableMobile } from "~/components/common/DataTable/config";
+import type {
+	IPerformanceSummaryData,
+	ITBody,
+	ITHead,
+	ITableMobile,
+} from "~/components/common/DataTable/config";
 import { useFetch } from "~/hooks/useFetch";
 import {
 	activeSignalsDataTableMobileSelector,
 	activeSignalsDataTableSelector,
 	signalsHistoryDataTableMobileSelector,
 	signalsHistoryDataTableSelector,
+	signalsPerfomanceSummary,
 } from "~/selectors/signals";
 import { AssetsService } from "..";
 
@@ -28,6 +34,7 @@ export const useFetchActiveSignals = ({
 	const [signalsTableHead, setSignalsTableHead] = useState<ITHead[]>([]);
 	const [signalsTableBody, setSignalsTableBody] = useState<ITBody>();
 	const [signalsMobileTableBody, setSignalsMobileTableBody] = useState<ITableMobile[]>([]);
+	const [performanceSummary, setPerformanceSummary] = useState<IPerformanceSummaryData>();
 
 	// const [socketUrl, setSocketUrl] = useState("ws://localhost:8080/signals/stream");
 	// const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
@@ -56,10 +63,14 @@ export const useFetchActiveSignals = ({
 		);
 		const dataMobile = activeSignalsDataTableMobileSelector(allSignals?.signals ?? []);
 
+		// Signals performance summary
+		const performanceSummary = signalsPerfomanceSummary(allSignals?.signals ?? []);
+
 		setSignalsTableHead(tableHead);
 		setSignalsTableBody(tableBody);
 		setSignalsMobileTableBody(dataMobile);
 		setActiveSignals(allSignals?.signals ?? []);
+		setPerformanceSummary(performanceSummary);
 	}, [allSignals, isSuccess, isLoading]);
 
 	// const { userId } = useUserProfileData();
@@ -106,6 +117,7 @@ export const useFetchActiveSignals = ({
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
+		performanceSummary,
 	};
 };
 

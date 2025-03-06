@@ -1,29 +1,22 @@
-import SearchForm from "~/components/AccountLayout/SearchForm";
-import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
-import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import clsx from "clsx";
-import Date from "~/components/AccountLayout/Date";
-import Button from "~/components/AccountLayout/Button";
-import Select from "~/components/AccountLayout/Select";
 import type { ChangeEvent } from "react";
 import React, { useState } from "react";
-import data from "../data.json";
-import { DataTable, DataTableMobile } from "~/components/common/DataTable";
-import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
-import Pagination from "~/components/Pagination";
 import { useFetchActiveSignals } from "~/apis/handlers/assets/hooks";
-import { ISignal } from "~/apis/handlers/assets/interfaces";
-import { activeSignalsPerfomanceSumary } from "~/selectors/signals";
-import { NestedSignalsLayout } from "../";
-import TableLoader from "~/components/Loaders/TableLoader";
+import Button from "~/components/AccountLayout/Button";
+import Date from "~/components/AccountLayout/Date";
+import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
+import SearchForm from "~/components/AccountLayout/SearchForm";
+import Select from "~/components/AccountLayout/Select";
+import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
+import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
-
-interface ActiveSignalCardProps {
-	signals: ISignal[];
-	isSuccess?: boolean;
-	isLoading?: boolean;
-}
+import TableLoader from "~/components/Loaders/TableLoader";
+import Pagination from "~/components/Pagination";
+import { DataTable, DataTableMobile } from "~/components/common/DataTable";
+import { IActiveSignalCardProps } from "~/components/common/DataTable/config";
+import { NestedSignalsLayout } from "../";
+import data from "../data.json";
 
 const ActiveSignals = () => {
 	// const { term: urlTerm } = useParams<{ term?: string }>();
@@ -36,11 +29,13 @@ const ActiveSignals = () => {
 
 	const {
 		isLoading,
+		isError,
 		isSuccess,
 		activeSignals,
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
+		performanceSummary,
 	} = useFetchActiveSignals({});
 	const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setSelectedDate(event.target.value);
@@ -79,7 +74,12 @@ const ActiveSignals = () => {
 
 	return (
 		<>
-			<ActiveSignalCard signals={activeSignals} isLoading={isLoading} isSuccess={isSuccess} />
+			<ActiveSignalCard
+				summary={performanceSummary}
+				isLoading={isLoading}
+				isSuccess={isSuccess}
+				isError={isError}
+			/>
 			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
 				<SearchForm
 					// onChange={(e) => setSearchTerm(e.target.value)}
@@ -188,17 +188,20 @@ const ActiveSignals = () => {
 		</>
 	);
 };
-const ActiveSignalCard: React.FC<ActiveSignalCardProps> = ({ signals, isSuccess, isLoading }) => {
-	const signalPerformer = activeSignalsPerfomanceSumary(signals);
+const ActiveSignalCard: React.FC<IActiveSignalCardProps> = ({
+	summary,
+	isLoading,
+	isError,
+	isSuccess,
+}) => {
 	return (
 		<div>
 			{isLoading && <PerformanceSummaryCardLoader />}
-			{signals.length > 0 && (
-				<div className="flex flex-col md:flex-row gap-2">
-					{isSuccess &&
-						signalPerformer.map((performance) => (
-							<PerformanceSummaryCard key={performance.id} data={performance} />
-						))}
+			{isError && <div>Error fetching data</div>}
+			{isSuccess && (
+				<div className="flex flex-col md:flex-row gap-4">
+					<PerformanceSummaryCard data={summary?.bestSignal} label="best performer" />
+					<PerformanceSummaryCard data={summary?.worstSignal} label="worst performer" />
 				</div>
 			)}
 		</div>
