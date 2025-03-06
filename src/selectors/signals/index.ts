@@ -1,7 +1,7 @@
 // import type { SignalHistoryItem } from "~/lib/types";
 import type {
 	IPerformanceData,
-	ISignalPerformanceSummaryData,
+	IPerformanceSummaryData,
 	ITBody,
 	ITableActions,
 	ITableMobile,
@@ -172,7 +172,7 @@ export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 	return dataMobile;
 }
 
-export function signalsPerfomanceSummary(signals: ISignal[]): ISignalPerformanceSummaryData {
+export function signalsPerfomanceSummary(signals: ISignal[]): IPerformanceSummaryData {
 	let bestPerformer: ISignal = signals[0];
 	let worstPerformer: ISignal = signals[0];
 
@@ -187,14 +187,14 @@ export function signalsPerfomanceSummary(signals: ISignal[]): ISignalPerformance
 		? {
 				itemLogo: bestPerformer.asset.logo,
 				itemName: bestPerformer.asset.name,
-				itemMaxGain: bestPerformer.maxGain,
+				itemPercentageChange: bestPerformer.maxGain,
 			}
 		: undefined;
 	const worstSignal: IPerformanceData | undefined = worstPerformer
 		? {
 				itemLogo: worstPerformer.asset.logo,
 				itemName: worstPerformer.asset.name,
-				itemMaxGain: worstPerformer.maxGain,
+				itemPercentageChange: worstPerformer.maxGain,
 			}
 		: undefined;
 

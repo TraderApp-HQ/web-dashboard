@@ -47,16 +47,16 @@ export interface ITableMobile {
 export interface IPerformanceData {
 	itemLogo: string;
 	itemName: string;
-	itemMaxGain: number;
+	itemPercentageChange: number;
 }
 
-export interface ISignalPerformanceSummaryData {
+export interface IPerformanceSummaryData {
 	bestSignal: IPerformanceData | undefined;
 	worstSignal: IPerformanceData | undefined;
 }
 
 export interface IActiveSignalCardProps {
-	summary: ISignalPerformanceSummaryData | undefined;
+	summary: IPerformanceSummaryData | undefined;
 	isLoading: boolean;
 	isSuccess: boolean;
 	isError: boolean;
