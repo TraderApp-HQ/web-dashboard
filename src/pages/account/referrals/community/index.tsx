@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
 import { NestedReferralsLayout } from "..";
 import { FaUsers } from "react-icons/fa";
-import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
-import SearchForm from "~/components/AccountLayout/SearchForm";
+import { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import ConnectionsIcons from "~/components/icons/ConnectionsIcons";
 import CurrencySymbolsIcon from "~/components/icons/CurrencySymbolsIcon";
@@ -81,7 +80,7 @@ const ReferralsCommunity = () => {
 		<div>
 			{isLoadingStats && <ReferralCommunityCardLoader />}
 			{stats && (
-				<div className="flex flex-col md:flex-row gap-2">
+				<div className="flex flex-col md:flex-row gap-2 mb-10">
 					<ReferalCard
 						title="Community Members"
 						subtext={`${stats.communitySize}`}
@@ -101,32 +100,6 @@ const ReferralsCommunity = () => {
 			)}
 
 			<section>
-				<div className="flex justify-between">
-					<SearchForm
-						onChange={(e) => setSearchKeyword(e.target.value)}
-						aria-label="search user"
-						placeHolder="Search for firstname lastname, etc..."
-						onSubmit={handleSearch}
-						defaultValue={searchKeyword}
-					/>
-					<DropdownMenu
-						className="w-[256px]"
-						btnClass="mt-6 w-24 h-12 px-1.5 py-3 bg-sky-200 bg-opacity-20 rounded-lg border"
-						trigger={
-							<>
-								<div className="text-sky-900 text-base font-normal leading-snug">
-									Filter
-								</div>
-							</>
-						}
-						position="left"
-					>
-						<DropdownMenuItem className="flex flex-col gap-y-2">
-							<div></div>
-						</DropdownMenuItem>
-					</DropdownMenu>
-				</div>
-
 				{referrals.length === 0 && !isLoading ? (
 					<>
 						<Card className="flex flex-col justify-center items-center h-[330px]">
@@ -143,7 +116,6 @@ const ReferralsCommunity = () => {
 					</>
 				) : (
 					<>
-						<h3 className="mb-2">Referrals ({data?.totalDocs ?? 0})</h3>
 						<div className="pb-8 rounded-2xl">
 							{isLoading ? (
 								<>
@@ -156,9 +128,9 @@ const ReferralsCommunity = () => {
 								</>
 							) : (
 								<>
-									<div className="hidden md:block p-5 bg-white rounded-2xl relative overflow-x-auto">
+									<div className="hidden md:block px-6 py-9 bg-white rounded-2xl relative overflow-x-auto">
 										<DataTable
-											tableStyles="mb-4"
+											tableStyles="mb-4 min-w-full"
 											justifyMenueItem="justify-normal"
 											tableHeadStyles="text-justify"
 											tableRowItemStyles="text-justify"
@@ -167,6 +139,25 @@ const ReferralsCommunity = () => {
 											tHead={tableHead}
 											tBody={tableBody}
 											hasActions={false}
+											showSearch={true}
+											searchProps={{
+												onSearch: handleSearch,
+												onChange: (e) => setSearchKeyword(e.target.value),
+												placeholder:
+													"Search for firstname lastname, etc...",
+												defaultValue: searchKeyword,
+												className: "bg-white mt-0",
+											}}
+											showFilter={true}
+											filterProps={{
+												triggerText: "Filter",
+												filterContent: (
+													<DropdownMenuItem className="flex flex-col gap-y-2">
+														<div></div>
+													</DropdownMenuItem>
+												),
+												className: "bg-white",
+											}}
 										/>
 										<Pagination
 											currentPage={data?.page ?? 1}
