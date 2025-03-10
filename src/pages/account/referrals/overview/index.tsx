@@ -62,7 +62,7 @@ const ReferralsOverview = () => {
 					<div className="flex flex-col lg:flex-row gap-2 relative">
 						<ReferalCard
 							title="Current Rank"
-							subtext={stats?.currentRank ?? ""}
+							subtext={stats?.currentRank ?? "---"}
 							Icon={RankIcon}
 						/>
 						<ReferalCard

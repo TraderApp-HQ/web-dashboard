@@ -12,8 +12,9 @@ import {
 	TaskStatus,
 	UserTaskStatus,
 } from "~/apis/handlers/users/enums";
-import { Tier } from "~/components/common/ProgressTracker/types";
+import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/types";
 import DisplayChange from "~/components/common/DisplayChange";
+import RankDisplay from "~/components/common/RankDisplay";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -110,6 +111,10 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 			theme = ColourTheme.PRIMARY;
 	}
 	return React.createElement(StatusPill, { status, theme, style, bullet });
+}
+
+export function renderRank(rank: ReferralRankType | null) {
+	return React.createElement(RankDisplay, { rank });
 }
 
 export const serverRedirect = (destination: string): GetServerSidePropsResult<{}> => {
