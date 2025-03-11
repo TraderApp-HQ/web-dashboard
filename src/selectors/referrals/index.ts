@@ -1,6 +1,6 @@
 import { IReferrals } from "~/apis/handlers/users/interfaces";
 import { ITableMobile, ITBody } from "~/components/common/DataTable/config";
-import { renderDisplayItem, renderStatus } from "~/helpers";
+import { renderDisplayItem, renderRank, renderStatus } from "~/helpers";
 import { UsersCommunityHeadItems } from "./constants";
 import { format } from "date-fns";
 
@@ -17,9 +17,7 @@ export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 					}),
 				},
 				{
-					displayItem: renderDisplayItem({
-						itemText: { text: referral.userId.referralRank },
-					}),
+					displayItem: renderRank(referral.userId.referralRank),
 				},
 				{
 					displayItem: renderDisplayItem({

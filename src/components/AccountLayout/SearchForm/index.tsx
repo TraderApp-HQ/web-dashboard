@@ -8,6 +8,7 @@ interface SearchFormProps {
 	"aria-label": string;
 	className?: string;
 	defaultValue?: string;
+	marginTop?: string;
 }
 
 export default function SearchForm({
@@ -17,13 +18,15 @@ export default function SearchForm({
 	onSubmit,
 	className,
 	defaultValue,
+	marginTop = "mt-6",
 }: SearchFormProps) {
 	return (
 		<form className="flex-1" onSubmit={onSubmit}>
 			<label
 				className={clsx(
 					className,
-					"mb-4 mt-6 sm:w-96 w-[100%] h-12 px-5 py-3 bg-gray-100 border rounded-xl justify-start items-center gap-3.5 inline-flex",
+					"mb-4 sm:w-96 w-[100%] h-12 px-5 py-3 bg-gray-100 border rounded-xl justify-start items-center gap-3.5 inline-flex",
+					marginTop,
 				)}
 			>
 				<div className="w-6 h-6 justify-center items-center flex">
