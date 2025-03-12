@@ -45,7 +45,7 @@ const RankDisplay: React.FC<IRankDisplay> = ({ rank }) => {
 	return (
 		<div className={`flex justify-center items-center}`}>
 			<div
-				className={`flex px-5 py-1.5 font-black rounded-lg justify-center items-center gap-2 ${rankStyle}`}
+				className={`flex px-7 py-2 font-black rounded-lg justify-center items-center gap-2 ${rankStyle}`}
 			>
 				{rank || "---"}
 			</div>
