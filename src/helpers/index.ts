@@ -26,6 +26,8 @@ export function renderDisplayItem({
 	itemImage,
 	styles,
 	isAssetItem,
+	useAvatar,
+	avatarInitials,
 }: IDisplayItem) {
 	return React.createElement(DisplayItem, {
 		itemText,
@@ -33,6 +35,8 @@ export function renderDisplayItem({
 		itemImage,
 		styles,
 		isAssetItem,
+		useAvatar,
+		avatarInitials,
 	});
 }
 
