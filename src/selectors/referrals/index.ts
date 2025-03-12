@@ -14,7 +14,11 @@ export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 						itemText: {
 							text: `${referral.userId.firstName} ${referral.userId.lastName}`,
 						},
+						useAvatar: true,
+						avatarInitials:
+							`${referral.userId.firstName[0]}${referral.userId.lastName[0]}`.toUpperCase(),
 					}),
+					styles: "flex justify-start px-4",
 				},
 				{
 					displayItem: renderRank(referral.userId.referralRank),

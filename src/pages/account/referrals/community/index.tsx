@@ -128,7 +128,7 @@ const ReferralsCommunity = () => {
 								</>
 							) : (
 								<>
-									<div className="hidden md:block px-6 py-9 bg-white rounded-2xl relative overflow-x-auto">
+									<div className="hidden md:block px-8 py-9 bg-white rounded-2xl relative overflow-x-auto">
 										<DataTable
 											tableStyles="mb-4 min-w-full"
 											justifyMenueItem="justify-normal"
@@ -143,10 +143,9 @@ const ReferralsCommunity = () => {
 											searchProps={{
 												onSearch: handleSearch,
 												onChange: (e) => setSearchKeyword(e.target.value),
-												placeholder:
-													"Search for firstname lastname, etc...",
+												placeholder: "Search by first or last name",
 												defaultValue: searchKeyword,
-												className: "bg-white mt-0",
+												className: "bg-white",
 											}}
 											showFilter={true}
 											filterProps={{
@@ -158,15 +157,16 @@ const ReferralsCommunity = () => {
 												),
 												className: "bg-white",
 											}}
-										/>
-										<Pagination
-											currentPage={data?.page ?? 1}
-											totalPages={data?.totalPages ?? 0}
-											rowsPerPage={rowsPerPage}
-											totalRecord={data?.totalDocs ?? 0}
-											setRowsPerPage={setRowsPerPage}
-											onNext={() => setCurrentPage((prev) => prev + 1)}
-											onPrev={() => setCurrentPage((prev) => prev - 1)}
+											showPagination={true}
+											paginationProps={{
+												currentPage: data?.page ?? 1,
+												totalPages: data?.totalPages ?? 0,
+												rowsPerPage: rowsPerPage,
+												totalRecord: data?.totalDocs ?? 0,
+												setRowsPerPage,
+												onNext: () => setCurrentPage((prev) => prev + 1),
+												onPrev: () => setCurrentPage((prev) => prev - 1),
+											}}
 										/>
 									</div>
 

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import React from "react";
+import UserTile from "~/components/AccountLayout/UserTile";
 import type { IDisplayItem } from "~/lib/types";
 
 const DisplayItem: React.FC<IDisplayItem> = ({
@@ -8,12 +9,14 @@ const DisplayItem: React.FC<IDisplayItem> = ({
 	itemSubText,
 	isAssetItem,
 	styles,
+	useAvatar,
+	avatarInitials,
 }) => {
 	return (
 		<div
-			className={`flex items-center space-x-4 md:justify-center justify-end ${styles} ${isAssetItem ? "md:w-[60%] md:mx-auto md:!justify-start" : ""}`}
+			className={`flex items-center space-x-2 md:justify-center justify-end ${styles} ${isAssetItem ? "md:w-[60%] md:mx-auto md:!justify-start" : ""}`}
 		>
-			{itemImage && (
+			{itemImage && !useAvatar && (
 				<Image
 					src={itemImage}
 					alt="Asset Logo"
@@ -22,11 +25,21 @@ const DisplayItem: React.FC<IDisplayItem> = ({
 					height={30}
 				/>
 			)}
+
+			{useAvatar && (
+				<UserTile
+					bgColor="bg-gray-50"
+					textColor="text-gray-700"
+					nameIntitials={avatarInitials ?? ""}
+				/>
+			)}
 			<div className={`flex flex-col gap-y-0.5 md:gap-y-2 md:items-start`}>
 				<span className={`text-stone-900 ${itemText?.style}`}>{itemText.text}</span>
-				<span className={`text-xs font-normal ${itemSubText?.style}`}>
-					{itemSubText?.text}
-				</span>
+				{itemSubText?.text && (
+					<span className={`text-xs font-normal ${itemSubText?.style}`}>
+						{itemSubText.text}
+					</span>
+				)}
 			</div>
 		</div>
 	);

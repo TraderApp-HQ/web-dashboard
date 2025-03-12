@@ -136,6 +136,8 @@ export interface IDisplayItem {
 	itemImage?: string;
 	styles?: string;
 	isAssetItem?: boolean;
+	useAvatar?: boolean;
+	avatarInitials?: string;
 }
 export type Asset = AssetItem | null;
 

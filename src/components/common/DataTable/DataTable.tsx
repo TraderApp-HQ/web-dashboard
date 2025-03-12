@@ -4,6 +4,17 @@ import TableMenuDropdown from "./TableMenuDropdown";
 import TableMenuItems from "./TableMenuitems";
 import SearchForm from "~/components/AccountLayout/SearchForm";
 import DropdownMenu from "~/components/AccountLayout/DropdownMenu";
+import Pagination from "~/components/Pagination";
+
+interface PaginationProps {
+	currentPage: number;
+	totalPages: number;
+	totalRecord: number;
+	rowsPerPage: number;
+	setRowsPerPage: (num: number) => void;
+	onNext: (page: number) => void;
+	onPrev: (page: number) => void;
+}
 
 interface IDataTable {
 	tHead: ITHead[];
@@ -30,6 +41,8 @@ interface IDataTable {
 		filterContent: React.ReactNode;
 		className?: string;
 	};
+	showPagination?: boolean;
+	paginationProps?: PaginationProps;
 }
 
 const DataTable: React.FC<IDataTable> = ({
@@ -47,18 +60,17 @@ const DataTable: React.FC<IDataTable> = ({
 	searchProps,
 	showFilter = false,
 	filterProps,
+	showPagination,
+	paginationProps,
 }) => {
 	return (
 		<>
-			<div className="flex justify-between mb-4">
+			<div className="flex justify-between mb-5">
 				{showSearch && searchProps && (
 					<SearchForm
-						onChange={searchProps.onChange}
-						aria-label="search"
+						{...searchProps}
 						placeHolder={searchProps.placeholder}
-						onSubmit={searchProps.onSearch}
-						defaultValue={searchProps.defaultValue}
-						className={searchProps.className}
+						aria-label="search"
 						marginTop="mt-0"
 					/>
 				)}
@@ -134,6 +146,11 @@ const DataTable: React.FC<IDataTable> = ({
 					))}
 				</tbody>
 			</table>
+			{showPagination && paginationProps && (
+				<div className="mt-9">
+					<Pagination {...paginationProps} />
+				</div>
+			)}
 		</>
 	);
 };
