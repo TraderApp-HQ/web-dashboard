@@ -174,8 +174,8 @@ const TaskCenter = () => {
 						</section>
 						<section className="mt-3 p-2 rounded-lg">
 							<Pagination
-								currentPage={firstPageIndex + 1}
-								totalPages={lastPageIndex!}
+								currentPage={currentPage}
+								totalPages={Math.ceil(totalDocsLength / rowsPerPage)}
 								rowsPerPage={rowsPerPage!}
 								totalRecord={totalDocsLength ?? 0}
 								setRowsPerPage={setRowsPerPage}
