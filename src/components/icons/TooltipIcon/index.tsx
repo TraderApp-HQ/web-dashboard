@@ -76,7 +76,6 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
 					"absolute z-50 p-2 text-[10px] text-gray-600 bg-white border border-gray-300 rounded shadow-sm",
 					"w-auto text-center font-light",
 					"leading-normal",
-					`min-w-[${minWidth}]`,
 					`max-w-${maxWidth}`,
 					visible ? "visible" : "invisible group-hover:visible",
 					pointerClasses.container,
@@ -86,6 +85,7 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
 					pointerClasses.pointerBorder,
 					pointerClasses.pointerBg,
 				)}
+				style={{ minWidth: minWidth }}
 			>
 				{text}
 			</div>
