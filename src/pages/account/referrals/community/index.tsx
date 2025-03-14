@@ -170,8 +170,29 @@ const ReferralsCommunity = () => {
 										/>
 									</div>
 
-									<div className="md:hidden p-5 bg-white rounded-2xl relative overflow-x-auto">
-										<DataTableMobile hasActions={false} data={mobileData} />
+									<div className="md:hidden rounded-2xl relative overflow-x-auto">
+										<DataTableMobile
+											hasActions={true}
+											data={mobileData}
+											showSearch={true}
+											searchProps={{
+												onSearch: handleSearch,
+												onChange: (e) => setSearchKeyword(e.target.value),
+												placeholder: "Search by first or last name",
+												defaultValue: searchKeyword,
+												className: "bg-white",
+											}}
+											showFilter={true}
+											filterProps={{
+												triggerText: "Filter",
+												filterContent: (
+													<DropdownMenuItem className="flex flex-col gap-y-2">
+														<div></div>
+													</DropdownMenuItem>
+												),
+												className: "bg-white",
+											}}
+										/>
 										<Pagination
 											currentPage={data?.page ?? 1}
 											totalPages={data?.totalPages ?? 0}
