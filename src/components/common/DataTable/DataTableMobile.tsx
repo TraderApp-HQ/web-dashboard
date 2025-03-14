@@ -36,7 +36,7 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 }) => {
 	return (
 		<>
-			<div className="flex flex-col mb-4 rounded-lg p-3 bg-white">
+			<div className="flex flex-col mb-4 rounded-lg px-3 py-4 bg-white">
 				{showSearch && searchProps && (
 					<SearchForm
 						{...searchProps}
@@ -72,7 +72,7 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 								{dataItem.tHead.displayItemTitle}
 							</div>
 							{hasActions && (
-								<div>
+								<div className="pr-1">
 									<TableMenuDropdown
 										dataTableMenuItems={dataItem.actions ?? []}
 									/>
@@ -91,7 +91,6 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 									} border-[#E5E7EB] border-opacity-20 pb-3 py-2 ${tb.styles ?? ""}`}
 								>
 									<div className="text-sm text-[#9CA3AF] w-[40%]">
-										{/* {tb.displayItemTitle} */}
 										{tb.tooltip ? (
 											<div className="flex items-center gap-1">
 												{tb.displayItemTitle}
