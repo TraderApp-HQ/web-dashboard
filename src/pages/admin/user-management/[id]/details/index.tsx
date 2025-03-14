@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { UsersService } from "~/apis/handlers/users";
 import type { IUserProfile } from "~/apis/handlers/users/interfaces";
 import Button from "~/components/AccountLayout/Button";
@@ -17,6 +17,7 @@ import { UserStatus } from "~/config/enum";
 import AdminLayout from "~/components/AdminLayout/Layout";
 import { useCreate } from "~/hooks/useCreate";
 import Toast from "~/components/common/Toast";
+import { UserRole } from "~/apis/handlers/users/enums";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { id } = context.params!;
@@ -30,6 +31,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const UserDetails = ({ id }: { id: string }) => {
 	const router = useRouter();
 	const [openModal] = useState(true);
+	const [showFundButton, setShowFundButton] = useState(false);
 	const usersService = new UsersService();
 
 	const fetchUser = useCallback(() => usersService.getUser({ id }), [id, usersService]);
@@ -37,6 +39,16 @@ const UserDetails = ({ id }: { id: string }) => {
 		queryKey: [id],
 		queryFn: fetchUser,
 	});
+
+	// Check if user is admin or super admin and if in development environment
+	useEffect(() => {
+		if (
+			process.env.NODE_ENV === "development" &&
+			(data?.role.includes(UserRole.SUPER_ADMIN) || data?.role.includes(UserRole.ADMIN))
+		) {
+			setShowFundButton(true);
+		}
+	}, [data]);
 
 	const {
 		mutate: trackUserReferrals,
@@ -80,6 +92,7 @@ const UserDetails = ({ id }: { id: string }) => {
 					<div className="flex gap-x-4 justify-center items-center">
 						<Button
 							onClick={() => router.push(`/admin/user-management/${data?.id}/edit`)}
+							size="small"
 						>
 							Edit user details
 						</Button>
@@ -88,6 +101,7 @@ const UserDetails = ({ id }: { id: string }) => {
 							color="text-black"
 							innerClassName="!border-neutral-300"
 							onClick={handleDeactivateClick}
+							size="small"
 						>
 							{data.status === UserStatus.ACTIVE
 								? "Deactivate User"
@@ -99,9 +113,23 @@ const UserDetails = ({ id }: { id: string }) => {
 							innerClassName="!border-neutral-300"
 							onClick={() => trackUserReferrals({ userId: data.id })}
 							disabled={isReferralTrackPending}
+							size="small"
 						>
 							Track Referrals
 						</Button>
+						{showFundButton && (
+							<Button
+								bgColor="bg-white hover:bg-blue-100 hover:transition-colors"
+								color="text-black"
+								innerClassName="!border-neutral-300"
+								onClick={() =>
+									router.push(`/admin/user-management/${data?.id}/add-fund`)
+								}
+								size="small"
+							>
+								Add Fund
+							</Button>
+						)}
 					</div>
 
 					<ConfirmModal
