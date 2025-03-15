@@ -1,23 +1,23 @@
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { UsersService } from "~/apis/handlers/users";
 import type { IUserProfile } from "~/apis/handlers/users/interfaces";
 import Button from "~/components/AccountLayout/Button";
 import Card from "~/components/AccountLayout/Card";
 import UserTile from "~/components/AccountLayout/UserTile";
+import AdminLayout from "~/components/AdminLayout/Layout";
 import Modal from "~/components/Modal";
+import Toast from "~/components/common/Toast";
 import TickIcon from "~/components/icons/TickIcon";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
+import { UserStatus } from "~/config/enum";
 import { renderStatus } from "~/helpers";
+import { useCreate } from "~/hooks/useCreate";
+import useFeatureFlag from "~/hooks/useFeatureFlag";
 import { useFetch } from "~/hooks/useFetch";
 import { formattedDate } from "~/lib/utils";
-import ConfirmModal from "../../../../../components/AdminLayout/User/ConfirmModal";
-import { UserStatus } from "~/config/enum";
-import AdminLayout from "~/components/AdminLayout/Layout";
-import { useCreate } from "~/hooks/useCreate";
-import Toast from "~/components/common/Toast";
-import { UserRole } from "~/apis/handlers/users/enums";
+import ConfirmModal from "~/components/AdminLayout/User/ConfirmModal";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { id } = context.params!;
@@ -31,24 +31,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const UserDetails = ({ id }: { id: string }) => {
 	const router = useRouter();
 	const [openModal] = useState(true);
-	const [showFundButton, setShowFundButton] = useState(false);
 	const usersService = new UsersService();
+
+	// Feature flag to show the button
+	const showButton = useFeatureFlag({ userId: id, flagName: "release-referral-tracking" });
 
 	const fetchUser = useCallback(() => usersService.getUser({ id }), [id, usersService]);
 	const { data, error, isLoading, isSuccess, isError, refetch } = useFetch({
 		queryKey: [id],
 		queryFn: fetchUser,
 	});
-
-	// Check if user is admin or super admin and if in development environment
-	useEffect(() => {
-		if (
-			process.env.NODE_ENV === "development" &&
-			(data?.role.includes(UserRole.SUPER_ADMIN) || data?.role.includes(UserRole.ADMIN))
-		) {
-			setShowFundButton(true);
-		}
-	}, [data]);
 
 	const {
 		mutate: trackUserReferrals,
@@ -117,7 +109,7 @@ const UserDetails = ({ id }: { id: string }) => {
 						>
 							Track Referrals
 						</Button>
-						{showFundButton && (
+						{showButton && (
 							<Button
 								bgColor="bg-white hover:bg-blue-100 hover:transition-colors"
 								color="text-black"
