@@ -2,6 +2,7 @@ import { APIClient } from "~/apis/apiClient";
 import type { IResponse } from "~/apis/handlers/interfaces";
 import { UsersService } from "~/apis/handlers/users";
 import type {
+	IAddFund,
 	IConnectManualInput,
 	IDeleteAccountInput,
 	IGetTradingAccountInput,
@@ -92,6 +93,19 @@ export class TradingEngineService {
 
 		if (response.error) {
 			throw new Error(response.message || "Failed to update account");
+		}
+
+		return response.message;
+	}
+
+	public async addFund(data: IAddFund): Promise<string> {
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/account/add-fund`,
+			data,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to add fund to account");
 		}
 
 		return response.message;

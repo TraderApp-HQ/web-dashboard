@@ -3,16 +3,18 @@ import Button from "~/components/common/Button";
 import Modal from "~/components/Modal";
 import InputField from "~/components/common/InputField";
 import { useCreate } from "~/hooks/useCreate";
-import { UsersService } from "~/apis/handlers/users";
 import Toast from "~/components/common/Toast";
 import type { ISelectBoxOption } from "~/components/interfaces";
 import { useFetch } from "~/hooks/useFetch";
-// import { UsersQueryId } from "~/apis/handlers/users/constants";
 import SelectBox from "~/components/common/SelectBox";
-import { UserRole } from "~/apis/handlers/users/enums";
 import { useRouter } from "next/router";
 import AdminLayout from "~/components/AdminLayout/Layout";
 import { GetServerSideProps } from "next";
+import { TradingEngineService } from "~/apis/handlers/trading-engine";
+import { TradingPlatform } from "~/apis/handlers/trading-engine/enums";
+import { AccountType, Currency } from "~/config/enum";
+import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
+import AddFundLoader from "~/components/Loaders/AddFundLoader";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { id } = context.params!;
@@ -24,256 +26,195 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 function AddFund({ id }: { id: string }) {
-	const [isOpen, setIsOpen] = useState(true);
 	const router = useRouter();
-	const usersService = new UsersService();
+	const tradingService = new TradingEngineService();
+	const [isOpen, setIsOpen] = useState(true);
+	const [tradingAccounts, setTradingAccounts] = useState<ITradingAccountInfo[]>([]);
+	const [exchange, setExchange] = useState<ISelectBoxOption | undefined>(undefined);
+	const [accountType, setAccountType] = useState<ISelectBoxOption | undefined>(undefined);
+	const [currency, setCurrency] = useState<ISelectBoxOption | undefined>(undefined);
+	const [amount, setAmount] = useState<number | undefined>(undefined);
+	const [submitButtonDisabled, setSubmitButtonDisabled] = useState<boolean>(true);
 
-	const fetchUser = useCallback(() => usersService.getUser({ id }), [id, usersService]);
-	const { data: fetchData, isSuccess: fetchSuccess } = useFetch({
+	// Fetch user trading accounts
+	const fetchUserTradingAccounts = useCallback(
+		() => tradingService.getUserTradingAccounts(id),
+		[id, tradingService],
+	);
+	const {
+		data: fetchData,
+		isSuccess,
+		isLoading,
+		isError,
+		error,
+	} = useFetch({
 		queryKey: [id],
-		queryFn: fetchUser,
+		queryFn: fetchUserTradingAccounts,
 	});
-	const roleOptions: ISelectBoxOption[] = Object.values(UserRole).map((role) => ({
-		displayText: role,
-		value: role,
-	}));
 
-	const [firstName, setFirstName] = useState<string>("");
-	const [lastName, setLastName] = useState<string>("");
-	const [email, setEmail] = useState<string>("");
-	const [role, setRole] = useState<string[]>([]);
-	// const [country, setCountry] = useState<{ name: string; id: string }>();
-	// const [countryOptions, setCountryOptions] = useState<ISelectBoxOption[]>([]);
-	const [currentRole, setCurrentRole] = useState<ISelectBoxOption>();
-	// const [currentCountry, setCurrentCountry] = useState<ISelectBoxOption>();
-	const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+	// Setup query to backend
+	const {
+		mutate: addFund,
+		isPending: isAddFundPending,
+		isError: isAddFundError,
+		isSuccess: isAddFundSuccess,
+		error: addFundError,
+		data: addFundDataMessage,
+	} = useCreate({
+		mutationFn: tradingService.addFund.bind(tradingService),
+	});
 
-	const handleFirstNameChange = (value: string) => {
-		setFirstName(value);
-	};
+	useEffect(() => {
+		if (fetchData) {
+			setTradingAccounts(fetchData);
+		}
+	}, [fetchData]);
 
-	const handleLastNameChange = (value: string) => {
-		setLastName(value);
-	};
+	// Validation to check if form is fit to submit
+	useEffect(() => {
+		if (exchange && accountType && currency && amount && amount > 0) {
+			setSubmitButtonDisabled(false);
+		} else {
+			setSubmitButtonDisabled(true);
+		}
+	}, [exchange, accountType, currency, amount]);
 
-	const compareArrays = (a: string[], b: string[]) => {
-		a.sort();
-		b.sort();
-		return a.length === b.length && a.every((element, index) => element === b[index]);
-	};
-
-	const handleRoleChange = (role: ISelectBoxOption) => {
-		setCurrentRole(role);
-		setRole((prevRoles) => {
-			if (prevRoles.includes(role.value)) {
-				return prevRoles.filter((r) => r !== role.value);
-			} else {
-				return [...prevRoles, role.value];
-			}
-		});
-	};
-
-	// const handleCountryChange = (option: ISelectBoxOption) => {
-	// 	setCurrentCountry(option);
-	// 	setCountry({ name: option.displayText, id: option.value });
-	// };
-
+	// Handlers
+	const handleSelectExchange = (exchange: ISelectBoxOption) => setExchange(exchange);
+	const handleSelectAccountType = (accountType: ISelectBoxOption) => setAccountType(accountType);
+	const handleSelectCurrency = (currency: ISelectBoxOption) => setCurrency(currency);
+	const handleChangeAmount = (amount: string) => setAmount(Number(amount));
 	const handleModalClose = () => {
 		setIsOpen(false);
 		router.back();
 	};
-
-	// Validation to check if form is fit to submit
-	useEffect(() => {
-		if (
-			fetchData?.firstName != firstName ||
-			fetchData.lastName != lastName ||
-			!compareArrays(fetchData.role.slice(), role.slice())
-			// fetchData.countryName != currentCountry?.value
-		) {
-			if (firstName && lastName && role.length) {
-				setIsSubmitDisabled(false);
-			} else {
-				setIsSubmitDisabled(true);
-			}
-		}
-	}, [firstName, lastName, currentRole]);
-
-	// Optionally update state when fetchData changes
-	useEffect(() => {
-		if (fetchSuccess && fetchData) {
-			setFirstName(fetchData.firstName);
-			setLastName(fetchData.lastName);
-			setEmail(fetchData.email);
-			const currentRole: ISelectBoxOption | undefined = roleOptions.find(
-				(role) => role.value === fetchData?.role[0],
-			);
-			if (currentRole) {
-				setCurrentRole(currentRole);
-			}
-			// if (countryOptions) {
-			// 	const currentCountry = countryOptions.find(
-			// 		(item) => parseInt(item.value, 10) === fetchData?.countryId,
-			// 	);
-			// 	setCurrentCountry(currentCountry);
-			// }
-		}
-	}, [fetchSuccess, fetchData]);
-
-	// Setup query to backend
-	const {
-		mutate: updateUser,
-		isError,
-		isPending,
-		error,
-		isSuccess,
-		data,
-	} = useCreate({
-		mutationFn: usersService.updateUser.bind(usersService),
-	});
-
-	useEffect(() => {
-		isSuccess && router.push(`/admin/user-management/${id}/details`);
-	}, [isSuccess]);
-
-	// Make call to backend
-	const handleUpdateUser = () => {
-		// updateUser({
-		// 	id,
-		// 	firstName,
-		// 	lastName,
-		// 	role: [currentRole?.value] as UserRole[],
-		// 	countryId: Number(country?.id),
-		// 	countryName: country?.name,
-		// });
+	const handleClearFields = () => {
+		setExchange(undefined);
+		setAccountType(undefined);
+		setCurrency(undefined);
+		setAmount(undefined);
 	};
+
+	// Clears form fields on successful submission
+	useEffect(() => {
+		isAddFundSuccess && handleClearFields();
+	}, [isAddFundSuccess]);
 
 	const onSubmit = () => {
-		// event.preventDefault();
-		handleUpdateUser();
-	};
-
-	// user update successful. Display success toast
-	useEffect(() => {
-		if (isSuccess && data) {
-			setTimeout(() => {
-				setIsOpen(false);
-			}, 8000);
+		if (exchange && accountType && currency && amount !== undefined && amount > 0) {
+			const data = {
+				userId: id,
+				platformName: exchange.value as TradingPlatform,
+				accountType: accountType.value as AccountType,
+				currency: currency.value as Currency,
+				amount,
+			};
+			addFund(data);
 		}
-	}, [isSuccess, data]);
-
-	// const {
-	// 	data: countries,
-	// 	isLoading: isCountryLoading,
-	// 	isSuccess: isCountrySuccess,
-	// } = useFetch({
-	// 	queryKey: [UsersQueryId.countries],
-	// 	queryFn: usersService.getAllCountries.bind(usersService),
-	// });
-
-	// // format countries to display on selectBox
-	// useEffect(() => {
-	// 	if (isCountrySuccess && countries) {
-	// 		const options: ISelectBoxOption[] = countries.map((country) => ({
-	// 			displayText: country.name,
-	// 			value: country._id.toString(),
-	// 			imgUrl: country.flag,
-	// 		}));
-	// 		setCountryOptions(options);
-	// 	}
-	// }, [isCountrySuccess, countries]);
-
-	// useEffect(() => {
-	// 	const currentCountry = countryOptions.find(
-	// 		(item) => parseInt(item.value, 10) === fetchData?.countryId,
-	// 	);
-	// 	setCurrentCountry(currentCountry);
-	// }, [countryOptions]);
+	};
 
 	return (
 		<>
 			<Modal
 				openModal={isOpen}
-				width=""
-				title="Add fund to user account"
-				description=""
+				width="md:w-[480px]"
+				title="Add fund to account"
 				onClose={handleModalClose}
 			>
-				<div>
-					<div className="flex flex-col gap-y-4">
-						<InputField
-							type="text"
-							labelText="First Name"
-							props={{ name: "firstname" }}
-							placeholder="Enter First Name"
-							onChange={handleFirstNameChange}
-							className="no-spin-buttons"
-							value={firstName}
+				{isLoading && <AddFundLoader />}
+				{isError && (
+					<section className="p-2 text-center bg-white text-red-400 text-base">
+						{error.message}
+					</section>
+				)}
+				{isSuccess && !isError && fetchData.length === 0 && (
+					<section className="p-2 text-center bg-white text-red-700 text-xl">
+						No account connected.
+					</section>
+				)}
+				{isSuccess && fetchData.length > 0 && (
+					<section className="flex flex-col gap-y-4 px-1">
+						<SelectBox
+							labelText="Select Exchange"
+							options={tradingAccounts?.map((acct) => ({
+								displayText: acct.platformName,
+								value: acct.platformName,
+								imgUrl: acct.platformLogo,
+							}))}
+							option={exchange}
+							placeholder="Select exchange"
+							setOption={handleSelectExchange}
+						/>
+						<SelectBox
+							labelText="Account Type"
+							options={Array.from(
+								new Set(
+									tradingAccounts.flatMap((acct) =>
+										acct.balances.map((bal) => bal.accountType),
+									),
+								),
+							).map((type) => ({
+								displayText: type,
+								value: type,
+							}))}
+							option={accountType}
+							placeholder="Select account type"
+							setOption={handleSelectAccountType}
+						/>
+						<SelectBox
+							labelText="Currency"
+							options={Array.from(
+								new Set(
+									tradingAccounts.flatMap((acct) =>
+										acct.balances.map((bal) => bal.currency),
+									),
+								),
+							).map((type) => ({
+								displayText: type,
+								value: type,
+							}))}
+							option={currency}
+							placeholder="Select currency"
+							setOption={handleSelectCurrency}
 						/>
 						<InputField
-							type="text"
-							labelText="Last Name"
-							props={{ name: "lastname" }}
-							placeholder="Enter Last Name"
-							onChange={handleLastNameChange}
+							type="number"
+							labelText="Amount"
+							props={{ name: "amount" }}
+							placeholder="Enter amount"
+							onChange={handleChangeAmount}
 							className="no-spin-buttons"
-							value={lastName}
+							value={amount !== undefined ? amount.toString() : ""}
 						/>
-						<InputField
-							type="text"
-							labelText="Email"
-							props={{ name: "email" }}
-							placeholder="Enter Email"
-							className="no-spin-buttons"
-							value={email}
-						/>
-						<div className="flex flex-col gap-y-[8px]">
-							{/* <SelectBox
-								labelText="Country"
-								isSearchable={true}
-								options={countryOptions}
-								option={currentCountry}
-								placeholder={isCountryLoading ? "Loading..." : "Select country"}
-								setOption={handleCountryChange}
-							/> */}
-						</div>
-						<div className="flex flex-col gap-y-[8px]">
-							<SelectBox
-								labelText="User Role(s)"
-								options={roleOptions}
-								option={currentRole}
-								placeholder="Select role"
-								setOption={handleRoleChange}
-							/>
-						</div>
 						<Button
 							className="mt-2 flex justify-center"
-							isProcessing={isPending}
-							labelText="Save"
+							isProcessing={isAddFundPending}
+							labelText="Add Fund"
 							onClick={onSubmit}
-							disabled={isSubmitDisabled}
+							disabled={submitButtonDisabled || isAddFundPending}
 						/>
-					</div>
-				</div>
+					</section>
+				)}
 
-				{isError && (
+				{isAddFundError && (
 					<Toast
 						type="error"
 						variant="filled"
-						title="User Update Error"
-						message={error?.message ?? "Something went wrong!"}
+						title="Fund Error"
+						message={addFundError?.message ?? "Something went wrong!"}
 						autoVanish
 						autoVanishTimeout={10}
 					/>
 				)}
-				{data && (
+				{isAddFundSuccess && (
 					<Toast
-						type="info"
+						type="success"
 						variant="filled"
-						title="User successfully updated"
-						message="Successful!"
+						title="Fund"
+						message={addFundDataMessage ?? "Fund added Successfully!"}
 						autoVanish
 						autoVanishTimeout={10}
+						onToastClose={handleModalClose}
 					/>
 				)}
 			</Modal>

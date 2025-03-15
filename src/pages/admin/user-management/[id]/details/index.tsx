@@ -89,7 +89,7 @@ const UserDetails = ({ id }: { id: string }) => {
 						lastName={data?.lastName}
 					/>
 					<h3>{`${data?.firstName ?? "First Name"} ${data?.lastName ?? "Last Name"}`}</h3>
-					<div className="flex gap-x-4 justify-center items-center">
+					<div className="flex gap-4 justify-center items-center flex-wrap">
 						<Button
 							onClick={() => router.push(`/admin/user-management/${data?.id}/edit`)}
 							size="small"
