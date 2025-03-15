@@ -3,7 +3,7 @@ import { SplitFactory } from "@splitsoftware/splitio";
 import { FEATURE_FLAG_CONFIG, FeatureFlag, TrafficType } from "./config";
 import SplitIO from "@splitsoftware/splitio-commons/types/splitio";
 
-const SDK_KEY = process.env.NEXT_PUBLIC_SPLIT_IO_CLIENT_KEY as string; // Use an environment variable
+const SDK_KEY = (process.env.NEXT_PUBLIC_SPLIT_IO_CLIENT_KEY ?? "my-feature-flag-key") as string; // Use an environment variable
 
 if (!SDK_KEY) {
 	throw new Error("Feature flag configuration key is missing/not set.");
