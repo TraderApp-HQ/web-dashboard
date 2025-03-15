@@ -72,7 +72,8 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
 		<div className={clsx("relative inline-block group", className)}>
 			{icon}
 			<div
-				className={`absolute z-50 p-2 text-[12px] text-gray-600 bg-white border border-gray-300 rounded shadow-sm w-auto text-center font-light leading-normal min-w-[${minWidth}] max-w-${maxWidth} ${visible ? "visible" : "invisible group-hover:visible"} ${pointerClasses.container} ${contentClassName}before:content-[''] before:absolute before:border-8 before:border-solid before:border-transparent after:content-[''] after:absolute after:border-[7px] after:border-solid after:border-transparent ${pointerClasses.pointerBorder} ${pointerClasses.pointerBg}`}
+				className={`absolute z-50 p-2 text-[12px] text-gray-600 bg-white border border-gray-300 rounded shadow-sm w-auto text-center font-light leading-normal max-w-${maxWidth} ${visible ? "visible" : "invisible group-hover:visible"} ${pointerClasses.container} ${contentClassName}before:content-[''] before:absolute before:border-8 before:border-solid before:border-transparent after:content-[''] after:absolute after:border-[7px] after:border-solid after:border-transparent ${pointerClasses.pointerBorder} ${pointerClasses.pointerBg}`}
+				style={{ minWidth }}
 			>
 				{text}
 			</div>
