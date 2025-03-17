@@ -66,7 +66,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 					disabled={disable}
 					placeholder={placeholder}
 					onKeyDown={onKeyDown}
-					className={`placeholder-[#808080] w-full text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[16px] pr-[54px] outline-[1px] outline-[#6579CC] invalid:[&:not(:placeholder-shown)]:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px]",
+					className={`placeholder-[#808080] w-full text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[16px] outline-[1px] outline-[#6579CC] invalid:[&:not(:placeholder-shown)]:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px]",
              ${className}`}
 				/>
 				{type === "password" && (

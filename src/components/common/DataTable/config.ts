@@ -5,6 +5,10 @@ export interface ITHead {
 	displayItem: string | JSX.Element | ReactNode;
 	styles?: string;
 	isAssetItem?: boolean;
+	tooltip?: {
+		text: string;
+		icon?: JSX.Element | ReactNode;
+	};
 }
 
 export interface ITBody {
@@ -36,6 +40,10 @@ export interface ITableMobileItem {
 	displayItemTitle: string | JSX.Element | ReactNode;
 	displayItemValue: string | JSX.Element | ReactNode;
 	styles?: string;
+	tooltip?: {
+		text: string;
+		icon?: JSX.Element | ReactNode;
+	};
 }
 
 export interface ITableMobile {
@@ -44,15 +52,20 @@ export interface ITableMobile {
 	actions?: ITableActions[];
 }
 
-export interface ISignalPerformance {
-	id: string;
-	label: string;
-	asset: {
-		id: string;
-		logo: string;
-		name: string;
-		symbol: string;
-	};
-	price?: number;
-	percentage?: number;
+export interface IPerformanceData {
+	itemLogo: string;
+	itemName: string;
+	itemPercentageChange: number;
+}
+
+export interface IPerformanceSummaryData {
+	bestSignal: IPerformanceData | undefined;
+	worstSignal: IPerformanceData | undefined;
+}
+
+export interface IActiveSignalCardProps {
+	summary: IPerformanceSummaryData | undefined;
+	isLoading: boolean;
+	isSuccess: boolean;
+	isError: boolean;
 }

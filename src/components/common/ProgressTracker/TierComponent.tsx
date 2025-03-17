@@ -43,7 +43,7 @@ export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
 									className="bg-[#465ec1] flex gap-0.5 items-center justify-center px-3 py-1 text-nowrap text-white rounded-md self-start disabled:opacity-50 disabled:cursor-not-allowed"
 									onClick={() => {}}
 								>
-									Do Something
+									{tier.buttonText}
 								</button>
 							)}
 						</div>

@@ -13,6 +13,7 @@ export interface ModalOptions {
 	headerDivider?: boolean;
 	backBtnIcon?: React.ReactNode;
 	showBackButton?: boolean;
+	className?: string;
 }
 
 const Modal: React.FC<ModalOptions> = ({
@@ -25,6 +26,7 @@ const Modal: React.FC<ModalOptions> = ({
 	headerDivider = false,
 	backBtnIcon,
 	showBackButton,
+	className,
 }) => {
 	function close() {
 		if (onClose) {
@@ -63,26 +65,25 @@ const Modal: React.FC<ModalOptions> = ({
 					style={{ maxHeight: "100%", display: "flex", flexDirection: "column" }}
 				>
 					<div
-						className={`flex items-center justify-between pb-2 ${headerDivider && "border-b-2 border-[#D1D7F0]"}`}
+						className={`flex items-start justify-between w-full pb-2 ${headerDivider && "border-b-2 border-[#D1D7F0]"}`}
 					>
-						<div className="space-y-3 flex-col">
+						<div className="flex flex-col space-y-3 flex-1">
 							<h1 className="text-xl flex items-center gap-x-1 font-semibold text-[#414141]">
 								{showBackButton && backBtnIcon && backBtnIcon}
 								{title}
 							</h1>
 							<p className="text-[12px] text-[#BEBFC1]">{description}</p>
 						</div>
-						<div className="cursor-pointer" onClick={close}>
+						<div className="cursor-pointer ml-4" onClick={close}>
 							<CancelIcon />
 						</div>
 					</div>
 
 					{/* Scrollable content & hides scrollbar*/}
 					<div
-						className="overflow-y-auto scrollbar-hide"
+						className={`overflow-y-auto scrollbar-hide ${className}`}
 						style={{
 							maxHeight: "calc(100vh - 200px)",
-							minHeight: "40vh",
 						}}
 					>
 						{children}

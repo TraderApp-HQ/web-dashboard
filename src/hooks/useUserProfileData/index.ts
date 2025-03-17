@@ -3,6 +3,7 @@ import { UsersService } from "~/apis/handlers/users";
 import { capitalizeFirstLetter } from "~/helpers";
 import { useFetch } from "../useFetch";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
+import { UserRole } from "~/apis/handlers/users/enums";
 
 const useUserProfileData = () => {
 	const [userId, setUserId] = useState("");
@@ -13,6 +14,7 @@ const useUserProfileData = () => {
 	const [userCountryName, setUserCountryName] = useState("");
 	const [userInitials, setUserInitials] = useState("");
 	const [userFullName, setUserFullName] = useState("");
+	const [isAdmin, setIsAdmin] = useState(false);
 
 	const usersService = new UsersService();
 	const fetchUser = useCallback(() => usersService.getUser({}), [usersService]);
@@ -41,6 +43,10 @@ const useUserProfileData = () => {
 			setUserFullName(
 				`${capitalizeFirstLetter(userProfile.firstName)} ${capitalizeFirstLetter(userProfile.lastName)}`,
 			);
+			setIsAdmin(
+				userProfile.role.includes(UserRole.ADMIN) ||
+					userProfile.role.includes(UserRole.SUPER_ADMIN),
+			);
 		}
 	}, [userProfile, isUserProfileSuccess]);
 
@@ -58,6 +64,7 @@ const useUserProfileData = () => {
 		isUserProfileLoading,
 		isUserProfileError,
 		userProfileError,
+		isAdmin,
 	};
 };
 

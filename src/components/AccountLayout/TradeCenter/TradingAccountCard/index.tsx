@@ -25,6 +25,7 @@ import {
 } from "~/config/constants";
 import StatusPill from "~/components/common/StatusPill";
 import RefreshIcon from "~/components/icons/RefreshIcon";
+import DeleteModal from "~/components/Modal/DeleteModal";
 
 interface IConnectionStatus {
 	isConnected: boolean;
@@ -159,6 +160,7 @@ const TradingAccountDropdownMenu: React.FC<ITradingAccountDropdownMenu> = ({
 	platformName,
 	refetchUserTradingAccounts,
 }) => {
+	const [toggleDeleteModal, setToggleDeleteModal] = useState<boolean>(false);
 	const router = useRouter();
 	const tradingEngineService = useMemo(() => new TradingEngineService(), []);
 	const {
@@ -179,48 +181,73 @@ const TradingAccountDropdownMenu: React.FC<ITradingAccountDropdownMenu> = ({
 		deleteAccount({ userId, platformName });
 	}, [deleteAccount, userId, platformName]);
 
+	const handleDeleteTaskModalOpen = () => setToggleDeleteModal(true);
+	const handleDeleteModalClose = () => setToggleDeleteModal(false);
+	const handleDeleteTask = () => {
+		handleDeleteTradingAccount();
+		if (isAccountDeletedSuccessful) handleDeleteModalClose();
+	};
+
 	return (
-		<DropdownMenu trigger={<DottedIcon />} position="left" direction="bottom" className="!p-2">
-			<DropdownMenuItem
-				type="button"
-				onClick={async () => {
-					await router.replace("/account/trade-center/trading-accounts", undefined);
-					router.push(
-						`trading-accounts/connect?platformName=${platformName}&refresh=true`,
-					);
-				}}
-				className="pl-0 text-neutral-700"
+		<>
+			<DropdownMenu
+				trigger={<DottedIcon />}
+				position="left"
+				direction="bottom"
+				className="!p-2"
 			>
-				<div className="flex items-center space-x-2 min-w-44">
-					<RefreshIcon />
-					<span>Refresh Connection</span>
-				</div>
-			</DropdownMenuItem>
-			<DropdownMenuItem
-				type="button"
-				onClick={async () => {
-					await router.replace("/account/trade-center/trading-accounts", undefined);
-					router.push(`trading-accounts/connect?platformName=${platformName}`);
-				}}
-				className="pl-0 text-neutral-700"
-			>
-				<div className="flex items-center space-x-2 min-w-40">
-					<ReplaceIcon />
-					<span>Replace API Keys</span>
-				</div>
-			</DropdownMenuItem>
-			<DropdownMenuItem
-				type="button"
-				disabled={isPending}
-				onClick={handleDeleteTradingAccount}
-				className="pl-0 text-neutral-700"
-			>
-				<div className="flex items-center space-x-2 min-w-40">
-					<TrashIcon />
-					<span>Delete Account</span>
-				</div>
-			</DropdownMenuItem>
-		</DropdownMenu>
+				<DropdownMenuItem
+					type="button"
+					onClick={async () => {
+						await router.replace("/account/trade-center/trading-accounts", undefined);
+						router.push(
+							`trading-accounts/connect?platformName=${platformName}&refresh=true`,
+						);
+					}}
+					className="pl-0 text-neutral-700"
+				>
+					<div className="flex items-center space-x-2 min-w-44">
+						<RefreshIcon />
+						<span>Refresh Connection</span>
+					</div>
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					type="button"
+					onClick={async () => {
+						await router.replace("/account/trade-center/trading-accounts", undefined);
+						router.push(`trading-accounts/connect?platformName=${platformName}`);
+					}}
+					className="pl-0 text-neutral-700"
+				>
+					<div className="flex items-center space-x-2 min-w-40">
+						<ReplaceIcon />
+						<span>Replace API Keys</span>
+					</div>
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					type="button"
+					disabled={isPending}
+					onClick={handleDeleteTaskModalOpen}
+					className="pl-0 text-neutral-700"
+				>
+					<div className="flex items-center space-x-2 min-w-40">
+						<TrashIcon />
+						<span>Delete Account</span>
+					</div>
+				</DropdownMenuItem>
+			</DropdownMenu>
+
+			{/* Delete modal */}
+			<DeleteModal
+				title={"Delete Trading Account"}
+				description={"Are you sure you want to delete this trading account?"}
+				btnConfirm={handleDeleteTask}
+				btnCancle={handleDeleteModalClose}
+				openModal={toggleDeleteModal}
+				onClose={handleDeleteModalClose}
+				isDeleting={isPending}
+			/>
+		</>
 	);
 };
 

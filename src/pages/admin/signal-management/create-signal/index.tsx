@@ -46,6 +46,8 @@ function CreateSignal() {
 	const [selectedBaseCurrency, setSelectedBaseCurrency] = useState<ISignalAsset>();
 	const [selectedSupportedExchange, setSelectedSupportedExchange] = useState<IExchange[]>();
 	const [entryPrice, setEntryPrice] = useState<string>();
+	const [entryPriceUpperBound, setEntryPriceUpperBound] = useState<string>();
+	const [entryPriceLowerBound, setEntryPriceLowerBound] = useState<string>();
 	const [stopLoss, setStopLoss] = useState<ISignalMilestone>();
 	const [leverage, setLeverage] = useState<number>();
 	const [targetProfits, setTargetProfits] = useState<ISignalMilestone[]>();
@@ -98,6 +100,8 @@ function CreateSignal() {
 
 	const tradePriceModalButton =
 		entryPrice &&
+		entryPriceUpperBound &&
+		entryPriceLowerBound &&
 		stopLoss &&
 		leverage &&
 		targetProfits &&
@@ -211,9 +215,12 @@ function CreateSignal() {
 	};
 
 	const handleStopLoss = (value: string) => {
+		const entryValue = Number(entryPrice);
+		const stopValue = Number(value);
+		const stopPercentage = Math.round((Math.abs(stopValue - entryValue) / entryValue) * 100);
 		setStopLoss({
-			price: Number(value),
-			percent: 1,
+			price: stopValue,
+			percent: stopPercentage,
 			isReached: false,
 		});
 	};
@@ -274,6 +281,8 @@ function CreateSignal() {
 		setResetSelectedBaseCurrency(true);
 		setResetSelectedCandle(true);
 		setEntryPrice(undefined);
+		setEntryPriceUpperBound(undefined);
+		setEntryPriceLowerBound(undefined);
 		setStopLoss(undefined);
 		setSelectedBaseCurrency(undefined);
 		setResetSelectedRisk(true);
@@ -289,10 +298,14 @@ function CreateSignal() {
 	const handleCreateSignal = () => {
 		createSignal({
 			asset: Number(selectedAsset?.id ?? 0),
+			assetName: selectedAsset?.symbol as string,
 			baseCurrency: Number(selectedBaseCurrency?.id ?? 0),
+			baseCurrencyName: selectedBaseCurrency?.symbol as string,
 			targetProfits: targetProfits as ISignalMilestone[],
 			stopLoss: stopLoss as ISignalMilestone,
 			entryPrice: Number(entryPrice),
+			entryPriceUpperBound: Number(entryPriceUpperBound),
+			entryPriceLowerBound: Number(entryPriceLowerBound),
 			tradeNote: tradeNote as string,
 			candlestick: selectedCandle?.value as Candlestick,
 			risk: selectedRisk?.value as SignalRisk,
@@ -329,20 +342,27 @@ function CreateSignal() {
 	};
 
 	const handleFirstTargetProfit = (index: number, newValue: number) => {
+		const entryValue = Number(entryPrice);
+		const ftpPercentage = Math.round((Math.abs(newValue - entryValue) / entryValue) * 100);
+
 		setTargetProfits((prevTargetProfits) => {
 			if (prevTargetProfits == undefined) {
-				return [{ price: newValue, percent: 1, isReached: false }];
+				return [{ price: newValue, percent: ftpPercentage, isReached: false }];
 			} else {
 				return prevTargetProfits?.map((profit, i) =>
-					i === index ? { ...profit, price: newValue } : profit,
+					i === index ? { ...profit, price: newValue, percent: ftpPercentage } : profit,
 				);
 			}
 		});
 	};
 
 	const handleValueChange = (index: number, newValue: number) => {
+		const entryValue = Number(entryPrice);
+		const ftpPercentage = Math.round((Math.abs(newValue - entryValue) / entryValue) * 100);
 		setTargetProfits((prev) =>
-			prev?.map((profit, i) => (i === index ? { ...profit, price: newValue } : profit)),
+			prev?.map((profit, i) =>
+				i === index ? { ...profit, price: newValue, percent: ftpPercentage } : profit,
+			),
 		);
 	};
 
@@ -495,6 +515,7 @@ function CreateSignal() {
 					}
 					headerDivider={true}
 					onClose={handleModalClose}
+					className="min-h-[40vh]"
 				>
 					<section className="flex flex-col gap-y-5 pt-3">
 						<SelectBox
@@ -582,6 +603,29 @@ function CreateSignal() {
 							onKeyDown={handleKeyDown}
 						/>
 
+						<section className="flex items-center gap-4 justify-between">
+							<InputField
+								type="number"
+								labelText="Entry Price Upper Bound"
+								props={{ name: "entryPriceUpperBound", step: "0.01" }}
+								placeholder="Price upper bound"
+								value={entryPriceUpperBound ?? ""}
+								onChange={(value: string) => setEntryPriceUpperBound(value)}
+								className="no-spin-buttons"
+								onKeyDown={handleKeyDown}
+							/>
+							<InputField
+								type="number"
+								labelText="Entry Price Lower bound"
+								props={{ name: "entryPriceLowerBound", step: "0.01" }}
+								placeholder="Price lower bound"
+								value={entryPriceLowerBound ?? ""}
+								onChange={(value: string) => setEntryPriceLowerBound(value)}
+								className="no-spin-buttons"
+								onKeyDown={handleKeyDown}
+							/>
+						</section>
+
 						<InputField
 							type="number"
 							labelText="Stop loss"
@@ -589,8 +633,9 @@ function CreateSignal() {
 							placeholder="Input trade stop loss"
 							value={String(stopLoss?.price) ?? ""}
 							onChange={(value: string) => handleStopLoss(value)}
-							className="no-spin-buttons"
+							className="no-spin-buttons disabled:cursor-not-allowed"
 							onKeyDown={handleKeyDown}
+							disable={!Number(entryPrice)}
 						/>
 
 						<InputField
@@ -616,8 +661,9 @@ function CreateSignal() {
 								onChange={(value) => handleFirstTargetProfit(0, Number(value))}
 								props={{ name: "targetProfit", step: "0.01" }}
 								placeholder="Enter target profit"
-								className="no-spin-buttons my-2"
+								className="no-spin-buttons my-2 disabled:cursor-not-allowed"
 								onKeyDown={handleKeyDown}
+								disable={!Number(entryPrice)}
 							/>
 							{targetProfits?.slice(1).map((profit, index) => (
 								<div key={index + 1}>
@@ -654,7 +700,7 @@ function CreateSignal() {
 									}
 									aria-label="add target profit"
 								>
-									Add another target profit
+									Add another target profit (Target profit must be 4)
 								</IconButton>
 							)}
 						</div>
