@@ -6,6 +6,8 @@ import SearchForm from "~/components/AccountLayout/SearchForm";
 import DropdownMenu from "~/components/AccountLayout/DropdownMenu";
 import { FiHelpCircle } from "react-icons/fi";
 import TooltipIcon from "../../icons/TooltipIcon";
+import Pagination from "~/components/Pagination";
+import { PaginationProps } from "~/components/interfaces";
 
 interface IDataTableMobile {
 	data: ITableMobile[];
@@ -24,6 +26,8 @@ interface IDataTableMobile {
 		filterContent: React.ReactNode;
 		className?: string;
 	};
+	showPagination?: boolean;
+	paginationProps?: PaginationProps;
 }
 
 const DataTableMobile: FC<IDataTableMobile> = ({
@@ -33,6 +37,8 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 	showSearch,
 	showFilter,
 	filterProps,
+	showPagination,
+	paginationProps,
 }) => {
 	return (
 		<>
@@ -118,6 +124,11 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 					</div>
 				))}
 			</div>
+			{showPagination && paginationProps && (
+				<div className="bg-white mt-[-0.8rem] rounded-lg py-5 px-3">
+					<Pagination {...paginationProps} />
+				</div>
+			)}
 		</>
 	);
 };
