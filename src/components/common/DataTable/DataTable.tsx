@@ -7,16 +7,7 @@ import DropdownMenu from "~/components/AccountLayout/DropdownMenu";
 import Pagination from "~/components/Pagination";
 import { FiHelpCircle } from "react-icons/fi";
 import TooltipIcon from "../../icons/TooltipIcon";
-
-interface PaginationProps {
-	currentPage: number;
-	totalPages: number;
-	totalRecord: number;
-	rowsPerPage: number;
-	setRowsPerPage: (num: number) => void;
-	onNext: (page: number) => void;
-	onPrev: (page: number) => void;
-}
+import { PaginationProps } from "~/components/interfaces";
 
 interface IDataTable {
 	tHead: ITHead[];

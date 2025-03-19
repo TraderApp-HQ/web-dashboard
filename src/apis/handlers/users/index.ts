@@ -15,7 +15,7 @@ import type {
 	IResetPasswordInput,
 	ICreateUserInput,
 	IDisableUserInput,
-	IFetchAllUsers,
+	PaginatedResult,
 	IUpdateUserInput,
 	IReferralStats,
 	IReferralCommunityStats,
@@ -25,9 +25,9 @@ import type {
 	ICreateUserTask,
 	IFetchAllPendingTasksCount,
 	ITaskData,
+	IReferrals,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
-
 export class UsersService {
 	private apiClient: APIClient;
 
@@ -123,7 +123,7 @@ export class UsersService {
 		size,
 		page,
 		searchKeyword,
-	}: IGetUsersInput): Promise<IFetchAllUsers> {
+	}: IGetUsersInput): Promise<PaginatedResult<IUserProfile>> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/users/all?page=${page}&size=${size}&searchKeyword=${searchKeyword}`,
 		});
@@ -132,7 +132,7 @@ export class UsersService {
 		}
 
 		const { data } = response;
-		return data as IFetchAllUsers;
+		return data as PaginatedResult<IUserProfile>;
 	}
 
 	public async refreshUserAccessToken(): Promise<string | null> {
@@ -378,9 +378,13 @@ export class UsersService {
 		return response.message;
 	}
 
-	public async getReferrals(): Promise<any> {
+	public async getReferrals({
+		page,
+		size,
+		searchKeyword,
+	}: IGetUsersInput): Promise<PaginatedResult<IReferrals>> {
 		const response = await this.apiClient.get<IResponse>({
-			url: "/users/referrals",
+			url: `/users/referrals/?page=${page}&size=${size}&searchKeyword=${searchKeyword}`,
 		});
 
 		if (response.error) {
@@ -388,7 +392,7 @@ export class UsersService {
 		}
 
 		const { data } = response;
-		return data;
+		return data as PaginatedResult<IReferrals>;
 	}
 
 	public async getReferralsStats(): Promise<IReferralStats> {

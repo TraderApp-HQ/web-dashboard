@@ -129,8 +129,8 @@ export interface IDisableUserInput {
 	userId: string;
 }
 
-export interface IFetchAllUsers {
-	docs: IUserProfile[];
+export interface PaginatedResult<T> {
+	docs: T[];
 	hasNextPage: boolean;
 	hasPrevPage: boolean;
 	limit: number;

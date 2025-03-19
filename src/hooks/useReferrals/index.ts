@@ -14,8 +14,7 @@ const useReferrals = ({ searchKeyword, currentPage, rowsPerPage }: IUseUsers) =>
 
 	// Memoized function to fetch users
 	const fetchReferrals = useCallback(() => {
-		// return usersService.getReferrals({ size: rowsPerPage, page: currentPage, searchKeyword });
-		return usersService.getReferrals();
+		return usersService.getReferrals({ size: rowsPerPage, page: currentPage, searchKeyword });
 	}, [currentPage, rowsPerPage, searchKeyword, usersService]);
 
 	// Using custom useFetch hook to fetch data
