@@ -1,20 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
-import Button from "~/components/common/Button";
-import Modal from "~/components/Modal";
-import InputField from "~/components/common/InputField";
-import { useCreate } from "~/hooks/useCreate";
-import Toast from "~/components/common/Toast";
-import type { ISelectBoxOption } from "~/components/interfaces";
-import { useFetch } from "~/hooks/useFetch";
-import SelectBox from "~/components/common/SelectBox";
-import { useRouter } from "next/router";
-import AdminLayout from "~/components/AdminLayout/Layout";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { TradingEngineService } from "~/apis/handlers/trading-engine";
 import { TradingPlatform } from "~/apis/handlers/trading-engine/enums";
-import { AccountType, Currency } from "~/config/enum";
 import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
+import AdminLayout from "~/components/AdminLayout/Layout";
+import Button from "~/components/common/Button";
+import InputField from "~/components/common/InputField";
+import SelectBox from "~/components/common/SelectBox";
+import Toast from "~/components/common/Toast";
+import type { ISelectBoxOption } from "~/components/interfaces";
 import AddFundLoader from "~/components/Loaders/AddFundLoader";
+import Modal from "~/components/Modal";
+import { AccountType, Currency } from "~/config/enum";
+import { useCreate } from "~/hooks/useCreate";
+import { useGetUserTradingAccounts } from "~/hooks/useGetUserTradingAccounts";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { id } = context.params!;
@@ -37,20 +37,13 @@ function AddFund({ id }: { id: string }) {
 	const [submitButtonDisabled, setSubmitButtonDisabled] = useState<boolean>(true);
 
 	// Fetch user trading accounts
-	const fetchUserTradingAccounts = useCallback(
-		() => tradingService.getUserTradingAccounts(id),
-		[id, tradingService],
-	);
 	const {
-		data: fetchData,
-		isSuccess,
-		isLoading,
-		isError,
-		error,
-	} = useFetch({
-		queryKey: [id],
-		queryFn: fetchUserTradingAccounts,
-	});
+		isUserTradingAccountsError,
+		isUserTradingAccountsLoading,
+		isUserTradingAccountsSuccess,
+		userTradingAccounts,
+		userTradingAccountsError,
+	} = useGetUserTradingAccounts({ userId: id, enabled: true });
 
 	// Setup query to backend
 	const {
@@ -65,10 +58,10 @@ function AddFund({ id }: { id: string }) {
 	});
 
 	useEffect(() => {
-		if (fetchData) {
-			setTradingAccounts(fetchData);
+		if (userTradingAccounts) {
+			setTradingAccounts(userTradingAccounts);
 		}
-	}, [fetchData]);
+	}, [userTradingAccounts]);
 
 	// Validation to check if form is fit to submit
 	useEffect(() => {
@@ -121,18 +114,20 @@ function AddFund({ id }: { id: string }) {
 				title="Add fund to account"
 				onClose={handleModalClose}
 			>
-				{isLoading && <AddFundLoader />}
-				{isError && (
+				{isUserTradingAccountsLoading && <AddFundLoader />}
+				{isUserTradingAccountsError && (
 					<section className="p-2 text-center bg-white text-red-400 text-base">
-						{error.message}
+						{userTradingAccountsError?.message}
 					</section>
 				)}
-				{isSuccess && !isError && fetchData.length === 0 && (
-					<section className="p-2 text-center bg-white text-red-700 text-xl">
-						No account connected.
-					</section>
-				)}
-				{isSuccess && fetchData.length > 0 && (
+				{isUserTradingAccountsSuccess &&
+					!isUserTradingAccountsError &&
+					userTradingAccounts?.length === 0 && (
+						<section className="p-2 text-center bg-white text-red-700 text-xl">
+							No account connected.
+						</section>
+					)}
+				{isUserTradingAccountsSuccess && tradingAccounts.length > 0 && (
 					<section className="flex flex-col gap-y-4 px-1">
 						<SelectBox
 							labelText="Select Exchange"

@@ -18,6 +18,7 @@ import useFeatureFlag from "~/hooks/useFeatureFlag";
 import { useFetch } from "~/hooks/useFetch";
 import { formattedDate } from "~/lib/utils";
 import ConfirmModal from "~/components/AdminLayout/User/ConfirmModal";
+import useUserProfileData from "~/hooks/useUserProfileData";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { id } = context.params!;
@@ -33,8 +34,11 @@ const UserDetails = ({ id }: { id: string }) => {
 	const [openModal] = useState(true);
 	const usersService = new UsersService();
 
+	// Get admin userId
+	const { userId } = useUserProfileData();
+
 	// Feature flag to show the button
-	const showButton = useFeatureFlag({ userId: id, flagName: "release-referral-tracking" });
+	const showButton = useFeatureFlag({ userId: userId, flagName: "release-referral-tracking" });
 
 	const fetchUser = useCallback(() => usersService.getUser({ id }), [id, usersService]);
 	const { data, error, isLoading, isSuccess, isError, refetch } = useFetch({
