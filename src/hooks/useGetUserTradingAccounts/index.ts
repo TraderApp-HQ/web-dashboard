@@ -19,6 +19,7 @@ export const useGetUserTradingAccounts = ({
 	const {
 		data: userTradingAccounts,
 		isError: isUserTradingAccountsError,
+		error: userTradingAccountsError,
 		refetch: refetchUserTradingAccounts,
 		isLoading: isUserTradingAccountsLoading,
 		isSuccess: isUserTradingAccountsSuccess,
@@ -34,5 +35,6 @@ export const useGetUserTradingAccounts = ({
 		isUserTradingAccountsError,
 		isUserTradingAccountsLoading,
 		isUserTradingAccountsSuccess,
+		userTradingAccountsError,
 	};
 };

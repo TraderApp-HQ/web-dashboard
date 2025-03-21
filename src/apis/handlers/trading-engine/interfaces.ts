@@ -100,3 +100,11 @@ export interface IUpdateAccountInput {
 	id: string;
 	accountData: IConnectManualInput;
 }
+
+export interface IAddFund {
+	userId: string;
+	platformName: TradingPlatform;
+	accountType: AccountType;
+	currency: Currency;
+	amount: number;
+}
