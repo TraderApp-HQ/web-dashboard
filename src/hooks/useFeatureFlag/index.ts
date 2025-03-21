@@ -17,7 +17,7 @@ const useFeatureFlag = ({ userId, flagName }: { userId: string; flagName: Featur
 		const factory: SplitIO.IBrowserSDK = SplitFactory({
 			core: {
 				authorizationKey: SDK_KEY,
-				key: userId,
+				key: userId ?? "key",
 			},
 			startup: { readyTimeout: 30 },
 		});
