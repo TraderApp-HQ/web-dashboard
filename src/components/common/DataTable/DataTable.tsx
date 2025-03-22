@@ -109,6 +109,7 @@ const DataTable: React.FC<IDataTable> = ({
 												/>
 											}
 											text={th.tooltip.text}
+											contentClassName="bg-[#3E5BD2] text-white !text-left after:!border-t-[#3E5BD2] border-2"
 										/>
 									</div>
 								) : (

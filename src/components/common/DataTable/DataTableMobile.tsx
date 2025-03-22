@@ -109,6 +109,7 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 														/>
 													}
 													text={tb.tooltip.text}
+													contentClassName="bg-[#3E5BD2] text-white !text-left after:!border-r-[#3E5BD2] border-2"
 												/>
 											</div>
 										) : (
