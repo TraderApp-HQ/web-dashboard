@@ -78,7 +78,7 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 								{dataItem.tHead.displayItemTitle}
 							</div>
 							{hasActions && (
-								<div className="pr-1">
+								<div>
 									<TableMenuDropdown
 										dataTableMenuItems={dataItem.actions ?? []}
 									/>
@@ -116,7 +116,7 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 											tb.displayItemTitle
 										)}
 									</div>
-									<div className="mr-4 text-base text-[#0C394B] font-semibold w-[60%] text-right">
+									<div className="text-sm text-[#0C394B] font-semibold w-[60%] text-right">
 										{tb.displayItemValue}
 									</div>
 								</div>
