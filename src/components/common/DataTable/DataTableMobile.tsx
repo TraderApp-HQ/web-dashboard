@@ -73,7 +73,7 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 			<div data-testid="table-data-mobile">
 				{data.map((dataItem, index) => (
 					<div className="border-2 rounded-lg py-5 px-3 bg-white mb-6" key={index}>
-						<div className="flex items-center justify-between mb-4">
+						<div className="flex items-center justify-between mb-5">
 							<div className={`${dataItem.tHead.styles ?? ""}`}>
 								{dataItem.tHead.displayItemTitle}
 							</div>
@@ -109,7 +109,8 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 														/>
 													}
 													text={tb.tooltip.text}
-													contentClassName="bg-[#3E5BD2] text-white !text-left after:!border-r-[#3E5BD2] border-2"
+													tooltipBgColor="[#3E5BD2]"
+													contentClassName="text-white !text-left border-2"
 												/>
 											</div>
 										) : (

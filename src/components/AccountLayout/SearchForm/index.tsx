@@ -35,7 +35,7 @@ export default function SearchForm({
 				<input
 					onChange={onChange}
 					placeholder={placeHolder}
-					className="text-gray-400 text-xs sm:text-sm font-normal focus:outline-none  inline-block pr-8 pl-2 w-full leading-normal placeholder-gray-400 bg-transparent border-gray-lighter focus:border-blue-800 focus:ring-gray-100"
+					className="text-gray-800 text-sm font-normal focus:outline-none  inline-block pr-8 pl-2 w-full leading-normal placeholder-gray-400 bg-transparent border-gray-lighter focus:border-blue-800 focus:ring-gray-100"
 					type="search"
 					name="term"
 					defaultValue={defaultValue}
