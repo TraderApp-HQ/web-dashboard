@@ -81,6 +81,7 @@ const Pagination: React.FC<PaginationProps> = ({
 					fontStyles="text-[#072F40] text-[15px]"
 					optionsClass="py-1"
 					dropPosition="top"
+					placeholder=""
 				/>
 			</div>
 		);

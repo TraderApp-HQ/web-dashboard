@@ -63,6 +63,15 @@ const ReferralsCommunity = () => {
 		refetch();
 	};
 
+	const handleRowsPerPageChange = (newRowsPerPage: number) => {
+		setRowsPerPage((prevRowsPerPage) => {
+			const currentItemOffset = (currentPage - 1) * prevRowsPerPage;
+			const adjustedPageNumber = Math.floor(currentItemOffset / newRowsPerPage) + 1;
+			setCurrentPage(adjustedPageNumber);
+			return newRowsPerPage;
+		});
+	};
+
 	// if (isLoading) {
 	// 	return <div>Loading...</div>;
 	// }
@@ -82,7 +91,7 @@ const ReferralsCommunity = () => {
 		totalRecord: data?.totalDocs ?? 0,
 		hasNextPage: data?.hasNextPage ?? null,
 		hasPrevPage: data?.hasPrevPage ?? null,
-		setRowsPerPage,
+		setRowsPerPage: handleRowsPerPageChange,
 		onNext: () => setCurrentPage((prev) => prev + 1),
 		onPrev: () => setCurrentPage((prev) => prev - 1),
 	};
