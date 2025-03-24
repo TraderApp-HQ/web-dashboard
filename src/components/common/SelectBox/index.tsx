@@ -21,6 +21,9 @@ interface ISelectBoxProps {
 	clear?: boolean | undefined;
 	inputError?: string;
 	fontStyles?: string;
+	buttonClassName?: string;
+	optionsClass?: string;
+	dropPosition?: "top" | "bottom";
 }
 
 /**
@@ -45,6 +48,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	clear,
 	inputError,
 	fontStyles,
+	buttonClassName,
+	optionsClass,
+	dropPosition = "bottom",
 }: ISelectBoxProps): JSX.Element => {
 	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -114,7 +120,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					// data-testid={options.map(({ displayText }) => displayText).join("")}
 					className={`p-[16px] placeholder-[#808080] w-full text-[#102477] invalid:text-[#808080] rounded-lg font-normal outline-[1px] outline-[#6579CC] appearance-none bg-no-repeat bg-[center_right_1em] invalid:[&:not(:empty)]:visited:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${
 						isOpen ? "border-[#7949FF]" : "border-gray-100"
-					} rounded-md p-2 flex justify-between items-center cursor-pointer space-x-2 ${bgColor ? bgColor : "bg-[#F5F8FE]"}`}
+					} rounded-md p-2 flex justify-between items-center cursor-pointer space-x-2 ${bgColor ? bgColor : "bg-[#F5F8FE]"} ${buttonClassName || ""}`}
 					onClick={() => setIsOpen(!isOpen)}
 					data-testid={placeholder}
 				>
@@ -135,7 +141,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					{isOpen ? <FiChevronUp /> : <FiChevronDown />}
 				</div>
 				{isOpen && (
-					<div className="absolute mt-1 w-full bg-white border border-gray-300 shadow-lg z-10 transition-all duration-300 ease-out transform scale-100">
+					<div
+						className={`absolute ${dropPosition === "top" ? "bottom-full mb-1" : "mt-1"} w-full bg-white border border-gray-300 shadow-lg z-10 transition-all duration-300 ease-out transform scale-100`}
+					>
 						{isSearchable && (
 							<div className="p-2 flex items-center justify-between bg-slate-50">
 								<SearchIcon />
@@ -157,7 +165,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 										option.displayText === selectedOption?.displayText
 											? "bg-gray-100"
 											: ""
-									}`}
+									} ${optionsClass || ""}`}
 									onClick={() => {
 										setSelectedOption(option);
 										setIsOpen(false);

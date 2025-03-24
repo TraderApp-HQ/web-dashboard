@@ -5,7 +5,6 @@ import { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import ConnectionsIcons from "~/components/icons/ConnectionsIcons";
 import CurrencySymbolsIcon from "~/components/icons/CurrencySymbolsIcon";
-import Pagination from "~/components/Pagination";
 import { useEffect, useState } from "react";
 import {
 	communityUsersDataTableSelector,
@@ -72,9 +71,21 @@ const ReferralsCommunity = () => {
 		return <div>Error: {error.message}</div>;
 	}
 
-	const referrals = isSuccess ? data.referrals : [];
+	const referrals = isSuccess ? data.docs : [];
 	const { tableHead, tableBody } = communityUsersDataTableSelector(referrals);
 	const mobileData = communityUsersMobileDataTableSelector(referrals);
+
+	const paginationProps = {
+		currentPage: data?.page ?? currentPage,
+		totalPages: data?.totalPages ?? 0,
+		rowsPerPage: data?.limit ?? rowsPerPage,
+		totalRecord: data?.totalDocs ?? 0,
+		hasNextPage: data?.hasNextPage ?? null,
+		hasPrevPage: data?.hasPrevPage ?? null,
+		setRowsPerPage,
+		onNext: () => setCurrentPage((prev) => prev + 1),
+		onPrev: () => setCurrentPage((prev) => prev - 1),
+	};
 
 	return (
 		<div>
@@ -158,28 +169,34 @@ const ReferralsCommunity = () => {
 												className: "bg-white",
 											}}
 											showPagination={true}
-											paginationProps={{
-												currentPage: data?.page ?? 1,
-												totalPages: data?.totalPages ?? 0,
-												rowsPerPage: rowsPerPage,
-												totalRecord: data?.totalDocs ?? 0,
-												setRowsPerPage,
-												onNext: () => setCurrentPage((prev) => prev + 1),
-												onPrev: () => setCurrentPage((prev) => prev - 1),
-											}}
+											paginationProps={paginationProps}
 										/>
 									</div>
 
-									<div className="md:hidden p-5 bg-white rounded-2xl relative overflow-x-auto">
-										<DataTableMobile hasActions={false} data={mobileData} />
-										<Pagination
-											currentPage={data?.page ?? 1}
-											totalPages={data?.totalPages ?? 0}
-											rowsPerPage={rowsPerPage}
-											totalRecord={data?.totalDocs ?? 0}
-											setRowsPerPage={setRowsPerPage}
-											onNext={() => setCurrentPage((prev) => prev + 1)}
-											onPrev={() => setCurrentPage((prev) => prev - 1)}
+									<div className="md:hidden relative overflow-x-auto">
+										<DataTableMobile
+											hasActions={true}
+											data={mobileData}
+											showSearch={true}
+											searchProps={{
+												onSearch: handleSearch,
+												onChange: (e) => setSearchKeyword(e.target.value),
+												placeholder: "Search by first or last name",
+												defaultValue: searchKeyword,
+												className: "bg-white",
+											}}
+											showFilter={true}
+											filterProps={{
+												triggerText: "Filter",
+												filterContent: (
+													<DropdownMenuItem className="flex flex-col gap-y-2">
+														<div></div>
+													</DropdownMenuItem>
+												),
+												className: "bg-white",
+											}}
+											showPagination={true}
+											paginationProps={paginationProps}
 										/>
 									</div>
 								</>

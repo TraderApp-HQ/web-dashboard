@@ -25,7 +25,7 @@ export default function SearchForm({
 			<label
 				className={clsx(
 					className,
-					"mb-4 sm:w-96 w-[100%] h-12 px-5 py-3 bg-gray-100 border rounded-xl justify-start items-center gap-3.5 inline-flex",
+					"mb-[0.7rem] md:mb-4 sm:w-96 w-[100%] h-12 px-5 py-3 bg-gray-100 border rounded-xl justify-start items-center gap-3.5 inline-flex",
 					marginTop,
 				)}
 			>
@@ -35,7 +35,7 @@ export default function SearchForm({
 				<input
 					onChange={onChange}
 					placeholder={placeHolder}
-					className="text-gray-400 text-xs sm:text-sm font-normal focus:outline-none  inline-block pr-8 pl-2 w-full leading-normal placeholder-gray-400 bg-transparent border-gray-lighter focus:border-blue-800 focus:ring-1 focus:ring-gray-100"
+					className="text-gray-400 text-xs sm:text-sm font-normal focus:outline-none  inline-block pr-8 pl-2 w-full leading-normal placeholder-gray-400 bg-transparent border-gray-lighter focus:border-blue-800 focus:ring-gray-100"
 					type="search"
 					name="term"
 					defaultValue={defaultValue}

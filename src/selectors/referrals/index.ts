@@ -50,27 +50,37 @@ export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 export function communityUsersMobileDataTableSelector(referrals: IReferrals[]) {
 	const dataMobile: ITableMobile[] = referrals.map((referral) => ({
 		tHead: {
-			displayItemTitle: renderDisplayItem({
-				itemText: {
-					text: referral.userId.firstName + " " + referral.userId.lastName,
-					style: "text-base font-normal",
-				},
-				itemSubText: { text: referral.userId.email },
-			}),
+			displayItemTitle: renderRank(referral.userId.referralRank),
 			displayItemValue: "",
 		},
 		tBody: [
 			{
-				displayItemTitle: "Level in Referral Tree",
+				displayItemTitle: "Level",
 				displayItemValue: `${referral.level}`,
+				tooltip: { text: "Referral depth, Level 1 represents direct referrals" },
 			},
 			{
-				displayItemTitle: "Status",
-				displayItemValue: renderStatus(referral.userId.status, { justify: "justify-end" }),
+				displayItemTitle: "Full Name",
+				displayItemValue: renderDisplayItem({
+					itemText: {
+						text: `${referral.userId.firstName} ${referral.userId.lastName}`,
+					},
+					useAvatar: true,
+					avatarInitials:
+						`${referral.userId.firstName[0]}${referral.userId.lastName[0]}`.toUpperCase(),
+				}),
 			},
 			{
 				displayItemTitle: "Registration Date",
 				displayItemValue: format(referral.userId.createdAt, "do MMMM yyyy"),
+			},
+			{
+				displayItemTitle: "Status",
+				displayItemValue: renderStatus(
+					referral.userId.status,
+					{ justify: "justify-end" },
+					false,
+				),
 			},
 		],
 	}));

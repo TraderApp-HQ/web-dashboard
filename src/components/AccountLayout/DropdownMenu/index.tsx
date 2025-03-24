@@ -14,6 +14,7 @@ interface DropdownMenuProps {
 	subClass?: string;
 	btnClass?: string;
 	itemType?: string;
+	containerClassName?: string;
 }
 
 type TextProps = {
@@ -42,6 +43,7 @@ export default function DropdownMenu({
 	subClass,
 	btnClass,
 	itemType = ItemType.text,
+	containerClassName,
 }: DropdownMenuProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const ref = useRef<HTMLDivElement | null>(null);
@@ -59,7 +61,7 @@ export default function DropdownMenu({
 	}, [setIsOpen]);
 
 	return (
-		<div ref={ref} className="ml-3 relative w-fit">
+		<div ref={ref} className={`relative ${containerClassName || "ml-3 w-fit"}`}>
 			<button
 				type="button"
 				onClick={() => {

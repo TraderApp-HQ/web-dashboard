@@ -5,16 +5,9 @@ import TableMenuItems from "./TableMenuitems";
 import SearchForm from "~/components/AccountLayout/SearchForm";
 import DropdownMenu from "~/components/AccountLayout/DropdownMenu";
 import Pagination from "~/components/Pagination";
-
-interface PaginationProps {
-	currentPage: number;
-	totalPages: number;
-	totalRecord: number;
-	rowsPerPage: number;
-	setRowsPerPage: (num: number) => void;
-	onNext: (page: number) => void;
-	onPrev: (page: number) => void;
-}
+import { FiHelpCircle } from "react-icons/fi";
+import TooltipIcon from "../../icons/TooltipIcon";
+import { PaginationProps } from "~/components/interfaces";
 
 interface IDataTable {
 	tHead: ITHead[];
@@ -81,7 +74,7 @@ const DataTable: React.FC<IDataTable> = ({
 						btnClass={`w-24 h-12 px-1.5 py-3 bg-sky-200 bg-opacity-20 rounded-lg border ${filterProps.className}`}
 						trigger={
 							<>
-								<div className="text-textGray text-base font-normal leading-snug">
+								<div className="text-textGray text-sm font-normal leading-snug">
 									{filterProps.triggerText || "Filter"}
 								</div>
 							</>
@@ -102,7 +95,25 @@ const DataTable: React.FC<IDataTable> = ({
 								key={index}
 								className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles} ${th.styles} ${th.isAssetItem ? "" : ""}`}
 							>
-								{th.displayItem}
+								{th.tooltip ? (
+									<div
+										className={`flex items-center gap-1 ${th.styles?.includes("text-left") ? "justify-start" : "justify-center"} `}
+									>
+										{th.displayItem}
+										<TooltipIcon
+											direction="top"
+											icon={
+												<FiHelpCircle
+													size={16}
+													className="text-gray-400 cursor-help"
+												/>
+											}
+											text={th.tooltip.text}
+										/>
+									</div>
+								) : (
+									th.displayItem
+								)}
 							</th>
 						))}
 						{hasActions && (

@@ -26,13 +26,7 @@ const DisplayItem: React.FC<IDisplayItem> = ({
 				/>
 			)}
 
-			{useAvatar && (
-				<UserTile
-					bgColor="bg-gray-50"
-					textColor="text-gray-700"
-					nameIntitials={avatarInitials ?? ""}
-				/>
-			)}
+			{useAvatar && <UserTile nameIntitials={avatarInitials ?? ""} />}
 			<div className={`flex flex-col gap-y-0.5 md:gap-y-2 md:items-start`}>
 				<span className={`text-stone-900 ${itemText?.style}`}>{itemText.text}</span>
 				{itemSubText?.text && (
