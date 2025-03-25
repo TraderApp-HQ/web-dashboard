@@ -108,7 +108,7 @@ const ReferralsCommunity = () => {
 					/>
 					<ReferalCard
 						title="Community ATC"
-						subtext={`$ ${stats.communityATC}`}
+						subtext={`$ ${stats.communityATC.toFixed(2)}`}
 						Icon={CurrencySymbolsIcon}
 					/>
 					<ReferalCard

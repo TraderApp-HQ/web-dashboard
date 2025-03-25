@@ -57,11 +57,25 @@ function AddFund({ id }: { id: string }) {
 		mutationFn: tradingService.addFund.bind(tradingService),
 	});
 
+	// Set trading accounts to state
 	useEffect(() => {
 		if (userTradingAccounts) {
 			setTradingAccounts(userTradingAccounts);
 		}
 	}, [userTradingAccounts]);
+
+	// Sets current account balance upon selection
+	useEffect(() => {
+		if (!exchange || !accountType || !currency) return;
+
+		const balance = tradingAccounts
+			.find((acct) => acct.platformName === exchange.value)
+			?.balances?.find(
+				(bal) => bal.currency === currency.value && bal.accountType === accountType.value,
+			)?.availableBalance;
+
+		setAmount(balance);
+	}, [exchange, accountType, currency, tradingAccounts]);
 
 	// Validation to check if form is fit to submit
 	useEffect(() => {
