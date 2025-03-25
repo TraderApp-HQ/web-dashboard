@@ -7,7 +7,7 @@ import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 const ReferralsHome = () => {
 	const router = useRouter();
 	useEffect(() => {
-		router.push(`/${LAYOUT_ROUTES.account}/${ROUTES.referrals}/overview`);
+		router.push(`${LAYOUT_ROUTES.account}${ROUTES.referrals}/overview`);
 	}, []);
 };
 

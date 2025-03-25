@@ -237,7 +237,7 @@ export default function VerificationModal({
 							{enteredInput.map((value, index) => (
 								<input
 									key={index}
-									type="text"
+									type="number"
 									placeholder=""
 									max={1}
 									maxLength={1}
@@ -248,7 +248,7 @@ export default function VerificationModal({
 									onChange={(e) => inputChangeHandler(index, e.target.value)}
 									onPaste={handlePaste}
 									onKeyDown={(e) => handleKeyDown(index, e)}
-									className="placeholder-[#808080] w-[54px] h-[54px] text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[20px] outline-[1px] outline-[#6579CC]"
+									className="placeholder-[#808080] w-[54px] h-[54px] text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[20px] outline-[1px] outline-[#6579CC] no-spin-buttons"
 								/>
 							))}
 						</div>
