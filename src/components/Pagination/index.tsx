@@ -10,7 +10,7 @@ const PaginationButton: React.FC<PaginationButtonProps> = ({
 	disabled,
 	testId,
 	direction,
-	className = "px-1 md:px-3 py-1 mx-1 rounded disabled:cursor-not-allowed text-[14px]",
+	className = "px-1 md:px-3 py-1 rounded disabled:cursor-not-allowed text-sm",
 }) => {
 	return (
 		<button data-testid={testId} onClick={onClick} className={className} disabled={disabled}>
@@ -49,7 +49,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
 	const calculateRowsPerPageOptions = (totalRecord: number): ISelectBoxOption[] => {
 		const options: number[] = [];
-		let value = 1;
+		let value = 5;
 
 		while (value < totalRecord) {
 			options.push(value);
@@ -67,21 +67,21 @@ const Pagination: React.FC<PaginationProps> = ({
 	const PagingComponent = ({ className }: { className?: string }) => {
 		return (
 			<div className={clsx(`mb-0 flex items-center`, className)}>
-				<span className="inline-block text-[#072F40] text-[14px] md:text-[15px]">
-					Rows per page:
+				<span className="inline-block text-[#072F40] text-[14px] md:text-[15px] md:mr-2">
+					Items per page:
 				</span>
 				<SelectBox
 					options={calculateRowsPerPageOptions(totalRecord)}
 					option={{ value: rowsPerPage.toString(), displayText: rowsPerPage.toString() }}
 					setOption={(selected) => setRowsPerPage(Number(selected.value))}
-					placeholder="Select rows"
-					bgColor="bg-white"
+					bgColor="bg-gray-100"
 					containerStyle="inline-block w-15"
 					className="py-0"
-					buttonClassName="px-[0.8rem] py-0"
+					buttonClassName="px-[0.8rem] py-1 md:space-x-4"
 					fontStyles="text-[#072F40] text-[15px]"
 					optionsClass="py-1"
 					dropPosition="top"
+					placeholder=""
 				/>
 			</div>
 		);
@@ -100,7 +100,7 @@ const Pagination: React.FC<PaginationProps> = ({
 					{Math.min(rowsPerPage * currentPage, totalRecord)} of {totalRecord}
 				</span>
 
-				<div className="flex items-center">
+				<div className="flex items-center md:ml-2.5 gap-x-3 md:gap-x-0">
 					<PaginationButton
 						testId="prev-btn"
 						onClick={handlePrev}

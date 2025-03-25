@@ -73,12 +73,12 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 			<div data-testid="table-data-mobile">
 				{data.map((dataItem, index) => (
 					<div className="border-2 rounded-lg py-5 px-3 bg-white mb-6" key={index}>
-						<div className="flex items-center justify-between mb-4">
+						<div className="flex items-center justify-between mb-5">
 							<div className={`${dataItem.tHead.styles ?? ""}`}>
 								{dataItem.tHead.displayItemTitle}
 							</div>
 							{hasActions && (
-								<div className="pr-1">
+								<div>
 									<TableMenuDropdown
 										dataTableMenuItems={dataItem.actions ?? []}
 									/>
@@ -109,13 +109,15 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 														/>
 													}
 													text={tb.tooltip.text}
+													tooltipTextColor="text-white"
+													contentClassName="!text-left border-2"
 												/>
 											</div>
 										) : (
 											tb.displayItemTitle
 										)}
 									</div>
-									<div className="mr-4 text-base text-[#0C394B] font-semibold w-[60%] text-right">
+									<div className="text-sm text-[#0C394B] font-semibold w-[60%] text-right">
 										{tb.displayItemValue}
 									</div>
 								</div>
