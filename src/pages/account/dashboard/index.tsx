@@ -17,6 +17,8 @@ import PortfolioSummary from "~/components/Portfolio/PorfolioSummary";
 import NoTransactionIcon from "~/components/icons/NoTransactionIcon";
 import { useGetAllPendingTasksCount } from "~/hooks/useTask";
 import useUserProfileData from "~/hooks/useUserProfileData";
+import OpenEyesIcon from "~/components/icons/OpenEyesIcon";
+import { formatCurrency } from "~/lib/utils";
 
 const Dashbaord = () => {
 	const router = useRouter();
@@ -71,18 +73,21 @@ const Dashbaord = () => {
 							</h3>
 						</div>
 					)}
-					<div
-						className="flex justify-start space-x-2"
-						onClick={() => handleShowBalance(!showBalance)}
-					>
+					<div className="flex items-center space-x-2">
 						<h4 className="text-sm text-[#08123B] font-medium">Wallet Overview</h4>
-						<EyesIcon />
+
+						<span
+							onClick={() => handleShowBalance(!showBalance)}
+							className="cursor-pointer"
+						>
+							{showBalance ? <EyesIcon /> : <OpenEyesIcon />}
+						</span>
 					</div>
 					<h3 className="mt-1 text-xl font-bold">
 						{isUserProfileLoading ? (
 							<Line width="md" height="lg" />
 						) : showBalance ? (
-							`${data?.wallet?.totalBalance} USD`
+							`${formatCurrency(data?.wallet?.totalBalance)} USD`
 						) : (
 							<HidenBalance className="mt-6 mb-2" />
 						)}

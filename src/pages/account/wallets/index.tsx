@@ -1,38 +1,45 @@
-import { useRouter } from "next/router";
-import React, { ReactNode, useEffect } from "react";
+import { ReactElement, ReactNode } from "react";
 import AccountLayout from "~/components/AccountLayout/Layout";
-import PageTab from "~/components/AccountLayout/Tabs";
-
-const WalletsHome = () => {
-	const router = useRouter();
-	useEffect(() => {
-		router.push("wallets/main");
-	}, []);
-};
+// import Currencies from "~/components/Wallet/Currencies";
+import RecentTransactions from "~/components/Wallet/RecentTransactions";
+import WalletBalanceCard from "~/components/Wallet/WalletBalanceCard";
+import TiltedCircledArrowIcon from "~/components/icons/TiltedCircledArrowIcon";
+import { ROUTES } from "~/config/constants";
 
 type IProps = {
 	children: ReactNode;
 };
 
-const WalletsLayout: React.FC<IProps> = ({ children }) => {
-	const tabs = [
-		{ title: "Main", href: "/account/wallets/main" },
-		{ title: "Spot", href: "/account/wallets/spot" },
-		{ title: "Futures", href: "/account/wallets/futures" },
+export const NestedWalletsLayout: React.FC<IProps> = ({ children }) => (
+	<AccountLayout>{children}</AccountLayout>
+);
+
+const Wallets = () => {
+	const supportedOperations = [
+		{
+			label: "Deposit",
+			url: ROUTES.wallet.deposit,
+			Icon: TiltedCircledArrowIcon,
+		},
+		{
+			label: "Withdraw",
+			url: ROUTES.wallet.withdraw,
+			Icon: TiltedCircledArrowIcon,
+		},
 	];
 
 	return (
-		<div>
-			<PageTab tabs={tabs} />
-			<div className="mt-6">{children}</div>
-		</div>
+		<section>
+			<WalletBalanceCard
+				supportedOperations={supportedOperations}
+				padding="p-3 md:px-5 md:py-10 !rounded-2xl"
+				totalBalanceStyle="text-2xl text-textGray"
+			/>
+			{/* <Currencies /> */}
+			<RecentTransactions />
+		</section>
 	);
 };
 
-export const NestedWalletsLayout: React.FC<IProps> = ({ children }) => (
-	<AccountLayout>
-		<WalletsLayout>{children}</WalletsLayout>
-	</AccountLayout>
-);
-
-export default WalletsHome;
+Wallets.getLayout = (page: ReactElement) => <AccountLayout>{page}</AccountLayout>;
+export default Wallets;

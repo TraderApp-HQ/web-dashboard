@@ -38,3 +38,14 @@ export const convertEnumToOptions = <T extends Record<string, string>>(
 		displayText: value,
 	}));
 };
+
+export const formatCurrency = (value: string | number) => {
+	// Remove commas and convert to a number
+	const number = parseFloat(value.toString().replace(/,/g, ""));
+
+	return new Intl.NumberFormat("en-US", {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
+		useGrouping: true, // Ensures thousand separators
+	}).format(number);
+};
