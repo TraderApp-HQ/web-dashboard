@@ -37,7 +37,7 @@ const IconButton: React.FC<IconButtonProps> = ({
 			disabled={disabled}
 			aria-label={otherProps["aria-label"]}
 			className={clsx(
-				` flex items-center p-1 transition focus:outline-none`,
+				`flex items-center justify-center p-1 transition focus:outline-none`,
 				disabled && "cursor-not-allowed",
 				reversed && "flex-row-reverse",
 				"disabled:text-gray",

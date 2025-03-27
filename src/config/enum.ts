@@ -66,3 +66,14 @@ export enum TradeSignalModalScreen {
 	TRADE_PRICE = "Trade Price",
 	TRADE_CHART = "Trade Chart",
 }
+
+export enum TransactionStatus {
+	SUCCESSFUL = "SUCCESSFUL",
+	FAILED = "FAILED",
+	PENDING = "PENDING",
+}
+
+export enum TransactionType {
+	WITHDRAW = "WITHDRAW",
+	DEPOSIT = "DEPOSIT",
+}

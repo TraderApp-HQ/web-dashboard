@@ -2,7 +2,14 @@
 import React from "react";
 import { GetServerSidePropsResult } from "next";
 import StatusPill from "~/components/common/StatusPill";
-import { ColourTheme, HTMLElements, OperationStatus, UserStatus } from "~/config/enum";
+import {
+	ColourTheme,
+	HTMLElements,
+	OperationStatus,
+	TransactionStatus,
+	TransactionType,
+	UserStatus,
+} from "~/config/enum";
 import TargetPill from "~/components/common/TargetPill";
 import type { IDisplayItem, TartgetProfit } from "~/lib/types";
 import DisplayItem from "~/components/common/DisplayItem";
@@ -15,6 +22,7 @@ import {
 import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/types";
 import DisplayChange from "~/components/common/DisplayChange";
 import RankDisplay from "~/components/common/RankDisplay";
+import DisplayTransaction from "~/components/common/DisplayTransaction";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -71,9 +79,16 @@ export function renderPercentageChange(currentChange?: number) {
 	return React.createElement(DisplayChange, { currentChange });
 }
 
+export function renderTransactionType(transaction: TransactionType) {
+	return React.createElement(DisplayTransaction, {
+		transaction,
+	});
+}
+
 export function renderStatus(status: string, style?: { justify?: string }, bullet?: boolean) {
 	let theme: ColourTheme;
 	switch (status) {
+		case TransactionStatus.SUCCESSFUL:
 		case TaskCategory.REFERRAL:
 		case UserTaskStatus.DONE:
 		case TaskStatus.STARTED:
@@ -89,11 +104,13 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 			theme = ColourTheme.WARNING;
 			break;
 		}
+		case TransactionStatus.PENDING:
 		case TaskStatus.COMPLETED:
 		case UserTaskStatus.IN_REVIEW: {
 			theme = ColourTheme.REVIEW;
 			break;
 		}
+		case TransactionStatus.FAILED:
 		case OperationStatus.FAILED: {
 			theme = ColourTheme.DANGER;
 			break;

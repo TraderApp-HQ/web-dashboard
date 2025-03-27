@@ -32,7 +32,7 @@ const AccountLayout: React.FC<Props> = ({ children }) => {
 					<MobileTopHeader />
 				</div>
 				{/* Body */}
-				<div className="h-[90%] overflow-y-auto py-6 px-4 md:px-12 md:py-8">{children}</div>
+				<div className="h-[90%] overflow-y-auto py-6 px-3 md:px-12 md:py-8">{children}</div>
 			</div>
 		</div>
 	);

@@ -1,38 +1,36 @@
-import { useRouter } from "next/router";
-import React, { ReactNode, useEffect } from "react";
+import { ReactElement } from "react";
 import AccountLayout from "~/components/AccountLayout/Layout";
-import PageTab from "~/components/AccountLayout/Tabs";
+import RecentTransactions from "~/components/Wallet/RecentTransactions";
+import WalletBalanceCard from "~/components/Wallet/WalletBalanceCard";
+import TiltedCircledTopRightArrowIcon from "~/components/icons/TiltedCircledTopRightArrowIcon";
+import TiltedCircledDownRightArrowIcon from "~/components/icons/TiltedCircledDownRightArrowIcon";
+import { ROUTES } from "~/config/constants";
 
-const WalletsHome = () => {
-	const router = useRouter();
-	useEffect(() => {
-		router.push("wallets/main");
-	}, []);
-};
-
-type IProps = {
-	children: ReactNode;
-};
-
-const WalletsLayout: React.FC<IProps> = ({ children }) => {
-	const tabs = [
-		{ title: "Main", href: "/account/wallets/main" },
-		{ title: "Spot", href: "/account/wallets/spot" },
-		{ title: "Futures", href: "/account/wallets/futures" },
+const Wallets = () => {
+	const supportedOperations = [
+		{
+			label: "Deposit",
+			url: ROUTES.wallet.deposit,
+			Icon: TiltedCircledDownRightArrowIcon,
+		},
+		{
+			label: "Withdraw",
+			url: ROUTES.wallet.withdraw,
+			Icon: TiltedCircledTopRightArrowIcon,
+		},
 	];
 
 	return (
-		<div>
-			<PageTab tabs={tabs} />
-			<div className="mt-6">{children}</div>
-		</div>
+		<section className="space-y-10">
+			<WalletBalanceCard
+				supportedOperations={supportedOperations}
+				padding="p-3 md:px-5 md:py-10 !rounded-2xl"
+				totalBalanceStyle="text-2xl text-textGray"
+			/>
+			<RecentTransactions />
+		</section>
 	);
 };
 
-export const NestedWalletsLayout: React.FC<IProps> = ({ children }) => (
-	<AccountLayout>
-		<WalletsLayout>{children}</WalletsLayout>
-	</AccountLayout>
-);
-
-export default WalletsHome;
+Wallets.getLayout = (page: ReactElement) => <AccountLayout>{page}</AccountLayout>;
+export default Wallets;
