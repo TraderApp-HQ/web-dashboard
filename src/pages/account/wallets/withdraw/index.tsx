@@ -9,7 +9,7 @@ import Button from "~/components/AccountLayout/Button";
 import RoundedTextDiv from "~/components/AccountLayout/RoundedTextDiv";
 import InputField from "~/components/common/InputField";
 import { handleKeyDown } from "~/lib/utils";
-import { NestedWalletsLayout } from "..";
+import AccountLayout from "~/components/AccountLayout/Layout";
 
 const Withdraw = () => {
 	const router = useRouter();
@@ -130,7 +130,5 @@ const Withdraw = () => {
 	);
 };
 
-Withdraw.getLayout = (page: React.ReactElement) => (
-	<NestedWalletsLayout>{page}</NestedWalletsLayout>
-);
+Withdraw.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
 export default Withdraw;

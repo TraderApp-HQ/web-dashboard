@@ -1,41 +1,32 @@
-import { ReactElement, ReactNode } from "react";
+import { ReactElement } from "react";
 import AccountLayout from "~/components/AccountLayout/Layout";
-// import Currencies from "~/components/Wallet/Currencies";
 import RecentTransactions from "~/components/Wallet/RecentTransactions";
 import WalletBalanceCard from "~/components/Wallet/WalletBalanceCard";
-import TiltedCircledArrowIcon from "~/components/icons/TiltedCircledArrowIcon";
+import TiltedCircledTopRightArrowIcon from "~/components/icons/TiltedCircledTopRightArrowIcon";
+import TiltedCircledDownRightArrowIcon from "~/components/icons/TiltedCircledDownRightArrowIcon";
 import { ROUTES } from "~/config/constants";
-
-type IProps = {
-	children: ReactNode;
-};
-
-export const NestedWalletsLayout: React.FC<IProps> = ({ children }) => (
-	<AccountLayout>{children}</AccountLayout>
-);
 
 const Wallets = () => {
 	const supportedOperations = [
 		{
 			label: "Deposit",
 			url: ROUTES.wallet.deposit,
-			Icon: TiltedCircledArrowIcon,
+			Icon: TiltedCircledDownRightArrowIcon,
 		},
 		{
 			label: "Withdraw",
 			url: ROUTES.wallet.withdraw,
-			Icon: TiltedCircledArrowIcon,
+			Icon: TiltedCircledTopRightArrowIcon,
 		},
 	];
 
 	return (
-		<section>
+		<section className="space-y-10">
 			<WalletBalanceCard
 				supportedOperations={supportedOperations}
 				padding="p-3 md:px-5 md:py-10 !rounded-2xl"
 				totalBalanceStyle="text-2xl text-textGray"
 			/>
-			{/* <Currencies /> */}
 			<RecentTransactions />
 		</section>
 	);

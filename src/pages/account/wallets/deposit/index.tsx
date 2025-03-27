@@ -7,7 +7,7 @@ import CustomSelect from "../../../../components/Wallet/CustomSelect";
 import data from "~/data/wallet/data.json";
 import type { Asset } from "~/lib/types";
 import Button from "~/components/AccountLayout/Button";
-import { NestedWalletsLayout } from "..";
+import AccountLayout from "~/components/AccountLayout/Layout";
 
 const Deposit = () => {
 	const router = useRouter();
@@ -128,5 +128,5 @@ const Deposit = () => {
 	);
 };
 
-Deposit.getLayout = (page: React.ReactElement) => <NestedWalletsLayout>{page}</NestedWalletsLayout>;
+Deposit.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
 export default Deposit;

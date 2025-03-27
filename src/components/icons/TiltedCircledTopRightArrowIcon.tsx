@@ -1,6 +1,6 @@
 import React from "react";
 
-const TiltedCircledArrowIcon: React.FC = () => {
+const TiltedCircledTopRightArrowIcon: React.FC = () => {
 	return (
 		<svg
 			width="30"
@@ -28,4 +28,4 @@ const TiltedCircledArrowIcon: React.FC = () => {
 	);
 };
 
-export default TiltedCircledArrowIcon;
+export default TiltedCircledTopRightArrowIcon;

@@ -1,8 +1,10 @@
 import type { IRecentTransactions } from "~/lib/types";
 import type { ITBody, ITableMobile } from "~/components/common/DataTable/config";
 import { RecentTransactionsTableHeadItems } from "./constants";
-import { renderDisplayItem, renderStatus } from "~/helpers";
+import { renderDisplayItem, renderStatus, renderTransactionType } from "~/helpers";
 import { ROUTES } from "~/config/constants";
+import { formatCurrency, uniqueDateFormat } from "~/lib/utils";
+import { TransactionType } from "~/config/enum";
 
 export function recentTransactionsDataTableSelector(recentTransactions: IRecentTransactions[]) {
 	const tableHead = [...RecentTransactionsTableHeadItems];
@@ -11,21 +13,26 @@ export function recentTransactionsDataTableSelector(recentTransactions: IRecentT
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: item.curency, style: "text-base font-normal" },
+						itemText: { text: item.curency, style: "text-base font-bold" },
 						itemSubText: { text: item.shortName },
 						itemImage: item.image,
+						styles: "md:!justify-start",
 					}),
 				},
-				{ displayItem: item.transaction },
-				{ displayItem: item.wallet },
-				{ displayItem: item.amount },
-				{ displayItem: renderStatus(item.status) },
-				{ displayItem: item.date },
+				{
+					displayItem: renderTransactionType(item.transaction as TransactionType),
+				},
+				{
+					displayItem: `${formatCurrency(+item.amount)} ${item.shortName}`,
+					styles: "text-left",
+				},
+				{ displayItem: renderStatus(item.status, {}, false) },
+				{ displayItem: uniqueDateFormat(item.date), styles: "text-left" },
 			],
 			actions: [
 				{
 					label: "View",
-					url: `${item.id}/${ROUTES.wallet.transactionDetails}`,
+					url: `${ROUTES.wallet.homepage.slice(1)}/${item.id}/${ROUTES.wallet.transactionDetails}`,
 				},
 			],
 		})),
@@ -49,29 +56,25 @@ export function recentTransactionsDataTableMobileSelector(
 		actions: [
 			{
 				label: "View",
-				url: `${item.id}/${ROUTES.wallet.transactionDetails}`,
+				url: `${ROUTES.wallet.homepage.slice(1)}/${item.id}/${ROUTES.wallet.transactionDetails}`,
 			},
 		],
 		tBody: [
 			{
-				displayItemTitle: "Transaction",
-				displayItemValue: item.transaction,
-			},
-			{
-				displayItemTitle: "Wallet",
-				displayItemValue: item.wallet,
-			},
-			{
-				displayItemTitle: "Date / Time",
-				displayItemValue: item.date,
+				displayItemTitle: "Transaction Type",
+				displayItemValue: renderTransactionType(item.transaction as TransactionType),
 			},
 			{
 				displayItemTitle: "Amount",
-				displayItemValue: item.amount,
+				displayItemValue: `${formatCurrency(+item.amount)} ${item.shortName}`,
+			},
+			{
+				displayItemTitle: "Date",
+				displayItemValue: uniqueDateFormat(item.date),
 			},
 			{
 				displayItemTitle: "Status",
-				displayItemValue: renderStatus(item.status),
+				displayItemValue: renderStatus(item.status, { justify: "justify-end" }, false),
 			},
 		],
 	}));

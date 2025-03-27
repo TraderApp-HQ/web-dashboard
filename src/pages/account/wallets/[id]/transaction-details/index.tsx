@@ -13,7 +13,7 @@ import {
 	TransferTransactionsRecord,
 	WithdrawalTransactionsRecord,
 } from "~/components/Wallet/RecentTransactions/TransactionsRecord";
-import { NestedWalletsLayout } from "../..";
+import AccountLayout from "~/components/AccountLayout/Layout";
 
 interface TransactionDetailsProps {
 	transaction: IRecentTransactions;
@@ -62,7 +62,5 @@ function TransactionDetails({ transaction }: TransactionDetailsProps) {
 	);
 }
 
-TransactionDetails.getLayout = (page: React.ReactElement) => (
-	<NestedWalletsLayout>{page}</NestedWalletsLayout>
-);
+TransactionDetails.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
 export default TransactionDetails;
