@@ -42,34 +42,36 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 }) => {
 	return (
 		<>
-			<div className="flex flex-col mb-4 rounded-lg px-3 py-4 bg-white">
-				{showSearch && searchProps && (
-					<SearchForm
-						{...searchProps}
-						placeHolder={searchProps.placeholder}
-						aria-label="search"
-						marginTop="mt-0"
-					/>
-				)}
+			{(showSearch || showFilter) && (
+				<div className="flex flex-col mb-4 rounded-lg px-3 py-4 bg-white">
+					{showSearch && searchProps && (
+						<SearchForm
+							{...searchProps}
+							placeHolder={searchProps.placeholder}
+							aria-label="search"
+							marginTop="mt-0"
+						/>
+					)}
 
-				{showFilter && filterProps && (
-					<DropdownMenu
-						className="w-[256px]"
-						btnClass={`w-full h-12 px-1.5 py-3 bg-sky-200 bg-opacity-20 rounded-lg border ${filterProps.className}`}
-						containerClassName="w-full"
-						trigger={
-							<>
-								<div className="text-textGray text-sm font-normal leading-snug">
-									{filterProps.triggerText || "Filter"}
-								</div>
-							</>
-						}
-						position="left"
-					>
-						{filterProps.filterContent}
-					</DropdownMenu>
-				)}
-			</div>
+					{showFilter && filterProps && (
+						<DropdownMenu
+							className="w-[256px]"
+							btnClass={`w-full h-12 px-1.5 py-3 bg-sky-200 bg-opacity-20 rounded-lg border ${filterProps.className}`}
+							containerClassName="w-full"
+							trigger={
+								<>
+									<div className="text-textGray text-sm font-normal leading-snug">
+										{filterProps.triggerText || "Filter"}
+									</div>
+								</>
+							}
+							position="left"
+						>
+							{filterProps.filterContent}
+						</DropdownMenu>
+					)}
+				</div>
+			)}
 			<div data-testid="table-data-mobile">
 				{data.map((dataItem, index) => (
 					<div className="border-2 rounded-lg py-5 px-3 bg-white mb-6" key={index}>
