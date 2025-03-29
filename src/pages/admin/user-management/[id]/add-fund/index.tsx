@@ -79,7 +79,8 @@ function AddFund({ id }: { id: string }) {
 
 	// Validation to check if form is fit to submit
 	useEffect(() => {
-		if (exchange && accountType && currency && amount && amount > 0) {
+		if (exchange && accountType && currency && amount !== undefined && amount >= 0) {
+			// Check if amount is a number and not negative
 			setSubmitButtonDisabled(false);
 		} else {
 			setSubmitButtonDisabled(true);
@@ -108,7 +109,7 @@ function AddFund({ id }: { id: string }) {
 	}, [isAddFundSuccess]);
 
 	const onSubmit = () => {
-		if (exchange && accountType && currency && amount !== undefined && amount > 0) {
+		if (exchange && accountType && currency && amount !== undefined && amount >= 0) {
 			const data = {
 				userId: id,
 				platformName: exchange.value as TradingPlatform,

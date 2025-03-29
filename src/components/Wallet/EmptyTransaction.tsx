@@ -11,7 +11,7 @@ export default function EmptyTransaction() {
 					No Transaction made yet.
 				</h2>
 				<p className="text-sm font-medium leading-normal text-textGray">
-					Transactions history will appear hear.
+					Transactions history will appear here.
 				</p>
 			</section>
 		</Card>
