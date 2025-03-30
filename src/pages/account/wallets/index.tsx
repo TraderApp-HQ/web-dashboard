@@ -1,5 +1,6 @@
 import { ReactElement } from "react";
 import { WalletType } from "~/apis/handlers/wallets/enum";
+import { IUserWallet } from "~/apis/handlers/wallets/interface";
 import AccountLayout from "~/components/AccountLayout/Layout";
 import WalletBalanceCardLoader from "~/components/Loaders/WalletBalanceCardLoader";
 import WalletTransactionsLoader from "~/components/Loaders/WalletTransactionsLoader";
@@ -9,17 +10,12 @@ import { useGetUserWalletsBalance } from "~/hooks/useWallets";
 
 const Wallets = () => {
 	// Get wallet balance hook
-	const {
-		data: wallets,
-		isError,
-		isLoading,
-		isSuccess,
-	} = useGetUserWalletsBalance(WalletType.MAIN);
+	const { data, isError, isLoading, isSuccess } = useGetUserWalletsBalance(WalletType.MAIN);
 
-	// Get the wallet balance for the main wallet
-	const walletBalance = wallets?.find(
+	// Get the main wallet balance and currency.
+	const wallet = data?.wallets?.find(
 		(wallet) => wallet.walletTypeName === WalletType.MAIN,
-	)?.availableBalance;
+	) as IUserWallet;
 
 	return (
 		<section className="space-y-10">
@@ -30,7 +26,8 @@ const Wallets = () => {
 					<WalletBalanceCard
 						padding="p-3 md:px-5 md:py-10 !rounded-2xl"
 						totalBalanceStyle="text-2xl text-textGray"
-						walletBalance={walletBalance}
+						walletBalance={wallet?.availableBalance}
+						walletCurrency={wallet?.currencySymbol}
 						isError={isError}
 					/>
 				)

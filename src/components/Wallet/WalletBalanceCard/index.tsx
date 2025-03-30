@@ -14,6 +14,7 @@ interface ITotalBalanceSectionProps {
 	totalBalanceStyle?: string;
 	padding?: string;
 	walletBalance?: number;
+	walletCurrency?: string;
 	isError?: boolean;
 }
 
@@ -23,6 +24,7 @@ export default function WalletBalanceCard({
 	totalBalanceStyle,
 	padding,
 	walletBalance,
+	walletCurrency,
 	isError,
 }: ITotalBalanceSectionProps) {
 	const router = useRouter();
@@ -57,7 +59,9 @@ export default function WalletBalanceCard({
 										className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"}`}
 									>
 										{formatCurrency(walletBalance ?? 0)}
-										<span className="pl-2 text-xl">USD</span>
+										<span className="pl-2 text-xl capitalize">
+											{walletCurrency}
+										</span>
 									</h3>
 								</section>
 								<h4 className="text-sm font-normal text-[#585858]">

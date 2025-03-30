@@ -2,7 +2,7 @@ import { APIClient } from "~/apis/apiClient";
 import { UsersService } from "~/apis/handlers/users";
 import { IResponse } from "../interfaces";
 import { WalletType } from "./enum";
-import { IUserWallet } from "./interface";
+import { IUserWalletResponse } from "./interface";
 
 export class WalletsService {
 	private apiClient: APIClient;
@@ -18,7 +18,7 @@ export class WalletsService {
 		);
 	}
 
-	public async getWalletBalance(wallet: WalletType): Promise<IUserWallet[]> {
+	public async getWalletBalance(wallet: WalletType): Promise<IUserWalletResponse> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/wallets/user-wallet-type?type=${wallet}`,
 		});
@@ -28,6 +28,6 @@ export class WalletsService {
 
 		const { data } = response;
 
-		return data as IUserWallet[];
+		return data as IUserWalletResponse;
 	}
 }
