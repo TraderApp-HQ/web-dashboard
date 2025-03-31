@@ -11,7 +11,7 @@ export interface ITotalBalanceItems {
 export interface IUserWalletResponse {
 	wallets: IUserWallet[];
 	exchangeRates: IExchangeRate[];
-	exchangeRateTotalBalances: IGetWalletResponseRate[];
+	exchangeRateTotalBalances: IWalletConvertedBalance[];
 }
 
 export interface IUserWallet {
@@ -31,7 +31,7 @@ interface IExchangeRate {
 	rate: number; // e.g., 45000.00
 }
 
-interface IGetWalletResponseRate {
+export interface IWalletConvertedBalance {
 	balance: number;
 	currency: string;
 }

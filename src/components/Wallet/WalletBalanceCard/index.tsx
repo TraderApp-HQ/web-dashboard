@@ -7,14 +7,15 @@ import EyesIcon from "~/components/icons/EyesIcon";
 import OpenEyesIcon from "~/components/icons/OpenEyesIcon";
 import { formatCurrency } from "~/lib/utils";
 import HidenBalance from "../HidenBalance";
+import { IWalletConvertedBalance } from "~/apis/handlers/wallets/interface";
+import SelectBox from "~/components/common/SelectBox";
 
 interface ITotalBalanceSectionProps {
 	showBalanceText?: string;
 	btcBalance?: string;
 	totalBalanceStyle?: string;
 	padding?: string;
-	walletBalance?: number;
-	walletCurrency?: string;
+	walletConvertedBalance?: IWalletConvertedBalance[];
 	isError?: boolean;
 }
 
@@ -23,12 +24,12 @@ export default function WalletBalanceCard({
 	// btcBalance,
 	totalBalanceStyle,
 	padding,
-	walletBalance,
-	walletCurrency,
+	walletConvertedBalance,
 	isError,
 }: ITotalBalanceSectionProps) {
 	const router = useRouter();
-	const [showBalance, handleShowBalance] = useState(true);
+	const [showBalance, handleShowBalance] = useState<boolean>(true);
+	const [walletBalance, setWalletBalance] = useState<number>(0);
 
 	return (
 		<Card
@@ -54,16 +55,37 @@ export default function WalletBalanceCard({
 					<section className="space-y-3 h-10 flex flex-col justify-center">
 						{showBalance ? (
 							<>
-								<section className="h-6 flex items-center">
-									<h3
+								<section className="h-6 flex items-baseline gap-2">
+									<h2
 										className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"}`}
 									>
 										{formatCurrency(walletBalance ?? 0)}
-										<span className="pl-2 text-xl capitalize">
-											{walletCurrency}
-										</span>
-									</h3>
+									</h2>
+
+									<SelectBox
+										isSearchable={false}
+										options={(walletConvertedBalance ?? []).map((bal) => ({
+											displayText: bal.currency,
+											value: bal.currency,
+										}))}
+										option={{
+											displayText:
+												walletConvertedBalance?.[0]?.currency ?? "",
+											value: walletConvertedBalance?.[0]?.currency ?? "",
+										}}
+										setOption={(opt) =>
+											setWalletBalance(
+												(walletConvertedBalance ?? []).find(
+													(item) => item.currency === opt.value,
+												)?.balance ?? 0,
+											)
+										}
+										bgColor="transparent"
+										buttonClassName="p-0 space-x-0"
+										fontStyles="text-lg capitalize font-bold text-textGray w-12"
+									/>
 								</section>
+
 								<h4 className="text-sm font-normal text-[#585858]">
 									<span className="pr-1 text-black font-semibold">≈</span>$
 									{formatCurrency(walletBalance ?? 0)}

@@ -12,10 +12,17 @@ const Wallets = () => {
 	// Get wallet balance hook
 	const { data, isError, isLoading, isSuccess } = useGetUserWalletsBalance(WalletType.MAIN);
 
-	// Get the main wallet balance and currency.
+	// Get the main wallet balance and currency in USDT.
 	const wallet = data?.wallets?.find(
 		(wallet) => wallet.walletTypeName === WalletType.MAIN,
 	) as IUserWallet;
+
+	// Get the wallet balances in all converted currencies and USDT.
+	// This is an array of objects with balance and currency properties.
+	const convertedWalletBalance = [
+		{ balance: wallet?.availableBalance, currency: wallet?.currencySymbol },
+		...(Array.isArray(data?.exchangeRateTotalBalances) ? data.exchangeRateTotalBalances : []),
+	];
 
 	return (
 		<section className="space-y-10">
@@ -26,8 +33,7 @@ const Wallets = () => {
 					<WalletBalanceCard
 						padding="p-3 md:px-5 md:py-10 !rounded-2xl"
 						totalBalanceStyle="text-2xl text-textGray"
-						walletBalance={wallet?.availableBalance}
-						walletCurrency={wallet?.currencySymbol}
+						walletConvertedBalance={convertedWalletBalance}
 						isError={isError}
 					/>
 				)
