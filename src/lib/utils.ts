@@ -46,26 +46,5 @@ export const formatCurrency = (value: number) =>
 		useGrouping: true, // Ensures thousand separators
 	}).format(value);
 
-export const uniqueDateFormat = (dateString: string) => {
-	const date = new Date(dateString);
-	const day = date.getDate();
-	const month = date.toLocaleString("en-US", { month: "long" });
-	const year = date.getFullYear();
-
-	// Function to get ordinal suffix (st, nd, rd, th)
-	const getOrdinalSuffix = (day: number) => {
-		if (day > 3 && day < 21) return "th"; // Covers 11th-13th
-		switch (day % 10) {
-			case 1:
-				return "st";
-			case 2:
-				return "nd";
-			case 3:
-				return "rd";
-			default:
-				return "th";
-		}
-	};
-
-	return `${day}${getOrdinalSuffix(day)} ${month.toLowerCase()}, ${year}`;
-};
+export const uniqueDateFormat = (dateString: string | number | Date) =>
+	format(new Date(dateString), "do MMMM, yyyy");

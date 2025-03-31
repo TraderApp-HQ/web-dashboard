@@ -1,37 +1,35 @@
-import Card from "~/components/AccountLayout/Card";
-import EyesIcon from "~/components/icons/EyesIcon";
-import type { JSXElementConstructor } from "react";
-import { useState } from "react";
-import data from "~/data/wallet/data.json";
-import HidenBalance from "../HidenBalance";
-import type { IconProps } from "~/components/AccountLayout/IconButton";
-import IconButton from "~/components/AccountLayout/IconButton";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { supportedOperations } from "~/apis/handlers/wallets/constants";
+import Card from "~/components/AccountLayout/Card";
+import IconButton from "~/components/AccountLayout/IconButton";
+import EyesIcon from "~/components/icons/EyesIcon";
 import OpenEyesIcon from "~/components/icons/OpenEyesIcon";
 import { formatCurrency } from "~/lib/utils";
+import HidenBalance from "../HidenBalance";
+import { IWalletConvertedBalance } from "~/apis/handlers/wallets/interface";
+import SelectBox from "~/components/common/SelectBox";
 
-export interface ITotalBalanceItems {
-	label: string;
-	url: string;
-	Icon: JSXElementConstructor<IconProps>;
-}
 interface ITotalBalanceSectionProps {
-	supportedOperations: ITotalBalanceItems[];
 	showBalanceText?: string;
 	btcBalance?: string;
 	totalBalanceStyle?: string;
 	padding?: string;
+	walletConvertedBalance?: IWalletConvertedBalance[];
+	isError?: boolean;
 }
 
 export default function WalletBalanceCard({
-	supportedOperations,
 	showBalanceText = "Total Balance",
 	// btcBalance,
 	totalBalanceStyle,
 	padding,
+	walletConvertedBalance,
+	isError,
 }: ITotalBalanceSectionProps) {
 	const router = useRouter();
-	const [showBalance, handleShowBalance] = useState(true);
+	const [showBalance, handleShowBalance] = useState<boolean>(true);
+	const [walletBalance, setWalletBalance] = useState<number>(0);
 
 	return (
 		<Card
@@ -41,32 +39,63 @@ export default function WalletBalanceCard({
 				<section className="flex items-center space-x-2">
 					<h4 className="text-sm text-black font-bold">{showBalanceText}</h4>
 
-					<span
-						onClick={() => handleShowBalance(!showBalance)}
-						className="cursor-pointer"
-					>
-						{showBalance ? <EyesIcon /> : <OpenEyesIcon />}
-					</span>
+					{!isError && (
+						<span
+							onClick={() => handleShowBalance(!showBalance)}
+							className="cursor-pointer"
+						>
+							{showBalance ? <EyesIcon /> : <OpenEyesIcon />}
+						</span>
+					)}
 				</section>
 
-				<section className="space-y-3">
-					<section className="h-6 flex items-center">
+				{isError ? (
+					<p className="text-red-300">Error fetching wallet balance. Please try again.</p>
+				) : (
+					<section className="space-y-3 h-10 flex flex-col justify-center">
 						{showBalance ? (
-							<h3
-								className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"}`}
-							>
-								{formatCurrency(data?.wallet?.totalBalance)}
-								<span className="pl-2 text-xl">USD</span>
-							</h3>
+							<>
+								<section className="h-6 flex items-baseline gap-2">
+									<h2
+										className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"}`}
+									>
+										{formatCurrency(walletBalance ?? 0)}
+									</h2>
+
+									<SelectBox
+										isSearchable={false}
+										options={(walletConvertedBalance ?? []).map((bal) => ({
+											displayText: bal.currency,
+											value: bal.currency,
+										}))}
+										option={{
+											displayText:
+												walletConvertedBalance?.[0]?.currency ?? "",
+											value: walletConvertedBalance?.[0]?.currency ?? "",
+										}}
+										setOption={(opt) =>
+											setWalletBalance(
+												(walletConvertedBalance ?? []).find(
+													(item) => item.currency === opt.value,
+												)?.balance ?? 0,
+											)
+										}
+										bgColor="transparent"
+										buttonClassName="p-0 space-x-0"
+										fontStyles="text-lg capitalize font-bold text-textGray w-12"
+									/>
+								</section>
+
+								<h4 className="text-sm font-normal text-[#585858]">
+									<span className="pr-1 text-black font-semibold">≈</span>$
+									{formatCurrency(walletBalance ?? 0)}
+								</h4>
+							</>
 						) : (
 							<HidenBalance />
 						)}
 					</section>
-					<h4 className="text-sm font-normal text-[#585858]">
-						<span className="pr-1 text-black font-semibold">≈</span>$
-						{formatCurrency(data?.wallet?.totalBalance)}
-					</h4>
-				</section>
+				)}
 			</section>
 
 			<section className="grid grid-cols-1 space-y-3 md:space-y-0 md:flex gap-px md:gap-2 flex-wrap md:justify-between md:space-x-2 text-xs">
