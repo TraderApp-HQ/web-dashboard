@@ -80,7 +80,7 @@ const RecoverPassword = () => {
 							/>
 						</div>
 						{/* action button */}
-						<div className="p-[16px] space-y-[16px]">
+						<div className="py-[16px] space-y-[16px]">
 							<Button
 								labelText="Continue"
 								className="w-full"

@@ -112,7 +112,7 @@ const Login = () => {
 	};
 
 	return (
-		<section className="py-[100px] h-full md:px-[20px] flex items-center max-[768px]:justify-center max-[768px]:pt-[0px]">
+		<section className="py-[100px] h-full md:px-[20px] flex lg:justify-center items-center max-[768px]:justify-center max-[768px]:pt-[0px]">
 			<div className="max-w-[419px] w-full">
 				<header className="text-center mb-[40px]">
 					<p className="text-[32px] text-[#102477] font-extrabold">Welcome back!</p>
@@ -147,7 +147,7 @@ const Login = () => {
 					{/* forgot password */}
 					<div>
 						<p
-							className="text-[#102477] dura text-[14px] font-sembold cursor-pointer"
+							className="text-[#102477] duration text-[14px] font-semibold cursor-pointer"
 							onClick={() => {
 								router.push(LAYOUT_ROUTES.auth + ROUTES.passwordrecover);
 							}}
@@ -156,10 +156,10 @@ const Login = () => {
 						</p>
 					</div>
 					{/* action button */}
-					<div className="p-[16px] space-y-[16px]">
+					<div className="py-[16px] space-y-[16px]">
 						<button
 							type="button"
-							className="transition-opacity duration-300 bg-[#1836B2] rounded-2xl p-[10px] font-semibold w-full text-white disabled:opacity-60"
+							className="transition-opacity duration-300 bg-[#1836B2] rounded-md px-[10px] py-4 font-semibold w-full text-white disabled:opacity-60"
 							onClick={handleLogin}
 							disabled={!validCredential || isPending}
 						>
