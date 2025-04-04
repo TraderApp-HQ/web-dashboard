@@ -21,4 +21,6 @@ export const WalletsQueryId = {
 	walletHistory: "user-wallet-history",
 	wallet: "user-wallet",
 	wallets: "user-wallets",
+	supportedCurrencies: "wallet-supported-currencies",
+	paymentOptions: "wallet-payment-options",
 };

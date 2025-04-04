@@ -112,8 +112,8 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 				ref={selectBoxRef}
 			>
 				{/* for testing */}
-				{filteredOptions.map(({ value, displayText }) => (
-					<div key={value} data-testid={displayText} />
+				{filteredOptions.map(({ value, displayText }, index) => (
+					<div key={`${value}_${index}`} data-testid={displayText} />
 				))}
 
 				<div
