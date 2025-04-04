@@ -13,7 +13,7 @@ const Button: React.FC<IButton> = ({ labelText, disabled, className, onClick, is
 		<button
 			disabled={disabled}
 			type="button"
-			className={`transition-opacity duration-300 bg-[#1836B2] rounded-md p-3 font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
+			className={`transition-opacity duration-300 bg-[#1836B2] rounded-md px-3 py-4 font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
 			onClick={onClick}
 		>
 			{isProcessing ? "Processing..." : labelText}

@@ -202,9 +202,9 @@ const NoTransactionIcon = (props) => {
 					gradientUnits="userSpaceOnUse"
 				>
 					<stop offset="0.01" />
-					<stop offset="0.08" stop-opacity="0.69" />
-					<stop offset="0.21" stop-opacity="0.32" />
-					<stop offset="1" stop-opacity="0" />
+					<stop offset="0.08" stopOpacity="0.69" />
+					<stop offset="0.21" stopOpacity="0.32" />
+					<stop offset="1" stopOpacity="0" />
 				</linearGradient>
 				<clipPath id="clip0_5856_31783">
 					<rect width="224" height="186.773" fill="white" transform="translate(0.5)" />

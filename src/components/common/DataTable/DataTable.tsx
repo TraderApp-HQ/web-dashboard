@@ -85,80 +85,85 @@ const DataTable: React.FC<IDataTable> = ({
 					</DropdownMenu>
 				)}
 			</div>
-			<table data-testid="table-data" className={`min-w-[1100px] w-full ${tableStyles}`}>
-				<thead
-					className={`border-b border-neutral-400 border-opacity-20 ${tableHeadStyles}`}
-				>
-					<tr>
-						{tHead.map((th, index) => (
-							<th
-								key={index}
-								className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles} ${th.styles} ${th.isAssetItem ? "" : ""}`}
-							>
-								{th.tooltip ? (
-									<div
-										className={`flex items-center gap-1 ${th.styles?.includes("text-left") ? "justify-start" : "justify-center"} `}
-									>
-										{th.displayItem}
-										<TooltipIcon
-											direction="top"
-											icon={
-												<FiHelpCircle
-													size={16}
-													className="text-gray-400 cursor-help"
-												/>
-											}
-											text={th.tooltip.text}
-											tooltipTextColor="text-white"
-											contentClassName="!text-left border-2"
-										/>
-									</div>
-								) : (
-									th.displayItem
-								)}
-							</th>
-						))}
-						{hasActions && (
-							<th
-								className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles}`}
-							>
-								Actions
-							</th>
-						)}
-					</tr>
-				</thead>
-				<tbody>
-					{tBody.tBodyRows.map((tr, index) => (
-						<tr key={index}>
-							{tr.tBodyColumns.map((tc, index) => (
-								<td
+			<div className="overflow-x-auto">
+				<table data-testid="table-data" className={`min-w-[1100px] w-full ${tableStyles}`}>
+					<thead
+						className={`border-b border-neutral-400 border-opacity-20 ${tableHeadStyles}`}
+					>
+						<tr>
+							{tHead.map((th, index) => (
+								<th
 									key={index}
-									className={`py-5 border-b text-sm border-slate-200 text-zinc-600 font-normal leading-none whitespace-nowrap ${tableRowItemStyles} ${
-										tc.styles ?? ""
-									}`}
+									className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles} ${th.styles} ${th.isAssetItem ? "" : ""}`}
 								>
-									{tc.displayItem}
-								</td>
+									{th.tooltip ? (
+										<div
+											className={`flex items-center gap-1 ${th.styles?.includes("text-left") ? "justify-start" : "justify-center"} `}
+										>
+											{th.displayItem}
+											<TooltipIcon
+												direction="top"
+												icon={
+													<FiHelpCircle
+														size={16}
+														className="text-gray-400 cursor-help"
+													/>
+												}
+												text={th.tooltip.text}
+												tooltipTextColor="text-white"
+												contentClassName="!text-left border-2"
+											/>
+										</div>
+									) : (
+										th.displayItem
+									)}
+								</th>
 							))}
 							{hasActions && (
-								<td
-									className={`py-5 border-b text-sm border-slate-200 text-zinc-600 font-normal leading-none whitespace-nowrap ${tableRowItemStyles}`}
+								<th
+									className={`py-5 text-[#0A0D14] text-sm font-bold leading-none ${tableHeadItemStyles}`}
 								>
-									{hasMenueItems ? (
-										<TableMenuItems
-											dataTableMenuItems={tr.actions ?? []}
-											menueItemType={menueItemType}
-											justifyMenueItem={justifyMenueItem}
-										/>
-									) : (
-										<TableMenuDropdown dataTableMenuItems={tr.actions ?? []} />
-									)}
-								</td>
+									Actions
+								</th>
 							)}
 						</tr>
-					))}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{tBody.tBodyRows.map((tr, index) => (
+							<tr key={index}>
+								{tr.tBodyColumns.map((tc, index) => (
+									<td
+										key={index}
+										className={`py-5 border-b text-sm border-slate-200 text-zinc-600 font-normal leading-none whitespace-nowrap ${tableRowItemStyles} ${
+											tc.styles ?? ""
+										}`}
+									>
+										{tc.displayItem}
+									</td>
+								))}
+								{hasActions && (
+									<td
+										className={`py-5 border-b text-sm border-slate-200 text-zinc-600 font-normal leading-none whitespace-nowrap ${tableRowItemStyles}`}
+									>
+										{hasMenueItems ? (
+											<TableMenuItems
+												dataTableMenuItems={tr.actions ?? []}
+												menueItemType={menueItemType}
+												justifyMenueItem={justifyMenueItem}
+											/>
+										) : (
+											<TableMenuDropdown
+												dataTableMenuItems={tr.actions ?? []}
+											/>
+										)}
+									</td>
+								)}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+
 			{showPagination && paginationProps && (
 				<div className="mt-9">
 					<Pagination {...paginationProps} />
