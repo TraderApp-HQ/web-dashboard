@@ -88,9 +88,9 @@ export default function WalletBalanceCard({
 
 			{!isError && (
 				<section className="grid grid-cols-1 space-y-3 md:space-y-0 md:flex gap-px md:gap-2 flex-wrap md:justify-between md:space-x-2 text-xs">
-					{supportedOperations.map((item, index) => (
+					{supportedOperations.map((item) => (
 						<IconButton
-							key={index}
+							key={item.label}
 							Icon={item.Icon}
 							btnClass={`px-4 gap-2 border border-buttonColor rounded-md text-sm font-medium w-full md:w-32 h-12 ${item.label.toLowerCase() === "deposit" ? "bg-buttonColor text-white hover:opacity-80 hover:transition-colors" : "bg-white text-buttonColor"}`}
 							iconClass=""

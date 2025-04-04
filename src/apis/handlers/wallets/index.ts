@@ -1,8 +1,14 @@
 import { APIClient } from "~/apis/apiClient";
 import { UsersService } from "~/apis/handlers/users";
 import { IResponse } from "../interfaces";
-import { WalletType } from "./enum";
-import { IUserWalletResponse } from "./interface";
+import { PaymentCategory, PaymentOperation, WalletType } from "./enum";
+import {
+	IFactoryPaymentProviderDepositResponse,
+	IInitiateDepositInput,
+	IPaymentOptions,
+	IUserWalletResponse,
+	IWalletSupportedCurrencies,
+} from "./interface";
 
 export class WalletsService {
 	private apiClient: APIClient;
@@ -29,5 +35,53 @@ export class WalletsService {
 		const { data } = response;
 
 		return data as IUserWalletResponse;
+	}
+
+	public async getSupportedCurrencies(): Promise<IWalletSupportedCurrencies[]> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/wallets/supported-currencies`,
+		});
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch wallet balance.");
+		}
+
+		const { data } = response;
+
+		return data;
+	}
+
+	public async getSupportedPaymentOptions({
+		category,
+		operation,
+	}: {
+		category: PaymentCategory;
+		operation: PaymentOperation;
+	}): Promise<IPaymentOptions[]> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/wallets/payment-methods?category=${category}&operation=${operation}`,
+		});
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch wallet balance.");
+		}
+
+		const { data } = response;
+
+		return data;
+	}
+
+	public async initiateDeposit(
+		depositData: IInitiateDepositInput,
+	): Promise<IFactoryPaymentProviderDepositResponse> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/wallets/initiate-deposit",
+			data: depositData,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to initiate deposit");
+		}
+
+		const { data } = response;
+		return data as IFactoryPaymentProviderDepositResponse;
 	}
 }
