@@ -42,7 +42,7 @@ export class WalletsService {
 			url: `/wallets/supported-currencies`,
 		});
 		if (response.error) {
-			throw new Error(response.message ?? "Failed to fetch wallet balance.");
+			throw new Error(response.message ?? "Failed to fetch supported currencies.");
 		}
 
 		const { data } = response;
@@ -61,7 +61,7 @@ export class WalletsService {
 			url: `/wallets/payment-methods?category=${category}&operation=${operation}`,
 		});
 		if (response.error) {
-			throw new Error(response.message ?? "Failed to fetch wallet balance.");
+			throw new Error(response.message ?? "Failed to fetch supported payment options.");
 		}
 
 		const { data } = response;
@@ -78,7 +78,7 @@ export class WalletsService {
 		});
 
 		if (response.error) {
-			throw new Error(response.message || "Failed to initiate deposit");
+			throw new Error(response.message || "Failed to initiate deposit.");
 		}
 
 		const { data } = response;

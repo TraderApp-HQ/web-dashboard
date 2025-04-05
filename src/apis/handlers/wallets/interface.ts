@@ -70,7 +70,7 @@ export interface IInitiateDepositInput {
 	paymentMethodId: string;
 	providerId: string;
 	network: string;
-	amount: number | undefined;
+	amount?: number;
 }
 
 export interface IFactoryPaymentProviderDepositResponse {
