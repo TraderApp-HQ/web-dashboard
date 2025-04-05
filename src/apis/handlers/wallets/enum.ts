@@ -12,3 +12,8 @@ export enum PaymentOperation {
 	DEPOSIT = "Deposit",
 	WITHDRAWAL = "Withdrawal",
 }
+
+export enum ModalType {
+	ADDRESS = "Address",
+	EXPIRED = "Expired",
+}

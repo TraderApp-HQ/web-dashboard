@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
-import { PaymentCategory, PaymentOperation } from "~/apis/handlers/wallets/enum";
+import { ModalType, PaymentCategory, PaymentOperation } from "~/apis/handlers/wallets/enum";
 import {
 	IFactoryPaymentProviderDepositResponse,
 	IPaymentOptions,
@@ -20,12 +20,14 @@ import { CopyIcon2 } from "~/components/icons/CopyIcon";
 import { ISelectBoxOption } from "~/components/interfaces";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import useUserProfileData from "~/hooks/useUserProfileData";
+import useWalletTransactionCountDownTimer from "~/hooks/useWalletTransactionCountDownTimer";
 import { useInitiateDeposit, useWalletDepositOptions } from "~/hooks/useWallets";
 
 const Deposit = () => {
 	const router = useRouter();
 	const [openModal, setOpenModal] = useState(true);
 	const [depositUrlModal, setDepositUrlModal] = useState(false);
+	const [depositExpiredModal, setDepositExpiredModal] = useState(false);
 	const [selectedCurrency, setSelectedCurrency] = useState<
 		IWalletSupportedCurrencies | undefined
 	>(undefined);
@@ -42,9 +44,11 @@ const Deposit = () => {
 	const [disableButton, setDisableButton] = useState<boolean>(true);
 
 	// Hooks
-
 	const { userId } = useUserProfileData();
 	const { copyMessage, copyToClipboard } = useCopyToClipboard();
+	const { timeIsExpired, setTimeIsExpired, timeLeft } = useWalletTransactionCountDownTimer({
+		expiresAt: depositWalletInfo?.expiresAt ?? "",
+	});
 
 	// Fetch the supported currencies and payment options for deposit
 	const { supportedCurrencies, paymentOptions, isLoding, isError, error } =
@@ -102,11 +106,13 @@ const Deposit = () => {
 	};
 	const handleChangeAmount = (amount: string) => setAmount(Number(amount));
 	const handleModalClose = () => {
-		console.log("I was called");
+		router.back();
+
 		setOpenModal(false);
 		setDepositUrlModal(false);
-		handleClearDepositData();
-		router.back();
+		setDepositExpiredModal(false);
+		setTimeIsExpired(false); // Reset time expired state
+		handleClearDepositData(); // Clear deposit data when modal is closed
 	};
 	const handleClearDepositData = () => {
 		setSelectedCurrency(undefined);
@@ -115,9 +121,17 @@ const Deposit = () => {
 		setAmount(undefined);
 		setDepositWalletInfo(undefined);
 	};
-	const handleSwitchModal = () => {
+	const handleSwitchModal = (mode: ModalType) => {
+		if (mode === ModalType.EXPIRED) {
+			setDepositExpiredModal(true);
+			setDepositUrlModal(false);
+			setOpenModal(false);
+			return;
+		}
+
 		setDepositUrlModal(true);
 		setOpenModal(false);
+		setDepositExpiredModal(false);
 	};
 
 	// Check if the button should be disabled
@@ -135,60 +149,20 @@ const Deposit = () => {
 	useEffect(() => {
 		if (!isPending && !initiateDepositIsError && isSuccess && data) {
 			// Handle wallet deposit URL transaction
-			console.log("Deposit URL data:", data);
 			setDepositWalletInfo(data);
 
-			// currency: "USDT";
-			// customWalletId: "5718e30d-cb6e-4879-bb3d-000a3a87e131";
-			// externalWalletId: "c838882d-f757-4c68-b9a6-cabfd7498966";
-			// id: "c838882d-f757-4c68-b9a6-cabfd7498966";
-			// network: "bnb_smart_chain";
-			// payCurrency: "USDT";
-			// paymentUri: "0x09aF90b9a733cf8FA9Ed795fa49aDB8A7C960F3E";
-			// paymentUrl: "https://hosted-page.minfeesandbox.com/channels/c838882d-f757-4c68-b9a6-cabfd7498966";
-			// shouldRedirect: false;
-			// walletAddress: "0x09aF90b9a733cf8FA9Ed795fa49aDB8A7C960F3E";
-
-			// 2nd trial
-			// amount: 100;
-			// createdAt: "2025-04-04T01:28:56+00:00";
-			// currency: "USDT";
-			// customWalletId: "3ed342ca-232d-43a2-9793-8731a3e6e005";
-			// exchangePair: "BTCUSDT";
-			// exchangeRate: 85153.0645;
-			// expiresAt: "2025-04-04T01:38:56+00:00";
-			// externalWalletId: "6b955268-4e72-4c0f-91de-4a81b0994252";
-			// id: "6b955268-4e72-4c0f-91de-4a81b0994252";
-			// network: "bnb_smart_chain";
-			// payAmount: 0.001175;
-			// payCurrency: "BTC";
-			// paymentUri: "0xbC3fAC880b3fA61351e78D7D5c554eB3340cd12c";
-			// paymentUrl: "https://hosted-page.minfeesandbox.com/invoices/6b955268-4e72-4c0f-91de-4a81b0994252";
-			// shouldRedirect: false;
-			// walletAddress: "0xbC3fAC880b3fA61351e78D7D5c554eB3340cd12c";
-
-			// 3rd trial
-			// createdAt: "2025-04-03T22:53:09.272Z"
-			// customWalletId: "5718e30d-cb6e-4879-bb3d-000a3a87e131"
-			// externalWalletId: "c838882d-f757-4c68-b9a6-cabfd7498966"
-			// id: "67ef115564a7c5cd0388831d"
-			// isActive: true
-			// network: "bnb_smart_chain"
-			// paymentCategoryName: "Crypto"
-			// paymentMethod: "67d44fffa64c2a2d1fa6f6e4"
-			// paymentMethodName: "Tether"
-			// paymentProviderName: "CryptoPay"
-			// paymentUrl: "https://hosted-page.minfeesandbox.com/channels/c838882d-f757-4c68-b9a6-cabfd7498966"
-			// provider: "67d45000a64c2a2d1fa6f6ef"
-			// shouldRedirect: false
-			// updatedAt: "2025-04-03T22:53:09.272Z"
-			// userId: "66e9471fc0fb1b4a83e849e1"
-			// walletAddress: "0x09aF90b9a733cf8FA9Ed795fa49aDB8A7C960F3E"
-
 			// Open the deposit URL modal
-			handleSwitchModal();
+			handleSwitchModal(ModalType.ADDRESS);
 		}
 	}, [data, isSuccess]);
+
+	// Check if the deposit transaction is expired
+	useEffect(() => {
+		if (timeIsExpired) {
+			handleSwitchModal(ModalType.EXPIRED);
+			handleClearDepositData(); // Clear deposit data when time is expired
+		}
+	}, [timeIsExpired]);
 
 	return (
 		<>
@@ -283,14 +257,50 @@ const Deposit = () => {
 					title="Make a Deposit"
 				>
 					<section className="space-y-5 px-1">
-						<QRCode
-							value={depositWalletInfo?.walletAddress ?? ""}
-							size={256} // You can adjust the size as needed
-							level="H" // Error correction level: L, M, Q, H
-							className="bg-white rounded-lg mx-auto"
-						/>
+						<section className="flex flex-col items-center justify-center">
+							{depositWalletInfo?.walletAddress && (
+								<QRCode
+									value={depositWalletInfo?.walletAddress}
+									size={256} // You can adjust the size as needed
+									level="H" // Error correction level: L, M, Q, H
+									className="bg-white p-4 rounded-2xl"
+								/>
+							)}
 
-						<section className="rounded-xl bg-[#f8f9fc] px-4">
+							{depositWalletInfo?.amount && depositWalletInfo.currency && (
+								<section className="space-y-1 text-center">
+									<p className="text-textGray font-semibold text-sm">Amount</p>
+									<p className="text-[#102477] font-semibold text-base">
+										{`${depositWalletInfo?.amount} ${depositWalletInfo?.currency}`}
+									</p>
+								</section>
+							)}
+						</section>
+
+						<section className="rounded-xl bg-[#f8f9fc] px-4 py-2">
+							{depositWalletInfo?.payAmount && depositWalletInfo.payCurrency && (
+								<section className="space-y-2 py-4 border-b border-[#808080]">
+									<p className="text-[#808080] font-normal text-sm">
+										Amount to send
+									</p>
+
+									<section className="flex items-start justify-between">
+										<p className="break-all text-textColor text-sm sm:text-base font-semibold">
+											{`${depositWalletInfo?.payAmount} ${depositWalletInfo?.payCurrency}`}
+										</p>
+										<p
+											className="ml-2 cursor-pointer"
+											onClick={() =>
+												copyToClipboard(
+													depositWalletInfo?.payAmount?.toString() ?? "",
+												)
+											}
+										>
+											<CopyIcon2 />
+										</p>
+									</section>
+								</section>
+							)}
 							<section className="space-y-2 py-4 border-b border-[#808080]">
 								<p className="text-[#808080] font-normal text-sm">
 									Currency to send
@@ -298,10 +308,7 @@ const Deposit = () => {
 
 								<section className="flex items-center space-x-2">
 									<Image
-										src={
-											selectedPaymentOption?.logoUrl ||
-											"/images/usdt_round.png"
-										}
+										src={selectedPaymentOption?.logoUrl || ""}
 										alt="Currency Logo"
 										className="w-[30px] h-[30px]"
 										width={30}
@@ -315,7 +322,7 @@ const Deposit = () => {
 							</section>
 							<section className="space-y-2 py-4 border-b border-[#808080]">
 								<p className="text-[#808080] font-normal text-xs">Network</p>
-								<p className="text-black font-semibold text-sm">
+								<p className="text-black font-semibold text-xs sm:text-sm">
 									{depositWalletInfo?.network === selectedNetwork?.slug &&
 										selectedNetwork?.name}
 								</p>
@@ -327,7 +334,7 @@ const Deposit = () => {
 							<section className="space-y-2 py-4">
 								<p className="text-[#808080] font-normal text-xs">Deposit ddress</p>
 								<section className="flex items-start justify-between">
-									<p className="break-all text-[#08123B] text-base font-semibold">
+									<p className="break-all text-textColor text-sm sm:text-base font-semibold">
 										{depositWalletInfo?.walletAddress}
 									</p>
 									<p
@@ -342,16 +349,92 @@ const Deposit = () => {
 							</section>
 						</section>
 
-						<section>
-							<h4 className="text-textGray font-medium text-sm">
+						{depositWalletInfo?.exchangeRate && depositWalletInfo.expiresAt && (
+							<section className="py-3 space-y-3 text-textGray font-medium text-xs sm:text-sm">
+								<section className="flex items-center justify-between space-x-2">
+									<p>Exchange Rate</p>
+									<p className="text-[#808080]">{`1 ${depositWalletInfo?.payCurrency} = ${depositWalletInfo?.exchangeRate} ${depositWalletInfo?.currency}`}</p>
+								</section>
+								<section className="flex items-center justify-between space-x-2">
+									<section className="flex items-center space-x-2">
+										<p>Rate Expires in</p>
+										<Image
+											src="/images/questionMarkIcon.svg"
+											alt="question icon"
+											width={15}
+											height={15}
+										/>
+									</section>
+
+									<p className="text-[#040E37] bg-[#F8F9FC] px-4 py-1 rounded-md">
+										{timeLeft}
+									</p>
+								</section>
+							</section>
+						)}
+
+						<section className="bg-[#F8F9FC] p-4 rounded-lg">
+							<h4 className="text-textGray font-medium text-xs sm:text-sm">
 								⚠️ Important warning
 							</h4>
-							<p className="text-[#808080] font-normal text-sm mt-3">
+							<p className="text-[#808080] font-normal text-xs sm:text-sm mt-3">
 								Send only to the specified network address. Sending funds via any
 								other network will result in a permanent loss of your assets.
 							</p>
 						</section>
 					</section>
+				</Modal>
+			)}
+
+			{depositExpiredModal && (
+				<Modal
+					openModal={depositExpiredModal}
+					width="md:w-[525px]"
+					onClose={handleModalClose}
+					title="Make a Deposit"
+				>
+					<Image
+						src="/images/expired.svg"
+						alt="Expired Icon"
+						className="mx-auto"
+						width={180}
+						height={150}
+					/>
+
+					<section className="space-y-3 mb-5">
+						<section className="bg-[#F8F9FC] px-3 py-6 rounded-2xl text-center">
+							<h4 className="text-[#3F3B3B] font-semibold text-sm sm:text-base">
+								Wallet Address Expired
+							</h4>
+							<p className="text-[#6B6868] font-normal text-xs sm:text-sm mt-1">
+								Don&apos;t send to the previous address as the rate has expired.{" "}
+								<br className="hidden sm:block" />
+								Please restart the process to generate a new wallet address.
+							</p>
+						</section>
+
+						<section className="flex items-center justify-between space-x-2 text-sm sm:text-base">
+							<section className="flex items-center space-x-2">
+								<p>Rate Expires in</p>
+								<Image
+									src="/images/questionMarkIcon.svg"
+									alt="question icon"
+									width={15}
+									height={15}
+								/>
+							</section>
+
+							<p className="text-[#040E37] bg-[#F8F9FC] px-4 py-1 rounded-md">
+								{timeLeft}
+							</p>
+						</section>
+					</section>
+
+					<Button
+						labelText="Okay"
+						className="w-full tracking-widest !py-2"
+						onClick={handleModalClose}
+					/>
 				</Modal>
 			)}
 
