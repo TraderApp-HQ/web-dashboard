@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { FiHelpCircle } from "react-icons/fi";
 import QRCode from "react-qr-code";
 import { ModalType, PaymentCategory, PaymentOperation } from "~/apis/handlers/wallets/enum";
 import {
@@ -17,6 +18,7 @@ import InputField from "~/components/common/InputField";
 import SelectBox from "~/components/common/SelectBox";
 import Toast from "~/components/common/Toast";
 import { CopyIcon2 } from "~/components/icons/CopyIcon";
+import TooltipIcon from "~/components/icons/TooltipIcon";
 import { ISelectBoxOption } from "~/components/interfaces";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import useUserProfileData from "~/hooks/useUserProfileData";
@@ -326,9 +328,6 @@ const Deposit = () => {
 									{depositWalletInfo?.network === selectedNetwork?.slug &&
 										selectedNetwork?.name}
 								</p>
-								<p className="text-[#808080] font-normal text-xs">
-									Contract Information
-								</p>
 							</section>
 
 							<section className="space-y-2 py-4">
@@ -358,11 +357,17 @@ const Deposit = () => {
 								<section className="flex items-center justify-between space-x-2">
 									<section className="flex items-center space-x-2">
 										<p>Rate Expires in</p>
-										<Image
-											src="/images/questionMarkIcon.svg"
-											alt="question icon"
-											width={15}
-											height={15}
+										<TooltipIcon
+											direction="top"
+											icon={
+												<FiHelpCircle
+													size={16}
+													className="text-gray-400 cursor-help"
+												/>
+											}
+											text="Wallet address expiration count down"
+											tooltipTextColor="text-white"
+											contentClassName="!text-left border-2"
 										/>
 									</section>
 
@@ -416,11 +421,17 @@ const Deposit = () => {
 						<section className="flex items-center justify-between space-x-2 text-sm sm:text-base">
 							<section className="flex items-center space-x-2">
 								<p>Rate Expires in</p>
-								<Image
-									src="/images/questionMarkIcon.svg"
-									alt="question icon"
-									width={15}
-									height={15}
+								<TooltipIcon
+									direction="top"
+									icon={
+										<FiHelpCircle
+											size={16}
+											className="text-gray-400 cursor-help"
+										/>
+									}
+									text="Wallet address is expired."
+									tooltipTextColor="text-white"
+									contentClassName="!text-left border-2"
 								/>
 							</section>
 
