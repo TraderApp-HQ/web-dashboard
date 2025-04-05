@@ -17,7 +17,7 @@ const Wallets = () => {
 				<WalletBalanceCardLoader />
 			) : (
 				<WalletBalanceCard
-					padding="p-3 md:px-5 md:py-10 !rounded-2xl"
+					padding="px-4 py-8 md:px-5 md:py-12 !rounded-2xl"
 					totalBalanceStyle="text-2xl text-textGray"
 					walletConvertedBalance={data?.exchangeRateTotalBalances}
 					isError={isError}
