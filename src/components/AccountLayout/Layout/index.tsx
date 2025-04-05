@@ -21,11 +21,11 @@ const AccountLayout: React.FC<Props> = ({ children }) => {
 			<div
 				className={`${
 					showSideNav ? "absolute z-[1000]" : "hidden"
-				} h-full w-full bg-[#F2F5FE] top-0 left-0 md:block md:w-[19%] 2xl:w-[16%]`}
+				} h-full w-full bg-[#F2F5FE] top-0 left-0 md:block md:w-[24%] 2xl:w-[16%]`}
 			>
 				<SideNav clientApp={"USER_DASHBOARD"} />
 			</div>
-			<div className="h-full right-0 md:w-[81%] 2xl:w-[84%] md:absolute">
+			<div className="h-full right-0 md:w-[76%] 2xl:w-[84%] md:absolute">
 				{/* Top header */}
 				<div className="h-[10%] border-b">
 					<TopHeader />

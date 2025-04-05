@@ -61,7 +61,7 @@ const SideNav: React.FC<ISideNavProps> = ({ clientApp = "USER_DASHBOARD" }) => {
 					<CancelIcon />
 				</div>
 			</div>
-			<div className={`${containerHeight} p-3 lg:p-8 overflow-y-auto`}>
+			<div className={`${containerHeight} px-3 py-8 xl:p-8 overflow-y-auto`}>
 				<ul className="space-y-6">
 					{navLinks.map((navlink, index) => (
 						<NavLinkItem key={index} navlink={navlink} toggleSideNav={toggleSideNav} />
