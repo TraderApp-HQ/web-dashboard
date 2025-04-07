@@ -21,7 +21,9 @@ export interface IUserWallet {
 	walletTypeName: WalletType;
 	currencyName: string;
 	currencySymbol: string;
-	currency: string;
+	currency: Omit<IWalletSupportedCurrencies, "id"> & {
+		_id: string;
+	};
 	availableBalance: number;
 	lockedBalance: number;
 }

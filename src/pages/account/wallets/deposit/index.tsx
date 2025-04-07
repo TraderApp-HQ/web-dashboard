@@ -3,7 +3,12 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FiHelpCircle } from "react-icons/fi";
 import QRCode from "react-qr-code";
-import { ModalType, PaymentCategory, PaymentOperation } from "~/apis/handlers/wallets/enum";
+import {
+	ModalType,
+	PaymentCategory,
+	PaymentOperation,
+	SupportedCurrency,
+} from "~/apis/handlers/wallets/enum";
 import {
 	IFactoryPaymentProviderDepositResponse,
 	IPaymentOptions,
@@ -30,6 +35,9 @@ const Deposit = () => {
 	const [openModal, setOpenModal] = useState(true);
 	const [depositUrlModal, setDepositUrlModal] = useState(false);
 	const [depositExpiredModal, setDepositExpiredModal] = useState(false);
+	const [disableButton, setDisableButton] = useState<boolean>(true);
+	const [showQrCode, setShowQrCode] = useState<boolean>(false);
+
 	const [selectedCurrency, setSelectedCurrency] = useState<
 		IWalletSupportedCurrencies | undefined
 	>(undefined);
@@ -43,7 +51,6 @@ const Deposit = () => {
 	const [depositWalletInfo, setDepositWalletInfo] = useState<
 		IFactoryPaymentProviderDepositResponse | undefined
 	>(undefined);
-	const [disableButton, setDisableButton] = useState<boolean>(true);
 
 	// Hooks
 	const { userId } = useUserProfileData();
@@ -69,7 +76,7 @@ const Deposit = () => {
 		error: initiateDepositError,
 	} = useInitiateDeposit();
 
-	// Handle initiate deposit transaction logic here
+	// Handles initiate deposit transaction logic here
 	const handleDepositTransaction = () => {
 		if (
 			userId &&
@@ -93,6 +100,15 @@ const Deposit = () => {
 	const handleSelectCurrency = (currency: ISelectBoxOption) => {
 		const selectedCurrency = supportedCurrencies?.find((cur) => cur.id === currency.value);
 		setSelectedCurrency(selectedCurrency);
+
+		// Sets payment option if selected currency has a default payment option
+		const defaultCurrencyPaymentOption = paymentOptions?.find(
+			(cur) => cur.symbol === selectedCurrency?.symbol,
+		);
+		if (defaultCurrencyPaymentOption) {
+			setSelectedPaymentOption(defaultCurrencyPaymentOption);
+		}
+
 		setSelectedNetwork(undefined); // Reset network when currency changes
 	};
 	const handleSelectPaymentOption = (option: ISelectBoxOption) => {
@@ -147,7 +163,7 @@ const Deposit = () => {
 		setDisableButton(isButtonDisabled);
 	}, [selectedCurrency, selectedPaymentOption, selectedNetwork, amount]);
 
-	// Set depoit data to state if deposit is successful
+	// Set deposit wallet data to state if deposit is successful
 	useEffect(() => {
 		if (!isPending && !initiateDepositIsError && isSuccess && data) {
 			// Handle wallet deposit URL transaction
@@ -165,6 +181,14 @@ const Deposit = () => {
 			handleClearDepositData(); // Clear deposit data when time is expired
 		}
 	}, [timeIsExpired]);
+
+	// Defaults
+	const defaultCurrency = supportedCurrencies?.find(
+		(cur) => cur.symbol === SupportedCurrency.USDT,
+	);
+	const defaultPaymentOption = paymentOptions?.find(
+		(cur) => cur.symbol === SupportedCurrency.USDT,
+	);
 
 	return (
 		<>
@@ -190,10 +214,15 @@ const Deposit = () => {
 								options={(supportedCurrencies ?? [])?.map((currency) => ({
 									displayText: currency.symbol,
 									value: currency.id,
-									imgUrl:
-										currency.logoUrl ??
-										"https://sandbox-cs-ledger.s3.eu-west-1.amazonaws.com/public/currencies/USDT.svg",
+									imgUrl: currency.logoUrl,
 								}))}
+								option={{
+									displayText:
+										selectedCurrency?.symbol || defaultCurrency?.symbol || "",
+									value: selectedCurrency?.id || defaultCurrency?.id || "",
+									imgUrl:
+										selectedCurrency?.logoUrl || defaultCurrency?.logoUrl || "",
+								}}
 								setOption={handleSelectCurrency}
 							/>
 							<SelectBox
@@ -205,6 +234,20 @@ const Deposit = () => {
 									value: option.paymentMethodId,
 									imgUrl: option.logoUrl,
 								}))}
+								option={{
+									displayText:
+										selectedPaymentOption?.symbol ||
+										defaultPaymentOption?.symbol ||
+										"",
+									value:
+										selectedPaymentOption?.paymentMethodId ||
+										defaultPaymentOption?.paymentMethodId ||
+										"",
+									imgUrl:
+										selectedPaymentOption?.logoUrl ||
+										defaultPaymentOption?.logoUrl ||
+										"",
+								}}
 								setOption={handleSelectPaymentOption}
 							/>
 							<SelectBox
@@ -260,7 +303,14 @@ const Deposit = () => {
 				>
 					<section className="space-y-5 px-1">
 						<section className="flex flex-col items-center justify-center">
-							{depositWalletInfo?.walletAddress && (
+							<p
+								className="font-semibold text-sm text-black mb-2 cursor-pointer"
+								onClick={() => setShowQrCode((prev) => !prev)}
+							>
+								{`${showQrCode ? "Hide" : "Click to scan the"}`}{" "}
+								<span className="text-[#102477]">QR Code</span>
+							</p>
+							{depositWalletInfo?.walletAddress && showQrCode && (
 								<QRCode
 									value={depositWalletInfo?.walletAddress}
 									size={256} // You can adjust the size as needed

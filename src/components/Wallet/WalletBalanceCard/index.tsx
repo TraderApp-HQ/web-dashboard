@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { supportedOperations } from "~/apis/handlers/wallets/constants";
-import { IWalletConvertedBalance } from "~/apis/handlers/wallets/interface";
+import { IUserWallet, IWalletConvertedBalance } from "~/apis/handlers/wallets/interface";
 import Card from "~/components/AccountLayout/Card";
 import IconButton from "~/components/AccountLayout/IconButton";
 import SelectBox from "~/components/common/SelectBox";
@@ -16,7 +16,8 @@ interface ITotalBalanceSectionProps {
 	btcBalance?: string;
 	totalBalanceStyle?: string;
 	padding?: string;
-	walletConvertedBalance?: IWalletConvertedBalance[];
+	walletConvertedTotalBalances?: IWalletConvertedBalance[];
+	walletSeperateBalances?: IUserWallet[];
 	isError?: boolean;
 }
 
@@ -25,26 +26,35 @@ export default function WalletBalanceCard({
 	// btcBalance,
 	totalBalanceStyle,
 	padding,
-	walletConvertedBalance,
+	walletConvertedTotalBalances,
+	walletSeperateBalances,
 	isError,
 }: ITotalBalanceSectionProps) {
 	const router = useRouter();
 	const [showBalance, handleShowBalance] = useState<boolean>(true);
-	const [walletBalance, setWalletBalance] = useState<number>(0);
-	const [walletBalanceOptions] = useState<ISelectBoxOption[]>(
-		(walletConvertedBalance ?? []).map((bal) => ({
+	const [walletTotalBalance, setWalletTotalBalance] = useState<number>(0);
+	const [walletTotalBalanceOptions] = useState<ISelectBoxOption[]>(
+		(walletConvertedTotalBalances ?? []).map((bal) => ({
 			displayText: bal.currency,
 			value: bal.balance.toString(),
+		})),
+	);
+	const [individualBalance, setIndividualBalance] = useState<number>(0);
+	const [individualWalletBalanceOptions] = useState<ISelectBoxOption[]>(
+		(walletSeperateBalances ?? []).map((bal) => ({
+			displayText: bal.currency.symbol,
+			value: bal.availableBalance.toString(),
+			imgUrl: bal.currency.logoUrl,
 		})),
 	);
 
 	return (
 		<Card
-			className={`flex flex-col gap-3 md:items-start md:flex-row md:justify-between ${padding ? padding : "p-5"}`}
+			className={`flex flex-col sm:flex-row gap-3 sm:items-start  sm:justify-between ${padding ? padding : "p-5"}`}
 		>
 			<section className="space-y-4">
 				<section className="flex items-center space-x-2">
-					<h4 className="text-sm text-black font-bold">{showBalanceText}</h4>
+					<h4 className="text-sm text-black font-bold text-nowrap">{showBalanceText}</h4>
 
 					{!isError && (
 						<span
@@ -59,25 +69,48 @@ export default function WalletBalanceCard({
 				{isError ? (
 					<p className="text-red-300">Error fetching wallet balance. Please try again.</p>
 				) : (
-					<section className="h-8 flex items-center justify-start">
+					<section className="min-h-8 flex items-center justify-start">
 						{showBalance ? (
-							<section className="flex items-baseline gap-2">
-								<h2
-									className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"}`}
-								>
-									{formatCurrency(walletBalance)}
-								</h2>
+							<section className="space-y-4 mb-5 sm:mb-0">
+								<section className="flex items-baseline gap-2">
+									<h2
+										className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"}`}
+									>
+										{formatCurrency(walletTotalBalance)}
+									</h2>
 
-								<SelectBox
-									isSearchable={false}
-									options={walletBalanceOptions}
-									option={walletBalanceOptions[0]}
-									setOption={(opt) => setWalletBalance(parseFloat(opt.value))}
-									bgColor="transparent"
-									buttonClassName="!p-0 !space-x-0"
-									fontStyles="text-lg capitalize font-bold text-textGray"
-									optionsClass="!p-1"
-								/>
+									<SelectBox
+										isSearchable={false}
+										options={walletTotalBalanceOptions}
+										option={walletTotalBalanceOptions[0]}
+										setOption={(opt) =>
+											setWalletTotalBalance(parseFloat(opt.value))
+										}
+										bgColor="bg-[#F1F5FF]"
+										buttonClassName="px-2 py-[2px]"
+										fontStyles="text-lg capitalize font-bold text-textGray"
+										optionsClass="!p-1"
+									/>
+								</section>
+
+								<section className="flex items-center gap-4">
+									<SelectBox
+										isSearchable={false}
+										options={individualWalletBalanceOptions}
+										option={individualWalletBalanceOptions[0]}
+										setOption={(opt) =>
+											setIndividualBalance(parseFloat(opt.value))
+										}
+										bgColor="bg-[#F1F5FF]"
+										buttonClassName="px-2 py-[2px]"
+										fontStyles="text-lg capitalize font-bold text-textGray"
+										optionsClass="!p-1"
+									/>
+
+									<h2 className="font-semibold text-base text-[#585858]">
+										{individualBalance}
+									</h2>
+								</section>
 							</section>
 						) : (
 							<HidenBalance />
@@ -87,12 +120,12 @@ export default function WalletBalanceCard({
 			</section>
 
 			{!isError && (
-				<section className="grid grid-cols-1 space-y-3 md:space-y-0 md:flex gap-px md:gap-2 flex-wrap md:justify-between md:space-x-2 text-xs">
+				<section className="flex flex-col sm:flex-row gap-3 items-center text-xs">
 					{supportedOperations.map((item) => (
 						<IconButton
 							key={item.label}
 							Icon={item.Icon}
-							btnClass={`px-4 gap-2 border border-buttonColor rounded-md text-sm font-medium w-full md:w-32 h-12 ${item.label.toLowerCase() === "deposit" ? "bg-buttonColor text-white hover:opacity-80 hover:transition-colors" : "bg-white text-buttonColor"}`}
+							btnClass={`px-4 gap-2 border border-buttonColor rounded-md text-sm font-medium w-full sm:w-32 lg:w-48 h-12 ${item.label.toLowerCase() === "deposit" ? "bg-buttonColor text-white hover:opacity-80 hover:transition-colors" : "bg-white text-buttonColor"}`}
 							iconClass=""
 							onClick={() => router.push(item.url)}
 							disabled={false}
