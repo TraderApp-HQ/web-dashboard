@@ -4,6 +4,12 @@ export enum WalletType {
 	FUTURES = "FUTURES",
 }
 
+export enum SupportedCurrency {
+	USDT = "USDT",
+	// BTC = "BTC",
+	// ETH = "ETH",
+}
+
 export enum PaymentCategory {
 	CRYPTO = "Crypto",
 }
