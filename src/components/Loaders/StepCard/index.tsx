@@ -33,8 +33,8 @@ const directionMapping = {
 const StepCard: React.FC<StepCardProps> = ({
 	style = "clear",
 	direction = "ltr",
-	opacity,
-	className,
+	opacity = "closed",
+	className = "",
 }) => {
 	const styleClass = stepCardStyleMapping[style];
 	const directionClass = directionMapping[direction];
@@ -53,10 +53,4 @@ const StepCard: React.FC<StepCardProps> = ({
 	);
 };
 
-StepCard.defaultProps = {
-	style: "clear",
-	direction: "ltr",
-	opacity: "closed",
-	className: "",
-};
 export default StepCard;
