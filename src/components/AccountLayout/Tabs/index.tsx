@@ -89,6 +89,7 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 					bgColor="bg-white"
 					fontStyles="text-base font-bold"
 					buttonClassName="border-gray-200 shadow-sm"
+					caretSize="2em"
 				/>
 			</div>
 			<div className="hidden md:block md:overflow-visible overflow-x-auto py-4">

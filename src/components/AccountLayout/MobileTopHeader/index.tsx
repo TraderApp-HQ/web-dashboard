@@ -1,20 +1,21 @@
 import React from "react";
-import HamburgerIcon from "~/components/icons/HamburgerIcon";
 import { useSideNav } from "~/contexts/NavContext";
-import ProfileDropdown from "../ProfileDropdown";
-import NotificationsDropdown from "../NotificationsDropdown";
+import TraderAppLogo from "~/components/icons/TraderAppLogo";
+import MenuIcon from "~/components/icons/MenuIcon";
 
 const MobileTopHeader = () => {
 	const { toggleSideNav } = useSideNav();
 
 	return (
-		<div className="flex justify-between items-center p-4 md:hidden">
-			<div onClick={() => toggleSideNav(true)}>
-				<HamburgerIcon />
+		<div className="flex justify-between items-end py-4 px-8 md:hidden h-full bg-white">
+			<div>
+				<TraderAppLogo />
 			</div>
-			<div className="flex items-center space-x-4">
-				<NotificationsDropdown notificationIconProps={{ width: "32px", height: "32px" }} />
-				<ProfileDropdown />
+			<div
+				onClick={() => toggleSideNav(true)}
+				className="flex items-center space-x-4 scale-125"
+			>
+				<MenuIcon />
 			</div>
 		</div>
 	);
