@@ -32,7 +32,8 @@ export interface ProgressTrackerProps {
 	isLoading?: boolean;
 	loadingComponent?: React.ComponentType;
 	error?: Error | null;
-	errorComponent?: React.ComponentType<{ error: Error }>;
+	errorComponent?: React.ComponentType<{ error?: Error }>;
+	isError?: boolean;
 }
 
 export type ReferralRankType = (typeof ReferralRank)[keyof typeof ReferralRank];

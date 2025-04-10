@@ -169,6 +169,7 @@ export interface IReferrals {
 export interface IInviteCodeProps {
 	code: string;
 	title: string;
+	isError?: boolean;
 }
 
 export interface ITaskPlatforms {
