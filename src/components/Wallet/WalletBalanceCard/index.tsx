@@ -95,7 +95,7 @@ export default function WalletBalanceCard({
 										</h2>
 									</section>
 
-									<section className="flex items-center gap-4 bg-[#F1F5FF] px-1 rounded-md">
+									<section className="flex items-center gap-4">
 										<SelectBox
 											isSearchable={false}
 											options={individualWalletBalanceOptions}
