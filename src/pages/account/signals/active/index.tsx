@@ -9,6 +9,7 @@ import SearchForm from "~/components/AccountLayout/SearchForm";
 import Select from "~/components/AccountLayout/Select";
 import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
 import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
+import ComponentError from "~/components/Error/ComponentError";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
@@ -73,105 +74,117 @@ const ActiveSignals = () => {
 	}, [rowsPerPage]);
 
 	return (
-		<>
+		<section className="space-y-5">
 			<ActiveSignalCard
 				summary={performanceSummary}
 				isLoading={isLoading}
 				isSuccess={isSuccess}
 				isError={isError}
 			/>
-			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
-				<SearchForm
-					// onChange={(e) => setSearchTerm(e.target.value)}
-					onChange={(e) => {
-						console.log(e);
-					}}
-					aria-label="search asset"
-					placeHolder="Search for asset name, status, etc..."
-					onSubmit={handleSearch}
-				/>
-
-				<DropdownMenu
-					className="w-[256px]"
-					subClass=""
-					btnClass="mt-7 px-4 py-2 bg-gray-100 rounded-lg border"
-					trigger={
-						<>
-							<div className="text-sky-900 text-base font-normal leading-snug">
-								Filter
-							</div>
-							{/* <DropdownIcon /> */}
-						</>
-					}
-					position="left"
+			{!isError && (
+				<section
+					className={clsx(
+						"flex justify-between",
+						activeSignals.length === 0 ? "mt-0" : "",
+					)}
 				>
-					<DropdownMenuItem className="flex flex-col gap-y-2">
-						<form onSubmit={onSubmit} method="post">
-							<Select
-								name="assets"
-								label="Assets"
-								options={data.assets}
-								classNames={{
-									input: "cursor-pointer",
-								}}
-								onChange={(e) => setAsset(e.target.value)}
-								selected={{ value: asset }}
-							/>
-							<Select
-								name="createdAt"
-								label="CreatedAt"
-								options={data.createdAtList}
-								classNames={{
-									input: "cursor-pointer",
-								}}
-								onChange={(e) => setCreatedAt(e.target.value)}
-								selected={{ value: createdAt }}
-							/>
-							<Date
-								label="Date"
-								name="selectedDate"
-								value={selectedDate}
-								onChange={handleDateChange}
-								required
-							/>
-							<Select
-								name="time"
-								label="Time"
-								options={data.timeList}
-								classNames={{
-									input: "cursor-pointer",
-								}}
-								onChange={(e) => setTime(e.target.value)}
-								selected={{ value: time }}
-							/>
-							<Button type="submit" onClick={() => {}} fluid className="mt-2">
-								Search
-							</Button>
-						</form>
-					</DropdownMenuItem>
-				</DropdownMenu>
-			</div>
+					<SearchForm
+						// onChange={(e) => setSearchTerm(e.target.value)}
+						onChange={(e) => {
+							console.log(e);
+						}}
+						aria-label="search asset"
+						placeHolder="Search for asset name, status, etc..."
+						onSubmit={handleSearch}
+					/>
 
-			{!isLoading && activeSignals.length === 0 ? (
+					<DropdownMenu
+						className="w-[256px]"
+						subClass=""
+						btnClass="mt-7 px-4 py-2 bg-gray-100 rounded-lg border"
+						trigger={
+							<>
+								<section className="text-sky-900 text-base font-normal leading-snug">
+									Filter
+								</section>
+								{/* <DropdownIcon /> */}
+							</>
+						}
+						position="left"
+					>
+						<DropdownMenuItem className="flex flex-col gap-y-2">
+							<form onSubmit={onSubmit} method="post">
+								<Select
+									name="assets"
+									label="Assets"
+									options={data.assets}
+									classNames={{
+										input: "cursor-pointer",
+									}}
+									onChange={(e) => setAsset(e.target.value)}
+									selected={{ value: asset }}
+								/>
+								<Select
+									name="createdAt"
+									label="CreatedAt"
+									options={data.createdAtList}
+									classNames={{
+										input: "cursor-pointer",
+									}}
+									onChange={(e) => setCreatedAt(e.target.value)}
+									selected={{ value: createdAt }}
+								/>
+								<Date
+									label="Date"
+									name="selectedDate"
+									value={selectedDate}
+									onChange={handleDateChange}
+									required
+								/>
+								<Select
+									name="time"
+									label="Time"
+									options={data.timeList}
+									classNames={{
+										input: "cursor-pointer",
+									}}
+									onChange={(e) => setTime(e.target.value)}
+									selected={{ value: time }}
+								/>
+								<Button type="submit" onClick={() => {}} fluid className="mt-2">
+									Search
+								</Button>
+							</form>
+						</DropdownMenuItem>
+					</DropdownMenu>
+				</section>
+			)}
+
+			{!isLoading && isError ? (
+				<section className="pb-3 rounded-2xl space-y-2">
+					<h3 className="font-bold text-base text-[#08123B]">All Active Signal</h3>
+					<ComponentError />
+				</section>
+			) : !isLoading && isSuccess && activeSignals.length === 0 ? (
 				<SignalsEmptyState />
 			) : (
-				<div className="pb-8 rounded-2xl">
+				<section className="pb-6 rounded-2xl">
 					<h3 className="font-bold text-base text-[#08123B]">
 						All Active Signal ({activeSignals.length})
 					</h3>
-					<div className="mt-2 mb-8">
-						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
+					<section className="mt-2 mb-8">
+						<section className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
 							{isLoading && <TableLoader />}
 							{isSuccess && signalsTableBody && (
 								<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
 							)}
-						</div>
-						<div className="md:hidden relative">
+						</section>
+						<section className="md:hidden relative">
 							{isLoading && <MobileTableLoader />}
 							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
-						</div>
-					</div>
-					<div className="bg-white p-4 w-1/2 ml-auto">
+						</section>
+					</section>
+					<section className="bg-white p-4 w-1/2 ml-auto">
 						{/* pagination component goes here */}
 						<Pagination
 							currentPage={currentPage}
@@ -182,10 +195,10 @@ const ActiveSignals = () => {
 							onNext={setCurrentPage}
 							onPrev={setCurrentPage}
 						/>
-					</div>
-				</div>
+					</section>
+				</section>
 			)}
-		</>
+		</section>
 	);
 };
 const ActiveSignalCard: React.FC<IActiveSignalCardProps> = ({
@@ -195,16 +208,24 @@ const ActiveSignalCard: React.FC<IActiveSignalCardProps> = ({
 	isSuccess,
 }) => {
 	return (
-		<div>
-			{isLoading && <PerformanceSummaryCardLoader />}
-			{isError && <div>Error fetching data</div>}
-			{isSuccess && (
-				<div className="flex flex-col md:flex-row gap-4">
-					<PerformanceSummaryCard data={summary?.bestSignal} label="best performer" />
-					<PerformanceSummaryCard data={summary?.worstSignal} label="worst performer" />
-				</div>
+		<section>
+			{isLoading ? (
+				<PerformanceSummaryCardLoader />
+			) : !isLoading && isError ? (
+				<ComponentError />
+			) : (
+				!isLoading &&
+				isSuccess && (
+					<section className="flex flex-col md:flex-row gap-4">
+						<PerformanceSummaryCard data={summary?.bestSignal} label="best performer" />
+						<PerformanceSummaryCard
+							data={summary?.worstSignal}
+							label="worst performer"
+						/>
+					</section>
+				)
 			)}
-		</div>
+		</section>
 	);
 };
 
