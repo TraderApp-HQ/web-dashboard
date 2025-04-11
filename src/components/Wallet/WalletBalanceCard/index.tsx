@@ -40,10 +40,9 @@ export default function WalletBalanceCard({
 			value: bal.balance.toString(),
 		})),
 	);
-	const [individualBalance, setIndividualBalance] = useState<number>(0);
 	const [individualWalletBalanceOptions] = useState<ISelectBoxOption[]>(
 		(walletSeperateBalances ?? []).map((bal) => ({
-			displayText: bal.currency.symbol,
+			displayText: `${bal.currency.symbol} - ${bal.availableBalance}`,
 			value: bal.availableBalance.toString(),
 			imgUrl: bal.currency.logoUrl,
 		})),
@@ -57,7 +56,7 @@ export default function WalletBalanceCard({
 				<Card
 					className={`flex flex-col sm:flex-row gap-3 sm:items-start sm:justify-between ${padding ? padding : "p-5"}`}
 				>
-					<section className="space-y-4">
+					<section className="space-y-5">
 						<section className="flex items-center space-x-2">
 							<h4 className="text-sm text-black font-bold text-nowrap">
 								{showBalanceText}
@@ -73,8 +72,8 @@ export default function WalletBalanceCard({
 
 						<section className="min-h-8 flex items-center justify-start">
 							{showBalance ? (
-								<section className="space-y-4 mb-5 sm:mb-0">
-									<section className="flex items-baseline gap-2">
+								<section className="space-y-5 mb-5 sm:mb-0">
+									<section className="flex items-baseline gap-2 text">
 										<SelectBox
 											isSearchable={false}
 											options={walletTotalBalanceOptions}
@@ -84,7 +83,7 @@ export default function WalletBalanceCard({
 											}
 											bgColor="bg-[#F1F5FF]"
 											buttonClassName="px-2 py-[2px]"
-											fontStyles="text-lg capitalize font-bold text-textGray"
+											fontStyles="text-base capitalize font-medium text-textGray"
 											optionsClass="!p-1"
 										/>
 
@@ -95,23 +94,16 @@ export default function WalletBalanceCard({
 										</h2>
 									</section>
 
-									<section className="flex items-center gap-4">
+									<section className="flex items-center">
 										<SelectBox
 											isSearchable={false}
 											options={individualWalletBalanceOptions}
 											option={individualWalletBalanceOptions[0]}
-											setOption={(opt) =>
-												setIndividualBalance(parseFloat(opt.value))
-											}
 											bgColor="bg-[#F1F5FF]"
 											buttonClassName="px-2 py-[2px]"
-											fontStyles="text-lg capitalize font-bold text-textGray"
+											fontStyles="font-medium text-base capitalize text-[#1E1E1E]"
 											optionsClass="!p-1"
 										/>
-
-										<h2 className="font-semibold text-base text-[#585858]">
-											{individualBalance}
-										</h2>
 									</section>
 								</section>
 							) : (
