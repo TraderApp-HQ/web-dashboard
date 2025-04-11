@@ -24,6 +24,7 @@ interface ISelectBoxProps {
 	buttonClassName?: string;
 	optionsClass?: string;
 	dropPosition?: "top" | "bottom";
+	caretSize?: string;
 }
 
 /**
@@ -51,6 +52,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	buttonClassName,
 	optionsClass,
 	dropPosition = "bottom",
+	caretSize = "1em",
 }: ISelectBoxProps): JSX.Element => {
 	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -138,7 +140,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					{/* {(!clear || selectedOption) && (
 						
 					)} */}
-					{isOpen ? <FiChevronUp /> : <FiChevronDown />}
+					{isOpen ? <FiChevronUp size={caretSize} /> : <FiChevronDown size={caretSize} />}
 				</div>
 				{isOpen && (
 					<div

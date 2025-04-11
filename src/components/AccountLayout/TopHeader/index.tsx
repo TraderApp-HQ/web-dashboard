@@ -10,7 +10,7 @@ import ProfileDropdown from "../ProfileDropdown";
 interface ITopHeaderProps {
 	clientApp?: "USER_DASHBOARD" | "ADMIN_DASHBOARD";
 }
-const TopHeader: React.FC<ITopHeaderProps> = ({ clientApp }) => {
+const TopHeader: React.FC<ITopHeaderProps> = ({ clientApp = "USER_DASHBOARD" }) => {
 	const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -53,10 +53,6 @@ const TopHeader: React.FC<ITopHeaderProps> = ({ clientApp }) => {
 			</div>
 		</div>
 	);
-};
-
-TopHeader.defaultProps = {
-	clientApp: "USER_DASHBOARD",
 };
 
 export default TopHeader;
