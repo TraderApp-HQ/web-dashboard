@@ -25,7 +25,7 @@ const NavLinkItem = ({ navlink, toggleSideNav }: NavLinkItemProps) => {
 		<li onClick={() => toggleSideNav(false)}>
 			<Link
 				href={navlink.path}
-				className={`${isActive ? "active" : "inactive"} flex items-center space-x-2 lg:space-x-4 font-bold text-[#414141] text-sm p-2.5 rounded-lg 2xl:text-base 2xl:p-3`}
+				className={`${isActive ? "active" : "inactive"} flex items-center space-x-2 lg:space-x-4 font-bold text-[#414141] text-sm p-4 rounded-lg 2xl:text-base`}
 			>
 				<i>
 					<navlink.icon color={isActive ? "white" : "#414141"} />
