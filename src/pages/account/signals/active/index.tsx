@@ -1,12 +1,5 @@
-import clsx from "clsx";
-import type { ChangeEvent } from "react";
-import React, { useState } from "react";
+import React from "react";
 import { useFetchActiveSignals } from "~/apis/handlers/assets/hooks";
-import Button from "~/components/AccountLayout/Button";
-import Date from "~/components/AccountLayout/Date";
-import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
-import SearchForm from "~/components/AccountLayout/SearchForm";
-import Select from "~/components/AccountLayout/Select";
 import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
 import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
 import ComponentError from "~/components/Error/ComponentError";
@@ -17,15 +10,9 @@ import Pagination from "~/components/Pagination";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import { IActiveSignalCardProps } from "~/components/common/DataTable/config";
 import { NestedSignalsLayout } from "../";
-import data from "../data.json";
 
 const ActiveSignals = () => {
 	// const { term: urlTerm } = useParams<{ term?: string }>();
-
-	const [asset, setAsset] = useState<string>("");
-	const [createdAt, setCreatedAt] = useState<string>("");
-	const [selectedDate, setSelectedDate] = useState<string>("");
-	const [time, setTime] = useState<string>("");
 	// const [searchterm, setSearchTerm] = useState<string>(urlTerm ?? "");
 
 	const {
@@ -38,21 +25,6 @@ const ActiveSignals = () => {
 		signalsMobileTableBody,
 		performanceSummary,
 	} = useFetchActiveSignals({});
-	const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setSelectedDate(event.target.value);
-	};
-
-	const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		console.log("asset::::::::::::::::::", asset);
-		console.log("createdAt::::::::::::::::::", createdAt);
-		console.log("selectedDate::::::::::::::::::", selectedDate);
-		console.log("time::::::::::::::::::", time);
-	};
-
-	const handleSearch = async () => {
-		// console.log("searchterm::::::::::::::::::", searchterm);
-	};
 
 	//  Paginaion configurations
 	const [currentPage, setCurrentPage] = React.useState<number>(1);
@@ -81,84 +53,6 @@ const ActiveSignals = () => {
 				isSuccess={isSuccess}
 				isError={isError}
 			/>
-			{!isError && (
-				<section
-					className={clsx(
-						"flex justify-between",
-						activeSignals.length === 0 ? "mt-0" : "",
-					)}
-				>
-					<SearchForm
-						// onChange={(e) => setSearchTerm(e.target.value)}
-						onChange={(e) => {
-							console.log(e);
-						}}
-						aria-label="search asset"
-						placeHolder="Search for asset name, status, etc..."
-						onSubmit={handleSearch}
-					/>
-
-					<DropdownMenu
-						className="w-[256px]"
-						subClass=""
-						btnClass="mt-7 px-4 py-2 bg-gray-100 rounded-lg border"
-						trigger={
-							<>
-								<section className="text-sky-900 text-base font-normal leading-snug">
-									Filter
-								</section>
-								{/* <DropdownIcon /> */}
-							</>
-						}
-						position="left"
-					>
-						<DropdownMenuItem className="flex flex-col gap-y-2">
-							<form onSubmit={onSubmit} method="post">
-								<Select
-									name="assets"
-									label="Assets"
-									options={data.assets}
-									classNames={{
-										input: "cursor-pointer",
-									}}
-									onChange={(e) => setAsset(e.target.value)}
-									selected={{ value: asset }}
-								/>
-								<Select
-									name="createdAt"
-									label="CreatedAt"
-									options={data.createdAtList}
-									classNames={{
-										input: "cursor-pointer",
-									}}
-									onChange={(e) => setCreatedAt(e.target.value)}
-									selected={{ value: createdAt }}
-								/>
-								<Date
-									label="Date"
-									name="selectedDate"
-									value={selectedDate}
-									onChange={handleDateChange}
-									required
-								/>
-								<Select
-									name="time"
-									label="Time"
-									options={data.timeList}
-									classNames={{
-										input: "cursor-pointer",
-									}}
-									onChange={(e) => setTime(e.target.value)}
-									selected={{ value: time }}
-								/>
-								<Button type="submit" onClick={() => {}} fluid className="mt-2">
-									Search
-								</Button>
-							</form>
-						</DropdownMenuItem>
-					</DropdownMenu>
-				</section>
-			)}
 
 			{!isLoading && isError ? (
 				<section className="pb-3 rounded-2xl space-y-2">
