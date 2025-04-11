@@ -27,7 +27,7 @@ const AccountLayout: React.FC<Props> = ({ children }) => {
 			</div>
 			<div className="h-full right-0 md:w-[76%] 2xl:w-[84%] md:absolute">
 				{/* Top header */}
-				<div className="h-[10%] border-b">
+				<div className="h-[8%] md:h-[10%] border-b">
 					<TopHeader />
 					<MobileTopHeader />
 				</div>

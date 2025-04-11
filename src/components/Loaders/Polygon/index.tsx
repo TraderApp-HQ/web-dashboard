@@ -58,7 +58,7 @@ const Polygon: React.FC<PolygonBaseProps> = ({
 	size = "md",
 	variant = "rounded",
 	opacity = "closed",
-	className,
+	className = "",
 }) => {
 	let dimension = sizeMapping[size];
 	let style = circleStyleMapping[opacity as "open" | "closed"];
@@ -73,10 +73,4 @@ const Polygon: React.FC<PolygonBaseProps> = ({
 	return <div className={clsx("animate-pulse", `bg-[#EDEDED] ${dimension}`, style, className)} />;
 };
 
-Polygon.defaultProps = {
-	size: "md",
-	variant: "rounded",
-	opacity: "closed",
-	className: "",
-};
 export default Polygon;
