@@ -377,13 +377,13 @@
 		"totalCapital": 234,
 		"bestSignal": {
 			"name": "Bitcoin",
-			"image": "/images/btc.png",
+			"image": "/images/btc_round.png",
 			"percentage": "+2.31%",
 			"amount": "$158.098098.00"
 		},
 		"worseSignal": {
 			"name": "Bitcoin",
-			"image": "/images/btc.png",
+			"image": "/images/btc_round.png",
 			"percentage": "-2.31%",
 			"amount": "$28.098098.00"
 		}

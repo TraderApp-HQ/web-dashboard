@@ -4,6 +4,7 @@ import Button from "~/components/AccountLayout/Button";
 import EmptyExchange from "~/components/AccountLayout/TradeCenter/EmptyExchange";
 import TradingAccountCard from "~/components/AccountLayout/TradeCenter/TradingAccountCard";
 import Toast from "~/components/common/Toast";
+import ComponentError from "~/components/Error/ComponentError";
 import TradeCenterLoader from "~/components/Loaders/TradeCenterLoader";
 import { useUserTradingAccounts } from "~/contexts/UserTradingAccountsContext";
 import { useGetUserTradingAccounts } from "~/hooks/useGetUserTradingAccounts";
@@ -48,43 +49,46 @@ const TradeCenterExchanges = () => {
 
 	return (
 		<div className="flex flex-col gap-y-8">
-			{isUserTradingAccountsError && (
-				<div>Failed to fetch trading accounts. Please try again later.</div>
-			)}
-			{isUserTradingAccountsLoading && <TradeCenterLoader />}
-			{isUserTradingAccountsSuccess && (
+			{isUserTradingAccountsLoading ? (
+				////////////////// - Loader Component - ////////////////////////
+				<TradeCenterLoader />
+			) : !isUserTradingAccountsLoading && isUserTradingAccountsError ? (
+				////////////////// - Error Component - ////////////////////////
+				<ComponentError errorMessage="Failed to fetch trading accounts. Please try again later." />
+			) : !isUserTradingAccountsLoading &&
+			  isUserTradingAccountsSuccess &&
+			  userTradingAccounts &&
+			  userTradingAccounts?.length > 0 ? (
 				<>
-					{userTradingAccounts && userTradingAccounts.length > 0 ? (
-						<>
-							<div className="flex justify-between flex-col md:flex-row">
-								<h1 className="text-slate-900 text-2xl font-semibold mb-4">
-									Trading Accounts
-								</h1>
-								<Button
-									onClick={() => {
-										router.push("trading-accounts/connect");
-									}}
-									className="!block"
-									innerClassName="px-4 md:px-4 text-xl md:text-sm"
-								>
-									Connect new Account
-								</Button>
-							</div>
-							<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8">
-								{userTradingAccounts.map((account) => (
-									<TradingAccountCard
-										key={account.accountId}
-										tradingAccount={account}
-										refetchTradingAccounts={refetchUserTradingAccounts}
-									/>
-								))}
-							</div>
-						</>
-					) : (
-						!isUserTradingAccountsLoading && <EmptyExchange />
-					)}
+					<div className="flex justify-between flex-col md:flex-row">
+						<h1 className="text-slate-900 text-2xl font-semibold mb-4">
+							Trading Accounts
+						</h1>
+						<Button
+							onClick={() => {
+								router.push("trading-accounts/connect");
+							}}
+							className="!block"
+							innerClassName="px-4 md:px-4 text-xl md:text-sm"
+						>
+							Connect new Account
+						</Button>
+					</div>
+					<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8">
+						{userTradingAccounts.map((account) => (
+							<TradingAccountCard
+								key={account.accountId}
+								tradingAccount={account}
+								refetchTradingAccounts={refetchUserTradingAccounts}
+							/>
+						))}
+					</div>
 				</>
+			) : (
+				////////////////// - Empty State - ////////////////////////
+				<EmptyExchange />
 			)}
+
 			{isConnectionSuccess && (
 				<Toast
 					type="success"
