@@ -39,7 +39,7 @@ const ReferralsOverview = () => {
 	const handleModalClose = () => setIsModalOpen(false);
 
 	return (
-    <div>
+		<div>
 			{isLoading ? (
 				<PerformanceSummaryCardLoader />
 			) : !isLoading && isReferralError ? (
