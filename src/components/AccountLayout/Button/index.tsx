@@ -32,11 +32,11 @@ const Button: React.FC<ButtonProps> = ({
 	const sizeClassnames = useMemo<string>(() => {
 		switch (size) {
 			case "small": {
-				return "px-3 py-2 text-sm leading-4";
+				return "px-3 h-12";
 			}
 
 			case "medium": {
-				return "px-6 py-2.5 text-sm font-bold";
+				return "px-6 h-12";
 			}
 		}
 	}, [size]);
@@ -47,7 +47,7 @@ const Button: React.FC<ButtonProps> = ({
 			<button
 				type={type} /* eslint-disable-line react/button-has-type */
 				className={clsx(
-					"inline-flex justify-center items-center first-letter:uppercase rounded-md border border-transparent transition focus:outline-none  hover:bg-blue-dark active:bg-blue-dark focus:bg-blue-dark disabled:bg-gray-400",
+					"inline-flex justify-center items-center font-semibold leading-4 first-letter:uppercase rounded-lg border border-transparent transition focus:outline-none hover:bg-blue-dark active:bg-blue-dark focus:bg-blue-dark disabled:bg-gray-400",
 					color ?? "text-white",
 					sizeClassnames,
 					disabled && "cursor-not-allowed !opacity-50 !bg-blue-800",

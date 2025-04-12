@@ -82,8 +82,8 @@ export default function WalletBalanceCard({
 												setWalletTotalBalance(parseFloat(opt.value))
 											}
 											bgColor="bg-[#F1F5FF]"
-											buttonClassName="px-2 py-[2px]"
-											fontStyles="text-base capitalize font-medium text-textGray"
+											buttonClassName="px-3 py-2"
+											fontStyles="text-base capitalize font-semibold text-textGray"
 											optionsClass="!p-1"
 										/>
 
@@ -100,7 +100,7 @@ export default function WalletBalanceCard({
 											options={individualWalletBalanceOptions}
 											option={individualWalletBalanceOptions[0]}
 											bgColor="bg-[#F1F5FF]"
-											buttonClassName="px-2 py-[2px]"
+											buttonClassName="px-3 py-2"
 											fontStyles="font-medium text-base capitalize text-[#1E1E1E]"
 											optionsClass="!p-1"
 										/>
@@ -112,13 +112,12 @@ export default function WalletBalanceCard({
 						</section>
 					</section>
 
-					<section className="flex flex-col sm:flex-row gap-3 items-center text-xs">
+					<section className="flex flex-col sm:flex-row gap-3 items-center">
 						{supportedOperations.map((item) => (
 							<IconButton
 								key={item.label}
 								Icon={item.Icon}
-								btnClass={`px-4 gap-2 border border-buttonColor rounded-md text-sm font-medium w-full sm:w-32 lg:w-48 h-12 ${item.label.toLowerCase() === "deposit" ? "bg-buttonColor text-white hover:opacity-80 hover:transition-colors" : "bg-white text-buttonColor"}`}
-								iconClass=""
+								btnClass={`px-4 gap-2 border border-buttonColor font-semibold rounded-lg w-full sm:w-32 lg:w-48 h-12 ${item.label.toLowerCase() === "deposit" ? "bg-buttonColor text-white hover:opacity-80 hover:transition-colors" : "bg-white text-buttonColor"}`}
 								onClick={() => router.push(item.url)}
 								disabled={false}
 							>

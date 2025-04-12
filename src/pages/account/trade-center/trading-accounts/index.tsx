@@ -58,35 +58,40 @@ const TradeCenterExchanges = () => {
 			) : !isUserTradingAccountsLoading &&
 			  isUserTradingAccountsSuccess &&
 			  userTradingAccounts &&
-			  userTradingAccounts?.length > 0 ? (
-				<>
-					<div className="flex justify-between flex-col md:flex-row">
-						<h1 className="text-slate-900 text-2xl font-semibold mb-4">
-							Trading Accounts
-						</h1>
-						<Button
-							onClick={() => {
-								router.push("trading-accounts/connect");
-							}}
-							className="!block"
-							innerClassName="px-4 md:px-4 text-xl md:text-sm"
-						>
-							Connect new Account
-						</Button>
-					</div>
-					<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8">
-						{userTradingAccounts.map((account) => (
-							<TradingAccountCard
-								key={account.accountId}
-								tradingAccount={account}
-								refetchTradingAccounts={refetchUserTradingAccounts}
-							/>
-						))}
-					</div>
-				</>
-			) : (
+			  userTradingAccounts?.length === 0 ? (
 				////////////////// - Empty State - ////////////////////////
 				<EmptyExchange />
+			) : (
+				!isUserTradingAccountsLoading &&
+				isUserTradingAccountsSuccess &&
+				userTradingAccounts &&
+				userTradingAccounts?.length > 0 && (
+					<>
+						<div className="flex justify-between flex-col md:flex-row">
+							<h1 className="text-slate-900 text-2xl font-semibold mb-4">
+								Trading Accounts
+							</h1>
+							<Button
+								onClick={() => {
+									router.push("trading-accounts/connect");
+								}}
+								className="!block"
+								innerClassName="px-4 md:px-4 text-xl md:text-sm"
+							>
+								Connect new Account
+							</Button>
+						</div>
+						<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8">
+							{userTradingAccounts.map((account) => (
+								<TradingAccountCard
+									key={account.accountId}
+									tradingAccount={account}
+									refetchTradingAccounts={refetchUserTradingAccounts}
+								/>
+							))}
+						</div>
+					</>
+				)
 			)}
 
 			{isConnectionSuccess && (
