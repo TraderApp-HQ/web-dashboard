@@ -49,16 +49,9 @@ const TradeCenterExchanges = () => {
 
 	return (
 		<div className="flex flex-col gap-y-8">
-			{isUserTradingAccountsLoading ? (
-				////////////////// - Loader Component - ////////////////////////
-				<TradeCenterLoader />
-			) : !isUserTradingAccountsLoading && isUserTradingAccountsError ? (
-				////////////////// - Error Component - ////////////////////////
-				<ComponentError errorMessage="Failed to fetch trading accounts. Please try again later." />
-			) : !isUserTradingAccountsLoading &&
-			  isUserTradingAccountsSuccess &&
-			  userTradingAccounts &&
-			  userTradingAccounts?.length > 0 ? (
+			{isUserTradingAccountsSuccess &&
+			userTradingAccounts &&
+			userTradingAccounts.length > 0 ? (
 				<>
 					<div className="flex justify-between flex-col md:flex-row">
 						<h1 className="text-slate-900 text-2xl font-semibold mb-4">
@@ -84,9 +77,17 @@ const TradeCenterExchanges = () => {
 						))}
 					</div>
 				</>
-			) : (
+			) : isUserTradingAccountsSuccess &&
+			  userTradingAccounts &&
+			  userTradingAccounts.length === 0 ? (
 				////////////////// - Empty State - ////////////////////////
 				<EmptyExchange />
+			) : !isUserTradingAccountsLoading && isUserTradingAccountsError ? (
+				////////////////// - Error Component - ////////////////////////
+				<ComponentError errorMessage="Failed to fetch trading accounts. Please try again later." />
+			) : (
+				////////////////// - Loader Component - ////////////////////////
+				<TradeCenterLoader />
 			)}
 
 			{isConnectionSuccess && (
