@@ -112,7 +112,7 @@ const Login = () => {
 	};
 
 	return (
-		<section className="py-[100px] h-full md:px-[20px] flex items-center md:justify-center max-[768px]:pt-[0px]">
+		<section className="py-[100px] h-full md:px-[20px] flex items-center justify-center max-[768px]:pt-[0px]">
 			<div className="max-w-[419px] w-full">
 				<header className="text-center mb-[40px]">
 					<p className="text-[32px] text-[#102477] font-extrabold">Welcome back!</p>
