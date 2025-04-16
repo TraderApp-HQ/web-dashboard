@@ -70,10 +70,13 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 
 	const handleSelectOption = (option: ISelectBoxOption) => {
 		const newSelectedTab = tabs[option.data.index];
-		if (newSelectedTab.href === router.asPath) return;
 		if (newSelectedTab.query) {
-			router.push({ query: { task: newSelectedTab.query } }, undefined, { shallow: true });
-		} else {
+			if (router.query.task !== newSelectedTab.query) {
+				router.push({ query: { task: newSelectedTab.query } }, undefined, {
+					shallow: true,
+				});
+			}
+		} else if (router.asPath !== newSelectedTab.href) {
 			router.push(newSelectedTab.href);
 		}
 	};
@@ -85,7 +88,6 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 					options={tabOptions}
 					option={selectedTab || tabOptions[Math.max(0, activeTabIndex)]}
 					setOption={handleSelectOption}
-					placeholder="Select Tab"
 					bgColor="bg-white"
 					fontStyles="text-base font-bold"
 					buttonClassName="border-gray-200 shadow-sm"

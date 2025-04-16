@@ -54,7 +54,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	dropPosition = "bottom",
 	caretSize = "1em",
 }: ISelectBoxProps): JSX.Element => {
-	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>();
+	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>(option);
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const selectBoxRef = useRef<HTMLDivElement>(null);
@@ -86,17 +86,22 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 		}
 	}, [isOpen]);
 
-	// Set default option or externally provided option
+	// Sync internal selectedOption with external option changes and notify setOption
 	useEffect(() => {
 		if (option) {
-			setSelectedOption(option);
+			if (
+				!selectedOption ||
+				option.value !== selectedOption.value ||
+				option.displayText !== selectedOption.displayText
+			) {
+				setSelectedOption(option);
+
+				if (setOption) {
+					setOption(option);
+				}
+			}
 		}
 	}, [option]);
-
-	// Notify external setOption handler when the selected option changes
-	useEffect(() => {
-		if (setOption && selectedOption) setOption(selectedOption);
-	}, [selectedOption]);
 
 	return (
 		<div>
@@ -172,6 +177,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 										setSelectedOption(option);
 										setIsOpen(false);
 										setSearchTerm("");
+										if (setOption) {
+											setOption(option);
+										}
 									}}
 									data-testid={`${option.displayText} button`}
 								>
