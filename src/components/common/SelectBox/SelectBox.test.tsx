@@ -81,4 +81,39 @@ describe("SelectBox Component", () => {
 		const selectBoxWithValue = screen.getByText(mockOptions[0].displayText);
 		expect(selectBoxWithValue).toBeInTheDocument();
 	});
+
+	test("initializes with the provided option", () => {
+		render(<SelectBox options={mockOptions} option={mockOptions[1]} />);
+		expect(screen.getByText("Option 2")).toBeInTheDocument();
+	});
+
+	test("doesn't call setOption when the same option is provided", () => {
+		const mockSetOption = jest.fn();
+		const { rerender } = render(
+			<SelectBox options={mockOptions} option={mockOptions[1]} setOption={mockSetOption} />,
+		);
+
+		expect(mockSetOption).not.toHaveBeenCalled();
+
+		rerender(
+			<SelectBox options={mockOptions} option={mockOptions[1]} setOption={mockSetOption} />,
+		);
+
+		expect(mockSetOption).not.toHaveBeenCalled();
+	});
+
+	test("calls setOption when a different option is provided", () => {
+		const mockSetOption = jest.fn();
+		const { rerender } = render(
+			<SelectBox options={mockOptions} option={mockOptions[0]} setOption={mockSetOption} />,
+		);
+
+		expect(mockSetOption).not.toHaveBeenCalled();
+
+		rerender(
+			<SelectBox options={mockOptions} option={mockOptions[1]} setOption={mockSetOption} />,
+		);
+
+		expect(mockSetOption).toHaveBeenCalledWith(mockOptions[1]);
+	});
 });
