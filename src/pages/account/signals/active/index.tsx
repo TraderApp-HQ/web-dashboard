@@ -6,7 +6,6 @@ import ComponentError from "~/components/Error/ComponentError";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
-import Pagination from "~/components/Pagination";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import { IActiveSignalCardProps } from "~/components/common/DataTable/config";
 import { NestedSignalsLayout } from "../";
@@ -70,25 +69,27 @@ const ActiveSignals = () => {
 						<section className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
 							{isLoading && <TableLoader />}
 							{isSuccess && signalsTableBody && (
-								<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
+								<DataTable
+									tableStyles="mb-4"
+									tHead={signalsTableHead}
+									tBody={signalsTableBody}
+									showPagination={true}
+									paginationProps={{
+										currentPage,
+										totalPages,
+										rowsPerPage,
+										totalRecord,
+										setRowsPerPage,
+										onNext: () => setCurrentPage((prev) => prev + 1),
+										onPrev: () => setCurrentPage((prev) => prev - 1),
+									}}
+								/>
 							)}
 						</section>
 						<section className="md:hidden relative">
 							{isLoading && <MobileTableLoader />}
 							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
 						</section>
-					</section>
-					<section className="bg-white p-4 w-1/2 ml-auto">
-						{/* pagination component goes here */}
-						<Pagination
-							currentPage={currentPage}
-							totalPages={totalPages}
-							rowsPerPage={rowsPerPage}
-							totalRecord={totalRecord}
-							setRowsPerPage={setRowsPerPage}
-							onNext={setCurrentPage}
-							onPrev={setCurrentPage}
-						/>
 					</section>
 				</section>
 			)}
