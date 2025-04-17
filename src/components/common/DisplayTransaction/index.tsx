@@ -10,7 +10,7 @@ const DisplayTransaction: React.FC<{
 		switch (transaction.toUpperCase()) {
 			case TransactionType.DEPOSIT:
 				return "/images/depositIcon.svg";
-			case TransactionType.WITHDRAW:
+			case TransactionType.WITHDRAWAL:
 				return "/images/withdrawalIcon.svg";
 			default:
 				return "";
@@ -27,7 +27,7 @@ const DisplayTransaction: React.FC<{
 				height={30}
 			/>
 
-			<span className={`text-stone-900 ${textStyles}`}>{transaction}</span>
+			<span className={`text-stone-900 ${textStyles}`}>{transaction.toLowerCase()}</span>
 		</section>
 	);
 };

@@ -1,25 +1,56 @@
 import { useEffect, useState } from "react";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
-import data from "~/data/wallet/data.json";
-import { IRecentTransactions } from "~/lib/types";
 import {
 	recentTransactionsDataTableMobileSelector,
 	recentTransactionsDataTableSelector,
 } from "~/selectors/wallets";
 import EmptyTransaction from "../EmptyTransaction";
+import { useGetUserWalletsRecentTransactions } from "~/hooks/useWallets";
+import WalletTransactionsLoader from "~/components/Loaders/WalletTransactionsLoader";
+import { useRouter } from "next/router";
+import ComponentError from "~/components/Error/ComponentError";
 
 export default function RecentTransactions() {
+	const router = useRouter();
+	const { page, limit } = router.query;
+
+	const params = new URLSearchParams();
+
 	// Pagination
-	const transactionsResult = data;
-	const totalDocs = transactionsResult?.transactions.length;
-	const [currentPage, setCurrentPage] = useState<number>(1);
-	const [rowsPerPage, setRowsPerPage] = useState<number>(totalDocs > 10 ? 10 : totalDocs);
-	const [tableData, setTableData] = useState<IRecentTransactions[]>([]);
+	const [currentPage, setCurrentPage] = useState<number>(Number(page) || 1);
+	const [rowsPerPage, setRowsPerPage] = useState<number>(Number(limit) || 10);
+
+	const {
+		data: transactionHistorydata,
+		isError,
+		isLoading,
+		isSuccess,
+	} = useGetUserWalletsRecentTransactions({ currentPage, rowsPerPage });
+
+	// Selectors
+	const { tableHead, tableBody } = recentTransactionsDataTableSelector(
+		transactionHistorydata?.docs ?? [],
+	);
+	const dataMobile = recentTransactionsDataTableMobileSelector(
+		transactionHistorydata?.docs ?? [],
+	);
+
+	useEffect(() => {
+		if (currentPage) {
+			params.set("page", currentPage.toString());
+		}
+		if (rowsPerPage) {
+			params.set("limit", rowsPerPage.toString());
+		}
+	}, [currentPage, rowsPerPage]);
+
 	const paginationData = {
 		currentPage,
-		totalPages: Math.ceil(totalDocs / rowsPerPage),
-		totalRecord: totalDocs,
-		rowsPerPage,
+		totalPages: transactionHistorydata?.totalPages ?? 0,
+		rowsPerPage: transactionHistorydata?.limit ?? rowsPerPage,
+		totalRecord: transactionHistorydata?.totalDocs ?? 0,
+		hasNextPage: transactionHistorydata?.hasNextPage,
+		hasPrevPage: transactionHistorydata?.hasPrevPage,
 		setRowsPerPage: (rows: number) => {
 			if (rows !== rowsPerPage) {
 				setRowsPerPage(rows);
@@ -30,42 +61,45 @@ export default function RecentTransactions() {
 		onPrev: (page: number) => setCurrentPage(page),
 	};
 
-	// Selectors
-	const { tableHead, tableBody } = recentTransactionsDataTableSelector(tableData);
-	const dataMobile = recentTransactionsDataTableMobileSelector(tableData);
-
-	useEffect(() => {
-		const start = rowsPerPage * (currentPage - 1);
-		const end = start + rowsPerPage;
-		setTableData(transactionsResult?.transactions.slice(start, end));
-	}, [currentPage, rowsPerPage]);
-
 	return (
 		<section className="space-y-5">
-			<h4 className="text-textColor text-base font-semibold leading-7">
-				Recent Transactions
-			</h4>
-			{transactionsResult?.transactions.length === 0 ? (
-				<EmptyTransaction />
+			{isLoading ? (
+				/////////////////// Loading State ///////////////
+				<WalletTransactionsLoader />
 			) : (
-				<section className="mt-2 mb-8">
-					<section className="hidden md:block py-4 px-8 bg-white rounded-2xl relative overflow-x-auto">
-						<DataTable
-							tHead={tableHead}
-							tBody={tableBody}
-							tableHeadItemStyles="text-left"
-							showPagination
-							paginationProps={paginationData}
-						/>
-					</section>
-					<section className="md:hidden relative">
-						<DataTableMobile
-							data={dataMobile}
-							showPagination
-							paginationProps={paginationData}
-						/>
-					</section>
-				</section>
+				<>
+					<h4 className="text-textColor text-base font-semibold leading-7">
+						Recent Transactions
+					</h4>
+					{isError ? (
+						/////////////////// Error State ///////////////////
+						<ComponentError />
+					) : isSuccess &&
+					  transactionHistorydata &&
+					  transactionHistorydata.totalDocs > 0 ? (
+						<section className="mt-2 mb-8">
+							<section className="hidden md:block py-4 px-8 bg-white rounded-2xl relative overflow-x-auto">
+								<DataTable
+									tHead={tableHead}
+									tBody={tableBody}
+									tableHeadItemStyles="text-left"
+									showPagination
+									paginationProps={paginationData}
+								/>
+							</section>
+							<section className="md:hidden relative">
+								<DataTableMobile
+									data={dataMobile}
+									showPagination
+									paginationProps={paginationData}
+								/>
+							</section>
+						</section>
+					) : (
+						/////////////// Empty State /////////////////////
+						<EmptyTransaction />
+					)}
+				</>
 			)}
 		</section>
 	);

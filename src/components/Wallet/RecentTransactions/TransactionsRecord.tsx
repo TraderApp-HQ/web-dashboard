@@ -1,9 +1,9 @@
 import Card from "~/components/AccountLayout/Card";
 import TransferIcon from "~/components/icons/TransferIcon";
-import type { IRecentTransactions } from "~/lib/types";
+import type { ITransaction } from "~/lib/types";
 
 interface ITransactionsRecordProps {
-	transaction: IRecentTransactions;
+	transaction: ITransaction;
 }
 
 interface TransactionInfoItemProps {
@@ -26,11 +26,11 @@ const TransactionInfoItem: React.FC<TransactionInfoItemProps> = ({ label, value 
 export function WithdrawalTransactionsRecord({ transaction }: ITransactionsRecordProps) {
 	return (
 		<Card className="p-3.5 !bg-slate-50 mb-4">
-			<TransactionInfoItem label="Address" value={transaction.address!} />
-			<TransactionInfoItem label="Wallet" value={transaction.wallet} />
-			<TransactionInfoItem label="Transaction ID" value={transaction.id} />
-			<TransactionInfoItem label="Transaction Fee" value={`$${transaction.fee}`} />
-			<TransactionInfoItem label="Network" value={transaction.network!} />
+			<TransactionInfoItem label="Address" value={transaction.fromWalletAddress ?? ""} />
+			{/* <TransactionInfoItem label="Wallet" value={transaction.wallet} /> */}
+			<TransactionInfoItem label="Transaction ID" value={transaction._id ?? ""} />
+			{/* <TransactionInfoItem label="Transaction Fee" value={`$${transaction.fee}`} /> */}
+			<TransactionInfoItem label="Network" value={transaction.transactionNetwork ?? ""} />
 			<TransactionInfoItem label="Withdrawn Amount" value={`${transaction.amount} USDT`} />
 		</Card>
 	);
@@ -40,11 +40,14 @@ export function WithdrawalTransactionsRecord({ transaction }: ITransactionsRecor
 export function DepositTransactionsRecord({ transaction }: ITransactionsRecordProps) {
 	return (
 		<Card className="p-3.5 !bg-slate-50 mb-4">
-			<TransactionInfoItem label="Address" value={transaction.address!} />
-			<TransactionInfoItem label="Transaction ID" value={transaction.id} />
-			<TransactionInfoItem label="Wallet" value={transaction.wallet} />
-			<TransactionInfoItem label="Network" value={transaction.network!} />
-			<TransactionInfoItem label="Deposit Amount" value={`$${transaction.amount} USDT`} />
+			<TransactionInfoItem label="Address" value={transaction.fromWalletAddress ?? ""} />
+			<TransactionInfoItem label="Transaction ID" value={transaction._id ?? ""} />
+			{/* <TransactionInfoItem label="Wallet" value={transaction.wallet} /> */}
+			<TransactionInfoItem label="Network" value={transaction.transactionNetwork ?? ""} />
+			<TransactionInfoItem
+				label="Deposit Amount"
+				value={`${transaction.fromAmount ?? transaction.amount} USDT`}
+			/>
 		</Card>
 	);
 }
@@ -53,8 +56,8 @@ export function DepositTransactionsRecord({ transaction }: ITransactionsRecordPr
 export function TransferTransactionsRecord({ transaction }: ITransactionsRecordProps) {
 	return (
 		<Card className="p-3.5 !bg-slate-50 mb-4">
-			<TransactionInfoItem label="From" value={transaction.from!} />
-			<TransactionInfoItem label="To" value={transaction.to!} />
+			<TransactionInfoItem label="From" value={transaction.fromWalletAddress ?? ""} />
+			<TransactionInfoItem label="To" value={transaction.toWalletAddress ?? ""} />
 		</Card>
 	);
 }
@@ -70,17 +73,17 @@ export function ConvertTransactionsRecord({ transaction }: ITransactionsRecordPr
 						<h4 className="text-neutral-700 text-sm font-bold">You Sold</h4>
 						<div>
 							<div className="flex gap-x-2 text-gray-500 text-sm font-normal leading-tight">
-								<p>{transaction.amount}</p>
-								<p>{transaction.shortName}</p>
+								<p>{transaction.fromAmount}</p>
+								<p>{transaction.fromCurrencyName}</p>
 							</div>
 							<p
 								className={`text-xs font-normal ${
-									parseFloat(transaction.percent!) < 0
+									parseFloat(String(transaction.conversionRate ?? "0")) < 0
 										? "text-rose-700"
 										: "text-emerald-700"
 								}`}
 							>
-								{transaction.percent}%
+								{transaction.conversionRate}%
 							</p>
 						</div>
 					</div>
@@ -96,17 +99,17 @@ export function ConvertTransactionsRecord({ transaction }: ITransactionsRecordPr
 						<div>
 							{/* Transaction details */}
 							<div className="flex gap-x-2 text-gray-500 text-sm font-normal leading-tight">
-								<p>{transaction.amount}</p>
-								<p>{transaction.toShortName}</p>
+								<p>{transaction.toAmount}</p>
+								<p>{transaction.toCurrencyName}</p>
 							</div>
 							<p
 								className={`text-xs font-normal ${
-									parseFloat(transaction.percent!) < 0
+									parseFloat(String(transaction.conversionRate ?? "0")) < 0
 										? "text-rose-700"
 										: "text-emerald-700"
 								}`}
 							>
-								{transaction.percent}%
+								{transaction.conversionRate}%
 							</p>
 						</div>
 					</div>
@@ -121,23 +124,23 @@ export function ConvertTransactionsRecord({ transaction }: ITransactionsRecordPr
 							Exchange rate
 						</span>{" "}
 						<span className="text-neutral-700 text-xs font-bold ">
-							(1 {transaction.toShortName}/{transaction.shortName})
+							(1 {transaction.toCurrencyName}/{transaction.currencyName})
 						</span>
 					</h4>
 					{/* Transaction details */}
 					<div>
 						<div className="flex gap-x-2 text-gray-500 text-sm font-normal leading-tight">
 							<p>{transaction.amount}</p>
-							<p>{transaction.toShortName}</p>
+							<p>{transaction.toCurrencyName}</p>
 						</div>
 						<p
 							className={`text-xs font-normal ${
-								parseFloat(transaction.percent!) < 0
+								parseFloat(String(transaction.conversionRate ?? "0")) < 0
 									? "text-rose-700"
 									: "text-emerald-700"
 							}`}
 						>
-							{transaction.percent}%
+							{transaction.conversionRate}%
 						</p>
 					</div>
 				</div>

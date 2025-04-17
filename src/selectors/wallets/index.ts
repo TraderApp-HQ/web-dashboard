@@ -1,33 +1,36 @@
-import type { IRecentTransactions } from "~/lib/types";
 import type { ITBody, ITableMobile } from "~/components/common/DataTable/config";
 import { RecentTransactionsTableHeadItems } from "./constants";
 import { renderDisplayItem, renderStatus, renderTransactionType } from "~/helpers";
 import { ROUTES } from "~/config/constants";
 import { formatCurrency, uniqueDateFormat } from "~/lib/utils";
 import { TransactionType } from "~/config/enum";
+import { ITransactionsHistory } from "~/apis/handlers/wallets/interface";
 
-export function recentTransactionsDataTableSelector(recentTransactions: IRecentTransactions[]) {
+export function recentTransactionsDataTableSelector(recentTransactions: ITransactionsHistory[]) {
 	const tableHead = [...RecentTransactionsTableHeadItems];
 	const tableBody: ITBody = {
 		tBodyRows: recentTransactions.map((item) => ({
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: item.curency, style: "text-base font-bold" },
-						itemSubText: { text: item.shortName },
-						itemImage: item.image,
+						itemText: {
+							text: item.assetLogo.name,
+							style: "text-base font-bold",
+						},
+						itemSubText: { text: item.assetLogo.symbol },
+						itemImage: item.assetLogo.logoUrl,
 						styles: "md:!justify-start",
 					}),
 				},
 				{
-					displayItem: renderTransactionType(item.transaction as TransactionType),
+					displayItem: renderTransactionType(item.transactionType as TransactionType),
 				},
 				{
-					displayItem: `${formatCurrency(+item.amount)} ${item.shortName}`,
+					displayItem: `${formatCurrency(+item.amount)} ${item.currency}`,
 					styles: "text-left",
 				},
 				{ displayItem: renderStatus(item.status, {}, false) },
-				{ displayItem: uniqueDateFormat(item.date), styles: "text-left" },
+				{ displayItem: uniqueDateFormat(item.createdAt), styles: "text-left" },
 			],
 			actions: [
 				{
@@ -42,14 +45,14 @@ export function recentTransactionsDataTableSelector(recentTransactions: IRecentT
 }
 
 export function recentTransactionsDataTableMobileSelector(
-	recentTransactions: IRecentTransactions[],
+	recentTransactions: ITransactionsHistory[],
 ) {
 	const dataMobile: ITableMobile[] = recentTransactions.map((item) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
-				itemText: { text: item.curency, style: "text-base font-normal" },
-				itemSubText: { text: item.shortName },
-				itemImage: item.image,
+				itemText: { text: item.assetLogo.name, style: "text-base font-normal" },
+				itemSubText: { text: item.assetLogo.symbol },
+				itemImage: item.assetLogo.logoUrl,
 			}),
 			displayItemValue: "",
 		},
@@ -62,15 +65,15 @@ export function recentTransactionsDataTableMobileSelector(
 		tBody: [
 			{
 				displayItemTitle: "Transaction Type",
-				displayItemValue: renderTransactionType(item.transaction as TransactionType),
+				displayItemValue: renderTransactionType(item.transactionType as TransactionType),
 			},
 			{
 				displayItemTitle: "Amount",
-				displayItemValue: `${formatCurrency(+item.amount)} ${item.shortName}`,
+				displayItemValue: `${formatCurrency(+item.amount)} ${item.currency}`,
 			},
 			{
 				displayItemTitle: "Date",
-				displayItemValue: uniqueDateFormat(item.date),
+				displayItemValue: uniqueDateFormat(item.createdAt),
 			},
 			{
 				displayItemTitle: "Status",

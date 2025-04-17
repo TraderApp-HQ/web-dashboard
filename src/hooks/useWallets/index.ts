@@ -5,6 +5,7 @@ import { WalletsQueryId } from "~/apis/handlers/wallets/constants";
 import { PaymentCategory, PaymentOperation, WalletType } from "~/apis/handlers/wallets/enum";
 import { useFetch } from "../useFetch";
 import { useCreate } from "../useCreate";
+import { IPaginationQuery } from "~/apis/handlers/wallets/interface";
 
 export const useGetUserWalletsBalance = (walletType: WalletType) => {
 	const walletsService = new WalletsService();
@@ -56,7 +57,7 @@ export const useWalletDepositOptions = ({
 	return {
 		supportedCurrencies: supportedCurrenciesQuery.data,
 		paymentOptions: paymentOptionsQuery.data,
-		isLoding: supportedCurrenciesQuery.isLoading || paymentOptionsQuery.isLoading,
+		isLoading: supportedCurrenciesQuery.isLoading || paymentOptionsQuery.isLoading,
 		isError: supportedCurrenciesQuery.isError || paymentOptionsQuery.isError,
 		error: supportedCurrenciesQuery.error || paymentOptionsQuery.error,
 	};
@@ -82,5 +83,49 @@ export const useInitiateDeposit = () => {
 		error,
 		isSuccess,
 		data,
+	};
+};
+
+export const useGetUserWalletsRecentTransactions = ({
+	currentPage,
+	rowsPerPage,
+}: IPaginationQuery) => {
+	const walletsService = new WalletsService();
+	const recentTransactions = useCallback(
+		() => walletsService.getWalletRecentTransactions({ currentPage, rowsPerPage }),
+		[walletsService, currentPage, rowsPerPage],
+	);
+	const { data, error, isLoading, isSuccess, isError } = useFetch({
+		queryKey: [WalletsQueryId.walletTransactions, currentPage, rowsPerPage],
+		queryFn: recentTransactions,
+	});
+
+	return {
+		data,
+		error,
+		isLoading,
+		isSuccess,
+		isError,
+	};
+};
+
+export const useGetUserWalletsTransaction = (id: string) => {
+	const walletsService = new WalletsService();
+	const recentTransactions = useCallback(
+		() => walletsService.getWalletTransaction(id),
+		[walletsService, id],
+	);
+	const { data, error, isLoading, isSuccess, isError } = useFetch({
+		queryKey: [WalletsQueryId.walletTransaction, id],
+		queryFn: recentTransactions,
+		enabled: !!id, // Only Fetches when the Id is not undefined
+	});
+
+	return {
+		data,
+		error,
+		isLoading,
+		isSuccess,
+		isError,
 	};
 };

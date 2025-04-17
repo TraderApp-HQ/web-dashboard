@@ -16,6 +16,7 @@ import {
 	IWalletSupportedCurrencies,
 } from "~/apis/handlers/wallets/interface";
 import AccountLayout from "~/components/AccountLayout/Layout";
+import ComponentError from "~/components/Error/ComponentError";
 import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
 import Button from "~/components/common/Button";
@@ -60,7 +61,7 @@ const Deposit = () => {
 	});
 
 	// Fetch the supported currencies and payment options for deposit
-	const { supportedCurrencies, paymentOptions, isLoding, isError, error } =
+	const { supportedCurrencies, paymentOptions, isLoading, isError, error } =
 		useWalletDepositOptions({
 			category: PaymentCategory.CRYPTO,
 			operation: PaymentOperation.DEPOSIT,
@@ -199,12 +200,10 @@ const Deposit = () => {
 					onClose={handleModalClose}
 					title="Make a Deposit"
 				>
-					{isLoding ? (
+					{isLoading ? (
 						<TaskViewLoader />
-					) : !isLoding && isError ? (
-						<p className="text-red-300">
-							{error?.message ?? "Sorry, an error occured. Try again."}
-						</p>
+					) : !isLoading && isError ? (
+						<ComponentError errorMessage={error?.message} />
 					) : (
 						<section className="space-y-5 px-1">
 							<SelectBox

@@ -1,6 +1,7 @@
 import { JSXElementConstructor } from "react";
 import { WalletType } from "./enum";
 import { IconProps } from "~/components/AccountLayout/IconButton";
+import { TransactionStatus, TransactionType } from "~/config/enum";
 
 export interface ITotalBalanceItems {
 	label: string;
@@ -101,4 +102,39 @@ export interface IFactoryPaymentProviderDepositResponse {
 	exchangeRate?: number;
 	exchangeFee?: number;
 	exchangeFeeCurrency?: string;
+}
+
+export interface IPaginationQuery {
+	currentPage?: number;
+	rowsPerPage?: number;
+}
+
+export interface IPaginatedResult<T> {
+	docs: T[];
+	totalDocs: number;
+	limit: number;
+	page: number;
+	nextPage: number;
+	prevPage?: number;
+	totalPages: number;
+	pagingCounter: number;
+	hasNextPage: boolean;
+	hasPrevPage: boolean;
+}
+
+interface IAsset {
+	name: string;
+	symbol: string;
+	logoUrl: string;
+}
+
+export interface ITransactionsHistory {
+	id: string;
+	userId: string;
+	assetLogo: IAsset;
+	transactionType: TransactionType;
+	amount: number;
+	currency: string;
+	status: TransactionStatus;
+	createdAt: string;
 }

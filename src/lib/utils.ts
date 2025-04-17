@@ -1,5 +1,5 @@
 import type { KeyboardEvent } from "react";
-import type { IRecentTransactions, OpenTrade, Signal } from "./types";
+import type { OpenTrade, Signal } from "./types";
 import type SignalsData from "./types";
 import { format } from "date-fns";
 import { ISelectBoxOption } from "~/components/interfaces";
@@ -11,11 +11,6 @@ export async function getAsset(id: string | undefined, data: SignalsData) {
 
 export async function getTrade(id: string | undefined, data: OpenTrade[]) {
 	const res = data.filter((trade: OpenTrade) => trade.id === id);
-	return res[0];
-}
-
-export async function getTransaction(id: string | undefined, data: IRecentTransactions[]) {
-	const res = data.filter((transaction: IRecentTransactions) => transaction.id === id);
 	return res[0];
 }
 
