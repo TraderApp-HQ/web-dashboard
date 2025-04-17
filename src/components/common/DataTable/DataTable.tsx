@@ -86,12 +86,7 @@ const DataTable: React.FC<IDataTable> = ({
 					</DropdownMenu>
 				)}
 			</div>
-			<div
-				className="overflow-x-auto"
-				style={{
-					scrollbarWidth: "none",
-				}}
-			>
+			<div className="overflow-x-auto scrollbar-hide">
 				<table data-testid="table-data" className={`min-w-[1100px] w-full ${tableStyles}`}>
 					<thead
 						className={`border-b border-neutral-400 border-opacity-20 ${tableHeadStyles}`}
