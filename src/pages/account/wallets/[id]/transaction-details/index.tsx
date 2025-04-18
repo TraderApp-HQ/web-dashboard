@@ -16,14 +16,14 @@ import { useGetUserWalletsTransaction } from "~/hooks/useWallets";
 function TransactionDetails() {
 	const [openModal, setOpenModal] = useState(true);
 	const router = useRouter();
-	const { id } = router.query;
+	const { id: transactionId } = router.query;
 	const {
 		data: transactionData,
 		error,
 		isError,
 		isLoading,
 		isSuccess,
-	} = useGetUserWalletsTransaction(id as string);
+	} = useGetUserWalletsTransaction(transactionId as string);
 
 	const onClose = () => {
 		setOpenModal(false);

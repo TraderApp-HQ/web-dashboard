@@ -109,16 +109,16 @@ export const useGetUserWalletsRecentTransactions = ({
 	};
 };
 
-export const useGetUserWalletsTransaction = (id: string) => {
+export const useGetUserWalletsTransaction = (transactionId: string) => {
 	const walletsService = new WalletsService();
-	const recentTransactions = useCallback(
-		() => walletsService.getWalletTransaction(id),
-		[walletsService, id],
+	const transaction = useCallback(
+		() => walletsService.getWalletTransaction(transactionId),
+		[walletsService, transactionId],
 	);
 	const { data, error, isLoading, isSuccess, isError } = useFetch({
-		queryKey: [WalletsQueryId.walletTransaction, id],
-		queryFn: recentTransactions,
-		enabled: !!id, // Only Fetches when the Id is not undefined
+		queryKey: [WalletsQueryId.walletTransaction, transactionId],
+		queryFn: transaction,
+		enabled: !!transactionId, // Only Fetches when the transaction id is defined
 	});
 
 	return {
