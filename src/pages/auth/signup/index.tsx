@@ -197,7 +197,7 @@ const Signup = () => {
 
 	return (
 		<>
-			<section className="h-full md:px-[20px] items-center flex max-[768px]:justify-center max-[768px]:pt-[0px]">
+			<section className="h-full md:px-[20px] items-center flex justify-center max-[768px]:pt-[0px]">
 				<div className="max-w-[419px] w-full">
 					<header className="text-center mb-[40px]">
 						<p

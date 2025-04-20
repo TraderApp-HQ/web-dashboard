@@ -1,13 +1,24 @@
 import React from "react";
 
-const TraderAppLogoWhite = () => {
+interface TraderAppLogoWhiteProps {
+	width?: string | number;
+	height?: string | number;
+	className?: string;
+}
+
+const TraderAppLogoWhite: React.FC<TraderAppLogoWhiteProps> = ({
+	width = "149",
+	height = "32",
+	className = "",
+}) => {
 	return (
 		<svg
-			width="149"
-			height="32"
+			width={width}
+			height={height}
 			viewBox="0 0 149 32"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
+			className={className}
 		>
 			<rect width="32" height="32" rx="16" fill="#FFFFFF" />
 			<path
