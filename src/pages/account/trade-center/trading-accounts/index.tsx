@@ -54,14 +54,15 @@ const TradeCenterExchanges = () => {
 			userTradingAccounts.length > 0 ? (
 				<>
 					<div className="flex justify-between flex-col md:flex-row">
-						<h1 className="text-slate-900 text-2xl font-semibold mb-4">
+						<h1 className="text-slate-900 text-2xl font-semibold mb-4 max-md:hidden">
 							Trading Accounts
 						</h1>
 						<Button
 							onClick={() => {
 								router.push("trading-accounts/connect");
 							}}
-							className="!block"
+							fluid
+							className="!block md:w-auto"
 							innerClassName="px-4 md:px-4 text-xl md:text-sm"
 						>
 							Connect new Account

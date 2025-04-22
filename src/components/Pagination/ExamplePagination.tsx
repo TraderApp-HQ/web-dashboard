@@ -47,8 +47,8 @@ const ExamplePagination: React.FC = () => {
 					rowsPerPage={rowsPerPage}
 					totalRecord={totalRecord} // records
 					setRowsPerPage={setRowsPerPage}
-					onNext={setCurrentPage}
-					onPrev={setCurrentPage}
+					onNext={() => setCurrentPage((prev) => prev + 1)}
+					onPrev={() => setCurrentPage((prev) => prev - 1)}
 				/>
 			</div>
 		</div>

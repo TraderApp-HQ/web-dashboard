@@ -7,7 +7,6 @@ import {
 	tradeHistoryDataTableSelector,
 } from "~/selectors/portfolio";
 import React from "react";
-import Pagination from "~/components/Pagination";
 import { NestedTradeCenterLayout } from "..";
 
 const TradeHistory = () => {
@@ -52,24 +51,39 @@ const TradeHistory = () => {
 				) : (
 					<div>
 						<div className="mt-2 mb-8">
-							<div className="hidden md:block md:overflow-hidden overflow-x-auto p-2 bg-white rounded-2xl relative">
-								<DataTable hasActions={false} tHead={tableHead} tBody={tableBody} />
+							<div className="hidden md:block md:overflow-hidden overflow-x-auto p-8 bg-white rounded-2xl relative">
+								<DataTable
+									hasActions={false}
+									tHead={tableHead}
+									tBody={tableBody}
+									showPagination={true}
+									paginationProps={{
+										currentPage,
+										totalPages,
+										rowsPerPage,
+										totalRecord,
+										setRowsPerPage,
+										onNext: () => setCurrentPage((prev) => prev + 1),
+										onPrev: () => setCurrentPage((prev) => prev - 1),
+									}}
+								/>
 							</div>
 							<div className="md:hidden">
-								<DataTableMobile hasActions={false} data={dataMobile} />
+								<DataTableMobile
+									hasActions={false}
+									data={dataMobile}
+									showPagination={true}
+									paginationProps={{
+										currentPage,
+										totalPages,
+										rowsPerPage,
+										totalRecord,
+										setRowsPerPage,
+										onNext: () => setCurrentPage((prev) => prev + 1),
+										onPrev: () => setCurrentPage((prev) => prev - 1),
+									}}
+								/>
 							</div>
-						</div>
-						<div className="bg-white p-4 w-1/2 ml-auto">
-							{/* pagination component goes here */}
-							<Pagination
-								currentPage={currentPage}
-								totalPages={totalPages}
-								rowsPerPage={rowsPerPage}
-								totalRecord={totalRecord}
-								setRowsPerPage={setRowsPerPage}
-								onNext={setCurrentPage}
-								onPrev={setCurrentPage}
-							/>
 						</div>
 					</div>
 				)}
