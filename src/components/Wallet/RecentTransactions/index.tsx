@@ -9,8 +9,11 @@ import { useGetUserWalletsRecentTransactions } from "~/hooks/useWallets";
 import WalletTransactionsLoader from "~/components/Loaders/WalletTransactionsLoader";
 import { useRouter } from "next/router";
 import ComponentError from "~/components/Error/ComponentError";
+import useUserProfileData from "~/hooks/useUserProfileData";
 
 export default function RecentTransactions() {
+	const { isAdmin } = useUserProfileData(); // Check if user is an admin
+
 	const router = useRouter();
 	const { page, limit } = router.query;
 
@@ -28,12 +31,14 @@ export default function RecentTransactions() {
 	} = useGetUserWalletsRecentTransactions({ currentPage, rowsPerPage });
 
 	// Selectors
-	const { tableHead, tableBody } = recentTransactionsDataTableSelector(
-		transactionHistorydata?.docs ?? [],
-	);
-	const dataMobile = recentTransactionsDataTableMobileSelector(
-		transactionHistorydata?.docs ?? [],
-	);
+	const { tableHead, tableBody } = recentTransactionsDataTableSelector({
+		recentTransactions: transactionHistorydata?.docs ?? [],
+		isAdmin,
+	});
+	const dataMobile = recentTransactionsDataTableMobileSelector({
+		recentTransactions: transactionHistorydata?.docs ?? [],
+		isAdmin,
+	});
 
 	useEffect(() => {
 		if (currentPage) {

@@ -104,9 +104,15 @@ export class WalletsService {
 		return data as IPaginatedResult<ITransactionsHistory>;
 	}
 
-	public async getWalletTransaction(transactionId: string): Promise<ITransactionsHistory> {
+	public async getWalletTransaction({
+		transactionId,
+		userId,
+	}: {
+		transactionId: string;
+		userId?: string;
+	}): Promise<ITransactionsHistory> {
 		const response = await this.apiClient.get<IResponse>({
-			url: `/transactions/get-transaction?transactionId=${transactionId}`,
+			url: `/transactions/get-transaction?transactionId=${transactionId}${userId ? `&userId=${userId}` : ""}`,
 		});
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch transaction.");

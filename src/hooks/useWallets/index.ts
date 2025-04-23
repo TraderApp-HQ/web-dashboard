@@ -60,6 +60,7 @@ export const useWalletDepositOptions = ({
 		isLoading: supportedCurrenciesQuery.isLoading || paymentOptionsQuery.isLoading,
 		isError: supportedCurrenciesQuery.isError || paymentOptionsQuery.isError,
 		error: supportedCurrenciesQuery.error || paymentOptionsQuery.error,
+		isSuccess: supportedCurrenciesQuery.isSuccess && paymentOptionsQuery.isSuccess,
 	};
 };
 
@@ -109,11 +110,17 @@ export const useGetUserWalletsRecentTransactions = ({
 	};
 };
 
-export const useGetUserWalletsTransaction = (transactionId: string) => {
+export const useGetUserWalletsTransaction = ({
+	transactionId,
+	userId,
+}: {
+	transactionId: string;
+	userId?: string;
+}) => {
 	const walletsService = new WalletsService();
 	const transaction = useCallback(
-		() => walletsService.getWalletTransaction(transactionId),
-		[walletsService, transactionId],
+		() => walletsService.getWalletTransaction({ transactionId, userId }),
+		[walletsService, transactionId, userId],
 	);
 	const { data, error, isLoading, isSuccess, isError } = useFetch({
 		queryKey: [WalletsQueryId.walletTransaction, transactionId],

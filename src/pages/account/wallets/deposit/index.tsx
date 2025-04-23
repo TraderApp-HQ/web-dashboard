@@ -61,11 +61,17 @@ const Deposit = () => {
 	});
 
 	// Fetch the supported currencies and payment options for deposit
-	const { supportedCurrencies, paymentOptions, isLoading, isError, error } =
-		useWalletDepositOptions({
-			category: PaymentCategory.CRYPTO,
-			operation: PaymentOperation.DEPOSIT,
-		});
+	const {
+		supportedCurrencies,
+		paymentOptions,
+		isLoading,
+		isError,
+		error,
+		isSuccess: isFetchSuccess,
+	} = useWalletDepositOptions({
+		category: PaymentCategory.CRYPTO,
+		operation: PaymentOperation.DEPOSIT,
+	});
 
 	// Initiate deposit transaction
 	const {
@@ -99,22 +105,24 @@ const Deposit = () => {
 
 	// Handlers
 	const handleSelectCurrency = (currency: ISelectBoxOption) => {
-		const selectedCurrency = supportedCurrencies?.find((cur) => cur.id === currency.value);
-		setSelectedCurrency(selectedCurrency);
+		if (selectedCurrency && selectedCurrency.id === currency.value) return; // Aborts if selected currency remains the same.
 
-		// Sets payment option if selected currency has a default payment option
+		const newCurrency = supportedCurrencies?.find((cur) => cur.id === currency.value);
+		setSelectedCurrency(newCurrency);
+
+		// Reset payment option if selected currency changes
 		const defaultCurrencyPaymentOption = paymentOptions?.find(
-			(cur) => cur.symbol === selectedCurrency?.symbol,
+			(cur) => cur.symbol === newCurrency?.symbol,
 		);
-		if (defaultCurrencyPaymentOption) {
-			setSelectedPaymentOption(defaultCurrencyPaymentOption);
-		}
+		setSelectedPaymentOption(defaultCurrencyPaymentOption);
 
 		setSelectedNetwork(undefined); // Reset network when currency changes
 	};
 	const handleSelectPaymentOption = (option: ISelectBoxOption) => {
-		const selectedOption = paymentOptions?.find((opt) => opt.paymentMethodId === option.value);
-		setSelectedPaymentOption(selectedOption);
+		if (selectedPaymentOption && selectedPaymentOption.paymentMethodId === option.value) return; // Aborts if selected payment option remains the same.
+
+		const newOption = paymentOptions?.find((opt) => opt.paymentMethodId === option.value);
+		setSelectedPaymentOption(newOption);
 		setSelectedNetwork(undefined); // Reset network when payment option changes
 	};
 	const handleSelectNetwork = (network: ISelectBoxOption) => {
@@ -183,13 +191,21 @@ const Deposit = () => {
 		}
 	}, [timeIsExpired]);
 
-	// Defaults
-	const defaultCurrency = supportedCurrencies?.find(
-		(cur) => cur.symbol === SupportedCurrency.USDT,
-	);
-	const defaultPaymentOption = paymentOptions?.find(
-		(cur) => cur.symbol === SupportedCurrency.USDT,
-	);
+	// Sets the default currency and payment option
+	useEffect(() => {
+		if (!isFetchSuccess) return; // Aborts if fetch failed.
+
+		// Defaults
+		const defaultCurrency = supportedCurrencies?.find(
+			(cur) => cur.symbol === SupportedCurrency.USDT,
+		);
+		const defaultPaymentOption = paymentOptions?.find(
+			(cur) => cur.symbol === SupportedCurrency.USDT,
+		);
+
+		setSelectedCurrency(defaultCurrency);
+		setSelectedPaymentOption(defaultPaymentOption);
+	}, [isFetchSuccess, paymentOptions, supportedCurrencies]);
 
 	return (
 		<>
@@ -216,11 +232,9 @@ const Deposit = () => {
 									imgUrl: currency.logoUrl,
 								}))}
 								option={{
-									displayText:
-										selectedCurrency?.symbol || defaultCurrency?.symbol || "",
-									value: selectedCurrency?.id || defaultCurrency?.id || "",
-									imgUrl:
-										selectedCurrency?.logoUrl || defaultCurrency?.logoUrl || "",
+									displayText: selectedCurrency?.symbol || "",
+									value: selectedCurrency?.id || "",
+									imgUrl: selectedCurrency?.logoUrl || "",
 								}}
 								setOption={handleSelectCurrency}
 							/>
@@ -234,18 +248,9 @@ const Deposit = () => {
 									imgUrl: option.logoUrl,
 								}))}
 								option={{
-									displayText:
-										selectedPaymentOption?.symbol ||
-										defaultPaymentOption?.symbol ||
-										"",
-									value:
-										selectedPaymentOption?.paymentMethodId ||
-										defaultPaymentOption?.paymentMethodId ||
-										"",
-									imgUrl:
-										selectedPaymentOption?.logoUrl ||
-										defaultPaymentOption?.logoUrl ||
-										"",
+									displayText: selectedPaymentOption?.symbol || "",
+									value: selectedPaymentOption?.paymentMethodId || "",
+									imgUrl: selectedPaymentOption?.logoUrl || "",
 								}}
 								setOption={handleSelectPaymentOption}
 							/>

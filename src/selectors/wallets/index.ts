@@ -6,7 +6,13 @@ import { formatCurrency, uniqueDateFormat } from "~/lib/utils";
 import { TransactionType } from "~/config/enum";
 import { ITransactionsHistory } from "~/apis/handlers/wallets/interface";
 
-export function recentTransactionsDataTableSelector(recentTransactions: ITransactionsHistory[]) {
+export function recentTransactionsDataTableSelector({
+	recentTransactions,
+	isAdmin,
+}: {
+	recentTransactions: ITransactionsHistory[];
+	isAdmin: boolean;
+}) {
 	const tableHead = [...RecentTransactionsTableHeadItems];
 	const tableBody: ITBody = {
 		tBodyRows: recentTransactions.map((item) => ({
@@ -35,7 +41,7 @@ export function recentTransactionsDataTableSelector(recentTransactions: ITransac
 			actions: [
 				{
 					label: "View",
-					url: `${ROUTES.wallet.homepage.slice(1)}/${item.id}/${ROUTES.wallet.transactionDetails}`,
+					url: `${ROUTES.wallet.homepage.slice(1)}/${item.id}/${ROUTES.wallet.transactionDetails}${isAdmin ? `?userId=${item.userId}` : ""}`,
 				},
 			],
 		})),
@@ -44,9 +50,13 @@ export function recentTransactionsDataTableSelector(recentTransactions: ITransac
 	return { tableHead, tableBody };
 }
 
-export function recentTransactionsDataTableMobileSelector(
-	recentTransactions: ITransactionsHistory[],
-) {
+export function recentTransactionsDataTableMobileSelector({
+	recentTransactions,
+	isAdmin,
+}: {
+	recentTransactions: ITransactionsHistory[];
+	isAdmin: boolean;
+}) {
 	const dataMobile: ITableMobile[] = recentTransactions.map((item) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
@@ -59,7 +69,7 @@ export function recentTransactionsDataTableMobileSelector(
 		actions: [
 			{
 				label: "View",
-				url: `${ROUTES.wallet.homepage.slice(1)}/${item.id}/${ROUTES.wallet.transactionDetails}`,
+				url: `${ROUTES.wallet.homepage.slice(1)}/${item.id}/${ROUTES.wallet.transactionDetails}${isAdmin ? `?userId=${item.userId}` : ""}`,
 			},
 		],
 		tBody: [
