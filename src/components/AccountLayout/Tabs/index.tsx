@@ -69,6 +69,8 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 	}, [router.asPath, router.query]);
 
 	const handleSelectOption = (option: ISelectBoxOption) => {
+		const matchedTabIndex = tabs.findIndex((tab) => router.asPath === tab.href);
+		if (matchedTabIndex === -1) return;
 		const newSelectedTab = tabs[option.data.index];
 		if (newSelectedTab.query) {
 			if (router.query.task !== newSelectedTab.query) {

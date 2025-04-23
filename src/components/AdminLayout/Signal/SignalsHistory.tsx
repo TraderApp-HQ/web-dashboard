@@ -96,9 +96,9 @@ function SignalsHistory() {
 				<SignalsEmptyState />
 			) : (
 				<div className="pb-8 rounded-2xl">
-					<h3 className="font-semibold text-base text-[#08123B]">Recent Transaction</h3>
+					<h3 className="font-semibold text-base text-[#08123B]">Recent Transactions</h3>
 					<div className="mt-2 mb-8">
-						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
+						<div className="hidden md:block p-8 bg-white rounded-2xl relative overflow-x-auto">
 							{isLoading && <TableLoader />}
 							{isSuccess && signalsTableBody && (
 								<DataTable
@@ -121,7 +121,21 @@ function SignalsHistory() {
 						</div>
 						<div className="md:hidden relative">
 							{isLoading && <MobileTableLoader />}
-							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
+							{isSuccess && (
+								<DataTableMobile
+									data={signalsMobileTableBody}
+									showPagination={true}
+									paginationProps={{
+										currentPage,
+										totalPages,
+										rowsPerPage,
+										totalRecord,
+										setRowsPerPage,
+										onNext: () => setCurrentPage((prev) => prev + 1),
+										onPrev: () => setCurrentPage((prev) => prev - 1),
+									}}
+								/>
+							)}
 						</div>
 					</div>
 				</div>

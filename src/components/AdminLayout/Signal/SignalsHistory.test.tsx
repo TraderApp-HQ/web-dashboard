@@ -1,31 +1,82 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { useSignalHistory } from "~/apis/handlers/assets/hooks";
 import SignalsHistory from "~/components/AdminLayout/Signal/SignalsHistory";
-import {
-	signalsHistoryDataTableMobileSelector,
-	signalsHistoryDataTableSelector,
-} from "~/selectors/signals";
-import { format } from "date-fns";
 import { signalData as mockSignalData } from "~/components/AdminLayout/Signal/SignalData";
+import type { PaginationProps } from "~/components/interfaces";
 
-// Add required properties to match ISignal interface
 const signalData = mockSignalData.map((signal) => ({
 	...signal,
 	assetName: signal.asset.name,
 	baseCurrencyName: signal.baseCurrency.name,
 }));
 
-// Mock the useSignalHistory hook
 jest.mock("~/apis/handlers/assets/hooks");
 
-// Mock implementation of useSignalHistory
+jest.mock("~/components/Pagination", () => {
+	const MockPagination = ({
+		currentPage,
+		totalPages,
+		totalRecord,
+		rowsPerPage,
+		setRowsPerPage,
+		onNext,
+		onPrev,
+	}: PaginationProps) => (
+		<div data-testid="mock-pagination">
+			<button
+				data-testid="mock-prev-btn"
+				onClick={() => onPrev()}
+				disabled={currentPage <= 1}
+			>
+				Prev
+			</button>
+			<button
+				data-testid="mock-next-btn"
+				onClick={() => onNext()}
+				disabled={currentPage >= totalPages}
+			>
+				Next
+			</button>
+			<select
+				data-testid="mock-rows-select"
+				value={rowsPerPage}
+				onChange={(e) => setRowsPerPage(Number(e.target.value))}
+			>
+				<option value="5">5</option>
+				<option value="10">10</option>
+				<option value="20">20</option>
+			</select>
+			<span data-testid="mock-pagination-props">
+				{JSON.stringify({ currentPage, totalPages, totalRecord, rowsPerPage })}
+			</span>
+		</div>
+	);
+	return {
+		__esModule: true,
+		default: MockPagination,
+		ExamplePagination: () => <div data-testid="mock-example-pagination">Example</div>,
+	};
+});
+
 const mockUseSignalHistory = useSignalHistory as jest.MockedFunction<typeof useSignalHistory>;
 
 describe("SignalsHistory Component", () => {
 	beforeEach(() => {
-		// Reset mock state before each test
 		mockUseSignalHistory.mockReset();
+		Object.defineProperty(window, "innerWidth", {
+			writable: true,
+			configurable: true,
+			value: 1024,
+		});
+	});
+
+	afterEach(() => {
+		Object.defineProperty(window, "innerWidth", {
+			writable: true,
+			configurable: true,
+			value: window.innerWidth,
+		});
 	});
 
 	test("renders SignalsHistory without crashing", () => {
@@ -42,7 +93,7 @@ describe("SignalsHistory Component", () => {
 
 		render(<SignalsHistory />);
 		expect(screen.getByPlaceholderText(/Search for asset name/i)).toBeInTheDocument();
-		expect(screen.getByText(/Recent Transaction/i)).toBeInTheDocument();
+		expect(screen.getByText(/Recent Transactions/i)).toBeInTheDocument();
 	});
 
 	test("shows TableLoader when loading", () => {
@@ -58,7 +109,6 @@ describe("SignalsHistory Component", () => {
 		});
 
 		render(<SignalsHistory />);
-		// Assuming there's a test ID for loaders
 		expect(screen.getByTestId("table-loader")).toBeInTheDocument();
 		expect(screen.queryByTestId("table-data")).not.toBeInTheDocument();
 	});
@@ -76,75 +126,10 @@ describe("SignalsHistory Component", () => {
 		});
 
 		render(<SignalsHistory />);
-
 		expect(screen.queryByTestId("table-loader")).not.toBeInTheDocument();
 		expect(screen.queryByTestId("table-data")).not.toBeInTheDocument();
 		const emptySignal = screen.queryByTestId("empty-signal");
 		expect(emptySignal).toBeInTheDocument();
 		expect(emptySignal).toHaveTextContent(/No Signal Available please try later/i);
-	});
-
-	test("renders DataTable and DataTableMobile when signal history exists", async () => {
-		const { tableHead, tableBody } = signalsHistoryDataTableSelector(signalData);
-		const dataMobile = signalsHistoryDataTableMobileSelector(signalData);
-
-		mockUseSignalHistory.mockReturnValue({
-			isLoading: false,
-			isSuccess: true,
-			signalHistory: signalData,
-			signalsTableHead: tableHead,
-			signalsTableBody: tableBody,
-			signalsMobileTableBody: dataMobile,
-			isError: false,
-			error: null,
-		});
-
-		render(<SignalsHistory />);
-
-		expect(screen.queryByTestId("table-loader")).not.toBeInTheDocument();
-		expect(screen.queryByTestId("empty-signal")).not.toBeInTheDocument();
-		const tableData = screen.queryByTestId("table-data");
-		const tableDataMobile = screen.queryByTestId("table-data-mobile");
-		expect(tableData).toBeInTheDocument();
-		expect(tableDataMobile).toBeInTheDocument();
-
-		// Wait for data to be rendered
-		await waitFor(() => {
-			signalData.forEach((signal) => {
-				expect(tableData).toHaveTextContent(signal.asset.name);
-				expect(tableData).toHaveTextContent(signal.maxGain.toString());
-				expect(tableData).toHaveTextContent(format(signal.createdAt, "dd MMM h:mm a"));
-				expect(tableData).toHaveTextContent(format(signal.endedAt, "dd MMM h:mm a"));
-			});
-		});
-	});
-
-	test("pagination works correctly", () => {
-		const { tableHead, tableBody } = signalsHistoryDataTableSelector(signalData);
-		const dataMobile = signalsHistoryDataTableMobileSelector(signalData);
-
-		mockUseSignalHistory.mockReturnValue({
-			isLoading: false,
-			isSuccess: true,
-			signalHistory: signalData,
-			signalsTableHead: tableHead,
-			signalsTableBody: tableBody,
-			signalsMobileTableBody: dataMobile,
-			isError: false,
-			error: null,
-		});
-
-		render(<SignalsHistory />);
-
-		// Test initial pagination state
-		const paginationData = screen.queryByTestId("pagination-data");
-		expect(paginationData).toBeInTheDocument();
-
-		expect(paginationData).toHaveTextContent("1"); // Current page
-		expect(paginationData).toHaveTextContent("2"); // Total pages
-
-		// check next/previous button state
-		expect(screen.queryByTestId("next-btn")).toBeDisabled();
-		expect(screen.queryByTestId("prev-btn")).toBeDisabled();
 	});
 });

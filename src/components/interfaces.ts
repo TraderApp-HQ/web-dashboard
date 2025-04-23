@@ -18,8 +18,8 @@ export interface PaginationProps {
 	totalRecord: number;
 	rowsPerPage: number;
 	setRowsPerPage: (num: number) => void;
-	onNext: (page: number) => void;
-	onPrev: (page: number) => void;
+	onNext: () => void;
+	onPrev: () => void;
 	hasNextPage?: boolean | null;
 	hasPrevPage?: boolean | null;
 }

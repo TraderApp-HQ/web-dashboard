@@ -26,8 +26,8 @@ export default function RecentTransactions() {
 				setCurrentPage(1); // Resets current page back to 1 anytime rowsPerPage is changed
 			}
 		},
-		onNext: (page: number) => setCurrentPage(page),
-		onPrev: (page: number) => setCurrentPage(page),
+		onNext: () => setCurrentPage((prev) => prev + 1),
+		onPrev: () => setCurrentPage((prev) => prev - 1),
 	};
 
 	// Selectors

@@ -88,7 +88,21 @@ const ActiveSignals = () => {
 						</section>
 						<section className="md:hidden relative">
 							{isLoading && <MobileTableLoader />}
-							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
+							{isSuccess && (
+								<DataTableMobile
+									data={signalsMobileTableBody}
+									showPagination={true}
+									paginationProps={{
+										currentPage,
+										totalPages,
+										rowsPerPage,
+										totalRecord,
+										setRowsPerPage,
+										onNext: () => setCurrentPage((prev) => prev + 1),
+										onPrev: () => setCurrentPage((prev) => prev - 1),
+									}}
+								/>
+							)}
 						</section>
 					</section>
 				</section>
