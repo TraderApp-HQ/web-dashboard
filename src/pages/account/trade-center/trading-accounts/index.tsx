@@ -53,8 +53,8 @@ const TradeCenterExchanges = () => {
 			userTradingAccounts &&
 			userTradingAccounts.length > 0 ? (
 				<>
-					<div className="flex justify-between flex-col md:flex-row">
-						<h1 className="text-slate-900 text-2xl font-semibold mb-4 max-md:hidden">
+					<div className="flex justify-between items-center flex-col md:flex-row">
+						<h1 className="text-slate-900 text-base font-semibold mb-4 max-md:hidden">
 							Trading Accounts
 						</h1>
 						<Button
@@ -63,7 +63,7 @@ const TradeCenterExchanges = () => {
 							}}
 							fluid
 							className="!block md:w-auto"
-							innerClassName="px-4 md:px-4 text-xl md:text-sm"
+							innerClassName="px-4 md:px-4 text-sm"
 						>
 							Connect new Account
 						</Button>
