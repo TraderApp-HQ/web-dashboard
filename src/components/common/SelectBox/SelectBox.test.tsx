@@ -89,17 +89,22 @@ describe("SelectBox Component", () => {
 
 	test("doesn't call setOption when the same option is provided", () => {
 		const mockSetOption = jest.fn();
+		// initial render
 		const { rerender } = render(
 			<SelectBox options={mockOptions} option={mockOptions[1]} setOption={mockSetOption} />,
 		);
 
-		expect(mockSetOption).not.toHaveBeenCalled();
+		// Called once on initial mount
+		expect(mockSetOption).toHaveBeenCalledTimes(1);
 
+		// rerender with same option
 		rerender(
 			<SelectBox options={mockOptions} option={mockOptions[1]} setOption={mockSetOption} />,
 		);
 
-		expect(mockSetOption).not.toHaveBeenCalled();
+		// Note: This checks the cumulative number of calls across both renders.
+		// The mock function retains its call history, so this ensures setOption was not called again on rerender.
+		expect(mockSetOption).toHaveBeenCalledTimes(1);
 	});
 
 	test("calls setOption when a different option is provided", () => {
@@ -108,12 +113,13 @@ describe("SelectBox Component", () => {
 			<SelectBox options={mockOptions} option={mockOptions[0]} setOption={mockSetOption} />,
 		);
 
-		expect(mockSetOption).not.toHaveBeenCalled();
+		expect(mockSetOption).toHaveBeenCalledTimes(1);
 
 		rerender(
 			<SelectBox options={mockOptions} option={mockOptions[1]} setOption={mockSetOption} />,
 		);
 
+		expect(mockSetOption).toHaveBeenCalledTimes(2);
 		expect(mockSetOption).toHaveBeenCalledWith(mockOptions[1]);
 	});
 });

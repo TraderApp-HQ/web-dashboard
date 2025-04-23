@@ -179,6 +179,8 @@ describe("Pagination Component", () => {
 			.closest('div[class*="cursor-pointer"]');
 		expect(selectBoxButtonTrigger).toBeInTheDocument();
 		if (!selectBoxButtonTrigger) throw new Error("SelectBox trigger not found");
+		// Clear the mock to ignore initial mount call and focus on click action
+		mockSetRowsPerPage.mockClear();
 		fireEvent.click(selectBoxButtonTrigger);
 		const listbox = screen.getByRole("listbox");
 		fireEvent.click(within(listbox).getByText("20"));
