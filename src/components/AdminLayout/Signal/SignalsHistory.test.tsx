@@ -7,7 +7,14 @@ import {
 	signalsHistoryDataTableSelector,
 } from "~/selectors/signals";
 import { format } from "date-fns";
-import { signalData } from "~/components/AdminLayout/Signal/SignalData";
+import { signalData as mockSignalData } from "~/components/AdminLayout/Signal/SignalData";
+
+// Add required properties to match ISignal interface
+const signalData = mockSignalData.map((signal) => ({
+	...signal,
+	assetName: signal.asset.name,
+	baseCurrencyName: signal.baseCurrency.name,
+}));
 
 // Mock the useSignalHistory hook
 jest.mock("~/apis/handlers/assets/hooks");
@@ -35,7 +42,7 @@ describe("SignalsHistory Component", () => {
 
 		render(<SignalsHistory />);
 		expect(screen.getByPlaceholderText(/Search for asset name/i)).toBeInTheDocument();
-		expect(screen.getByText(/Resent Transaction/i)).toBeInTheDocument();
+		expect(screen.getByText(/Recent Transaction/i)).toBeInTheDocument();
 	});
 
 	test("shows TableLoader when loading", () => {

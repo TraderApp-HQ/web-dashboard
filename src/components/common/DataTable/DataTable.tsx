@@ -61,6 +61,7 @@ const DataTable: React.FC<IDataTable> = ({
 			<div className="flex justify-between mb-5">
 				{showSearch && searchProps && (
 					<SearchForm
+						className="bg-white"
 						{...searchProps}
 						placeHolder={searchProps.placeholder}
 						aria-label="search"
@@ -71,7 +72,7 @@ const DataTable: React.FC<IDataTable> = ({
 				{showFilter && filterProps && (
 					<DropdownMenu
 						className="w-[256px]"
-						btnClass={`w-24 h-12 px-1.5 py-3 bg-sky-200 bg-opacity-20 rounded-lg border ${filterProps.className}`}
+						btnClass={`w-24 h-12 px-1.5 py-3 bg-sky-200 bg-opacity-20 rounded-lg border bg-white ${filterProps.className}`}
 						trigger={
 							<>
 								<div className="text-textGray text-sm font-normal leading-snug">
@@ -85,7 +86,7 @@ const DataTable: React.FC<IDataTable> = ({
 					</DropdownMenu>
 				)}
 			</div>
-			<div className="overflow-x-auto">
+			<div className="overflow-x-auto scrollbar-hide">
 				<table data-testid="table-data" className={`min-w-[1100px] w-full ${tableStyles}`}>
 					<thead
 						className={`border-b border-neutral-400 border-opacity-20 ${tableHeadStyles}`}
@@ -165,7 +166,7 @@ const DataTable: React.FC<IDataTable> = ({
 			</div>
 
 			{showPagination && paginationProps && (
-				<div className="mt-9">
+				<div className="mt-4">
 					<Pagination {...paginationProps} />
 				</div>
 			)}
