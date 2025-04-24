@@ -82,9 +82,16 @@ describe("Trading Account Connection Navigation Flow", () => {
 		expect(screen.getByText("Not connected")).toBeInTheDocument();
 		expect(screen.getByText("Connect new trading account")).toBeInTheDocument();
 
+		// Check initial route
+		expect(mockRouter.asPath).toBe("/account/trade-center/trading-accounts");
+
 		fireEvent.click(screen.getByText("Connect new trading account"));
 
+		// Simulate the router updating the URL as Next.js would do
+		mockRouter.setCurrentUrl("/account/trade-center/trading-accounts/connect");
+
 		await waitFor(() => {
+			expect(mockRouter.asPath).toBe("/account/trade-center/trading-accounts/connect");
 			expect(screen.getByText("Select Trading Platform")).toBeInTheDocument();
 		});
 	});
