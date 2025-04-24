@@ -82,13 +82,14 @@ export function renderPercentageChange(currentChange?: number) {
 export function renderTransactionType(transaction: TransactionType) {
 	return React.createElement(DisplayTransaction, {
 		transaction,
+		textStyles: "capitalize",
 	});
 }
 
 export function renderStatus(status: string, style?: { justify?: string }, bullet?: boolean) {
 	let theme: ColourTheme;
 	switch (status) {
-		case TransactionStatus.SUCCESSFUL:
+		case TransactionStatus.SUCCESS:
 		case TaskCategory.REFERRAL:
 		case UserTaskStatus.DONE:
 		case TaskStatus.STARTED:
@@ -97,6 +98,7 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 			theme = ColourTheme.SUCCESS;
 			break;
 		}
+		case TransactionStatus.PENDING:
 		case UserTaskStatus.PENDING:
 		case TaskStatus.NOT_STARTED:
 		case OperationStatus.PAUSED:
@@ -104,7 +106,6 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 			theme = ColourTheme.WARNING;
 			break;
 		}
-		case TransactionStatus.PENDING:
 		case TaskStatus.COMPLETED:
 		case UserTaskStatus.IN_REVIEW: {
 			theme = ColourTheme.REVIEW;

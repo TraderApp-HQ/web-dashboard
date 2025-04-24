@@ -5,7 +5,10 @@ import { PaymentCategory, PaymentOperation, WalletType } from "./enum";
 import {
 	IFactoryPaymentProviderDepositResponse,
 	IInitiateDepositInput,
+	IPaginatedResult,
+	IPaginationQuery,
 	IPaymentOptions,
+	ITransactionsHistory,
 	IUserWalletResponse,
 	IWalletSupportedCurrencies,
 } from "./interface";
@@ -83,5 +86,40 @@ export class WalletsService {
 
 		const { data } = response;
 		return data as IFactoryPaymentProviderDepositResponse;
+	}
+
+	public async getWalletRecentTransactions({
+		currentPage,
+		rowsPerPage,
+	}: IPaginationQuery): Promise<IPaginatedResult<ITransactionsHistory>> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/transactions?page=${currentPage}&limit=${rowsPerPage}`,
+		});
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch wallet recent transactions.");
+		}
+
+		const { data } = response;
+
+		return data as IPaginatedResult<ITransactionsHistory>;
+	}
+
+	public async getWalletTransaction({
+		transactionId,
+		userId,
+	}: {
+		transactionId: string;
+		userId?: string;
+	}): Promise<ITransactionsHistory> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/transactions/get-transaction?transactionId=${transactionId}${userId ? `&userId=${userId}` : ""}`,
+		});
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch transaction.");
+		}
+
+		const { data } = response;
+
+		return data as ITransactionsHistory;
 	}
 }

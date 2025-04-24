@@ -18,7 +18,8 @@ export const supportedOperations: ITotalBalanceItems[] = [
 
 export const WalletsQueryId = {
 	walletsBalance: "user-wallets-balance",
-	walletHistory: "user-wallet-history",
+	walletTransactions: "user-wallet-transactions",
+	walletTransaction: "user-wallet-transaction",
 	wallet: "user-wallet",
 	wallets: "user-wallets",
 	supportedCurrencies: "wallet-supported-currencies",

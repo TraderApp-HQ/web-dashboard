@@ -5,6 +5,7 @@ import { WalletsQueryId } from "~/apis/handlers/wallets/constants";
 import { PaymentCategory, PaymentOperation, WalletType } from "~/apis/handlers/wallets/enum";
 import { useFetch } from "../useFetch";
 import { useCreate } from "../useCreate";
+import { IPaginationQuery } from "~/apis/handlers/wallets/interface";
 
 export const useGetUserWalletsBalance = (walletType: WalletType) => {
 	const walletsService = new WalletsService();
@@ -56,9 +57,10 @@ export const useWalletDepositOptions = ({
 	return {
 		supportedCurrencies: supportedCurrenciesQuery.data,
 		paymentOptions: paymentOptionsQuery.data,
-		isLoding: supportedCurrenciesQuery.isLoading || paymentOptionsQuery.isLoading,
+		isLoading: supportedCurrenciesQuery.isLoading || paymentOptionsQuery.isLoading,
 		isError: supportedCurrenciesQuery.isError || paymentOptionsQuery.isError,
 		error: supportedCurrenciesQuery.error || paymentOptionsQuery.error,
+		isSuccess: supportedCurrenciesQuery.isSuccess && paymentOptionsQuery.isSuccess,
 	};
 };
 
@@ -82,5 +84,55 @@ export const useInitiateDeposit = () => {
 		error,
 		isSuccess,
 		data,
+	};
+};
+
+export const useGetUserWalletsRecentTransactions = ({
+	currentPage,
+	rowsPerPage,
+}: IPaginationQuery) => {
+	const walletsService = new WalletsService();
+	const recentTransactions = useCallback(
+		() => walletsService.getWalletRecentTransactions({ currentPage, rowsPerPage }),
+		[walletsService, currentPage, rowsPerPage],
+	);
+	const { data, error, isLoading, isSuccess, isError } = useFetch({
+		queryKey: [WalletsQueryId.walletTransactions, currentPage, rowsPerPage],
+		queryFn: recentTransactions,
+	});
+
+	return {
+		data,
+		error,
+		isLoading,
+		isSuccess,
+		isError,
+	};
+};
+
+export const useGetUserWalletsTransaction = ({
+	transactionId,
+	userId,
+}: {
+	transactionId: string;
+	userId?: string;
+}) => {
+	const walletsService = new WalletsService();
+	const transaction = useCallback(
+		() => walletsService.getWalletTransaction({ transactionId, userId }),
+		[walletsService, transactionId, userId],
+	);
+	const { data, error, isLoading, isSuccess, isError } = useFetch({
+		queryKey: [WalletsQueryId.walletTransaction, transactionId],
+		queryFn: transaction,
+		enabled: !!transactionId, // Only Fetches when the transaction id is defined
+	});
+
+	return {
+		data,
+		error,
+		isLoading,
+		isSuccess,
+		isError,
 	};
 };

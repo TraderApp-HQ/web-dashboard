@@ -68,12 +68,14 @@ export enum TradeSignalModalScreen {
 }
 
 export enum TransactionStatus {
-	SUCCESSFUL = "SUCCESSFUL",
+	SUCCESS = "SUCCESS",
 	FAILED = "FAILED",
 	PENDING = "PENDING",
 }
 
 export enum TransactionType {
-	WITHDRAW = "WITHDRAW",
 	DEPOSIT = "DEPOSIT",
+	WITHDRAWAL = "WITHDRAWAL",
+	TRANSFER = "TRANSFER",
+	CONVERT = "CONVERT",
 }

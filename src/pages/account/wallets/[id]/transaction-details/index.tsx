@@ -1,10 +1,8 @@
-import { GetServerSideProps } from "next";
-import { useState } from "react";
 import { useRouter } from "next/router";
-import data from "~/data/wallet/data.json";
-import { IRecentTransactions } from "~/lib/types";
-import { getTransaction } from "~/lib/utils";
-
+import { useState } from "react";
+import AccountLayout from "~/components/AccountLayout/Layout";
+import ComponentError from "~/components/Error/ComponentError";
+import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
 import TransactionDetailsCard from "~/components/Wallet/RecentTransactions/TransactionDetailsCard";
 import {
@@ -13,23 +11,23 @@ import {
 	TransferTransactionsRecord,
 	WithdrawalTransactionsRecord,
 } from "~/components/Wallet/RecentTransactions/TransactionsRecord";
-import AccountLayout from "~/components/AccountLayout/Layout";
+import { useGetUserWalletsTransaction } from "~/hooks/useWallets";
 
-interface TransactionDetailsProps {
-	transaction: IRecentTransactions;
-}
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-	const { id } = context.params!;
-	const transaction = await getTransaction(id as string, data.transactions);
-	return {
-		props: { transaction },
-	};
-};
-
-function TransactionDetails({ transaction }: TransactionDetailsProps) {
-	const router = useRouter();
+function TransactionDetails() {
 	const [openModal, setOpenModal] = useState(true);
+	const router = useRouter();
+	const { id: transactionId, userId } = router.query;
+
+	const {
+		data: transactionData,
+		error,
+		isError,
+		isLoading,
+		isSuccess,
+	} = useGetUserWalletsTransaction({
+		transactionId: transactionId as string,
+		...(userId && { userId: userId as string }), // Only passes the userId if it is defined
+	});
 
 	const onClose = () => {
 		setOpenModal(false);
@@ -37,15 +35,17 @@ function TransactionDetails({ transaction }: TransactionDetailsProps) {
 	};
 
 	const renderContent = () => {
-		switch (transaction.transaction.toLowerCase()) {
+		switch (transactionData?.transactionType.toLowerCase()) {
 			case "deposit":
-				return <DepositTransactionsRecord transaction={transaction} />;
+				return <DepositTransactionsRecord transaction={transactionData} />;
 			case "withdraw":
-				return <WithdrawalTransactionsRecord transaction={transaction} />;
+				return <WithdrawalTransactionsRecord transaction={transactionData} />;
 			case "transfer":
-				return <TransferTransactionsRecord transaction={transaction} />;
+				return <TransferTransactionsRecord transaction={transactionData} />;
 			default:
-				return <ConvertTransactionsRecord transaction={transaction} />;
+				return transactionData ? (
+					<ConvertTransactionsRecord transaction={transactionData} />
+				) : null;
 		}
 	};
 
@@ -54,10 +54,23 @@ function TransactionDetails({ transaction }: TransactionDetailsProps) {
 			openModal={openModal}
 			width="lg:w-[807px]"
 			onClose={onClose}
-			title={`${transaction.transaction} Transaction Details`}
+			title={`${transactionData?.transactionType.toLowerCase()} Transaction Details`}
 		>
-			<TransactionDetailsCard transaction={transaction} />
-			{renderContent()}
+			{isLoading ? (
+				/////// Loading State ////////////
+				<TaskViewLoader />
+			) : !isLoading && isError ? (
+				////////// Error State //////////
+				<ComponentError errorMessage={error?.message} />
+			) : (
+				isSuccess &&
+				transactionData && (
+					<>
+						<TransactionDetailsCard transaction={transactionData} />
+						{renderContent()}
+					</>
+				)
+			)}
 		</Modal>
 	);
 }

@@ -96,7 +96,7 @@ const Modal: React.FC<ModalOptions> = ({
 						className={`flex items-start justify-between w-full pb-2 ${headerDivider && "border-b-2 border-[#D1D7F0]"}`}
 					>
 						<div className="flex flex-col space-y-3 flex-1">
-							<h1 className="text-xl flex items-center gap-x-1 font-semibold text-[#414141]">
+							<h1 className="text-xl flex items-center gap-x-1 font-semibold capitalize text-[#414141]">
 								{showBackButton && backBtnIcon && backBtnIcon}
 								{title}
 							</h1>
