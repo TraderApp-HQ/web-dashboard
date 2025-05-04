@@ -1,3 +1,5 @@
+import nextPwa from "next-pwa";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactStrictMode: true,
@@ -43,4 +45,47 @@ const nextConfig = {
 	},
 };
 
-export default nextConfig;
+const withPwa = nextPwa({
+	dest: "public",
+	register: true,
+	skipWaiting: true,
+	// important to avoid running the generation everytime on your local environment
+	disable: process.env.NODE_ENV === "development",
+});
+
+export default withPwa(nextConfig);
+
+// const withPWA = require("next-pwa")({
+// 	dest: "public",
+// });
+
+// export default withPWA({
+// 	...nextConfig,
+// });
+
+// PWA Configuration (ES Modules)
+// import withPWA from "next-pwa";
+// const pwaConfig = {
+// 	dest: "public",
+// 	disable: process.env.NODE_ENV === "development",
+// 	register: true,
+// 	skipWaiting: true,
+// };
+
+// Export the combined config
+// export default withPWA({
+// 	...nextConfig, // Spread your existing Next.js config
+// 	// pwa: pwaConfig, // Properly nest PWA config under `pwa` key
+// 	dest: "public",
+// });
+
+// // PWA Configuration
+// const withPWA = require("next-pwa")({
+// 	dest: "public",
+// 	disable: process.env.NODE_ENV === "development",
+// 	register: true,
+// 	skipWaiting: true,
+// });
+
+// // Export the combined config
+// module.exports = withPWA(nextConfig);
