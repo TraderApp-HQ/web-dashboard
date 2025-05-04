@@ -50,7 +50,7 @@ const withPwa = nextPwa({
 	register: true,
 	skipWaiting: true,
 	// important to avoid running the generation everytime on your local environment
-	disable: process.env.NODE_ENV === "development",
+	// disable: process.env.NODE_ENV === "development",
 });
 
 export default withPwa(nextConfig);
