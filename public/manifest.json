@@ -1,7 +1,7 @@
 {
-	"name": "TraderApp Technologies",
-	"short_name": "TraderApp",
-	"description": "Your app description",
+	"name": "TraderApp Staging",
+	"short_name": "TraderApp Staging",
+	"description": "Copy Trading Platform",
 	"start_url": "/",
 	"display": "standalone",
 	"background_color": "#ffffff",
