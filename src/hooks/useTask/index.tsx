@@ -192,3 +192,19 @@ export const useGetUserTask = (taskId: string) => {
 
 	return { task, isLoading, isError, error };
 };
+
+export const useUpdateTaskPlatformData = () => {
+	const usersService = new UsersService();
+	const {
+		mutateAsync: updateTaskPlatformData,
+		data: successMessage,
+		isError,
+		error,
+		isSuccess,
+		isPending,
+	} = useCreate({
+		mutationFn: (data: FormData) => usersService.updateTaskPlatformData(data),
+	});
+
+	return { updateTaskPlatformData, isPending, isSuccess, successMessage, isError, error };
+};

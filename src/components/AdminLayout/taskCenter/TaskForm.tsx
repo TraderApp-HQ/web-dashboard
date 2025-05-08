@@ -65,6 +65,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 						return {
 							displayText: platform.name,
 							value: platform.name,
+							imgUrl: platform.logoUrl,
 						};
 					})
 				: [

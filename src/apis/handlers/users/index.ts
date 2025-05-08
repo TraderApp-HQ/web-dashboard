@@ -378,6 +378,24 @@ export class UsersService {
 		return response.message;
 	}
 
+	public async updateTaskPlatformData(data: FormData): Promise<string> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/task/update-platform-data",
+			data,
+			options: {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			},
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Error updating task platform data.");
+		}
+
+		return response.message;
+	}
+
 	public async getReferrals({
 		page,
 		size,

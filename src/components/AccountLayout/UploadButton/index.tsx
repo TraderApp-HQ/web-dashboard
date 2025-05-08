@@ -23,7 +23,7 @@ const UploadButton: React.FC<Props> = ({ acceptedFiles, getRootProps, getInputPr
 			<input {...getInputProps()} />
 
 			{/* Displaying the uploaded file if available */}
-			{acceptedFiles.length > 0 ? (
+			{acceptedFiles.length > 0 && !acceptedFiles.endsWith(".csv") ? (
 				<Image
 					src={acceptedFiles}
 					alt={acceptedFiles}
@@ -33,13 +33,23 @@ const UploadButton: React.FC<Props> = ({ acceptedFiles, getRootProps, getInputPr
 				/>
 			) : (
 				/* Prompt to drag or choose a file */
-				<div className="flex gap-1 text-gray-400 text-sm font-normal leading-tight justify-center">
+				<div className="flex gap-1 text-gray-400 text-sm font-normal leading-tight justify-center items-center">
 					<span>
 						{/* Cloud icon indicating file upload */}
 						<CloudIcon />{" "}
 					</span>
-					<p>Drag file here to upload document or </p>{" "}
-					<p className="text-gray-500 text-sm font-normal leading-tight">choose file</p>
+					{acceptedFiles.length > 0 && acceptedFiles.endsWith(".csv") ? (
+						<p className="text-gray-500 text-lg font-medium leading-tight">
+							{acceptedFiles}
+						</p>
+					) : (
+						<>
+							<p>Drag file here to upload document or </p>{" "}
+							<p className="text-gray-500 text-sm font-normal leading-tight">
+								choose file
+							</p>
+						</>
+					)}
 				</div>
 			)}
 		</div>
