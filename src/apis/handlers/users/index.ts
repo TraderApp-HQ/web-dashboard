@@ -26,6 +26,7 @@ import type {
 	IFetchAllPendingTasksCount,
 	ITaskData,
 	IReferrals,
+	ITaskPlatformData,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 export class UsersService {
@@ -378,15 +379,10 @@ export class UsersService {
 		return response.message;
 	}
 
-	public async updateTaskPlatformData(data: FormData): Promise<string> {
+	public async updateTaskPlatformData(data: ITaskPlatformData): Promise<string> {
 		const response = await this.apiClient.post<IResponse>({
 			url: "/task/update-platform-data",
 			data,
-			options: {
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
-			},
 		});
 
 		if (response.error) {

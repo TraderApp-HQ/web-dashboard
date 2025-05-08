@@ -13,13 +13,15 @@ const UpdateData = () => {
 	const router = useRouter();
 	// Get all platforms
 	const { isLoading, platforms } = useGetTaskPlatforms();
-	const { isPending, updateTaskPlatformData } = useUpdateTaskPlatformData();
+	const { isPending, updateTaskPlatformData, error, isError, isSuccess } =
+		useUpdateTaskPlatformData();
 
 	const [openTaskModal, setOpenTaskModal] = useState<boolean>(true);
 	const [enableUploadButton, setEnableUplaodButton] = useState<boolean>(false);
 	const [platform, setPlatform] = useState<string>();
 	const [platformAction, setPlatformAction] = useState<string>();
-	const [file, setFile] = useState<File>();
+	const [fileString, setFileString] = useState<string>();
+	const [fileName, setFileName] = useState<string>();
 
 	const closeModal = () => {
 		router.push(".");
@@ -29,7 +31,8 @@ const UpdateData = () => {
 	const resetInput = () => {
 		setPlatform(undefined);
 		setPlatformAction(undefined);
-		setFile(undefined);
+		setFileString(undefined);
+		setFileName(undefined);
 	};
 
 	// Drag and Drop function
@@ -37,7 +40,15 @@ const UpdateData = () => {
 		const file = acceptedFiles[0];
 		// Check if the file is of .csv type and not greater than 1MB
 		if (file.type.includes("csv") && file.size <= 1000000) {
-			setFile(file);
+			const reader = new FileReader();
+			reader.onload = () => {
+				// Convert file to base64 and store it in state
+				const base64String = reader.result as string;
+				setFileString(base64String);
+			};
+
+			setFileName(file.name);
+			reader.readAsDataURL(file);
 		} else {
 			console.log("Invalid file format/size:", file.name, file.type, file.size);
 		}
@@ -47,31 +58,35 @@ const UpdateData = () => {
 
 	// Input validation
 	useEffect(() => {
-		if (!platform || !platformAction || !file) {
+		if (!platform || !platformAction || !fileString) {
 			return;
 		}
 
 		setEnableUplaodButton(true);
-	}, [platform, platformAction, file]);
+	}, [platform, platformAction, fileString]);
 
 	// OnSubmit
-	const handleUploadData = () => {
-		if (!platform || !platformAction || !file) {
+	const handleUploadData = async () => {
+		if (!platform || !platformAction || !fileString) {
 			return;
 		}
 
-		const formData = new FormData();
-		formData.append("platform", platform);
-		formData.append("platformAction", platformAction);
-		formData.append("file", file);
+		const formData = {
+			platform,
+			platformAction,
+			file: fileString,
+		};
 
-		console.log("form data", formData);
-		updateTaskPlatformData(formData);
-
-		// On success, reset input and close modal
-		resetInput();
-		closeModal();
+		await updateTaskPlatformData(formData);
 	};
+
+	// Handle success state changes
+	useEffect(() => {
+		if (isSuccess) {
+			resetInput();
+			closeModal();
+		}
+	}, [isSuccess]);
 
 	return (
 		<Modal
@@ -125,10 +140,16 @@ const UpdateData = () => {
 					Select file <small>( max 1MB )</small>
 				</label>
 				<UploadButton
-					acceptedFiles={file?.name || ""}
+					acceptedFiles={fileName || ""}
 					getRootProps={getRootProps}
 					getInputProps={getInputProps}
 				/>
+
+				{isError && (
+					<p className="text-red-500 text-sm font-normal leading-none">
+						{error?.message}
+					</p>
+				)}
 				<Button
 					onClick={handleUploadData}
 					disabled={!enableUploadButton || isPending}

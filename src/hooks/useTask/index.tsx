@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
 import { useFetch } from "../useFetch";
 import { useCallback } from "react";
-import { ICreateUserTask, ITaskData } from "~/apis/handlers/users/interfaces";
+import { ICreateUserTask, ITaskData, ITaskPlatformData } from "~/apis/handlers/users/interfaces";
 
 export const useGetTaskPlatforms = () => {
 	const usersService = new UsersService();
@@ -195,6 +195,12 @@ export const useGetUserTask = (taskId: string) => {
 
 export const useUpdateTaskPlatformData = () => {
 	const usersService = new UsersService();
+
+	const updateTaskPlatform = useCallback(
+		(data: ITaskPlatformData) => usersService.updateTaskPlatformData(data),
+		[usersService],
+	);
+
 	const {
 		mutateAsync: updateTaskPlatformData,
 		data: successMessage,
@@ -203,7 +209,7 @@ export const useUpdateTaskPlatformData = () => {
 		isSuccess,
 		isPending,
 	} = useCreate({
-		mutationFn: (data: FormData) => usersService.updateTaskPlatformData(data),
+		mutationFn: updateTaskPlatform,
 	});
 
 	return { updateTaskPlatformData, isPending, isSuccess, successMessage, isError, error };

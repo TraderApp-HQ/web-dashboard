@@ -308,3 +308,9 @@ export interface IDocsLength {
 	pending: number;
 	completed: number;
 }
+
+export interface ITaskPlatformData {
+	platform: string;
+	platformAction: string;
+	file: string;
+}
