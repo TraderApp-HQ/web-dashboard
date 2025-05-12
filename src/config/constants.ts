@@ -58,6 +58,7 @@ export const ROUTES = {
 		create: "/create-task",
 		view: "/view",
 		edit: "/edit",
+		updateData: "/update-data",
 	},
 };
 

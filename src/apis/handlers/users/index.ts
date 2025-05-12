@@ -26,6 +26,7 @@ import type {
 	IFetchAllPendingTasksCount,
 	ITaskData,
 	IReferrals,
+	ITaskPlatformData,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 export class UsersService {
@@ -373,6 +374,19 @@ export class UsersService {
 
 		if (response.error) {
 			throw new Error(response.message || "Error deleting task.");
+		}
+
+		return response.message;
+	}
+
+	public async updateTaskPlatformData(data: ITaskPlatformData): Promise<string> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/task/update-platform-data",
+			data,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Error updating task platform data.");
 		}
 
 		return response.message;

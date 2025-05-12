@@ -108,17 +108,28 @@ const TaskCenter = () => {
 		<section className="">
 			<section className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 				<h1 className="md:mb-8 text-lg md:text-2xl font-bold leading-loose">Task Center</h1>
-				{selectedTasks && selectedTasks.length >= 1 && (
+				<section className="flex items-center gap-3">
 					<Button
-						labelText="create new task"
+						labelText="Update Data"
 						onClick={() =>
 							router.push(
-								`${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}${ROUTES.taskcenter.create}`,
+								`${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}${ROUTES.taskcenter.updateData}`,
 							)
 						}
 						className="capitalize px-10 mb-6 text-sm font-bold"
 					/>
-				)}
+					{selectedTasks && selectedTasks.length >= 1 && (
+						<Button
+							labelText="create new task"
+							onClick={() =>
+								router.push(
+									`${LAYOUT_ROUTES.admin}${ROUTES.taskcenter.home}${ROUTES.taskcenter.create}`,
+								)
+							}
+							className="capitalize px-10 mb-6 text-sm font-bold"
+						/>
+					)}
+				</section>
 			</section>
 
 			<section className="flex flex-row items-center -mt-6">
