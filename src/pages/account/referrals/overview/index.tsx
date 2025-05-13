@@ -93,8 +93,8 @@ const ReferralsOverview = () => {
 			/>
 
 			<InviteCode
-				code={stats?.referralLink ?? ""}
-				title="Referral Link"
+				code={stats?.referralCode ?? ""}
+				title="Referral Code"
 				isError={isReferralError}
 			/>
 
