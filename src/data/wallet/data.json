@@ -295,5 +295,36 @@
 			{ "value": "etherum", "text": "Etherum" },
 			{ "value": "binance", "text": "Binance" }
 		]
-	}
+	},
+	"exchanges": [
+		{
+			"_id": "1",
+			"name": "Kucoin",
+			"logo": "/images/btc_round.png",
+			"isConnected": true
+		},
+		{
+			"_id": "2",
+			"name": "Binance",
+			"logo": "/images/binance_round.png",
+			"isConnected": true
+		},
+		{
+			"_id": "3",
+			"name": "ByBit",
+			"logo": "/images/usdt_round.png",
+			"isConnected": false
+		},
+		{
+			"_id": "4",
+			"name": "BitGate",
+			"logo": "/images/btc_round.png",
+			"isConnected": false
+		}
+	],
+	"accountTypes": [
+		{ "type": "Spot", "balance": 1000 },
+		{ "type": "Future", "balance": 2000 },
+		{ "type": "Main", "balance": 4000 }
+	]
 }

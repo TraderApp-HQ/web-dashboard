@@ -2,7 +2,26 @@
 const nextConfig = {
 	reactStrictMode: true,
 	images: {
-		domains: ["s2.coinmarketcap.com"],
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "s2.coinmarketcap.com",
+				port: "",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "flagcdn.com",
+				port: "",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "upload.wikimedia.org",
+				port: "",
+				pathname: "/**",
+			},
+		],
 	},
 };
 

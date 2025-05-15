@@ -48,7 +48,7 @@ export function openTradesDataTableSelector(openTrades: OpenTrade[]) {
 				},
 				{
 					label: "Manage Trade",
-					url: `open-trades/${trades.id}/${ROUTES.portfolio.manageTrade}`,
+					url: `open-trades/${trades.id}/${ROUTES.tradeCenter.manageTrade}`,
 				},
 			],
 		})),
@@ -74,7 +74,7 @@ export function openTradesDataTableMobileSelector(openTrades: OpenTrade[]) {
 			},
 			{
 				label: "Manage Trade",
-				url: `open-trades/${trades.id}/${ROUTES.portfolio.manageTrade}`,
+				url: `open-trades/${trades.id}/${ROUTES.tradeCenter.manageTrade}`,
 			},
 		],
 		tBody: [

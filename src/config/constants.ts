@@ -10,13 +10,14 @@ export const ROUTES = {
 		backButton: "/account/dashboard",
 	},
 	signals: "/signals",
-	portfolio: {
-		homepage: "/portfolio",
+	tradeCenter: {
+		homepage: "/trade-center",
 		openTrade: "../open-trades",
 		tradeHistory: "../trade-history",
 		tradingRules: "../trading-rules",
-		backButton: "/account/portfolio",
+		backButton: "/account/trade-center",
 		manageTrade: "manage",
+		exchanges: "exchanges",
 	},
 	wallet: {
 		homepage: "/wallets",

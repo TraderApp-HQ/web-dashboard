@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import SearchForm from "~/components/AccountLayout/SearchForm";
-import EmptySignal from "../../../../components/AdminLayout/Signal/EmptySignal";
 import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import clsx from "clsx";
 import DropdownIcon from "~/components/icons/DropdownIcon";
@@ -9,36 +8,24 @@ import Button from "~/components/common/old/Button";
 import type { ChangeEvent } from "react";
 import { useState } from "react";
 import signalsData from "~/pages/account/signals/data.json";
-import type SignalsData from "~/lib/types";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import DeleteModal from "~/components/Modal/DeleteModal";
 import Select from "~/components/AccountLayout/Select";
-import { useFetchActiveSignals } from "~/apis/handlers/signals/hooks";
-import { ISignal } from "~/apis/handlers/signals/interfaces";
+import { useFetchActiveSignals } from "~/apis/handlers/assets/hooks";
+import { ISignal } from "~/apis/handlers/assets/interfaces";
 import { activeSignalsPerfomanceSumary } from "~/selectors/signals";
 import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
 import { AdminNestedSignalsLayout } from "..";
 import { useCreate } from "~/hooks/useCreate";
-import { SignalsService } from "~/apis/handlers/signals";
-import { SignalStatus } from "~/apis/handlers/signals/enums";
+import { AssetsService } from "~/apis/handlers/assets";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
 import Toast from "~/components/common/Toast";
+import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
+import TableLoader from "~/components/Loaders/TableLoader";
+import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
 
-interface ActiveSignalProps {
-	signalResult: SignalsData;
-}
-
-export const getServerSideProps = async () => {
-	// Replace with actual data fetching logic
-	return {
-		props: {
-			signalResult: signalsData,
-		},
-	};
-};
-
-function ActiveSignals({ signalResult }: ActiveSignalProps) {
-	const { signals } = signalResult;
-	const signalsService = new SignalsService();
+function ActiveSignals() {
+	const signalsService = new AssetsService();
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 	const router = useRouter();
 	const { term } = router.query;
@@ -120,9 +107,7 @@ function ActiveSignals({ signalResult }: ActiveSignalProps) {
 	return (
 		<>
 			<ActiveSignalCard signals={activeSignals} />
-			<div
-				className={clsx("flex justify-between", signals.signals.length === 0 ? "mt-0" : "")}
-			>
+			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
 				<SearchForm
 					onChange={(e) => setSearchTerm(e.target.value)}
 					aria-label="search asset"
@@ -190,20 +175,22 @@ function ActiveSignals({ signalResult }: ActiveSignalProps) {
 				</DropdownMenu>
 			</div>
 
-			{signals.signals.length === 0 ? (
-				<EmptySignal />
+			{!isLoading && activeSignals.length === 0 ? (
+				<SignalsEmptyState />
 			) : (
 				<div className="pb-8 rounded-2xl">
-					<h3 className="font-bold text-base text-[#08123B]">All Active Signal (10)</h3>
+					<h3 className="font-bold text-base text-[#08123B]">
+						All Active Signal ({activeSignals.length})
+					</h3>
 					<div className="mt-2 mb-8">
 						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
-							{isLoading && <div>Loading...</div>}
+							{isLoading && <TableLoader />}
 							{isSuccess && signalsTableBody && (
 								<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
 							)}
 						</div>
 						<div className="md:hidden relative">
-							{isLoading && <div>Loading...</div>}
+							{isLoading && <MobileTableLoader />}
 							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
 						</div>
 					</div>
@@ -255,67 +242,6 @@ const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
 		)
 	);
 };
-
-// interface ActiveSignalCardProps {
-//   signals: SignalsData;
-// }
-
-// function ActiveSignalCard({ signals }: ActiveSignalCardProps) {
-//   return (
-//     signals.signals.signals.length > 0 && (
-//       <Card className="w-12/12 lg:w-8/12 2xl:w-7/12">
-//         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-//           <div className="flex-col justify-center items-start gap-0.5 py-3">
-//             <h3 className="text-neutral-700 text-sm font-normal leading-tight">Total Active signal</h3>
-//             <div className="justify-center items-center gap-9 inline-flex">
-//               <p className="text-neutral-700 text-base font-bold">{signals.signals.totalActiveSignal}</p>
-//             </div>
-//           </div>
-
-//           <div className="py-3">
-//             <div className="w-12 h-px origin-top-left rotate-90 border border-stone-300 border-opacity-20 sm:block hidden" />
-//             <div className="flex-col justify-center items-start gap-0.5 ml-3">
-//               <h3 className="text-neutral-700 text-sm font-normal leading-tight">Total Capital</h3>
-//               <div className="justify-center items-center gap-9 inline-flex">
-//                 <p className="text-neutral-700 text-base font-bold">{signals.signals.totalCapital}.00 USD</p>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="py-3">
-//             <div className="w-80 h-px border border-stone-300 border-opacity-20 mb-4 sm:hidden block" />
-//             <div className="w-12 h-px origin-top-left rotate-90 border border-stone-300 border-opacity-20 sm:block hidden" />
-//             <div className="flex-col justify-center items-start gap-2 ml-0 sm:ml-3">
-//               <h3 className="text-neutral-700 text-sm font-semibold leading-tight">Best performer</h3>
-//               <div className="justify-start items-center gap-12 inline-flex">
-//                 <div className="justify-start items-center gap-2 flex">
-//                   <img
-//                     src={signals.signals.bestSignal.image}
-//                     alt={signals.signals.bestSignal.name}
-//                     className="w-6 h-6 relative"
-//                   />
-//                   <p className="text-slate-900 text-xs font-semibold leading-none">{signals.signals.bestSignal.name}</p>
-//                 </div>
-//                 <div className="justify-start items-center flex">
-//                   <div className="w-4 h-4 relative origin-top-left -rotate-180" />
-//                   <p className="flex text-emerald-700 text-sm font-normal">
-//                     <IconButton
-//                       Icon={TopArrowFilledIcon}
-//                       onClick={() => {}}
-//                       aria-label="more page"
-//                       disabled={false}
-//                     ></IconButton>
-//                     {signals.signals.percentage}
-//                   </p>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </Card>
-//     )
-//   );
-// }
 
 ActiveSignals.getLayout = (page: React.ReactElement) => (
 	<AdminNestedSignalsLayout>{page}</AdminNestedSignalsLayout>
