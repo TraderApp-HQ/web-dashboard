@@ -1,0 +1,64 @@
+name: web-dashboard-deploy-prod
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch: # Allow manual runs of the pipeline.
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        environment:
+            name: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
+
+        steps:
+            - name: Checkout code from branch
+              uses: actions/checkout@v2
+
+            - name: Set environment variables
+              run: |
+                  echo "SERVICE=${{ vars.SERVICE }}" >> $GITHUB_ENV
+                  echo "NEXT_PUBLIC_USERS_SERVICE_API_URL=${{ vars.NEXT_PUBLIC_USERS_SERVICE_API_URL }}" >> $GITHUB_ENV
+
+            - name: Install Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 18.17.0
+
+            - name: Install dependencies
+              run: npm install --include=dev --force
+
+            - name: Build
+              run: npm run build
+
+            # - name: Test
+            #   run: npm run test
+
+            - name: Start
+              run: npm run start &
+
+    deploy-staging:
+        runs-on: ubuntu-latest
+        environment:
+            name: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
+        needs: build
+
+        steps:
+            - name: Check out code from branch
+              uses: actions/checkout@v2
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ${{ vars.AWS_REGION }}
+
+            - name: Deploy to Amplify
+              env:
+                  APP_ID: ${{ vars.AMPLIFY_APP_ID }}
+              run: |
+                  URL="${{ vars.WEBHOOK_URL }}"
+                  curl -X POST -d {} "$URL" -H "Content-Type:application/json"
+                  echo "Deployment triggered in Amplify."
