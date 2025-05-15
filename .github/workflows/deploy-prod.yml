@@ -33,13 +33,13 @@ jobs:
             - name: Build
               run: npm run build
 
-            # - name: Test
-            #   run: npm run test
+            - name: Test
+              run: npm run test
 
             - name: Start
               run: npm run start &
 
-    deploy-staging:
+    deploy-prod:
         runs-on: ubuntu-latest
         environment:
             name: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
