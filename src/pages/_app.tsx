@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NavProvider } from "~/contexts/NavContext";
 import AuthLayout from "./auth/layout";
 import AccountLayout from "../components/AccountLayout/Layout";
+import { UserTradingAccountsProvider } from "~/contexts/UserTradingAccountsContext";
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactElement;
@@ -34,7 +35,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 	return (
 		<NavProvider>
 			<QueryClientProvider client={queryClient}>
-				<LayoutWrapper>{getLayout(<Component {...pageProps} />)}</LayoutWrapper>
+				<UserTradingAccountsProvider>
+					<LayoutWrapper>{getLayout(<Component {...pageProps} />)}</LayoutWrapper>
+				</UserTradingAccountsProvider>
 			</QueryClientProvider>
 		</NavProvider>
 	);

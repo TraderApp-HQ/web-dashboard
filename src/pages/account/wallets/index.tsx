@@ -1,38 +1,19 @@
-import { useRouter } from "next/router";
-import React, { ReactNode, useEffect } from "react";
+import { ReactElement } from "react";
 import AccountLayout from "~/components/AccountLayout/Layout";
-import PageTab from "~/components/AccountLayout/Tabs";
+import RecentTransactions from "~/components/Wallet/RecentTransactions";
+import WalletBalanceCard from "~/components/Wallet/WalletBalanceCard";
 
-const WalletsHome = () => {
-	const router = useRouter();
-	useEffect(() => {
-		router.push("wallets/main");
-	}, []);
-};
-
-type IProps = {
-	children: ReactNode;
-};
-
-const WalletsLayout: React.FC<IProps> = ({ children }) => {
-	const tabs = [
-		{ title: "Main", href: "/account/wallets/main" },
-		{ title: "Spot", href: "/account/wallets/spot" },
-		{ title: "Futures", href: "/account/wallets/futures" },
-	];
-
+const Wallets = () => {
 	return (
-		<div>
-			<PageTab tabs={tabs} />
-			<div className="mt-6">{children}</div>
-		</div>
+		<section className="space-y-10">
+			<WalletBalanceCard
+				padding="px-4 py-8 md:px-5 md:py-12 !rounded-2xl"
+				totalBalanceStyle="text-2xl text-textGray"
+			/>
+			<RecentTransactions />
+		</section>
 	);
 };
 
-export const NestedWalletsLayout: React.FC<IProps> = ({ children }) => (
-	<AccountLayout>
-		<WalletsLayout>{children}</WalletsLayout>
-	</AccountLayout>
-);
-
-export default WalletsHome;
+Wallets.getLayout = (page: ReactElement) => <AccountLayout>{page}</AccountLayout>;
+export default Wallets;

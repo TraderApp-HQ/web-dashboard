@@ -19,6 +19,12 @@ interface ISelectBoxProps {
 	bgColor?: string;
 	isSearchable?: boolean;
 	clear?: boolean | undefined;
+	inputError?: string;
+	fontStyles?: string;
+	buttonClassName?: string;
+	optionsClass?: string;
+	dropPosition?: "top" | "bottom";
+	caretSize?: string;
 }
 
 /**
@@ -41,8 +47,14 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	containerStyle,
 	isSearchable,
 	clear,
+	inputError,
+	fontStyles,
+	buttonClassName,
+	optionsClass,
+	dropPosition = "bottom",
+	caretSize = "1em",
 }: ISelectBoxProps): JSX.Element => {
-	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>();
+	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>(undefined);
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const selectBoxRef = useRef<HTMLDivElement>(null);
@@ -74,24 +86,29 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 		}
 	}, [isOpen]);
 
-	// Set default option or externally provided option
+	// Sync internal selectedOption with external option changes and notify setOption
 	useEffect(() => {
 		if (option) {
-			setSelectedOption(option);
+			if (
+				!selectedOption ||
+				option.value !== selectedOption.value ||
+				option.displayText !== selectedOption.displayText
+			) {
+				setSelectedOption(option);
+
+				if (setOption) {
+					setOption(option);
+				}
+			}
 		}
 	}, [option]);
-
-	// Notify external setOption handler when the selected option changes
-	useEffect(() => {
-		if (setOption && selectedOption) setOption(selectedOption);
-	}, [selectedOption]);
 
 	return (
 		<div>
 			{labelText && (
 				<label
 					aria-label={labelText}
-					className={`text-sm text-[#08123B] font-normal ${labelClassName}`}
+					className={`text-sm text-textColor font-normal ${labelClassName}`}
 				>
 					{labelText}
 				</label>
@@ -102,33 +119,38 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 				ref={selectBoxRef}
 			>
 				{/* for testing */}
-				{filteredOptions.map(({ value, displayText }) => (
-					<div key={value} data-testid={displayText} />
+				{filteredOptions.map(({ value, displayText }, index) => (
+					<div key={`${value}_${index}`} data-testid={displayText} />
 				))}
 
 				<div
 					// data-testid={options.map(({ displayText }) => displayText).join("")}
 					className={`p-[16px] placeholder-[#808080] w-full text-[#102477] invalid:text-[#808080] rounded-lg font-normal outline-[1px] outline-[#6579CC] appearance-none bg-no-repeat bg-[center_right_1em] invalid:[&:not(:empty)]:visited:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${
 						isOpen ? "border-[#7949FF]" : "border-gray-100"
-					} rounded-md p-2 flex justify-between items-center cursor-pointer ${bgColor ? bgColor : "bg-[#F5F8FE]"}`}
+					} rounded-md p-2 flex justify-between items-center cursor-pointer space-x-2 ${bgColor ? bgColor : "bg-[#F5F8FE]"} ${buttonClassName || ""}`}
 					onClick={() => setIsOpen(!isOpen)}
 					data-testid={placeholder}
 				>
 					{clear || !selectedOption ? (
-						<span className="text-[#808080]">{placeholder || "Select option"}</span>
+						<span role="button" className="text-[#808080]">
+							{placeholder ?? "Select option"}
+						</span>
 					) : (
 						<SelectBoxOption
 							displayText={selectedOption.displayText}
 							imgUrl={selectedOption.imgUrl}
+							className={fontStyles}
 						/>
 					)}
 					{/* {(!clear || selectedOption) && (
 						
 					)} */}
-					{isOpen ? <FiChevronUp /> : <FiChevronDown />}
+					{isOpen ? <FiChevronUp size={caretSize} /> : <FiChevronDown size={caretSize} />}
 				</div>
 				{isOpen && (
-					<div className="absolute mt-1 w-full bg-white border border-gray-300 shadow-lg z-10 transition-all duration-300 ease-out transform scale-100">
+					<div
+						className={`absolute ${dropPosition === "top" ? "bottom-full mb-1" : "mt-1"} w-full bg-white border border-gray-300 shadow-lg z-10 transition-all duration-300 ease-out transform scale-100`}
+					>
 						{isSearchable && (
 							<div className="p-2 flex items-center justify-between bg-slate-50">
 								<SearchIcon />
@@ -147,18 +169,24 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 								<li
 									key={index}
 									className={`p-3 hover:bg-gray-100 cursor-pointer ${
-										option.value === selectedOption?.value ? "bg-gray-100" : ""
-									}`}
+										option.displayText === selectedOption?.displayText
+											? "bg-gray-100"
+											: ""
+									} ${optionsClass || ""}`}
 									onClick={() => {
 										setSelectedOption(option);
 										setIsOpen(false);
 										setSearchTerm("");
+										if (setOption) {
+											setOption(option);
+										}
 									}}
 									data-testid={`${option.displayText} button`}
 								>
 									<SelectBoxOption
 										displayText={option.displayText}
 										imgUrl={option.imgUrl}
+										className={fontStyles}
 									/>
 								</li>
 							))}
@@ -166,6 +194,9 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 					</div>
 				)}
 			</div>
+			{inputError && (
+				<p className="pl-2 font-normal text-red-600 text-[12px]">{inputError}</p>
+			)}
 		</div>
 	);
 };
@@ -196,7 +227,7 @@ const SelectBoxOption: React.FC<ISelectBoxOptionProps> = ({
 					height={20}
 				/>
 			)}
-			<p>{displayText}</p>
+			<p className={className}>{displayText}</p>
 		</div>
 	);
 };

@@ -34,7 +34,7 @@ export default function VerificationModal({
 	const [countdown, setCountdown] = useState(initialCountdownTime);
 	const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 	const [searchParams] = useState(new URLSearchParams(router.asPath.split("?")[1]));
-	const [isVerificationError, setIsVerificationError] = useState<boolean>(false);
+	const [otpError, setOtpError] = useState<Error | null>(null);
 
 	const usersService = new UsersService();
 	const userId = searchParams.get("userid");
@@ -96,6 +96,12 @@ export default function VerificationModal({
 		}
 	};
 
+	const focusFirstInputField = () => {
+		if (inputRefs.current[0]) {
+			inputRefs.current[0].focus();
+		}
+	};
+
 	/* Check input if some have an empty string as a value */
 	const isInputsEmpty = enteredInput.some((value) => value === "");
 
@@ -116,14 +122,14 @@ export default function VerificationModal({
 	}, []);
 
 	useEffect(() => {
-		// Focus on the first input field when the component loads
-		if (inputRefs.current[0]) {
-			inputRefs.current[0].focus();
-		}
+		focusFirstInputField();
 	}, [inputRefs.current[0]]);
 
-	const restartCountdown = () => {
+	const resendOtp = () => {
+		sendOtp({ userId: userId! });
 		setCountdown(initialCountdownTime);
+		setEnteredInput(["", "", "", "", "", ""]);
+		focusFirstInputField();
 	};
 
 	useEffect(() => {
@@ -142,9 +148,26 @@ export default function VerificationModal({
 		isError: isVerificationErrorFlag,
 		isPending,
 		isSuccess: isVerificationSuccess,
+		error: verifyOtpError,
 	} = useCreate({
 		mutationFn: usersService.verifyOtp.bind(usersService),
 	});
+
+	const {
+		mutate: sendOtp,
+		error: sendOtpError,
+		isError: isSendOtpErrorFlag,
+	} = useCreate({
+		mutationFn: usersService.sendOtp.bind(usersService),
+	});
+
+	useEffect(() => {
+		setOtpError(isVerificationErrorFlag ? verifyOtpError : null);
+	}, [isVerificationErrorFlag]);
+
+	useEffect(() => {
+		setOtpError(isSendOtpErrorFlag ? sendOtpError : null);
+	}, [isSendOtpErrorFlag]);
 
 	const handleVerification = async () => {
 		// verify otp
@@ -174,19 +197,21 @@ export default function VerificationModal({
 	}, [isVerificationSuccess, redirectTo, router, setOpenModal, setIsSuccess]);
 
 	useEffect(() => {
-		if (isVerificationErrorFlag) {
-			setIsVerificationError(true);
-			setTimeout(() => {
-				setIsVerificationError(false);
+		let timeoutId: NodeJS.Timeout | undefined;
+		if (otpError) {
+			timeoutId = setTimeout(() => {
+				setOtpError(null);
 			}, 10000);
 		}
-	}, [isVerificationErrorFlag]);
+
+		return () => clearTimeout(timeoutId);
+	}, [otpError]);
 
 	return (
 		<Modal open={openModal} setOpen={setOpenModal} data-testId="otp-modal">
 			<section>
 				<div>
-					<header className="flex flex-col items-center mb-[40px]">
+					<header className="flex flex-col items-center mb-[25px] text-center">
 						<Image
 							src="/images/auth/pen.png"
 							width={73}
@@ -194,25 +219,23 @@ export default function VerificationModal({
 							alt="pen"
 							className="mb-[12px] w-[73px] h-[73px]"
 						/>
-						<p className="text-[32px] text-[#102477] font-extrabold">
-							OTP verification
-						</p>
+						<p className="text-[26px] text-[#102477] font-bold">OTP verification</p>
 						<div className="flex items-center justify-center gap-x-[13px]">
-							<p className="font-bold text-[#08123B]">
+							<p className="font-normal text-[#08123B]">
 								We sent a 6 digit OTP to {recipient}
 							</p>
 						</div>
 					</header>
 					<div>
-						<p className="text-center text-[#01171F] font-bold">OTP</p>
+						<p className="text-center text-[#01171F] font-bold mb-4">OTP</p>
 					</div>
 					<form className="space-y-[16px]">
 						{/* pin */}
-						<div className="flex justify-center gap-[8px]">
+						<div className="flex justify-center gap-[5px] sm:gap-[8px]">
 							{enteredInput.map((value, index) => (
 								<input
 									key={index}
-									type="text"
+									type="number"
 									placeholder=""
 									max={1}
 									maxLength={1}
@@ -223,12 +246,20 @@ export default function VerificationModal({
 									onChange={(e) => inputChangeHandler(index, e.target.value)}
 									onPaste={handlePaste}
 									onKeyDown={(e) => handleKeyDown(index, e)}
-									className="placeholder-[#808080] w-[54px] h-[54px] text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[20px] outline-[1px] outline-[#6579CC]"
+									className="placeholder-[#808080] w-[40px] sm:w-[54px] h-[40px] sm:h-[54px] text-[#102477] bg-[#F5F8FE] rounded-lg font-normal outline-[1px] outline-[#6579CC] no-spin-buttons text-center"
 								/>
 							))}
 						</div>
+						{otpError && (
+							<span className="text-[red] flex justify-center">
+								{otpError.message}
+							</span>
+						)}
 						{/* action button */}
-						<div className="p-[16px] space-y-[16px] flex flex-col items-center">
+						<div
+							className="p-[16px] space-y-[16px] flex flex-col items-center"
+							style={{ marginTop: otpError ? "0px" : undefined }}
+						>
 							<button
 								type="button"
 								className="max-w-[364px] rounded-2xl p-[10px] font-semibold w-full text-white"
@@ -242,27 +273,23 @@ export default function VerificationModal({
 							>
 								Confirm
 							</button>
-							{isVerificationError && (
-								<p className="text-[red] flex justify-center">
-									Otp could not be verfied
-								</p>
-							)}
 							<div style={{ display: "flex" }}>
 								<div className="text-[#08123B] text-center">
 									Didn’t receive your code?{" "}
 									<strong
 										className={`text-[#102477] font-bold ${countdown === 0 && "cursor-pointer"}`}
-										onClick={() => countdown === 0 && restartCountdown()}
 									>
-										{countdown !== 0 ? "Retry in" : "Resend code."}
+										{countdown !== 0 ? (
+											<span className="text-[#102477] font-bold ml-1">
+												Retry in {Math.floor(countdown / 60)}:
+												{String(countdown % 60).padStart(2, "0")}
+											</span>
+										) : (
+											<span onClick={countdown === 0 ? resendOtp : undefined}>
+												Resend code
+											</span>
+										)}
 									</strong>
-								</div>
-								<div>
-									{openModal && countdown !== 0 && (
-										<p className="text-[#102477] font-bold ml-2">
-											{Math.floor(countdown / 60)}:{countdown % 60}
-										</p>
-									)}
 								</div>
 							</div>
 						</div>

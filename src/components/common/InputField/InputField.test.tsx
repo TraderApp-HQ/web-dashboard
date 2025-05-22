@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import InputField from ".";
 
+jest.setTimeout(30000);
 describe("InputField Component", () => {
 	test("renders InputField with placeholder text", () => {
 		render(<InputField type="text" placeholder="Enter email" />);

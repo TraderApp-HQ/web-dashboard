@@ -4,6 +4,9 @@ export enum ColourTheme {
 	WARNING = "WARNING",
 	PRIMARY = "PRIMARY",
 	SECONDARY = "SECONDARY",
+	REVIEW = "REVIEW",
+	TERTIARY = "TERTIARY",
+	TERTIARY2 = "TERTIARY2",
 }
 
 export enum OperationStatus {
@@ -30,4 +33,49 @@ export enum HTMLElements {
 export enum UserStatus {
 	ACTIVE = "ACTIVE",
 	INACTIVE = "INACTIVE",
+}
+
+export enum Category {
+	FOREX = "FOREX",
+	CRYPTO = "CRYPTO",
+}
+
+export enum AccountType {
+	SPOT = "SPOT",
+	FUTURES = "FUTURES",
+}
+
+export enum Currency {
+	USDT = "USDT",
+	BTC = "BTC",
+}
+
+export enum TradeType {
+	SPOT = "SPOT",
+	FUTURES = "FUTURES",
+}
+
+export enum TradeSide {
+	SHORT = "SHORT",
+	LONG = "LONG",
+}
+
+export enum TradeSignalModalScreen {
+	TRADE_ASSET = "Trade Asset",
+	TRADE_TYPE = "Trade Type",
+	TRADE_PRICE = "Trade Price",
+	TRADE_CHART = "Trade Chart",
+}
+
+export enum TransactionStatus {
+	SUCCESS = "SUCCESS",
+	FAILED = "FAILED",
+	PENDING = "PENDING",
+}
+
+export enum TransactionType {
+	DEPOSIT = "DEPOSIT",
+	WITHDRAWAL = "WITHDRAWAL",
+	TRANSFER = "TRANSFER",
+	CONVERT = "CONVERT",
 }

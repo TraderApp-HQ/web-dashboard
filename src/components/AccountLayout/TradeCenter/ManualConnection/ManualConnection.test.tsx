@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { ISelectBoxOption } from "~/components/interfaces";
 import ManualConnection from ".";
 
 // Mock the custom hook
@@ -11,37 +10,33 @@ jest.mock("~/hooks/useCopyToClipboard", () => ({
 	}),
 }));
 
-describe("ManualConnection", () => {
-	const mockSetSelectedExchange = jest.fn();
+describe("Given trading account manual connection", () => {
+	const mockHandleManualConnection = jest.fn();
 	const mockSetApiKey = jest.fn();
-	const mockSetSecretKey = jest.fn();
-
-	const exchangeOptions: ISelectBoxOption[] = [
-		{ value: "1", displayText: "Exchange 1" },
-		{ value: "2", displayText: "Exchange 2" },
-	];
+	const mockSetApiSecret = jest.fn();
 
 	const defaultProps = {
-		selectedExchange: exchangeOptions[0],
-		exchangeOptions,
-		setSelectedExchange: mockSetSelectedExchange,
+		handleManualConnection: mockHandleManualConnection,
 		setApiKey: mockSetApiKey,
-		setSecretKey: mockSetSecretKey,
-		isSubmitDisabled: false,
+		setApiSecret: mockSetApiSecret,
 		ipString: "192.168.1.1, 172.168.1.1",
+		// isIpAddressWhitelistRequired: false,
 	};
 
-	it("renders the component and displays the correct elements", () => {
+	it("renders the component and displays the correct elements with ip address whitelist supported", () => {
 		render(
-			<ManualConnection isError={false} error={null} isLoading={false} {...defaultProps} />,
+			<ManualConnection
+				isError={false}
+				error={null}
+				isSubmitDisabled={false}
+				isIpAddressWhitelistRequired={true}
+				{...defaultProps}
+			/>,
 		);
 
-		// Check if SelectBox is rendered
-		expect(screen.getByLabelText("Exchange")).toBeInTheDocument();
-
 		// Check if InputFields are rendered
-		expect(screen.getByLabelText("API Keys")).toBeInTheDocument();
-		expect(screen.getByLabelText("Secret Keys")).toBeInTheDocument();
+		expect(screen.getByLabelText("API Key")).toBeInTheDocument();
+		expect(screen.getByLabelText("API Secret")).toBeInTheDocument();
 
 		// Check if IP Address InputField is rendered with the correct placeholder
 		expect(screen.getByPlaceholderText("192.168.1.1, 172.168.1.1")).toBeInTheDocument();
@@ -54,9 +49,38 @@ describe("ManualConnection", () => {
 		expect(screen.getByText("How to Connect")).toBeInTheDocument();
 	});
 
+	it("renders the component and displays the correct elements with ip address whitelist not supported", () => {
+		render(
+			<ManualConnection
+				isError={false}
+				error={null}
+				isSubmitDisabled={false}
+				isIpAddressWhitelistRequired={false}
+				{...defaultProps}
+			/>,
+		);
+
+		// Check if InputFields are rendered
+		expect(screen.getByLabelText("API Key")).toBeInTheDocument();
+		expect(screen.getByLabelText("API Secret")).toBeInTheDocument();
+
+		// Check if Button is rendered and not disabled
+		expect(screen.getByText("Connect")).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: /connect/i })).toBeEnabled();
+
+		// Check if Link is rendered
+		expect(screen.getByText("How to Connect")).toBeInTheDocument();
+	});
+
 	it("handles the copy functionality correctly", async () => {
 		render(
-			<ManualConnection isError={false} error={null} isLoading={false} {...defaultProps} />,
+			<ManualConnection
+				isError={false}
+				error={null}
+				isSubmitDisabled={false}
+				isIpAddressWhitelistRequired={true}
+				{...defaultProps}
+			/>,
 		);
 
 		// Simulate the copy icon click
@@ -70,20 +94,26 @@ describe("ManualConnection", () => {
 
 	it("handles form inputs changes", () => {
 		render(
-			<ManualConnection isError={false} error={null} isLoading={false} {...defaultProps} />,
+			<ManualConnection
+				isError={false}
+				error={null}
+				isSubmitDisabled={false}
+				isIpAddressWhitelistRequired={true}
+				{...defaultProps}
+			/>,
 		);
 
 		// Simulate entering text in API Key input field
-		fireEvent.change(screen.getByPlaceholderText("Enter API Keys"), {
+		fireEvent.change(screen.getByPlaceholderText("Enter API Key"), {
 			target: { value: "new-api-key" },
 		});
 		expect(mockSetApiKey).toHaveBeenCalledWith("new-api-key");
 
 		// Simulate entering text in Secret Key input field
-		fireEvent.change(screen.getByPlaceholderText("Enter Secret Keys"), {
+		fireEvent.change(screen.getByPlaceholderText("Enter API Secret"), {
 			target: { value: "new-secret-key" },
 		});
-		expect(mockSetSecretKey).toHaveBeenCalledWith("new-secret-key");
+		expect(mockSetApiSecret).toHaveBeenCalledWith("new-secret-key");
 	});
 
 	it("handles disabled state of the submit button", () => {
@@ -91,9 +121,9 @@ describe("ManualConnection", () => {
 			<ManualConnection
 				isError={false}
 				error={null}
-				isLoading={false}
-				{...defaultProps}
 				isSubmitDisabled={true}
+				isIpAddressWhitelistRequired={true}
+				{...defaultProps}
 			/>,
 		);
 

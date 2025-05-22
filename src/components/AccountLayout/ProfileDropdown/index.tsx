@@ -9,8 +9,7 @@ import UserTile from "../UserTile";
 
 const ProfileDropdown = () => {
 	const usersService = new UsersService();
-	const { userEmail, userFirstNameInitials, userLastNameInitials, userFullName } =
-		useUserProfileData();
+	const { userEmail, userFullName, userInitials } = useUserProfileData();
 
 	// Setup query to backend
 	const { mutate: logoutUser } = useCreate({
@@ -24,28 +23,25 @@ const ProfileDropdown = () => {
 	return (
 		<DropdownMenu
 			trigger={
-				<UserTile
-					firstName={userFirstNameInitials}
-					lastName={userLastNameInitials}
-					size={{ width: "39px", height: "39px" }}
-				/>
+				<UserTile nameIntitials={userInitials} size={{ width: "39px", height: "39px" }} />
 			}
 			position="left"
 			direction="bottom"
-			className="max-w-[419px] w-full min-[768px]:mr-12 "
+			className="min-w-[243px] w-full min-w-[768px]:mr-12 "
 		>
 			<div>
 				<div className="flex flex-row items-center pb-4">
 					<div className="mr-2">
 						<UserTile
-							firstName={userFirstNameInitials}
-							lastName={userLastNameInitials}
+							nameIntitials={userInitials}
 							size={{ width: "39px", height: "39px" }}
 						/>
 					</div>
-					<div className="flex flex-col">
-						<p className="text-[#3C3C3F] font-bold text-[14px] pb-1">{userFullName}</p>
-						<p className="text-[14px] color-[#311A0A]">{userEmail}</p>
+					<div className="flex flex-col max-w-[180px]">
+						<p className="text-[#3C3C3F] font-bold text-[14px] pb-1 break-words">
+							{userFullName}
+						</p>
+						<p className="text-[14px] text-[#311A0A] break-words">{userEmail}</p>
 					</div>
 				</div>
 				<hr className="pb-4" />

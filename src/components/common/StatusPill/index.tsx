@@ -8,12 +8,14 @@ interface IOperationStatus {
 	style?: {
 		justify?: string;
 	};
+	bullet?: boolean;
 }
 
 const OperationStatus: React.FC<IOperationStatus> = ({
 	status,
 	theme,
 	style = { justify: "justify-end sm:justify-center" },
+	bullet = true, // defaults to true to display bullet
 }) => {
 	const statusText = capitalizeFirstLetter(status);
 	let roundedIconStyles: string;
@@ -35,6 +37,21 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 			statusContainerStyles = "bg-[#FEF1F2] text-[#E02D3C]";
 			break;
 		}
+		case ColourTheme.REVIEW: {
+			roundedIconStyles = "bg-[#082DC7]";
+			statusContainerStyles = "bg-[#F3F6FF] text-[#3E57BF]";
+			break;
+		}
+		case ColourTheme.TERTIARY: {
+			roundedIconStyles = "bg-[#3E57BF]";
+			statusContainerStyles = "bg-[#E7ECFF] text-[#3E57BF]";
+			break;
+		}
+		case ColourTheme.TERTIARY2: {
+			roundedIconStyles = "bg-[#234475]";
+			statusContainerStyles = "bg-[#F2FCFF] text-[#234475]";
+			break;
+		}
 		default: {
 			roundedIconStyles = "";
 			statusContainerStyles = "";
@@ -46,7 +63,7 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 			<div
 				className={`flex px-3 py-1.5 font-black rounded-lg justify-center items-center gap-2 ${statusContainerStyles}`}
 			>
-				<div className={`p-1 rounded-full ${roundedIconStyles}`}></div>
+				{bullet && <div className={`p-1 rounded-full ${roundedIconStyles}`}></div>}
 				<div className="capitalize">{statusText}</div>
 			</div>
 		</div>

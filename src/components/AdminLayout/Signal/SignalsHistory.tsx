@@ -5,7 +5,6 @@ import type { ChangeEvent } from "react";
 import React, { useState } from "react";
 import FilterDropdown from "~/components/AccountLayout/FilterDropdown";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
-import Pagination from "~/components/Pagination";
 import TableLoader from "~/components/Loaders/TableLoader";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import { useSignalHistory } from "~/apis/handlers/assets/hooks";
@@ -19,7 +18,7 @@ function SignalsHistory() {
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
-	} = useSignalHistory({});
+	} = useSignalHistory();
 
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 
@@ -97,34 +96,47 @@ function SignalsHistory() {
 				<SignalsEmptyState />
 			) : (
 				<div className="pb-8 rounded-2xl">
-					<h3 className="font-semibold text-base text-[#08123B]">Resent Transaction</h3>
+					<h3 className="font-semibold text-base text-[#08123B]">Recent Transactions</h3>
 					<div className="mt-2 mb-8">
-						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
+						<div className="hidden md:block p-8 bg-white rounded-2xl relative overflow-x-auto">
 							{isLoading && <TableLoader />}
 							{isSuccess && signalsTableBody && (
 								<DataTable
+									tableStyles="mb-4"
 									hasActions={false}
 									tHead={signalsTableHead}
 									tBody={signalsTableBody}
+									showPagination={true}
+									paginationProps={{
+										currentPage,
+										totalPages,
+										rowsPerPage,
+										totalRecord,
+										setRowsPerPage,
+										onNext: () => setCurrentPage((prev) => prev + 1),
+										onPrev: () => setCurrentPage((prev) => prev - 1),
+									}}
 								/>
 							)}
 						</div>
 						<div className="md:hidden relative">
 							{isLoading && <MobileTableLoader />}
-							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
+							{isSuccess && (
+								<DataTableMobile
+									data={signalsMobileTableBody}
+									showPagination={true}
+									paginationProps={{
+										currentPage,
+										totalPages,
+										rowsPerPage,
+										totalRecord,
+										setRowsPerPage,
+										onNext: () => setCurrentPage((prev) => prev + 1),
+										onPrev: () => setCurrentPage((prev) => prev - 1),
+									}}
+								/>
+							)}
 						</div>
-					</div>
-					<div className="bg-white p-4 w-1/2 ml-auto">
-						{/* pagination component goes here */}
-						<Pagination
-							currentPage={currentPage}
-							totalPages={totalPages}
-							rowsPerPage={rowsPerPage}
-							totalRecord={totalRecord}
-							setRowsPerPage={setRowsPerPage}
-							onNext={setCurrentPage}
-							onPrev={setCurrentPage}
-						/>
 					</div>
 				</div>
 			)}

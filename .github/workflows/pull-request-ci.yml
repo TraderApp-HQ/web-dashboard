@@ -18,6 +18,8 @@ jobs:
                   echo "SERVICE=${{ vars.SERVICE }}" >> $GITHUB_ENV
                   echo "NEXT_PUBLIC_ASSETS_SERVICE_API_URL=${{ vars.NEXT_PUBLIC_ASSETS_SERVICE_API_URL }}" >> $GITHUB_ENV
                   echo "NEXT_PUBLIC_USERS_SERVICE_API_URL=${{ vars.NEXT_PUBLIC_USERS_SERVICE_API_URL }}" >> $GITHUB_ENV
+                  echo "NEXT_PUBLIC_TRADING_ENGINE_SERVICE_API_URL=${{ vars.NEXT_PUBLIC_TRADING_ENGINE_SERVICE_API_URL }}" >> $GITHUB_ENV
+                  echo "NEXT_PUBLIC_WALLETS_SERVICE_API_URL=${{ vars.NEXT_PUBLIC_WALLETS_SERVICE_API_URL }}" >> $GITHUB_ENV
 
             - name: Install Node.js
               uses: actions/setup-node@v2

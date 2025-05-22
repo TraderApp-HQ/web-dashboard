@@ -1,53 +1,121 @@
-import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Button from "~/components/common/old/Button";
-import PlusIcon from "~/components/icons/PlusIcon";
-import UploadButton from "~/components/AccountLayout/UploadButton";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import Modal from "~/components/Modal";
-import InputField from "~/components/common/InputField";
-import IconButton from "~/components/AccountLayout/IconButton";
-import MessageModal from "~/components/Modal/MessageModal";
-import SuccessIcon from "~/components/icons/SuccessIcon";
-import { convertEnumToOptions, handleKeyDown } from "~/lib/utils";
-import SelectBox from "~/components/common/SelectBox";
-import type { ICheckedBoxOption, ISelectBoxOption } from "~/components/interfaces";
-import CancelIcon from "~/components/icons/CancelIcon";
 import { Candlestick, SignalRisk } from "~/apis/handlers/assets/enums";
 import type { IExchange, ISignalAsset, ISignalMilestone } from "~/apis/handlers/assets/interfaces";
-import Toast from "~/components/common/Toast";
+import IconButton from "~/components/AccountLayout/IconButton";
+import UploadButton from "~/components/AccountLayout/UploadButton";
+import AdminLayout from "~/components/AdminLayout/Layout";
+import Modal from "~/components/Modal";
 import Checkbox from "~/components/common/CheckBox";
+import InputField from "~/components/common/InputField";
+import SelectBox from "~/components/common/SelectBox";
 import TextArea from "~/components/common/TextArea";
-import useAssets from "~/hooks/useAssets";
+import Toast from "~/components/common/Toast";
+import Button from "~/components/common/old/Button";
+import BackBtnIcon from "~/components/icons/BackBtnIcon";
+import CancelIcon from "~/components/icons/CancelIcon";
+import PlusIcon from "~/components/icons/PlusIcon";
+import type { ICheckedBoxOption, ISelectBoxOption } from "~/components/interfaces";
+import { Category, TradeSide, TradeSignalModalScreen, TradeType } from "~/config/enum";
+import useGetAssets from "~/hooks/useAssets";
+import { useCreateSignal } from "~/hooks/useCreateSignal";
 import useCurrencies from "~/hooks/useCurrencies";
 import useSupportedExchanges from "~/hooks/useSupportedExchanges";
-import { useCreateSignal } from "~/hooks/useCreateSignal";
+import { convertEnumToOptions, handleKeyDown } from "~/lib/utils";
 
-export default function CreateSignal() {
-	const [toggleSuccess, setToggleSuccess] = useState(false);
-	const [isOpen, setIsOpen] = useState(true);
-
+function CreateSignal() {
 	const router = useRouter();
+
+	// Modal state handler
+	const [isModalOpen, setIsModalOpen] = useState({
+		tradeAsset: true,
+		tradeType: false,
+		tradePrice: false,
+		tradeChart: false,
+	});
 
 	const [assetOptions, setAssetOptions] = useState<ISelectBoxOption[]>([]);
 	const [baseCurrencyOptions, setBaseCurrencyOptions] = useState<ISelectBoxOption[]>([]);
 	const [exchangeOptions, setExchangeOptions] = useState<ICheckedBoxOption[]>([]);
 
+	const [assetCategory, setAssetCategory] = useState<ISelectBoxOption>();
+	const [tradeType, setTradeType] = useState<TradeType>();
+	const [tradeSide, setTradeSide] = useState<TradeSide>();
 	const [selectedAsset, setSelectedAsset] = useState<ISignalAsset>();
 	const [selectedBaseCurrency, setSelectedBaseCurrency] = useState<ISignalAsset>();
 	const [selectedSupportedExchange, setSelectedSupportedExchange] = useState<IExchange[]>();
-	const [signalImage, setSignalImage] = useState("");
-	const [targetProfits, setTargetProfits] = useState<ISignalMilestone[]>();
 	const [entryPrice, setEntryPrice] = useState<string>();
+	const [entryPriceUpperBound, setEntryPriceUpperBound] = useState<string>();
+	const [entryPriceLowerBound, setEntryPriceLowerBound] = useState<string>();
 	const [stopLoss, setStopLoss] = useState<ISignalMilestone>();
+	const [leverage, setLeverage] = useState<number>();
+	const [targetProfits, setTargetProfits] = useState<ISignalMilestone[]>();
 	const [selectedCandle, setSelectedCandle] = useState<ISelectBoxOption>();
 	const [selectedRisk, setSelectedRisk] = useState<ISelectBoxOption>();
 	const [tradeNote, setTradeNote] = useState<string>();
+	const [signalImage, setSignalImage] = useState("");
 
 	const [resetSelectedAsset, setResetSelectedAsset] = useState(false);
 	const [resetSelectedBaseCurrency, setResetSelectedBaseCurrency] = useState(false);
 	const [resetSelectedCandle, setResetSelectedCandle] = useState(false);
 	const [resetSelectedRisk, setResetSelectedRisk] = useState(false);
+
+	// ================= Handlers ==============================
+
+	// close create signal modals handler
+	const handleModalClose = () => {
+		router.push(".");
+		setIsModalOpen({
+			tradeAsset: false,
+			tradeType: false,
+			tradePrice: false,
+			tradeChart: false,
+		});
+	};
+
+	// handle modal change
+	const handleModalChange = (modal: TradeSignalModalScreen) => {
+		const updateState = {
+			tradeAsset: modal === TradeSignalModalScreen.TRADE_ASSET,
+			tradeType: modal === TradeSignalModalScreen.TRADE_TYPE,
+			tradePrice: modal === TradeSignalModalScreen.TRADE_PRICE,
+			tradeChart: modal === TradeSignalModalScreen.TRADE_CHART,
+		};
+
+		setIsModalOpen(updateState);
+	};
+
+	// ================ Validation function ====================
+	// Validation function to check if any state value is empty
+	const assetModalButton =
+		assetCategory &&
+		selectedAsset &&
+		selectedBaseCurrency &&
+		selectedSupportedExchange &&
+		selectedSupportedExchange.length > 0;
+
+	const tradeTypeModalButton =
+		tradeType === TradeType.SPOT || (tradeType === TradeType.FUTURES && tradeSide);
+
+	const tradePriceModalButton =
+		entryPrice &&
+		entryPriceUpperBound &&
+		entryPriceLowerBound &&
+		stopLoss &&
+		leverage &&
+		targetProfits &&
+		targetProfits[0].price !== 0 &&
+		targetProfits?.length === 4;
+
+	const validCredentials =
+		assetModalButton &&
+		tradeTypeModalButton &&
+		tradePriceModalButton &&
+		selectedCandle &&
+		selectedRisk &&
+		signalImage &&
+		tradeNote;
 
 	const {
 		data: exchanges,
@@ -64,7 +132,8 @@ export default function CreateSignal() {
 		isError: isAssetError,
 		error: assetError,
 		isLoading: isAssetLoading,
-	} = useAssets({
+	} = useGetAssets({
+		category: assetCategory?.value as Category,
 		page: 1,
 		rowsPerPage: 100,
 		orderBy: "asc",
@@ -146,9 +215,12 @@ export default function CreateSignal() {
 	};
 
 	const handleStopLoss = (value: string) => {
+		const entryValue = Number(entryPrice);
+		const stopValue = Number(value);
+		const stopPercentage = Math.round((Math.abs(stopValue - entryValue) / entryValue) * 100);
 		setStopLoss({
-			price: Number(value),
-			percent: 1,
+			price: stopValue,
+			percent: stopPercentage,
 			isReached: false,
 		});
 	};
@@ -202,30 +274,6 @@ export default function CreateSignal() {
 
 	const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-	const handleSuccessClose = () => {
-		setToggleSuccess(false);
-	};
-
-	const handleModalClose = () => {
-		router.push(".");
-		setIsOpen(false);
-	};
-
-	// Validation function to check if any state value is empty
-	const validCredentials =
-		selectedAsset &&
-		selectedCandle &&
-		signalImage &&
-		entryPrice &&
-		stopLoss &&
-		selectedBaseCurrency &&
-		selectedRisk &&
-		targetProfits &&
-		targetProfits[0].price !== 0 &&
-		selectedSupportedExchange &&
-		selectedSupportedExchange.length > 0 &&
-		tradeNote;
-
 	const onReset = () => {
 		setSignalImage("");
 		setTargetProfits(undefined);
@@ -233,11 +281,14 @@ export default function CreateSignal() {
 		setResetSelectedBaseCurrency(true);
 		setResetSelectedCandle(true);
 		setEntryPrice(undefined);
+		setEntryPriceUpperBound(undefined);
+		setEntryPriceLowerBound(undefined);
 		setStopLoss(undefined);
 		setSelectedBaseCurrency(undefined);
 		setResetSelectedRisk(true);
 		setSelectedSupportedExchange(undefined);
 		setTradeNote(undefined);
+		setSelectedAsset(undefined);
 	};
 
 	// Setup query to backend
@@ -247,10 +298,14 @@ export default function CreateSignal() {
 	const handleCreateSignal = () => {
 		createSignal({
 			asset: Number(selectedAsset?.id ?? 0),
+			assetName: selectedAsset?.symbol as string,
 			baseCurrency: Number(selectedBaseCurrency?.id ?? 0),
+			baseCurrencyName: selectedBaseCurrency?.symbol as string,
 			targetProfits: targetProfits as ISignalMilestone[],
 			stopLoss: stopLoss as ISignalMilestone,
 			entryPrice: Number(entryPrice),
+			entryPriceUpperBound: Number(entryPriceUpperBound),
+			entryPriceLowerBound: Number(entryPriceLowerBound),
 			tradeNote: tradeNote as string,
 			candlestick: selectedCandle?.value as Candlestick,
 			risk: selectedRisk?.value as SignalRisk,
@@ -259,35 +314,55 @@ export default function CreateSignal() {
 			supportedExchanges: selectedSupportedExchange?.map((exchange) =>
 				Number(exchange._id),
 			) ?? [0],
+			category: assetCategory?.value as Category,
+			tradeType: tradeType,
+			tradeSide: tradeSide,
+			leverage: leverage,
 		});
 	};
 
-	// user creation successful. Display success toast
+	// Close signal modal after successful signal creation.
 	useEffect(() => {
 		if (isSuccess && data) {
-			setToggleSuccess(!toggleSuccess);
+			router.push(`/admin/signal-management/active?signal=${isSuccess}`);
+			setIsModalOpen({
+				tradeAsset: false,
+				tradeType: false,
+				tradePrice: false,
+				tradeChart: false,
+			});
 		}
 	}, [isSuccess, data]);
+
+	// Resets asset when category is changed
+	useEffect(() => onReset(), [assetCategory]);
 
 	const handleRemoveTargetProfit = (index: number) => {
 		setTargetProfits((prev) => prev?.filter((_, i) => i !== index));
 	};
 
 	const handleFirstTargetProfit = (index: number, newValue: number) => {
+		const entryValue = Number(entryPrice);
+		const ftpPercentage = Math.round((Math.abs(newValue - entryValue) / entryValue) * 100);
+
 		setTargetProfits((prevTargetProfits) => {
 			if (prevTargetProfits == undefined) {
-				return [{ price: newValue, percent: 1, isReached: false }];
+				return [{ price: newValue, percent: ftpPercentage, isReached: false }];
 			} else {
 				return prevTargetProfits?.map((profit, i) =>
-					i === index ? { ...profit, price: newValue } : profit,
+					i === index ? { ...profit, price: newValue, percent: ftpPercentage } : profit,
 				);
 			}
 		});
 	};
 
 	const handleValueChange = (index: number, newValue: number) => {
+		const entryValue = Number(entryPrice);
+		const ftpPercentage = Math.round((Math.abs(newValue - entryValue) / entryValue) * 100);
 		setTargetProfits((prev) =>
-			prev?.map((profit, i) => (i === index ? { ...profit, price: newValue } : profit)),
+			prev?.map((profit, i) =>
+				i === index ? { ...profit, price: newValue, percent: ftpPercentage } : profit,
+			),
 		);
 	};
 
@@ -297,15 +372,37 @@ export default function CreateSignal() {
 
 	return (
 		<>
-			<Modal
-				openModal={isOpen}
-				width="md:w-[807px]"
-				title="Create Signal Form"
-				description="System will immediately notify users after upload"
-				onClose={handleModalClose}
-			>
-				<div>
-					<div className="flex flex-col gap-y-4">
+			{/* Asset Category Modal */}
+			{isModalOpen.tradeAsset && (
+				<Modal
+					openModal={isModalOpen.tradeAsset}
+					title={
+						<p
+							data-testid="create-new-signal-form"
+							className="font-bold text-lg md:text-2xl text-textColor"
+						>
+							Select Asset Pair
+						</p>
+					}
+					headerDivider={true}
+					onClose={handleModalClose}
+				>
+					<section className="flex flex-col gap-y-4 pt-4">
+						<SelectBox
+							labelText="Category"
+							isSearchable={false}
+							options={[
+								{ displayText: Category.FOREX, value: Category.FOREX },
+								{ displayText: Category.CRYPTO, value: Category.CRYPTO },
+							]}
+							placeholder={"Select Asset Category"}
+							option={assetCategory}
+							setOption={(opt) => {
+								setAssetOptions([]);
+								setAssetCategory(opt);
+							}}
+						/>
+
 						<SelectBox
 							labelText="Quote Asset"
 							isSearchable={true}
@@ -315,11 +412,17 @@ export default function CreateSignal() {
 									? "Loading..."
 									: isAssetError
 										? `${assetError} `
-										: "Select Quote Asset"
+										: assets?.length === 0
+											? "No asset found"
+											: "Select Quote Asset"
 							}
+							option={assetOptions.find(
+								(opt) => opt.displayText === selectedAsset?.name,
+							)}
 							setOption={handleAssetChange}
 							clear={resetSelectedAsset}
 						/>
+
 						<SelectBox
 							labelText="Base Currency"
 							isSearchable={true}
@@ -331,26 +434,164 @@ export default function CreateSignal() {
 										? `${currencyError}`
 										: "Select Base Currency"
 							}
+							option={baseCurrencyOptions.find(
+								(opt) => opt.displayText === selectedBaseCurrency?.name,
+							)}
 							setOption={handleBaseCurrencyChange}
 							clear={resetSelectedBaseCurrency}
 						/>
+
+						<div>
+							<label
+								htmlFor="Supported Exchanges"
+								className="text-textColor text-sm font-normal leading-none"
+							>
+								Choose Trading Platforms
+							</label>
+
+							{isExchangeLoading ? (
+								<p>Loading....</p>
+							) : exchangeOptions.length === 0 ? (
+								<p className="bg-[#F5F8FE] text-red-500 text-center py-9 px-4 rounded-md">
+									Please select asset and base currency.
+								</p>
+							) : (
+								exchangeOptions.map((exchange) => (
+									<Checkbox
+										key={exchange.displayText}
+										label={exchange.displayText}
+										onChange={() => handleExchangeChange(exchange)}
+										checked={
+											selectedSupportedExchange?.some(
+												(x) => x._id === exchange.value,
+											) ?? false
+										}
+										imageUrl={exchange.imgUrl}
+										className="bg-[#F5F8FE] py-3 px-4 rounded-md cursor-pointer"
+									/>
+								))
+							)}
+						</div>
+
+						<Button
+							onClick={() =>
+								handleModalChange(
+									assetCategory?.value === Category.CRYPTO
+										? TradeSignalModalScreen.TRADE_TYPE
+										: TradeSignalModalScreen.TRADE_PRICE,
+								)
+							}
+							disabled={!assetModalButton}
+							type="submit"
+							className="mt-2 flex justify-center"
+							innerClassName="px-[20%] py-4 capitalize"
+						>
+							Continue
+						</Button>
+					</section>
+				</Modal>
+			)}
+
+			{/* Asset Trade Type Modal */}
+			{isModalOpen.tradeType && (
+				<Modal
+					openModal={isModalOpen.tradeType}
+					title={
+						<p
+							data-testid="create-new-signal-form"
+							className="font-bold text-lg md:text-2xl text-textColor flex items-center"
+						>
+							<span
+								className="mr-4"
+								onClick={() =>
+									handleModalChange(TradeSignalModalScreen.TRADE_ASSET)
+								}
+							>
+								{" "}
+								<BackBtnIcon />
+							</span>{" "}
+							Set Trade Type
+						</p>
+					}
+					headerDivider={true}
+					onClose={handleModalClose}
+					className="min-h-[40vh]"
+				>
+					<section className="flex flex-col gap-y-5 pt-3">
 						<SelectBox
-							labelText="Timeframe/ Candles"
+							labelText="Trade Type"
 							isSearchable={false}
-							options={convertEnumToOptions(Candlestick)}
-							placeholder="Select TimeFrame/ Candles"
-							setOption={handleCandleChange}
-							clear={resetSelectedCandle}
+							options={[
+								{ displayText: TradeType.SPOT, value: TradeType.SPOT },
+								{ displayText: TradeType.FUTURES, value: TradeType.FUTURES },
+							]}
+							placeholder="Select trade type"
+							option={{
+								displayText: tradeType as string,
+								value: tradeType as string,
+							}}
+							setOption={(opt) => setTradeType(opt.value as TradeType)}
 						/>
-						<SelectBox
-							labelText="Risk Level"
-							isSearchable={false}
-							options={convertEnumToOptions(SignalRisk)}
-							placeholder="Select Risk Level"
-							option={selectedRisk}
-							setOption={handleRiskChange}
-							clear={resetSelectedRisk}
-						/>
+
+						{tradeType === TradeType.FUTURES && (
+							<SelectBox
+								labelText="Trade Side"
+								isSearchable={false}
+								options={[
+									{ displayText: TradeSide.LONG, value: TradeSide.LONG },
+									{ displayText: TradeSide.SHORT, value: TradeSide.SHORT },
+								]}
+								placeholder="Select trade side"
+								option={{
+									displayText: tradeSide as string,
+									value: tradeSide as string,
+								}}
+								setOption={(opt) => setTradeSide(opt.value as TradeSide)}
+							/>
+						)}
+
+						<Button
+							onClick={() => handleModalChange(TradeSignalModalScreen.TRADE_PRICE)}
+							disabled={!tradeTypeModalButton}
+							type="submit"
+							className="flex justify-center"
+							innerClassName="px-[20%] py-4 capitalize"
+						>
+							Continue
+						</Button>
+					</section>
+				</Modal>
+			)}
+
+			{/* Asset Trade Prices Modal */}
+			{isModalOpen.tradePrice && (
+				<Modal
+					openModal={isModalOpen.tradePrice}
+					title={
+						<p
+							data-testid="create-new-signal-form"
+							className="font-bold text-lg md:text-2xl text-textColor flex items-center"
+						>
+							<span
+								className="mr-4"
+								onClick={() =>
+									handleModalChange(
+										assetCategory?.value === Category.CRYPTO
+											? TradeSignalModalScreen.TRADE_TYPE
+											: TradeSignalModalScreen.TRADE_ASSET,
+									)
+								}
+							>
+								{" "}
+								<BackBtnIcon />
+							</span>{" "}
+							Set Prices
+						</p>
+					}
+					headerDivider={true}
+					onClose={handleModalClose}
+				>
+					<section className="flex flex-col gap-y-4 pt-4 px-2">
 						<InputField
 							type="number"
 							labelText="Entry Price"
@@ -361,6 +602,53 @@ export default function CreateSignal() {
 							className="no-spin-buttons"
 							onKeyDown={handleKeyDown}
 						/>
+
+						<section className="flex items-center gap-4 justify-between">
+							<InputField
+								type="number"
+								labelText="Entry Price Upper Bound"
+								props={{ name: "entryPriceUpperBound", step: "0.01" }}
+								placeholder="Price upper bound"
+								value={entryPriceUpperBound ?? ""}
+								onChange={(value: string) => setEntryPriceUpperBound(value)}
+								className="no-spin-buttons"
+								onKeyDown={handleKeyDown}
+							/>
+							<InputField
+								type="number"
+								labelText="Entry Price Lower bound"
+								props={{ name: "entryPriceLowerBound", step: "0.01" }}
+								placeholder="Price lower bound"
+								value={entryPriceLowerBound ?? ""}
+								onChange={(value: string) => setEntryPriceLowerBound(value)}
+								className="no-spin-buttons"
+								onKeyDown={handleKeyDown}
+							/>
+						</section>
+
+						<InputField
+							type="number"
+							labelText="Stop loss"
+							props={{ name: "stopLoss" }}
+							placeholder="Input trade stop loss"
+							value={String(stopLoss?.price) ?? ""}
+							onChange={(value: string) => handleStopLoss(value)}
+							className="no-spin-buttons disabled:cursor-not-allowed"
+							onKeyDown={handleKeyDown}
+							disable={!Number(entryPrice)}
+						/>
+
+						<InputField
+							type="number"
+							labelText="Leverage"
+							props={{ name: "leverage" }}
+							placeholder="Input trade leverage"
+							value={String(leverage) ?? ""}
+							onChange={(value: string) => setLeverage(+value)}
+							className="no-spin-buttons"
+							onKeyDown={handleKeyDown}
+						/>
+
 						<div>
 							<InputField
 								type="number"
@@ -373,8 +661,9 @@ export default function CreateSignal() {
 								onChange={(value) => handleFirstTargetProfit(0, Number(value))}
 								props={{ name: "targetProfit", step: "0.01" }}
 								placeholder="Enter target profit"
-								className="no-spin-buttons my-2"
+								className="no-spin-buttons my-2 disabled:cursor-not-allowed"
 								onKeyDown={handleKeyDown}
+								disable={!Number(entryPrice)}
 							/>
 							{targetProfits?.slice(1).map((profit, index) => (
 								<div key={index + 1}>
@@ -411,57 +700,74 @@ export default function CreateSignal() {
 									}
 									aria-label="add target profit"
 								>
-									Add another target profit
+									Add another target profit (Target profit must be 4)
 								</IconButton>
 							)}
 						</div>
-						<InputField
-							type="number"
-							labelText="Stop loss"
-							props={{ name: "stopLoss" }}
-							placeholder="Input trade stop loss"
-							value={String(stopLoss?.price) ?? ""}
-							onChange={(value: string) => handleStopLoss(value)}
-							className="no-spin-buttons"
-							onKeyDown={handleKeyDown}
+
+						<Button
+							onClick={() => handleModalChange(TradeSignalModalScreen.TRADE_CHART)}
+							disabled={!tradePriceModalButton}
+							type="submit"
+							className="mt-2 flex justify-center"
+							innerClassName="px-[20%] py-4 capitalize"
+						>
+							Continue
+						</Button>
+					</section>
+				</Modal>
+			)}
+
+			{/* Asset Trade Chart Modal */}
+			{isModalOpen.tradeChart && (
+				<Modal
+					openModal={isModalOpen.tradeChart}
+					title={
+						<p
+							data-testid="create-new-signal-form"
+							className="font-bold text-lg md:text-2xl text-textColor flex items-center"
+						>
+							<span
+								className="mr-4"
+								onClick={() =>
+									handleModalChange(TradeSignalModalScreen.TRADE_PRICE)
+								}
+							>
+								{" "}
+								<BackBtnIcon />
+							</span>{" "}
+							Finish Creating Signal
+						</p>
+					}
+					headerDivider={true}
+					onClose={handleModalClose}
+				>
+					<section className="flex flex-col gap-y-4 pt-4">
+						<SelectBox
+							labelText="Timeframe/ Candles"
+							isSearchable={false}
+							options={convertEnumToOptions(Candlestick)}
+							placeholder="Select TimeFrame/ Candles"
+							setOption={handleCandleChange}
+							clear={resetSelectedCandle}
 						/>
+
+						<SelectBox
+							labelText="Risk Level"
+							isSearchable={false}
+							options={convertEnumToOptions(SignalRisk)}
+							placeholder="Select Risk Level"
+							option={selectedRisk}
+							setOption={handleRiskChange}
+							clear={resetSelectedRisk}
+						/>
+
 						<TextArea
 							label="Trade Note"
 							value={tradeNote ?? ""}
 							onChange={handleTradeNote}
 							placeholder="Leave a comment"
 						/>
-						<div>
-							<label
-								htmlFor="Supported Exchanges"
-								className="text-slate-900 text-sm font-normal leading-none"
-							>
-								Supported Exchanges
-							</label>
-
-							{isExchangeLoading ? (
-								<p>Loading....</p>
-							) : exchangeOptions.length === 0 ? (
-								<p className="bg-[#F5F8FE] text-red-500 text-center py-9 px-4 rounded-md">
-									Please select currency and asset pairs
-								</p>
-							) : (
-								exchangeOptions.map((exchange) => (
-									<Checkbox
-										key={exchange.displayText}
-										label={exchange.displayText}
-										onChange={() => handleExchangeChange(exchange)}
-										checked={
-											selectedSupportedExchange?.some(
-												(x) => x._id === exchange.value,
-											) ?? false
-										}
-										imageUrl={exchange.imgUrl}
-										className="bg-[#F5F8FE] py-3 px-4 rounded-md cursor-pointer"
-									/>
-								))
-							)}
-						</div>
 
 						<label
 							htmlFor="image upload"
@@ -481,7 +787,7 @@ export default function CreateSignal() {
 							className="mt-2 flex justify-center"
 							innerClassName="px-[20%] py-4 capitalize"
 						>
-							Create Signal
+							{isPending ? "Creating Signal..." : "Create Signal"}
 						</Button>
 						<Button
 							onClick={onReset}
@@ -493,18 +799,10 @@ export default function CreateSignal() {
 						>
 							Reset all signal
 						</Button>
-					</div>
-				</div>
-			</Modal>
-			{isSuccess && data && (
-				<MessageModal
-					title={"Successful"}
-					description={"You have successfully created a new signal"}
-					icon={SuccessIcon}
-					openModal={toggleSuccess}
-					onClose={handleSuccessClose}
-				/>
+					</section>
+				</Modal>
 			)}
+
 			{isError && (
 				<Toast
 					type="error"
@@ -518,3 +816,6 @@ export default function CreateSignal() {
 		</>
 	);
 }
+
+CreateSignal.getLayout = (page: React.ReactElement) => <AdminLayout>{page}</AdminLayout>;
+export default CreateSignal;

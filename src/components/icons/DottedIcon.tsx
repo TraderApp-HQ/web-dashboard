@@ -1,6 +1,46 @@
 import React from "react";
 
-export default function DottedIcon() {
+interface DottedIconProps {
+	orientation?: "vertical" | "horizontal";
+}
+
+const DottedIcon: React.FC<DottedIconProps> = ({ orientation = "vertical" }) => {
+	if (orientation === "horizontal") {
+		return (
+			<svg
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					d="M5 12C5 12.5523 4.55228 13 4 13C3.44772 13 3 12.5523 3 12C3 11.4477 3.44772 11 4 11C4.55228 11 5 11.4477 5 12Z"
+					fill="#98A2B3"
+					stroke="#98A2B3"
+					strokeWidth="2"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				/>
+				<path
+					d="M13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12Z"
+					fill="#98A2B3"
+					stroke="#98A2B3"
+					strokeWidth="2"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				/>
+				<path
+					d="M21 12C21 12.5523 20.5523 13 20 13C19.4477 13 19 12.5523 19 12C19 11.4477 19.4477 11 20 11C20.5523 11 21 11.4477 21 12Z"
+					fill="#98A2B3"
+					stroke="#98A2B3"
+					strokeWidth="2"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				/>
+			</svg>
+		);
+	}
 	return (
 		<svg
 			width="21"
@@ -32,4 +72,6 @@ export default function DottedIcon() {
 			/>
 		</svg>
 	);
-}
+};
+
+export default DottedIcon;

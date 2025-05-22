@@ -4,7 +4,7 @@ import { UsersService } from "~/apis/handlers/users";
 import type {
 	ICreateSignalInput,
 	IExchange,
-	IFetchExchanges,
+	IFetchTradingPlatform,
 	IFetchSignals,
 	IGetAssetsInput,
 	IGetExchangesInput,
@@ -56,9 +56,8 @@ export class AssetsService {
 		return response.message;
 	}
 
-	public async getSignal(): Promise<ISignal> {
-		const response = await this.apiClient.get<IResponse>({ url: "/signal/id" });
-
+	public async getSignal(id: string): Promise<ISignal> {
+		const response = await this.apiClient.get<IResponse>({ url: `/signals/${id}` });
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch signal");
 		}
@@ -110,12 +109,12 @@ export class AssetsService {
 	}
 
 	//Exchanges
-	public async getAllExchanges({
+	public async getAllTradingPlatforms({
 		page,
 		rowsPerPage,
 		orderBy,
 		status,
-	}: IGetExchangesInput): Promise<IFetchExchanges[]> {
+	}: IGetExchangesInput): Promise<IFetchTradingPlatform[]> {
 		// Construct query parameters
 		const queryParams = new URLSearchParams();
 
@@ -146,7 +145,7 @@ export class AssetsService {
 		}
 
 		const { data } = response;
-		return data as IFetchExchanges[];
+		return data as IFetchTradingPlatform[];
 	}
 
 	//Exchanges
@@ -155,10 +154,11 @@ export class AssetsService {
 		rowsPerPage,
 		orderBy,
 		sortBy,
+		category,
 	}: IGetAssetsInput): Promise<ISignalAsset[]> {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
-			url: `/coins?page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&sortBy=${sortBy}`,
+			url: `/coins?category=${category}&page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&sortBy=${sortBy}`,
 			options: { credentials: "include" },
 		});
 

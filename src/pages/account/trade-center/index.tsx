@@ -6,7 +6,7 @@ import AccountLayout from "~/components/AccountLayout/Layout";
 const TradeCenterHome = () => {
 	const router = useRouter();
 	useEffect(() => {
-		router.push(`trade-center/exchanges`);
+		router.push(`trade-center/trading-accounts`);
 	}, []);
 };
 
@@ -16,7 +16,7 @@ interface IProps {
 
 const TradeCenterLayout: React.FC<IProps> = ({ children }) => {
 	const tabs = [
-		{ title: "My Exchanges", href: "/account/trade-center/exchanges" },
+		{ title: "Trading Accounts", href: "/account/trade-center/trading-accounts" },
 		{ title: "Open Trades", href: "/account/trade-center/open-trades" },
 		{ title: "Trades History", href: "/account/trade-center/trade-history" },
 		{ title: "Trading Rules", href: "/account/trade-center/trading-rules" },

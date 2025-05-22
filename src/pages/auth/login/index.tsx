@@ -8,8 +8,12 @@ import VerificationModal from "~/components/AuthLayout/Modal/VerificationModal";
 import { NotificationChannel, VerificationType } from "~/apis/handlers/users/enums";
 import Toast from "~/components/common/Toast";
 import AuthLayout from "../layout";
+import { useSearchParams } from "next/navigation";
+import useUnProtectedRoute from "~/hooks/useUnProtectedRoute";
 
 const Login = () => {
+	const router = useRouter();
+	useUnProtectedRoute({ path: router.pathname });
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordValid, setPasswordValid] = useState(false);
@@ -18,8 +22,8 @@ const Login = () => {
 	const [showVerificationModal, setShowVerificationModal] = useState(false);
 	const [isVerificationSuccess, setIsVerificationSuccess] = useState(false);
 	const [isQueryParamsSet, setIsQueryParamsSet] = useState(false);
+	const redirectTo = useSearchParams().get("redirect_to");
 
-	const router = useRouter();
 	// const [searchParams, setSearchParams] = useState(new URLSearchParams(router.asPath.split('?')[1]));
 	const usersService = new UsersService();
 
@@ -108,7 +112,7 @@ const Login = () => {
 	};
 
 	return (
-		<section className="py-[100px] h-full md:px-[20px] flex items-center max-[768px]:justify-center max-[768px]:pt-[0px]">
+		<section className="py-[100px] h-full md:px-[20px] flex items-center justify-center max-[768px]:pt-[0px]">
 			<div className="max-w-[419px] w-full">
 				<header className="text-center mb-[40px]">
 					<p className="text-[32px] text-[#102477] font-extrabold">Welcome back!</p>
@@ -143,7 +147,7 @@ const Login = () => {
 					{/* forgot password */}
 					<div>
 						<p
-							className="text-[#102477] dura text-[14px] font-sembold cursor-pointer"
+							className="text-[#102477] duration text-[14px] font-semibold cursor-pointer"
 							onClick={() => {
 								router.push(LAYOUT_ROUTES.auth + ROUTES.passwordrecover);
 							}}
@@ -152,10 +156,10 @@ const Login = () => {
 						</p>
 					</div>
 					{/* action button */}
-					<div className="p-[16px] space-y-[16px]">
+					<div className="py-[16px] space-y-[16px]">
 						<button
 							type="button"
-							className="transition-opacity duration-300 bg-[#1836B2] rounded-2xl p-[10px] font-semibold w-full text-white disabled:opacity-60"
+							className="transition-opacity duration-300 bg-[#1836B2] rounded-md px-[10px] py-4 font-semibold w-full text-white disabled:opacity-60"
 							onClick={handleLogin}
 							disabled={!validCredential || isPending}
 						>
@@ -181,7 +185,7 @@ const Login = () => {
 					setIsSuccess={handleVerificationSuccess}
 					notificationChannel={NotificationChannel.EMAIL}
 					verificationType={[VerificationType.AUTHENTICATE]}
-					redirectTo={LAYOUT_ROUTES.account}
+					redirectTo={redirectTo ?? LAYOUT_ROUTES.account}
 				/>
 			)}
 			{isError && (

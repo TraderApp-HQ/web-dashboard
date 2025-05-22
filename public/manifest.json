@@ -1,0 +1,35 @@
+{
+	"name": "TraderApp Staging",
+	"short_name": "TraderApp Staging",
+	"description": "Copy Trading Platform",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#1836B2",
+	"icons": [
+		{
+			"src": "/icons/icon-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/icons/icon-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"screenshots": [
+		{
+			"src": "/screenshots/mobile-screenshot.png",
+			"sizes": "864x1641",
+			"type": "image/png",
+			"form_factor": "narrow"
+		},
+		{
+			"src": "/screenshots/desktop-screenshot.png",
+			"sizes": "3584x2240",
+			"type": "image/png",
+			"form_factor": "wide"
+		}
+	]
+}
