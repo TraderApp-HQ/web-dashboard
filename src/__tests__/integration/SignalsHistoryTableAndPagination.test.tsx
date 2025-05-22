@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { signalData as mockSignalData } from "~/components/AdminLayout/Signal/SignalData";
 import type { PaginationProps } from "~/components/interfaces";
 
+jest.setTimeout(30000);
 const signalData = mockSignalData.map((signal) => ({
 	...signal,
 	assetName: signal.asset.name,

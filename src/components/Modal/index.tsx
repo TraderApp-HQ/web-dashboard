@@ -87,6 +87,7 @@ const Modal: React.FC<ModalOptions> = ({
 		<div
 			className={clsx(
 				"bg-gray-600 bg-opacity-70 flex fixed top-0 right-0 left-0 z-50 justify-center items-center w-full h-full",
+				"bg-gray-600 bg-opacity-70 flex fixed top-0 right-0 left-0 z-50 justify-center items-center w-full h-full",
 				openModal ? "" : "hidden",
 			)}
 		>

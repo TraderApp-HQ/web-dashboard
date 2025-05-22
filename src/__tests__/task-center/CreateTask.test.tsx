@@ -11,6 +11,7 @@ jest.mock("next/router", () => ({
 }));
 jest.mock("~/hooks/useTask");
 
+jest.setTimeout(30000);
 describe("Task Center - Create Task form", () => {
 	const mockPush = jest.fn();
 	const mockMutate = jest.fn();

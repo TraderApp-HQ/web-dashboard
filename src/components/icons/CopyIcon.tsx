@@ -1,6 +1,9 @@
 interface IProps {
 	color?: string;
 }
+interface IProps {
+	color?: string;
+}
 
 const CopyIcon: React.FC<IProps> = ({ color = "black" }) => {
 	return (

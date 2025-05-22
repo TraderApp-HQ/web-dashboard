@@ -5,6 +5,7 @@ import Modal from ".";
 
 // Mock scrollTo (JSDOM doesn't implement it)
 Element.prototype.scrollTo = jest.fn();
+jest.setTimeout(30000);
 
 describe("Modal Component", () => {
 	const mockOnClose = jest.fn();

@@ -120,7 +120,7 @@ const Toast: React.FC<ToastProps> = ({
 	}, [autoVanish, autoVanishTimeout]);
 
 	const styles = clsx(
-		`bg-white flex items-start p-4 rounded-md shadow-md ${!show && "hidden"}`,
+		`bg-white flex items-start p-4 rounded-md shadow-md ${!show || autoVanish ? "hidden" : ""}`,
 		variant === "outlined" ? `border ${typeClasses[type].outlined}` : typeClasses[type].filled,
 	);
 
