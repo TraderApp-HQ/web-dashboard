@@ -15,11 +15,20 @@ import type {
 	IResetPasswordInput,
 	ICreateUserInput,
 	IDisableUserInput,
-	IFetchAllUsers,
+	PaginatedResult,
 	IUpdateUserInput,
+	IReferralStats,
+	IReferralCommunityStats,
+	ITaskPlatforms,
+	ITaskWithPopulate,
+	IFetchAllActiveTasks,
+	ICreateUserTask,
+	IFetchAllPendingTasksCount,
+	ITaskData,
+	IReferrals,
+	ITaskPlatformData,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
-
 export class UsersService {
 	private apiClient: APIClient;
 
@@ -115,7 +124,7 @@ export class UsersService {
 		size,
 		page,
 		searchKeyword,
-	}: IGetUsersInput): Promise<IFetchAllUsers> {
+	}: IGetUsersInput): Promise<PaginatedResult<IUserProfile>> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/users/all?page=${page}&size=${size}&searchKeyword=${searchKeyword}`,
 		});
@@ -124,7 +133,7 @@ export class UsersService {
 		}
 
 		const { data } = response;
-		return data as IFetchAllUsers;
+		return data as PaginatedResult<IUserProfile>;
 	}
 
 	public async refreshUserAccessToken(): Promise<string | null> {
@@ -144,7 +153,10 @@ export class UsersService {
 			return data?.accessToken || null;
 		} catch (error: any) {
 			removeAccessToken();
-			window.location.href = "/auth/login";
+			const params = new URLSearchParams();
+			const redirectTo = new URLSearchParams(window.location.search).get("redirect_to");
+			params.append("redirect_to", redirectTo ?? window.location.pathname);
+			window.location.href = "/auth/login?" + params.toString();
 			throw new Error(`Token refresh failed: ${error.message}`);
 		}
 	}
@@ -240,6 +252,241 @@ export class UsersService {
 		const { data } = response;
 		return data as IUserProfile;
 	}
-}
 
-// export default new UsersService();
+	public async getAllActiveTaskPlatforms(): Promise<ITaskPlatforms[]> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/task/platforms",
+		});
+
+		if (response.error) throw new Error(response.message || "Error fetching platforms.");
+
+		const { data } = response;
+		return data as ITaskPlatforms[];
+	}
+
+	public async getAllTasks({ search }: { search?: string }): Promise<ITaskData[]> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/task?search=${search}`,
+		});
+
+		if (response.error) throw new Error(response.message || "Error fetching tasks.");
+
+		const { data } = response;
+		return data as ITaskData[];
+	}
+
+	public async getAllActiveTasks(): Promise<IFetchAllActiveTasks> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/task/active-tasks",
+		});
+
+		if (response.error) throw new Error(response.message || "Error fetching tasks.");
+
+		const { data } = response;
+
+		return data as IFetchAllActiveTasks;
+	}
+
+	public async getAllPendingTasksCount(): Promise<IFetchAllPendingTasksCount> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/task/pending-tasks-count",
+		});
+
+		if (response.error)
+			throw new Error(response.message || "Error fetching pending tasks count.");
+
+		const { data } = response;
+
+		return data as IFetchAllPendingTasksCount;
+	}
+
+	public async createTask(data: ITaskData): Promise<string> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/task",
+			data,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Error creating task.");
+		}
+
+		return response.message;
+	}
+
+	public async createUserTask(data: ICreateUserTask): Promise<string> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/task/user-task",
+			data,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Error creating user task.");
+		}
+
+		return response.message;
+	}
+
+	public async updateTask({
+		taskId,
+		data,
+	}: {
+		taskId: string;
+		data: ITaskData;
+	}): Promise<string> {
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/task/${taskId}`,
+			data,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Error updating task.");
+		}
+
+		return response.message;
+	}
+
+	public async getTask({ taskId }: { taskId: string }): Promise<ITaskWithPopulate> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/task/${taskId}`,
+		});
+
+		if (response.error) throw new Error(response.message || "Error updating task.");
+
+		const { data } = response;
+		return data as ITaskWithPopulate;
+	}
+
+	public async getUserTask({ taskId }: { taskId: string }): Promise<ITaskWithPopulate> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/task/user-task/${taskId}`,
+		});
+
+		if (response.error) throw new Error(response.message || "Error updating task.");
+
+		const { data } = response;
+		return data as ITaskWithPopulate;
+	}
+
+	public async deleteTask(taskId: string): Promise<string> {
+		const response = await this.apiClient.delete<IResponse>({
+			url: `/task/${taskId}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Error deleting task.");
+		}
+
+		return response.message;
+	}
+
+	public async updateTaskPlatformData(data: ITaskPlatformData): Promise<string> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/task/update-platform-data",
+			data,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Error updating task platform data.");
+		}
+
+		return response.message;
+	}
+
+	public async getReferrals({
+		page,
+		size,
+		searchKeyword,
+	}: IGetUsersInput): Promise<PaginatedResult<IReferrals>> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/users/referrals/?page=${page}&size=${size}&searchKeyword=${searchKeyword}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Referrals fetch failed");
+		}
+
+		const { data } = response;
+		return data as PaginatedResult<IReferrals>;
+	}
+
+	public async getReferralsStats(): Promise<IReferralStats> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/users/referral-stats",
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Referral Stats fetch failed");
+		}
+
+		const { data } = response;
+		return data as IReferralStats;
+	}
+
+	public async getCommunityStats(): Promise<IReferralCommunityStats> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/users/community-stats",
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Community Stats fetch failed");
+		}
+
+		const { data } = response;
+		return data as IReferralCommunityStats;
+	}
+
+	public async getReferralOverview(): Promise<IReferralStats & IReferralCommunityStats> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/users/referral-overview",
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to fetch referral overview data");
+		}
+
+		const { data } = response;
+		return data as IReferralStats & IReferralCommunityStats;
+	}
+
+	public async inviteFriends(emails: string[]): Promise<{ message: string }> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/users/invite-friends",
+			data: {
+				emails,
+			},
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Community Stats fetch failed");
+		}
+
+		const { data } = response;
+		return data;
+	}
+
+	public async sendOtp({ userId }: any): Promise<void> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/auth/send-otp",
+			data: {
+				userId,
+			},
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "OTP sending failed");
+		}
+	}
+
+	public async trackUserReferrals({ userId }: { userId: string }): Promise<void> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/users/track-referrals",
+			data: {
+				userId,
+			},
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Referral tracking failed");
+		}
+	}
+}

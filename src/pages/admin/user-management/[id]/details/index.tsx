@@ -6,15 +6,19 @@ import type { IUserProfile } from "~/apis/handlers/users/interfaces";
 import Button from "~/components/AccountLayout/Button";
 import Card from "~/components/AccountLayout/Card";
 import UserTile from "~/components/AccountLayout/UserTile";
+import AdminLayout from "~/components/AdminLayout/Layout";
 import Modal from "~/components/Modal";
+import Toast from "~/components/common/Toast";
 import TickIcon from "~/components/icons/TickIcon";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
+import { UserStatus } from "~/config/enum";
 import { renderStatus } from "~/helpers";
+import { useCreate } from "~/hooks/useCreate";
+import useFeatureFlag from "~/hooks/useFeatureFlag";
 import { useFetch } from "~/hooks/useFetch";
 import { formattedDate } from "~/lib/utils";
-import ConfirmModal from "../../../../../components/AdminLayout/User/ConfirmModal";
-import { UserStatus } from "~/config/enum";
-import AdminLayout from "~/components/AdminLayout/Layout";
+import ConfirmModal from "~/components/AdminLayout/User/ConfirmModal";
+import useUserProfileData from "~/hooks/useUserProfileData";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { id } = context.params!;
@@ -30,10 +34,26 @@ const UserDetails = ({ id }: { id: string }) => {
 	const [openModal] = useState(true);
 	const usersService = new UsersService();
 
+	// Get admin userId
+	const { userId } = useUserProfileData();
+
+	// Feature flag to show the button
+	const showButton = useFeatureFlag({ userId: userId, flagName: "release-referral-tracking" });
+
 	const fetchUser = useCallback(() => usersService.getUser({ id }), [id, usersService]);
 	const { data, error, isLoading, isSuccess, isError, refetch } = useFetch({
 		queryKey: [id],
 		queryFn: fetchUser,
+	});
+
+	const {
+		mutate: trackUserReferrals,
+		isError: isReferralTrackError,
+		error: referralTrackError,
+		isSuccess: isReferralTrackSuccess,
+		isPending: isReferralTrackPending,
+	} = useCreate({
+		mutationFn: usersService.trackUserReferrals.bind(usersService),
 	});
 
 	const onClose = () => {
@@ -65,9 +85,10 @@ const UserDetails = ({ id }: { id: string }) => {
 						lastName={data?.lastName}
 					/>
 					<h3>{`${data?.firstName ?? "First Name"} ${data?.lastName ?? "Last Name"}`}</h3>
-					<div className="flex gap-x-4 w-full md:w-[70%] lg:w-[60%] xl 2xl">
+					<div className="flex gap-4 justify-center items-center flex-wrap">
 						<Button
 							onClick={() => router.push(`/admin/user-management/${data?.id}/edit`)}
+							size="small"
 						>
 							Edit user details
 						</Button>
@@ -76,11 +97,35 @@ const UserDetails = ({ id }: { id: string }) => {
 							color="text-black"
 							innerClassName="!border-neutral-300"
 							onClick={handleDeactivateClick}
+							size="small"
 						>
 							{data.status === UserStatus.ACTIVE
 								? "Deactivate User"
 								: "Reactivate User"}
 						</Button>
+						<Button
+							bgColor="bg-white"
+							color="text-black"
+							innerClassName="!border-neutral-300"
+							onClick={() => trackUserReferrals({ userId: data.id })}
+							disabled={isReferralTrackPending}
+							size="small"
+						>
+							Track Referrals
+						</Button>
+						{showButton && (
+							<Button
+								bgColor="bg-white hover:bg-blue-100 hover:transition-colors"
+								color="text-black"
+								innerClassName="!border-neutral-300"
+								onClick={() =>
+									router.push(`/admin/user-management/${data?.id}/add-fund`)
+								}
+								size="small"
+							>
+								Add Fund
+							</Button>
+						)}
 					</div>
 
 					<ConfirmModal
@@ -91,6 +136,26 @@ const UserDetails = ({ id }: { id: string }) => {
 					<UserRecord user={data} />
 					<UserRecordList user={data} />
 				</div>
+			)}
+			{isReferralTrackError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Referral Tracking Error"
+					message={referralTrackError?.message ?? "Something went wrong!"}
+					autoVanish
+					autoVanishTimeout={3}
+				/>
+			)}
+			{isReferralTrackSuccess && (
+				<Toast
+					type="info"
+					variant="filled"
+					title="Referrals Tracked Successfully"
+					message="Successful!"
+					autoVanish
+					autoVanishTimeout={3}
+				/>
 			)}
 		</Modal>
 	);

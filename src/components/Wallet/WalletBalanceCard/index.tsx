@@ -1,21 +1,20 @@
-import Card from "~/components/AccountLayout/Card";
-import EyesIcon from "~/components/icons/EyesIcon";
-import type { JSXElementConstructor } from "react";
-import { useState } from "react";
-import data from "~/data/wallet/data.json";
-import HidenBalance from "../HidenBalance";
-import type { IconProps } from "~/components/AccountLayout/IconButton";
-import IconButton from "~/components/AccountLayout/IconButton";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { supportedOperations } from "~/apis/handlers/wallets/constants";
+import Card from "~/components/AccountLayout/Card";
+import IconButton from "~/components/AccountLayout/IconButton";
+import SelectBox from "~/components/common/SelectBox";
+import EyesIcon from "~/components/icons/EyesIcon";
 import OpenEyesIcon from "~/components/icons/OpenEyesIcon";
+import { ISelectBoxOption } from "~/components/interfaces";
+import { formatCurrency } from "~/lib/utils";
+import HidenBalance from "../HidenBalance";
+import ComponentError from "~/components/Error/ComponentError";
+import { useGetUserWalletsBalance } from "~/hooks/useWallets";
+import { WalletType } from "~/apis/handlers/wallets/enum";
+import WalletBalanceCardLoader from "~/components/Loaders/WalletBalanceCardLoader";
 
-export interface ITotalBalanceItems {
-	label: string;
-	url: string;
-	Icon: JSXElementConstructor<IconProps>;
-}
 interface ITotalBalanceSectionProps {
-	supportedOperations: ITotalBalanceItems[];
 	showBalanceText?: string;
 	btcBalance?: string;
 	totalBalanceStyle?: string;
@@ -23,59 +22,129 @@ interface ITotalBalanceSectionProps {
 }
 
 export default function WalletBalanceCard({
-	supportedOperations,
 	showBalanceText = "Total Balance",
 	// btcBalance,
 	totalBalanceStyle,
 	padding,
 }: ITotalBalanceSectionProps) {
+	// Get wallet balance hook
+	const { data, isError, isLoading, isSuccess } = useGetUserWalletsBalance(WalletType.MAIN);
+
 	const router = useRouter();
-	const [showBalance, handleShowBalance] = useState(true);
+	const [showBalance, handleShowBalance] = useState<boolean>(true);
+	const [walletTotalBalance, setWalletTotalBalance] = useState<number>(0);
+	const [walletTotalBalanceOptions, setWalletTotalBalanceOptions] = useState<ISelectBoxOption[]>(
+		[],
+	);
+	const [individualWalletBalanceOptions, setIndividualWalletBalanceOptions] = useState<
+		ISelectBoxOption[]
+	>([]);
+
+	useEffect(() => {
+		if (isSuccess && data) {
+			setWalletTotalBalanceOptions(
+				data.exchangeRateTotalBalances.map((bal) => ({
+					displayText: bal.currency,
+					value: bal.balance.toString(),
+				})),
+			);
+
+			setIndividualWalletBalanceOptions(
+				data.wallets.map((bal) => ({
+					displayText: `${bal.currency.symbol} - ${bal.availableBalance}`,
+					value: bal.availableBalance.toString(),
+					imgUrl: bal.currency.logoUrl,
+				})),
+			);
+		}
+	}, [data, isSuccess]);
 
 	return (
 		<>
-			<Card className={`md:flex md:justify-between ${padding ? padding : "p-5"}`}>
-				<div>
-					<div>
-						<IconButton
-							reversed
-							Icon={showBalance ? EyesIcon : OpenEyesIcon}
-							btnClass="font-bold text-base gap-2"
-							onClick={() => handleShowBalance(!showBalance)}
-							disabled={false}
-						>
-							{showBalanceText}
-						</IconButton>
-						<div className="flex flex-col space-y-1.5 ml-1">
-							<h3
-								className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl "}`}
-							>
+			{isLoading ? (
+				/////////////////// Loading State ///////////////
+				<WalletBalanceCardLoader />
+			) : !isLoading && isError ? (
+				/////////////////// Error State ///////////////////
+				<ComponentError errorMessage="Error fetching wallet balance. Please try again." />
+			) : (
+				isSuccess &&
+				data && (
+					<Card
+						className={`flex flex-col sm:flex-row gap-3 sm:items-start sm:justify-between ${padding ? padding : "p-5"}`}
+					>
+						<section className="space-y-5">
+							<section className="flex items-center space-x-2">
+								<h4 className="text-sm text-black font-bold text-nowrap">
+									{showBalanceText}
+								</h4>
+
+								<span
+									onClick={() => handleShowBalance(!showBalance)}
+									className="cursor-pointer"
+								>
+									{showBalance ? <EyesIcon /> : <OpenEyesIcon />}
+								</span>
+							</section>
+
+							<section className="min-h-8 flex items-center justify-start">
 								{showBalance ? (
-									`${data?.wallet?.totalBalance} USD`
+									<section className="space-y-5 mb-5 sm:mb-0">
+										<section className="flex items-baseline gap-2 text">
+											<SelectBox
+												isSearchable={false}
+												options={walletTotalBalanceOptions}
+												option={walletTotalBalanceOptions[0]}
+												setOption={(opt) =>
+													setWalletTotalBalance(parseFloat(opt.value))
+												}
+												bgColor="bg-[#F1F5FF]"
+												buttonClassName="px-3 py-2"
+												fontStyles="text-base capitalize font-semibold text-textGray"
+												optionsClass="!p-1"
+											/>
+
+											<h2
+												className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"}`}
+											>
+												{formatCurrency(walletTotalBalance)}
+											</h2>
+										</section>
+
+										<section className="flex items-center">
+											<SelectBox
+												isSearchable={false}
+												options={individualWalletBalanceOptions}
+												option={individualWalletBalanceOptions[0]}
+												bgColor="bg-[#F1F5FF]"
+												buttonClassName="px-3 py-2"
+												fontStyles="font-medium text-base capitalize text-[#1E1E1E]"
+												optionsClass="!p-1"
+											/>
+										</section>
+									</section>
 								) : (
-									<HidenBalance className="mt-6 mb-2" />
+									<HidenBalance />
 								)}
-							</h3>
-							<h3 className="text-base font-bold text-[#585858]">
-								=${data?.wallet?.totalBalance}
-							</h3>
-						</div>
-					</div>
-				</div>
-				<div className="grid grid-cols-2 md:flex gap-px md:gap-2 mb-2 sm:mb-0 flex-wrap md:justify-between md:space-x-2 h-[4rem] py-4 text-xs md:-mt-5">
-					{supportedOperations.map((item, index) => (
-						<IconButton
-							key={index}
-							Icon={item.Icon}
-							btnClass="bg-stone-50 px-4 text-zinc-500 gap-2 m-1"
-							onClick={() => router.push(item.url)}
-							disabled={false}
-						>
-							{item.label}
-						</IconButton>
-					))}
-				</div>
-			</Card>
+							</section>
+						</section>
+
+						<section className="flex flex-col sm:flex-row gap-3 items-center">
+							{supportedOperations.map((item) => (
+								<IconButton
+									key={item.label}
+									Icon={item.Icon}
+									btnClass={`px-4 gap-2 border border-buttonColor font-semibold rounded-lg w-full sm:w-32 lg:w-48 h-12 ${item.label.toLowerCase() === "deposit" ? "bg-buttonColor text-white hover:opacity-80 hover:transition-colors" : "bg-white text-buttonColor"}`}
+									onClick={() => router.push(item.url)}
+									disabled={false}
+								>
+									{item.label}
+								</IconButton>
+							))}
+						</section>
+					</Card>
+				)
+			)}
 		</>
 	);
 }

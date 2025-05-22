@@ -3,6 +3,7 @@ import type { ITBody, ITableMobile } from "~/components/common/DataTable/config"
 import { ActiveSignalsTableHeadItems, SignalsHistoryTableHeadItems } from "./constants";
 import type { Dispatch, SetStateAction } from "react";
 import { renderDisplayItem, renderStatus, renderTargetProfits } from "~/helpers";
+import { format } from "date-fns";
 
 export function activeSignalsDataTableSelector(
 	activeSignals: Signal[],
@@ -24,7 +25,7 @@ export function activeSignalsDataTableSelector(
 				{ displayItem: `${signal.currentPrice} USDT` },
 				{ displayItem: `${signal.change} %` },
 				{ displayItem: renderTargetProfits({ targetProfits: signal.targetProfits }) },
-				{ displayItem: signal.created },
+				{ displayItem: format(signal.created, "do MMMM yyyy") },
 				{ displayItem: renderStatus(signal.status) },
 			],
 			actions: [
@@ -96,7 +97,7 @@ export function activeSignalsDataTableMobileSelector(
 			},
 			{
 				displayItemTitle: "Created",
-				displayItemValue: signal.created,
+				displayItemValue: format(signal.created, "do MMMM yyyy"),
 			},
 			{
 				displayItemTitle: "Status",
@@ -120,8 +121,8 @@ export function signalsHistoryDataTableSelector(data: SignalHistoryItem[]) {
 					}),
 				},
 				{ displayItem: `${signal.winLoss} USDT` },
-				{ displayItem: signal.startDate },
-				{ displayItem: signal.endDate },
+				{ displayItem: format(signal.startDate, "do MMMM yyyy") },
+				{ displayItem: format(signal.endDate, "do MMMM yyyy") },
 			],
 		})),
 	};
@@ -146,11 +147,11 @@ export function signalsHistoryDataTableMobileSelector(data: SignalHistoryItem[])
 			},
 			{
 				displayItemTitle: "Start date",
-				displayItemValue: signal.startDate,
+				displayItemValue: format(signal.startDate, "do MMMM yyyy"),
 			},
 			{
 				displayItemTitle: "End date",
-				displayItemValue: signal.endDate,
+				displayItemValue: format(signal.endDate, "do MMMM yyyy"),
 			},
 		],
 	}));

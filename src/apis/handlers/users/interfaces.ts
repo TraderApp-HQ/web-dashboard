@@ -1,5 +1,16 @@
 import type { UserStatus } from "~/config/enum";
-import type { NotificationChannel, UserRole, VerificationType } from "./enums";
+import type {
+	NotificationChannel,
+	Platform,
+	PlatformAction,
+	TaskCategory,
+	TaskStatus,
+	TaskType,
+	UserRole,
+	UserTaskStatus,
+	VerificationType,
+} from "./enums";
+import { IRankData, ReferralRankType } from "~/components/common/ProgressTracker/types";
 
 export interface IUserProfile {
 	id: string;
@@ -13,6 +24,7 @@ export interface IUserProfile {
 	isPhoneVerified: boolean;
 	isIdVerified: boolean;
 	role: UserRole[];
+	referralRank: ReferralRankType;
 	status: UserStatus;
 	createdAt: string;
 	updatedAt: string;
@@ -36,6 +48,7 @@ export interface IUserSignupInput {
 	password: string;
 	countryId: number;
 	countryName?: string;
+	referralCode?: string;
 }
 export interface IResetPasswordInput {
 	verificationToken: string;
@@ -116,8 +129,8 @@ export interface IDisableUserInput {
 	userId: string;
 }
 
-export interface IFetchAllUsers {
-	docs: IUserProfile[];
+export interface PaginatedResult<T> {
+	docs: T[];
 	hasNextPage: boolean;
 	hasPrevPage: boolean;
 	limit: number;
@@ -127,4 +140,177 @@ export interface IFetchAllUsers {
 	prevPage?: number;
 	totalDocs: number;
 	totalPages: number;
+}
+
+export interface IReferralStats {
+	referralCode: string;
+	referralLink: string;
+	currentRank: null | string;
+	currentEarning: number;
+	rankProgress: number;
+	personalATC: number;
+	rankData: IRankData;
+	isTestReferralTrackingInProgress: boolean;
+}
+
+export interface IReferralCommunityStats {
+	communitySize: number;
+	communityATC: number;
+	referralTreeLevels: number;
+}
+
+export interface IReferrals {
+	userId: IUserProfile;
+	parentId: IUserProfile;
+	level: number;
+	createdAt: Date;
+}
+
+export interface IInviteCodeProps {
+	code: string;
+	title: string;
+	isError?: boolean;
+}
+
+export interface ITaskPlatforms {
+	_id: string;
+	name: string;
+	logoUrl: string;
+	isActive: boolean;
+	supportedActions: string[];
+	categories: string[];
+}
+
+export interface ITask {
+	id: string;
+	title: string;
+	description: string;
+	objective?: string;
+	taskType: string;
+	category: string;
+	platformId?: string;
+	platformName?: string;
+	link?: string;
+	expectedActions?: string[];
+	points: number;
+	startDate?: Date;
+	dueDate?: Date;
+	status: string;
+}
+
+export interface ITaskWithPopulate {
+	id: string;
+	title: string;
+	description: string;
+	objective?: string;
+	taskType: string;
+	category: string;
+	platformId?: ITaskPlatforms;
+	platformName?: string;
+	link?: string;
+	expectedActions?: PlatformAction[];
+	points: number;
+	startDate?: Date;
+	dueDate?: Date;
+	status: string;
+}
+
+export interface ICreateUserTask {
+	userId: string;
+	taskId: string;
+	taskPoints: number;
+	expectedActions?: PlatformAction[];
+	status: UserTaskStatus;
+}
+
+export interface IGetTasksInput {
+	page?: number;
+	rows?: number;
+	search?: string;
+}
+
+export interface ITaskTableData {
+	id: string;
+	title: string;
+	points: number;
+	taskType: TaskType;
+	dueDate?: Date;
+	status: UserTaskStatus | TaskStatus;
+}
+
+interface IUserTableData {
+	id: string;
+	taskId: string;
+	status: UserTaskStatus;
+}
+
+export interface IFetchAllActiveTasks {
+	allTask: ITaskTableData[];
+	userTask: IUserTableData[];
+}
+
+export interface IFetchAllPendingTasksCount {
+	pendingTasksCount: number;
+}
+
+export interface ITaskCategory {
+	displayText: string;
+	value: TaskCategory;
+}
+
+export interface ITaskPlatform {
+	displayText: string;
+	value: Platform;
+}
+
+export interface ITaskType {
+	displayText: string;
+	value: TaskType;
+}
+
+export interface ITaskForm {
+	onClose: () => void;
+	isLoading: boolean;
+	platforms: ITaskPlatforms[];
+	task?: ITaskData;
+}
+
+export interface IUpdateTaskFormProps {
+	onClose: () => void;
+	isLoading: boolean;
+	task: ITaskData;
+}
+
+export interface ITaskData {
+	id?: string;
+	title: string;
+	description: string;
+	objective?: string;
+	taskType: TaskType;
+	category: TaskCategory;
+	platformId?: string;
+	platformName?: Platform;
+	link?: string;
+	expectedActions?: PlatformAction[];
+	points: number;
+	startDate?: Date;
+	dueDate?: Date;
+	status?: TaskStatus;
+}
+
+export interface ITaskFormError {
+	startDate?: string;
+	dueDate?: string;
+}
+
+export interface IDocsLength {
+	all: number;
+	pending: number;
+	completed: number;
+}
+
+export interface ITaskPlatformData {
+	platform: string;
+	platformAction: string;
+	file: string;
 }

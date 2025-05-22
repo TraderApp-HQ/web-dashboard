@@ -30,19 +30,19 @@ describe("EmptyExchange Component", () => {
 
 		// Check for the correct headings and texts
 		expect(screen.getByText("Not connected")).toBeInTheDocument();
-		expect(screen.getByText("You don’t have any connected exchange")).toBeInTheDocument();
+		expect(screen.getByText("You don’t have any connected account")).toBeInTheDocument();
 
 		// Check for the presence of the button
-		expect(screen.getByText("Connect new Exchange")).toBeInTheDocument();
+		expect(screen.getByText("Connect new trading account")).toBeInTheDocument();
 	});
 
 	it("should navigate to 'exchanges/connect' when the button is clicked", () => {
 		render(<EmptyExchange />);
 
-		const button = screen.getByText("Connect new Exchange");
+		const button = screen.getByText("Connect new trading account");
 		fireEvent.click(button);
 
 		// Assert that the router push method was called with the correct route
-		expect(mockPush).toHaveBeenCalledWith("exchanges/connect");
+		expect(mockPush).toHaveBeenCalledWith("/account/trade-center/trading-accounts/connect");
 	});
 });

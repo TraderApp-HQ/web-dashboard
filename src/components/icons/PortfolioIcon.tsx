@@ -17,7 +17,7 @@ const PortfolioIcon: React.FC<IProps> = ({ color = "#414141" }) => {
 				d="M10.5003 2.52686C5.90033 2.52686 2.16699 6.26019 2.16699 10.8602C2.16699 15.4602 5.90033 19.1935 10.5003 19.1935C15.1003 19.1935 18.8337 15.4602 18.8337 10.8602"
 				stroke={color}
 				strokeWidth="1.5"
-				stroke-miterlimit="10"
+				strokeMiterlimit="10"
 				strokeLinecap="round"
 				strokeLinejoin="round"
 			/>

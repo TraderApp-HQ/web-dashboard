@@ -14,10 +14,7 @@ export const RecentTransactionsTableHeadItems: ITHead[] = [
 		displayItem: "Asset",
 	},
 	{
-		displayItem: "Transaction",
-	},
-	{
-		displayItem: "Wallet",
+		displayItem: "Transaction Type",
 	},
 	{
 		displayItem: "Amount",

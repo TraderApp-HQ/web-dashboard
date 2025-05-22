@@ -74,7 +74,7 @@ export class APIClient {
 			const responseData: IResponse = await response.json();
 			if (!response.ok) {
 				// check if error is unauthorized invalid token, then refresh users tokens and retry the initial request
-				if (response.status === 401) {
+				if (response.status === 401 && responseData.message === "Invalid Token") {
 					const newToken = await this.refreshToken();
 					if (newToken) {
 						setAccessToken(newToken);

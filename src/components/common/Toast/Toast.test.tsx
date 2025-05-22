@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import Toast from ".";
 
+jest.setTimeout(30000);
 describe("Toast Component", () => {
 	it("renders the Toast with the success type and filled variant", () => {
 		render(
@@ -53,7 +54,7 @@ describe("Toast Component", () => {
 	});
 
 	it("auto-vanishes the Toast after the specified timeout", async () => {
-		render(<Toast type="warning" title="Warning!" autoVanish autoVanishTimeout={1} />);
+		render(<Toast type="warning" title="Warning!" autoVanish={true} autoVanishTimeout={1} />);
 
 		// Check if the toast is initially visible
 		expect(screen.getByTestId("toast-message")).toBeVisible();

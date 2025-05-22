@@ -49,6 +49,12 @@ interface ToastProps {
 	 * @type {number}
 	 */
 	autoVanishTimeout?: number;
+
+	// Opens to from parent component
+	showToast?: boolean;
+
+	// Updates toast state on parent component
+	onToastClose?: () => void;
 }
 
 const iconSize = 23;
@@ -93,17 +99,20 @@ const Toast: React.FC<ToastProps> = ({
 	type = "success",
 	variant = "filled",
 	autoVanishTimeout = 10,
+	showToast = true,
+	onToastClose,
 }) => {
-	const [show, setShow] = React.useState(true);
+	const [show, setShow] = React.useState(showToast);
 
 	const handleClose = () => {
 		setShow(false);
+		onToastClose && onToastClose();
 	};
 
 	React.useEffect(() => {
 		if (autoVanish) {
 			const timeout = setTimeout(() => {
-				setShow(false);
+				handleClose();
 			}, autoVanishTimeout * 1000);
 
 			return () => clearTimeout(timeout);
@@ -111,24 +120,32 @@ const Toast: React.FC<ToastProps> = ({
 	}, [autoVanish, autoVanishTimeout]);
 
 	const styles = clsx(
-		`bg-white flex items-start p-4 rounded-md shadow-md ${!show && "hidden"}`,
+		`bg-white flex items-start p-4 rounded-md shadow-md ${!show || autoVanish ? "hidden" : ""}`,
 		variant === "outlined" ? `border ${typeClasses[type].outlined}` : typeClasses[type].filled,
 	);
 
 	return (
 		<div
 			data-testid="toast-message"
-			className={`fixed z-50 right-1 top-1 min-w-[400px] ${styles}`}
+			className={`fixed z-50 right-1 top-1 min-w-[400px] ${styles} ${type === "success" && "bg-[#F7FFFC]"}`}
 		>
 			<div className="flex-shrink-0 self-baseline">{typeClasses[type].icon}</div>
 			<div className="ml-3 w-full">
 				<div className="flex items-center justify-between">
-					<h3 className={`font-normal ${typeClasses[type].base} text-base`}>{title}</h3>
+					<h3
+						className={`font-normal ${typeClasses[type].base} ${type === "success" && "text-[#00944D]"} text-base`}
+					>
+						{title}
+					</h3>
 					<button className="btn" onClick={handleClose}>
 						<LiaTimesSolid size={20} />
 					</button>
 				</div>
-				{message && <p className="mt-1 text-sm">{message}</p>}
+				{message && (
+					<p className={`mt-1 text-sm ${type === "success" && "text-[#08875D]"}`}>
+						{message}
+					</p>
+				)}
 			</div>
 		</div>
 	);

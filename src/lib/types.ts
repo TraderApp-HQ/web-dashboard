@@ -94,23 +94,36 @@ export interface TradeHistoryData extends TradeOrOrder {}
 
 export interface Orders extends TradeOrOrder {}
 
-export interface IRecentTransactions {
+interface AssetLogo {
+	name: string;
+	symbol: string;
+	logoUrl: string;
+}
+
+export interface ITransaction {
 	id: string;
-	transaction: string;
-	wallet: string;
-	date: string;
+	_id?: string;
+	transactionNetwork?: string;
+	userId: string;
+	fromWallet?: string;
+	toWallet?: string;
+	currencyName?: string;
+	fromCurrencyName?: string;
+	toCurrencyName?: string;
+	conversionRate?: number;
+	amount: number;
+	fromAmount?: number;
+	toAmount?: number;
+	transactionType: string;
+	fromWalletAddress?: string;
+	toWalletAddress?: string;
 	status: string;
-	curency: string;
-	amount: string;
-	shortName: string;
-	image: string;
-	address?: string;
-	fee?: string;
-	network?: string;
-	from?: string;
-	to?: string;
-	percent?: string;
-	toShortName?: string;
+	transactionSource?: string;
+	paymentCategoryName?: string;
+	paymentMethodName?: string;
+	paymentProviderName?: string;
+	createdAt: string;
+	assetLogo?: AssetLogo;
 }
 
 export interface Wallet {
@@ -136,6 +149,8 @@ export interface IDisplayItem {
 	itemImage?: string;
 	styles?: string;
 	isAssetItem?: boolean;
+	useAvatar?: boolean;
+	avatarInitials?: string;
 }
 export type Asset = AssetItem | null;
 

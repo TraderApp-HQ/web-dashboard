@@ -27,12 +27,12 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
 			</div>
 			<div className="h-full right-0 w-full md:w-[81%] 2xl:w-[84%] sm:absolute mt-4">
 				{/* Top header */}
-				<div className="h-[10%">
+				<div className="h-[10%]">
 					<TopHeader clientApp="ADMIN_DASHBOARD" />
 					<MobileTopHeader />
 				</div>
 				{/* Body */}
-				<div className="h-[90%] overflow-y-auto px-4 md:px-12 ">
+				<div className="h-[90%] overflow-y-auto px-4 md:px-12 scrollbar-hide">
 					<div className="border-t mt-4 py-4 md:py-6" />
 					{children}
 				</div>

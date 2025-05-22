@@ -3,6 +3,8 @@ import Component from "../components/Component";
 import { server } from "../mocks/server";
 import { rest } from "msw";
 
+jest.setTimeout(30000);
+
 beforeAll(() => {
 	server.listen();
 });

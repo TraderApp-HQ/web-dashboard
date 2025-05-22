@@ -25,3 +25,8 @@ export enum TradeStatus {
 	active = "ACTIVE",
 	inactive = "INACTIVE",
 }
+
+export enum Exchange {
+	binance = "binance",
+	kucoin = "kucoin",
+}

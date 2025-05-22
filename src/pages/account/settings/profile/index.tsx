@@ -5,8 +5,7 @@ import useUserProfileData from "~/hooks/useUserProfileData";
 import { NestedSettingsLayout } from "..";
 
 const ProfileSettings = () => {
-	const { userProfile, userEmail, userFirstNameInitials, userLastNameInitials, userFullName } =
-		useUserProfileData();
+	const { userProfile, userEmail, userFullName, userInitials } = useUserProfileData();
 
 	return (
 		<div>
@@ -24,11 +23,7 @@ const ProfileSettings = () => {
 				/>
 			</div>
 			<div>
-				<UserTile
-					firstName={userFirstNameInitials}
-					lastName={userLastNameInitials}
-					size={{ width: "39px", height: "39px" }}
-				/>
+				<UserTile nameIntitials={userInitials} size={{ width: "39px", height: "39px" }} />
 			</div>
 			<div className="flex flex-row flex-wrap items-center max-[640px]:justify-center gap-4 mt-6 border-b">
 				<UserProfileField fieldLabel="Name" fieldValue={userFullName} />

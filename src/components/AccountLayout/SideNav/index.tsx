@@ -25,7 +25,7 @@ const NavLinkItem = ({ navlink, toggleSideNav }: NavLinkItemProps) => {
 		<li onClick={() => toggleSideNav(false)}>
 			<Link
 				href={navlink.path}
-				className={`${isActive ? "active" : "inactive"} flex items-center space-x-2 lg:space-x-4 font-bold text-[#414141] text-sm p-2.5 rounded-lg 2xl:text-base 2xl:p-3`}
+				className={`${isActive ? "active" : "inactive"} flex items-center space-x-2 lg:space-x-4 font-bold text-[#414141] text-base p-4 rounded-lg 2xl:text-base`}
 			>
 				<i>
 					<navlink.icon color={isActive ? "white" : "#414141"} />
@@ -61,7 +61,7 @@ const SideNav: React.FC<ISideNavProps> = ({ clientApp = "USER_DASHBOARD" }) => {
 					<CancelIcon />
 				</div>
 			</div>
-			<div className={`${containerHeight} p-3 lg:p-8 overflow-y-auto`}>
+			<div className={`${containerHeight} px-3 py-8 xl:p-8 overflow-y-auto`}>
 				<ul className="space-y-6">
 					{navLinks.map((navlink, index) => (
 						<NavLinkItem key={index} navlink={navlink} toggleSideNav={toggleSideNav} />

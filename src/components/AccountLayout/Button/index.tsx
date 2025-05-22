@@ -13,6 +13,7 @@ interface ButtonProps {
 	color?: string;
 	size?: "small" | "medium";
 	type?: "submit" | "reset" | "button";
+	isLoading?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -26,15 +27,16 @@ const Button: React.FC<ButtonProps> = ({
 	type = "button",
 	color,
 	bgColor,
+	isLoading,
 }) => {
 	const sizeClassnames = useMemo<string>(() => {
 		switch (size) {
 			case "small": {
-				return "px-3 py-2 text-sm leading-4";
+				return "px-3 py-4 text-sm leading-4";
 			}
 
 			case "medium": {
-				return "px-6 py-2.5 text-sm font-bold";
+				return "px-6 py-4 text-sm font-bold";
 			}
 		}
 	}, [size]);
@@ -45,7 +47,7 @@ const Button: React.FC<ButtonProps> = ({
 			<button
 				type={type} /* eslint-disable-line react/button-has-type */
 				className={clsx(
-					"inline-flex justify-center items-center first-letter:uppercase rounded-md border border-transparent transition focus:outline-none  hover:bg-blue-dark active:bg-blue-dark focus:bg-blue-dark disabled:bg-gray-400",
+					"inline-flex justify-center items-center first-letter:uppercase rounded-lg border border-transparent transition focus:outline-none hover:bg-blue-dark active:bg-blue-dark focus:bg-blue-dark disabled:bg-gray-400",
 					color ?? "text-white",
 					sizeClassnames,
 					disabled && "cursor-not-allowed !opacity-50 !bg-blue-800",
@@ -56,7 +58,7 @@ const Button: React.FC<ButtonProps> = ({
 				onClick={onClick}
 				disabled={disabled}
 			>
-				{children}
+				{isLoading ? "Processing..." : children}
 			</button>
 		</span>
 	);

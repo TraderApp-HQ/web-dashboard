@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
-import ProfileDropdown from "../ProfileDropdown";
-import NotificationsDropdown from "../NotificationsDropdown";
 import Link from "next/link";
-import { LAYOUT_ROUTES } from "~/config/constants";
-import RightArrowIcon from "~/components/icons/RightArrowIcon";
-import { UserRole } from "~/apis/handlers/users/enums";
+import { useEffect, useState } from "react";
 import { UsersService } from "~/apis/handlers/users";
+import { UserRole } from "~/apis/handlers/users/enums";
+import RightArrowIcon from "~/components/icons/RightArrowIcon";
+import { LAYOUT_ROUTES } from "~/config/constants";
+import NotificationsDropdown from "../NotificationsDropdown";
+import ProfileDropdown from "../ProfileDropdown";
 
 interface ITopHeaderProps {
 	clientApp?: "USER_DASHBOARD" | "ADMIN_DASHBOARD";
 }
-const TopHeader: React.FC<ITopHeaderProps> = ({ clientApp }) => {
+const TopHeader: React.FC<ITopHeaderProps> = ({ clientApp = "USER_DASHBOARD" }) => {
 	const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -53,10 +53,6 @@ const TopHeader: React.FC<ITopHeaderProps> = ({ clientApp }) => {
 			</div>
 		</div>
 	);
-};
-
-TopHeader.defaultProps = {
-	clientApp: "USER_DASHBOARD",
 };
 
 export default TopHeader;

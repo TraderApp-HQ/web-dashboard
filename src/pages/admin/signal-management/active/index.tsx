@@ -1,34 +1,37 @@
-import { useRouter } from "next/router";
-import SearchForm from "~/components/AccountLayout/SearchForm";
-import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
+import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import DropdownIcon from "~/components/icons/DropdownIcon";
+import { useRouter } from "next/router";
+import type { ChangeEvent } from "react";
+import { useEffect, useState } from "react";
+import { AssetsService } from "~/apis/handlers/assets";
+import { AssetsQueryId } from "~/apis/handlers/assets/constants";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
+import { useFetchActiveSignals } from "~/apis/handlers/assets/hooks";
+import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
+import SearchForm from "~/components/AccountLayout/SearchForm";
+import Select from "~/components/AccountLayout/Select";
+import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
+import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
+import { DataTable, DataTableMobile } from "~/components/common/DataTable";
+import { IActiveSignalCardProps } from "~/components/common/DataTable/config";
 import Date from "~/components/common/Date";
 import Button from "~/components/common/old/Button";
-import type { ChangeEvent } from "react";
-import { useState } from "react";
-import signalsData from "~/pages/account/signals/data.json";
-import { DataTable, DataTableMobile } from "~/components/common/DataTable";
-import DeleteModal from "~/components/Modal/DeleteModal";
-import Select from "~/components/AccountLayout/Select";
-import { useFetchActiveSignals } from "~/apis/handlers/assets/hooks";
-import { ISignal } from "~/apis/handlers/assets/interfaces";
-import { activeSignalsPerfomanceSumary } from "~/selectors/signals";
-import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
-import { AdminNestedSignalsLayout } from "..";
-import { useCreate } from "~/hooks/useCreate";
-import { AssetsService } from "~/apis/handlers/assets";
-import { SignalStatus } from "~/apis/handlers/assets/enums";
 import Toast from "~/components/common/Toast";
+import DropdownIcon from "~/components/icons/DropdownIcon";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
-import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
+import DeleteModal from "~/components/Modal/DeleteModal";
+import { useCreate } from "~/hooks/useCreate";
+import signalsData from "~/pages/account/signals/data.json";
+import { AdminNestedSignalsLayout } from "..";
+import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
 
 function ActiveSignals() {
 	const signalsService = new AssetsService();
+	const queryClient = useQueryClient();
 	// const { term: urlTerm } = useParams<{ term?: string }>();
 	const router = useRouter();
-	const { term } = router.query;
+	const { term, signal } = router.query;
 	const urlTerm = term as string | undefined;
 
 	const [asset, setAsset] = useState<string>("");
@@ -38,7 +41,17 @@ function ActiveSignals() {
 	const [searchterm, setSearchTerm] = useState<string>(urlTerm ?? "");
 	const [toggleDeleteModal, setToggleDeleteModal] = useState(false);
 	const [selectedSignalId, setSelectedSignalId] = useState<string | null>(null);
+	const [showSignalCreationToast, setShowSignalCreationToast] = useState(false);
 	// const [isToggle, setToggle] = useState(false);
+
+	useEffect(() => {
+		if (signal && signal === "true") setShowSignalCreationToast(true);
+
+		if (signal === "true") {
+			const url = window.location.pathname; // Get the current pathname
+			window.history.replaceState(null, "", url); // Clears query params
+		}
+	}, [signal]);
 
 	// Setup query to backend
 	const {
@@ -50,12 +63,8 @@ function ActiveSignals() {
 		data,
 	} = useCreate({
 		mutationFn: signalsService.updateSignal.bind(signalsService),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: [AssetsQueryId.signals] }),
 	});
-
-	const handleSetToggleDeleteModal = (id: string) => {
-		setSelectedSignalId(id);
-		setToggleDeleteModal(!toggleDeleteModal);
-	};
 
 	const handleDeleteModalConfirm = () => {
 		if (selectedSignalId) {
@@ -63,6 +72,11 @@ function ActiveSignals() {
 			setToggleDeleteModal(false);
 			setSelectedSignalId(null);
 		}
+	};
+
+	const handleSetToggleDeleteModal = (id: string) => {
+		setSelectedSignalId(id);
+		setToggleDeleteModal(!toggleDeleteModal);
 	};
 
 	const handleResumeSignal = (id: string, currentStatus: SignalStatus) => {
@@ -73,11 +87,13 @@ function ActiveSignals() {
 
 	const {
 		isLoading,
+		isError: isFetchError,
 		isSuccess,
 		activeSignals,
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
+		performanceSummary,
 	} = useFetchActiveSignals({
 		isAdmin: true,
 		handleSetToggleDeleteModal,
@@ -106,7 +122,12 @@ function ActiveSignals() {
 
 	return (
 		<>
-			<ActiveSignalCard signals={activeSignals} />
+			<ActiveSignalCard
+				summary={performanceSummary}
+				isLoading={isLoading}
+				isSuccess={isSuccess}
+				isError={isFetchError}
+			/>
 			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
 				<SearchForm
 					onChange={(e) => setSearchTerm(e.target.value)}
@@ -216,12 +237,12 @@ function ActiveSignals() {
 					autoVanishTimeout={10}
 				/>
 			)}
-			{data && isSignalUpdateSuccessful && (
+			{((data && isSignalUpdateSuccessful) || showSignalCreationToast) && (
 				<Toast
-					type="info"
+					type="success"
 					variant="filled"
-					title="Signal successfully updated"
-					message="Successful!"
+					title="Success"
+					message={`Signal ${showSignalCreationToast ? "created" : "updated"} successfully.`}
 					autoVanish
 					autoVanishTimeout={10}
 				/>
@@ -230,16 +251,23 @@ function ActiveSignals() {
 	);
 }
 
-const ActiveSignalCard: React.FC<{ signals: ISignal[] }> = ({ signals }) => {
-	const signalPerformer = activeSignalsPerfomanceSumary(signals);
+const ActiveSignalCard: React.FC<IActiveSignalCardProps> = ({
+	summary,
+	isLoading,
+	isError,
+	isSuccess,
+}) => {
 	return (
-		signals.length > 0 && (
-			<div className="flex flex-col md:flex-row gap-2">
-				{signalPerformer.map((performance) => (
-					<PerformanceSummaryCard key={performance.id} data={performance} />
-				))}
-			</div>
-		)
+		<>
+			{isLoading && <PerformanceSummaryCardLoader />}
+			{isError && <div>Error fetching data</div>}
+			{isSuccess && (
+				<div className="flex flex-col md:flex-row gap-4">
+					<PerformanceSummaryCard data={summary?.bestSignal} label="best performer" />
+					<PerformanceSummaryCard data={summary?.worstSignal} label="worst performer" />
+				</div>
+			)}
+		</>
 	);
 };
 

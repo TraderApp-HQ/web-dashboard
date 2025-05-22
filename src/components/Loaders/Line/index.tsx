@@ -29,17 +29,11 @@ const heightMapping = {
  * @param {string} props.className - Additional CSS class names for the line loader.
  * @returns {JSX.Element} The line loader component.
  */
-const Line: React.FC<LineProps> = ({ width = "sm", height = "sm", className }) => {
+const Line: React.FC<LineProps> = ({ width = "sm", height = "sm", className = "" }) => {
 	const w = widthMapping[width];
 	const h = heightMapping[height];
 
 	return <Polygon size="sm" variant="rounded" className={clsx(`h-2`, w, h, className)} />;
-};
-
-Line.defaultProps = {
-	width: "sm",
-	height: "sm",
-	className: "",
 };
 
 export default Line;

@@ -11,3 +11,23 @@ export interface ICheckedBoxOption {
 	value: string;
 	imgUrl: string;
 }
+
+export interface PaginationProps {
+	currentPage: number;
+	totalPages: number;
+	totalRecord: number;
+	rowsPerPage: number;
+	setRowsPerPage: (num: number) => void;
+	onNext: () => void;
+	onPrev: () => void;
+	hasNextPage?: boolean | null;
+	hasPrevPage?: boolean | null;
+}
+
+export interface PaginationButtonProps {
+	onClick: () => void;
+	disabled?: boolean;
+	testId: string;
+	className?: string;
+	direction: "left" | "right";
+}

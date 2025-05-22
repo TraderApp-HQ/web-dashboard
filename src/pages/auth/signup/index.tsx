@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import { Transition } from "@headlessui/react";
 import VerificationModal from "~/components/AuthLayout/Modal/VerificationModal";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
@@ -24,6 +23,7 @@ const Signup = () => {
 	const [email, setEmail] = useState("");
 	const [emailValid, setEmailValid] = useState(false);
 	const [password, setPassword] = useState("");
+	const [referralCode, setReferralCode] = useState((router.query.ref as string) ?? "");
 	const [passwordValid, setPasswordValid] = useState(false);
 	const [country, setCountry] = useState<{ name: string; id: string }>();
 
@@ -93,11 +93,15 @@ const Signup = () => {
 
 	// handle form field changes
 	const handleFirstNameChange = (value: string) => {
-		setFirstName(value.trim());
+		setFirstName(value);
 	};
 
 	const handleLastNameChange = (value: string) => {
-		setLastName(value.trim());
+		setLastName(value);
+	};
+
+	const handleReferralCodeChange = (value: string) => {
+		setReferralCode(value.trim());
 	};
 
 	const handleEmailChange = (value: string) => {
@@ -166,6 +170,7 @@ const Signup = () => {
 			password,
 			countryId: country?.id ? Number(country.id) : 89, // default to Nigeria
 			countryName: country?.name ?? "Nigeria", // default to Nigeria
+			...(referralCode && { referralCode }),
 		});
 	};
 
@@ -192,26 +197,15 @@ const Signup = () => {
 
 	return (
 		<>
-			<section className="py-[100px] md:px-[20px] flex max-[768px]:justify-center max-[768px]:pt-[0px]">
+			<section className="h-full md:px-[20px] items-center flex justify-center max-[768px]:pt-[0px]">
 				<div className="max-w-[419px] w-full">
 					<header className="text-center mb-[40px]">
 						<p
 							className="text-[32px] text-[#102477] font-extrabold"
 							data-testid="heading"
 						>
-							Lets get started
+							Let's get started
 						</p>
-						<div className="flex items-center justify-center gap-x-[13px]">
-							<p className="font-bold text-[#B25E09]">
-								Create your Trader app account{" "}
-							</p>
-							<Image
-								src="/images/auth/coins.png"
-								alt="coins"
-								width={54}
-								height={54}
-							/>
-						</div>
 					</header>
 					<form className="space-y-[16px]">
 						{/* first name */}
@@ -255,6 +249,16 @@ const Signup = () => {
 								setOption={handleCountryChange}
 							/>
 						</div>
+						{/* referral code */}
+						<div className="flex flex-col gap-y-[8px]">
+							<InputField
+								type={"text"}
+								placeholder="Enter referral code"
+								labelText={"Referral Code"}
+								onChange={handleReferralCodeChange}
+								value={referralCode}
+							/>
+						</div>
 						{/* password */}
 						<div className="flex flex-col gap-y-[8px]">
 							<InputField
@@ -296,10 +300,10 @@ const Signup = () => {
 							</div>
 						</Transition>
 						{/* action button */}
-						<div className="p-[16px] space-y-[16px]">
+						<div className="py-[16px] space-y-[16px]">
 							<button
 								type="button"
-								className="transition-opacity duration-300 bg-[#1836B2] rounded-2xl p-[10px] font-semibold w-full text-white disabled:opacity-60"
+								className="transition-opacity duration-300 bg-[#1836B2] rounded-md px-[10px] py-4 font-semibold w-full text-white disabled:opacity-60"
 								onClick={handleSignUp}
 								disabled={!validCredentials || isPending}
 							>
