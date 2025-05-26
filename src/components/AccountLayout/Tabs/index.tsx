@@ -113,8 +113,7 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 								docLen={queryKey ? docCount?.[queryKey] : undefined}
 								isActive={
 									tab.query
-										? tab.query === router.query.task &&
-											router.asPath.includes(tab.href)
+										? tab.query === router.query.task
 										: router.asPath.includes(tab.href)
 								}
 							/>
