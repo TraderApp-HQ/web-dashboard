@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { useRouter } from "next/router";
 import { activeTasksTest } from "~/components/AdminLayout/taskCenter/testData";
 import { useGetAllActiveTasks } from "~/hooks/useTask";
-import UserTaskDashboard from "~/pages/account/task-center";
+import UserTaskDashboard from "~/pages/account/reward-hub/task-center";
 
 // Mocking hooks and dependencies
 jest.mock("next/router", () => ({

@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import AccountLayout from "~/components/AccountLayout/Layout";
 import ViewUserTask from "~/components/AccountLayout/task-center/ViewUserTask";
 import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
 import { useGetUserTask } from "~/hooks/useTask";
+import { NestedRewardHubLayout } from "../..";
 
 const ViewTaskModal = () => {
 	const [openTaskModal, setOpenTaskModal] = useState(true);
@@ -40,5 +40,7 @@ const ViewTaskModal = () => {
 	);
 };
 
-ViewTaskModal.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
+ViewTaskModal.getLayout = (page: React.ReactElement) => (
+	<NestedRewardHubLayout>{page}</NestedRewardHubLayout>
+);
 export default ViewTaskModal;

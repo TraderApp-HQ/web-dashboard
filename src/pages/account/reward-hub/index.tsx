@@ -4,10 +4,10 @@ import PageTab from "~/components/AccountLayout/Tabs";
 import AccountLayout from "~/components/AccountLayout/Layout";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 
-const ReferralsHome = () => {
+const RewardHubHome = () => {
 	const router = useRouter();
 	useEffect(() => {
-		router.push(`${LAYOUT_ROUTES.account}${ROUTES.referrals}/overview`);
+		router.push(`${LAYOUT_ROUTES.account}${ROUTES.rewardHub}/overview`);
 	}, []);
 };
 
@@ -15,10 +15,11 @@ type IProps = {
 	children: ReactNode;
 };
 
-const ReferralsLayout = ({ children }: IProps) => {
+const RewardHubLayout = ({ children }: IProps) => {
 	const tabs = [
-		{ title: "Overview", href: `/account/referrals/overview` },
-		{ title: "My Community", href: "/account/referrals/community" },
+		{ title: "Overview", href: `/account/reward-hub/overview` },
+		{ title: "My Community", href: "/account/reward-hub/community" },
+		{ title: "My Tasks Center", href: "/account/reward-hub/task-center?task=all" },
 	];
 
 	return (
@@ -29,10 +30,10 @@ const ReferralsLayout = ({ children }: IProps) => {
 	);
 };
 
-export const NestedReferralsLayout: React.FC<IProps> = ({ children }) => (
+export const NestedRewardHubLayout: React.FC<IProps> = ({ children }) => (
 	<AccountLayout>
-		<ReferralsLayout>{children}</ReferralsLayout>
+		<RewardHubLayout>{children}</RewardHubLayout>
 	</AccountLayout>
 );
 
-export default ReferralsHome;
+export default RewardHubHome;

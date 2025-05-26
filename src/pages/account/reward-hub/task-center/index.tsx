@@ -8,27 +8,25 @@ import {
 	ITaskTableData,
 } from "~/apis/handlers/users/interfaces";
 import Card from "~/components/AccountLayout/Card";
-import AccountLayout from "~/components/AccountLayout/Layout";
 import PageTab from "~/components/AccountLayout/Tabs";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
-import LeftArrowIcon from "~/components/icons/LeftArrowIcon";
 import UserTaskPointIcon from "~/components/icons/UserTaskPointIcon";
 import { Card as CardLoader } from "~/components/Loaders";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
 import Pagination from "~/components/Pagination";
-import { ROUTES } from "~/config/constants";
 import { useGetAllActiveTasks } from "~/hooks/useTask";
 import {
 	userTaskCenterMobileTableSelector,
 	userTaskCenterTableSelector,
 } from "~/selectors/task-center";
+import { NestedRewardHubLayout } from "..";
 
 const UserTaskDashboard = () => {
 	const taskTabs = [
-		{ title: "All Tasks", href: "", query: "all" },
-		{ title: "Pending Tasks", href: "", query: "pending" },
-		{ title: "Completed Tasks", href: "", query: "completed" },
+		{ title: "All Tasks", href: "/account/reward-hub/task-center", query: "all" },
+		{ title: "Pending Tasks", href: "/account/reward-hub/task-center", query: "pending" },
+		{ title: "Completed Tasks", href: "/account/reward-hub/task-center", query: "completed" },
 	];
 	const router = useRouter();
 	const { task } = router.query;
@@ -107,15 +105,6 @@ const UserTaskDashboard = () => {
 
 	return (
 		<section className="space-y-10">
-			<section
-				className="flex items-center gap-2 cursor-pointer w-fit -my-6"
-				onClick={() => router.replace(`${ROUTES.dashboard.backButton}`)}
-			>
-				<LeftArrowIcon />
-				<p className="font-semibold text-lg text-textColor">Back</p>
-			</section>
-			<h1 className="font-semibold text-4xl text-[#03033A]">Tasks Center</h1>
-
 			{isLoading ? (
 				<section className="bg-white p-3 w-[20rem]">
 					<CardLoader />
@@ -189,5 +178,7 @@ const UserTaskDashboard = () => {
 	);
 };
 
-UserTaskDashboard.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
+UserTaskDashboard.getLayout = (page: React.ReactElement) => (
+	<NestedRewardHubLayout>{page}</NestedRewardHubLayout>
+);
 export default UserTaskDashboard;

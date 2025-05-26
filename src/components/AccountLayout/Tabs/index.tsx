@@ -35,7 +35,7 @@ function Tab({ href, title, query, isActive, docLen }: TabProps) {
 			onClick={query ? handleQueryParam : undefined}
 		>
 			<div className="whitespace-nowrap">
-				{title} <span className="pl-[2px]">{docLen}</span>
+				{title} {isActive && <span className="pl-[2px]">{docLen}</span>}
 			</div>
 		</Link>
 	);
@@ -69,7 +69,9 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 	}, [router.asPath, router.query]);
 
 	const handleSelectOption = (option: ISelectBoxOption) => {
-		const matchedTabIndex = tabs.findIndex((tab) => router.asPath === tab.href);
+		const matchedTabIndex = tabs.findIndex(
+			(tab) => router.asPath === tab.href || tab.query === router.query.task,
+		);
 		if (matchedTabIndex === -1) return;
 		const newSelectedTab = tabs[option.data.index];
 		if (newSelectedTab.query) {
@@ -111,7 +113,8 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 								docLen={queryKey ? docCount?.[queryKey] : undefined}
 								isActive={
 									tab.query
-										? tab.query === router.query.task
+										? tab.query === router.query.task &&
+											router.asPath.includes(tab.href)
 										: router.asPath.includes(tab.href)
 								}
 							/>

@@ -131,7 +131,7 @@ const Dashbaord = () => {
 					<div
 						onClick={() =>
 							router.push({
-								pathname: `${LAYOUT_ROUTES.account}${ROUTES.taskcenter.home}`,
+								pathname: `${LAYOUT_ROUTES.account}${ROUTES.rewardHub}${ROUTES.taskcenter.home}`,
 								query: { task: "all" },
 							})
 						}
