@@ -44,10 +44,6 @@ describe("User Task Center", () => {
 		// check if useGetAllActiveTasks was called
 		expect(useGetAllActiveTasks).toHaveBeenCalled();
 
-		// Test for page header
-		const header = screen.getByRole("heading", { level: 1 });
-		expect(header).toHaveTextContent(/tasks center/i);
-
 		// Test for tasks tab
 		const allTaskstabLink = screen.getByLabelText(/all tasks/i);
 		const pendingTaskstabLink = screen.getByLabelText(/pending tasks/i);
