@@ -52,7 +52,9 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 
 	// Determine active tab
 	const activeTabIndex = tabs.findIndex((tab) =>
-		tab.query ? tab.query === router.query.task : router.asPath.includes(tab.href),
+		tab.query
+			? tab.query === router.query.task
+			: router.asPath.includes(tab.href.split("?")[0]),
 	);
 
 	const tabOptions: ISelectBoxOption[] = tabs.map((tab, index) => ({
@@ -69,18 +71,25 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 	}, [router.asPath, router.query]);
 
 	const handleSelectOption = (option: ISelectBoxOption) => {
-		const matchedTabIndex = tabs.findIndex(
-			(tab) => router.asPath === tab.href || tab.query === router.query.task,
-		);
-		if (matchedTabIndex === -1) return;
-		const newSelectedTab = tabs[option.data.index];
+		const selectedTabIndex = option.data.index;
+
+		// Add a check to ensure the selected index is valid within the current tabs array.
+		if (
+			selectedTabIndex === undefined ||
+			selectedTabIndex < 0 ||
+			selectedTabIndex >= tabs.length
+		) {
+			return; // Prevent navigation for an invalid selection
+		}
+
+		const newSelectedTab = tabs[selectedTabIndex]; // Use the index from the selected option
 		if (newSelectedTab.query) {
 			if (router.query.task !== newSelectedTab.query) {
 				router.push({ query: { task: newSelectedTab.query } }, undefined, {
 					shallow: true,
 				});
 			}
-		} else if (router.asPath !== newSelectedTab.href) {
+		} else if (router.asPath.split("?")[0] !== newSelectedTab.href.split("?")[0]) {
 			router.push(newSelectedTab.href);
 		}
 	};
@@ -114,7 +123,7 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 								isActive={
 									tab.query
 										? tab.query === router.query.task
-										: router.asPath.includes(tab.href)
+										: router.asPath.includes(tab.href.split("?")[0])
 								}
 							/>
 						);
