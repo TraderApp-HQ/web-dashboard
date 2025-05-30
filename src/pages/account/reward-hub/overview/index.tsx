@@ -12,7 +12,7 @@ import RankIcon from "~/components/icons/RankIcon";
 import { useReferralOverview } from "~/hooks/useReferralOverview";
 import { useReferralRank } from "~/hooks/useReferralRank";
 import useUserProfileData from "~/hooks/useUserProfileData";
-import { NestedReferralsLayout } from "..";
+import { NestedRewardHubLayout } from "..";
 
 const ReferralsOverview = () => {
 	const INVITE_BUTTON_TEXT = "Invite Friends";
@@ -145,6 +145,6 @@ const ReferralsOverview = () => {
 };
 
 ReferralsOverview.getLayout = (page: React.ReactElement) => (
-	<NestedReferralsLayout>{page}</NestedReferralsLayout>
+	<NestedRewardHubLayout>{page}</NestedRewardHubLayout>
 );
 export default ReferralsOverview;

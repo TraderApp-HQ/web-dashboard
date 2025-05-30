@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { NestedReferralsLayout } from "..";
+import { NestedRewardHubLayout } from "..";
 import { FaUsers } from "react-icons/fa";
 import { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
@@ -219,6 +219,6 @@ const ReferralsCommunity = () => {
 };
 
 ReferralsCommunity.getLayout = (page: React.ReactElement) => (
-	<NestedReferralsLayout>{page}</NestedReferralsLayout>
+	<NestedRewardHubLayout>{page}</NestedRewardHubLayout>
 );
 export default ReferralsCommunity;

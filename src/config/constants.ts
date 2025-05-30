@@ -34,7 +34,7 @@ export const ROUTES = {
 		transfer: "/account/wallets/transfer",
 		transactionDetails: "transaction-details",
 	},
-	referrals: "/referrals",
+	rewardHub: "/reward-hub",
 	settings: "/settings",
 	login: "/login",
 	signup: "/signup",

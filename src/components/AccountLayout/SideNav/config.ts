@@ -42,8 +42,8 @@ export const NavLinks: SidenavLink[] = [
 	},
 	{
 		icon: ReferralsIcon,
-		text: "Referrals",
-		path: LAYOUT_ROUTES.account + ROUTES.referrals,
+		text: "Reward Hub",
+		path: LAYOUT_ROUTES.account + ROUTES.rewardHub,
 	},
 ];
 

@@ -35,7 +35,7 @@ function Tab({ href, title, query, isActive, docLen }: TabProps) {
 			onClick={query ? handleQueryParam : undefined}
 		>
 			<div className="whitespace-nowrap">
-				{title} <span className="pl-[2px]">{docLen}</span>
+				{title} {isActive && <span className="pl-[2px]">{docLen}</span>}
 			</div>
 		</Link>
 	);
@@ -52,7 +52,9 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 
 	// Determine active tab
 	const activeTabIndex = tabs.findIndex((tab) =>
-		tab.query ? tab.query === router.query.task : router.asPath.includes(tab.href),
+		tab.query
+			? tab.query === router.query.task
+			: router.asPath.includes(tab.href.split("?")[0]),
 	);
 
 	const tabOptions: ISelectBoxOption[] = tabs.map((tab, index) => ({
@@ -69,7 +71,11 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 	}, [router.asPath, router.query]);
 
 	const handleSelectOption = (option: ISelectBoxOption) => {
-		const matchedTabIndex = tabs.findIndex((tab) => router.asPath === tab.href);
+		const matchedTabIndex = tabs.findIndex((tab) =>
+			option.data.query
+				? router.query.task === tab.query
+				: router.asPath.split("?")[0].endsWith(tab.href.split("?")[0]),
+		);
 		if (matchedTabIndex === -1) return;
 		const newSelectedTab = tabs[option.data.index];
 		if (newSelectedTab.query) {
@@ -78,9 +84,20 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 					shallow: true,
 				});
 			}
-		} else if (router.asPath !== newSelectedTab.href) {
+		} else if (!router.asPath.split("?")[0].endsWith(newSelectedTab.href.split("?")[0])) {
 			router.push(newSelectedTab.href);
 		}
+	};
+
+	// Modiefied selected option to include task count for task-center route
+	const selectedOption = selectedTab || tabOptions[Math.max(0, activeTabIndex)];
+	const modifiedSelectedOption: ISelectBoxOption = {
+		...selectedOption,
+		displayText: `${selectedOption.displayText}${
+			docCount && docCount[selectedOption.data.query as keyof IDocsLength]
+				? ` (${docCount[selectedOption.data.query as keyof IDocsLength]})`
+				: ""
+		}`,
 	};
 
 	return (
@@ -88,7 +105,7 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 			<div className="md:hidden">
 				<SelectBox
 					options={tabOptions}
-					option={selectedTab || tabOptions[Math.max(0, activeTabIndex)]}
+					option={modifiedSelectedOption}
 					setOption={handleSelectOption}
 					bgColor="bg-white"
 					fontStyles="text-base font-bold"
@@ -112,7 +129,7 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 								isActive={
 									tab.query
 										? tab.query === router.query.task
-										: router.asPath.includes(tab.href)
+										: router.asPath.includes(tab.href.split("?")[0])
 								}
 							/>
 						);
