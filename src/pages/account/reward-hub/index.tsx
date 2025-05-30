@@ -15,9 +15,9 @@ type IProps = {
 	children: ReactNode;
 };
 
-const RewardHubLayout = ({ children }: IProps) => {
+export const RewardHubLayout = ({ children }: IProps) => {
 	const tabs = [
-		{ title: "Overview", href: `/account/reward-hub/overview` },
+		{ title: "Referrals Overview", href: `/account/reward-hub/overview` },
 		{ title: "My Community", href: "/account/reward-hub/community" },
 		{ title: "My Tasks Center", href: "/account/reward-hub/task-center?task=all" },
 	];
