@@ -1,13 +1,13 @@
 import { useRouter } from "next/router";
-import React, { useEffect, ReactNode } from "react";
-import PageTab from "~/components/AccountLayout/Tabs";
+import React, { ReactNode, useEffect } from "react";
 import AccountLayout from "~/components/AccountLayout/Layout";
-import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
+import PageTab from "~/components/AccountLayout/Tabs";
+import { ROUTES } from "~/config/constants";
 
 const RewardHubHome = () => {
 	const router = useRouter();
 	useEffect(() => {
-		router.push(`${LAYOUT_ROUTES.account}${ROUTES.rewardHub}/overview`);
+		router.push(`${ROUTES.rewardHub}/overview`.substring(1));
 	}, []);
 };
 
@@ -17,9 +17,9 @@ type IProps = {
 
 export const RewardHubLayout = ({ children }: IProps) => {
 	const tabs = [
-		{ title: "Referrals Overview", href: `/account/reward-hub/overview` },
-		{ title: "My Community", href: "/account/reward-hub/community" },
-		{ title: "My Tasks Center", href: "/account/reward-hub/task-center?task=all" },
+		{ title: "Referrals Overview", href: `overview` },
+		{ title: "My Community", href: "community" },
+		{ title: "My Tasks Center", href: "task-center?task=all" },
 	];
 
 	return (

@@ -24,9 +24,9 @@ import { NestedRewardHubLayout } from "..";
 
 const UserTaskDashboard = () => {
 	const taskTabs = [
-		{ title: "All Tasks", href: "/account/reward-hub/task-center", query: "all" },
-		{ title: "Pending Tasks", href: "/account/reward-hub/task-center", query: "pending" },
-		{ title: "Completed Tasks", href: "/account/reward-hub/task-center", query: "completed" },
+		{ title: "All Tasks", href: "task-center", query: "all" },
+		{ title: "Pending Tasks", href: "task-center", query: "pending" },
+		{ title: "Completed Tasks", href: "task-center", query: "completed" },
 	];
 	const router = useRouter();
 	const { task } = router.query;

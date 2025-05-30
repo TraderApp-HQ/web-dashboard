@@ -71,27 +71,33 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 	}, [router.asPath, router.query]);
 
 	const handleSelectOption = (option: ISelectBoxOption) => {
-		const selectedTabIndex = option.data.index;
-
-		// Add a check to ensure the selected index is valid within the current tabs array.
-		if (
-			selectedTabIndex === undefined ||
-			selectedTabIndex < 0 ||
-			selectedTabIndex >= tabs.length
-		) {
-			return; // Prevent navigation for an invalid selection
-		}
-
-		const newSelectedTab = tabs[selectedTabIndex]; // Use the index from the selected option
+		const matchedTabIndex = tabs.findIndex((tab) =>
+			option.data.query
+				? router.query.task === tab.query
+				: router.asPath.split("?")[0].endsWith(tab.href.split("?")[0]),
+		);
+		if (matchedTabIndex === -1) return;
+		const newSelectedTab = tabs[option.data.index];
 		if (newSelectedTab.query) {
 			if (router.query.task !== newSelectedTab.query) {
 				router.push({ query: { task: newSelectedTab.query } }, undefined, {
 					shallow: true,
 				});
 			}
-		} else if (router.asPath.split("?")[0] !== newSelectedTab.href.split("?")[0]) {
+		} else if (!router.asPath.split("?")[0].endsWith(newSelectedTab.href.split("?")[0])) {
 			router.push(newSelectedTab.href);
 		}
+	};
+
+	// Modiefied selected option to include task count for task-center route
+	const selectedOption = selectedTab || tabOptions[Math.max(0, activeTabIndex)];
+	const modifiedSelectedOption: ISelectBoxOption = {
+		...selectedOption,
+		displayText: `${selectedOption.displayText}${
+			docCount && docCount[selectedOption.data.query as keyof IDocsLength]
+				? ` (${docCount[selectedOption.data.query as keyof IDocsLength]})`
+				: ""
+		}`,
 	};
 
 	return (
@@ -99,7 +105,7 @@ const PageTab: React.FC<PageTabProps> = ({ tabs, docCount }) => {
 			<div className="md:hidden">
 				<SelectBox
 					options={tabOptions}
-					option={selectedTab || tabOptions[Math.max(0, activeTabIndex)]}
+					option={modifiedSelectedOption}
 					setOption={handleSelectOption}
 					bgColor="bg-white"
 					fontStyles="text-base font-bold"
