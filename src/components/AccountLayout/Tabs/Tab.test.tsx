@@ -83,15 +83,19 @@ describe("PageTab component", () => {
 
 	test("marks correct tab as active based on query", () => {
 		(useRouter as jest.Mock).mockReturnValue({
-			asPath: "/account/task-center",
+			asPath: "/account/reward-hub/task-center",
 			query: { task: "pending" },
 			push: jest.fn(),
 		});
 
 		const taskTabs = [
-			{ title: "All Tasks", href: "/account/task-center", query: "all" },
-			{ title: "Pending Tasks", href: "/account/task-center", query: "pending" },
-			{ title: "Completed Tasks", href: "/account/task-center", query: "completed" },
+			{ title: "All Tasks", href: "/account/reward-hub/task-center", query: "all" },
+			{ title: "Pending Tasks", href: "/account/reward-hub/task-center", query: "pending" },
+			{
+				title: "Completed Tasks",
+				href: "/account/reward-hub/task-center",
+				query: "completed",
+			},
 		];
 
 		render(<PageTab tabs={taskTabs} />);
@@ -181,14 +185,14 @@ describe("PageTab component", () => {
 	test("clicking a tab with query triggers shallow push", () => {
 		const pushMock = jest.fn();
 		(useRouter as jest.Mock).mockReturnValue({
-			asPath: "/account/task-center",
+			asPath: "/account/reward-hub/task-center",
 			query: {},
 			push: pushMock,
 		});
 
 		const taskTabs = [
-			{ title: "All Tasks", href: "/account/task-center", query: "all" },
-			{ title: "Pending Tasks", href: "/account/task-center", query: "pending" },
+			{ title: "All Tasks", href: "/account/reward-hub/task-center", query: "all" },
+			{ title: "Pending Tasks", href: "/account/reward-hub/task-center", query: "pending" },
 		];
 
 		render(<PageTab tabs={taskTabs} />);
