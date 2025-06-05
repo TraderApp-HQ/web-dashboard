@@ -23,7 +23,7 @@ import type {
 	ITaskWithPopulate,
 	IFetchAllActiveTasks,
 	ICreateUserTask,
-	IFetchAllPendingTasksCount,
+	IFetchAllPendingTasks,
 	ITaskData,
 	IReferrals,
 	ITaskPlatformData,
@@ -287,17 +287,16 @@ export class UsersService {
 		return data as IFetchAllActiveTasks;
 	}
 
-	public async getAllPendingTasksCount(): Promise<IFetchAllPendingTasksCount> {
+	public async getAllPendingTasks(): Promise<IFetchAllPendingTasks> {
 		const response = await this.apiClient.get<IResponse>({
-			url: "/task/pending-tasks-count",
+			url: "/task/pending-tasks",
 		});
 
-		if (response.error)
-			throw new Error(response.message || "Error fetching pending tasks count.");
+		if (response.error) throw new Error(response.message || "Error fetching pending tasks.");
 
 		const { data } = response;
 
-		return data as IFetchAllPendingTasksCount;
+		return data as IFetchAllPendingTasks;
 	}
 
 	public async createTask(data: ITaskData): Promise<string> {
