@@ -249,8 +249,13 @@ export interface IFetchAllActiveTasks {
 	userTask: IUserTableData[];
 }
 
-export interface IFetchAllPendingTasksCount {
-	pendingTasksCount: number;
+export interface IFetchAllPendingTasks {
+	pendingTasks: IPendingTask[];
+}
+
+export interface IPendingTask {
+	id: string;
+	title: string;
 }
 
 export interface ITaskCategory {
