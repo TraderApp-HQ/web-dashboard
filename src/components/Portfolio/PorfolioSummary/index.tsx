@@ -14,7 +14,7 @@ interface ChartProps {
 
 const PortfolioSummary: React.FC<ChartProps> = ({ chartData, colors }) => {
 	return (
-		<Card className="border-2 border-[#D1D7F0] p-5 flex flex-col lg:flex-row items-center justify-center gap-5 lg:gap-2 xl:gap-5 lg:h-60">
+		<Card className="border-2 border-[#D1D7F0] p-5 flex flex-col lg:flex-row items-center justify-center gap-5 lg:gap-2 xl:gap-5 lg:h-80">
 			<div className="w-full lg:w-[30%] flex items-center justify-center">
 				<Chart data={chartData} colors={colors} />
 			</div>

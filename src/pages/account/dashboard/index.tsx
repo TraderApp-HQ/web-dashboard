@@ -62,7 +62,7 @@ const Dashbaord = () => {
 						!isUserProfileLoading &&
 						userProfile && (
 							<div className="space-y-4">
-								<h1 className="text-[#000000] font-bold text-[32px]">
+								<h1 className="text-[#000000] font-bold text-[32px] capitalize">
 									Hey {userProfile.firstName}
 								</h1>
 								<p className="text-xs text-[#545050]">
@@ -73,53 +73,56 @@ const Dashbaord = () => {
 					)}
 				</section>
 
-				<Card className="py-5 px-3 md:p-5 flex flex-col md:flex-row justify-between items-start gap-5 !rounded-2xl bg-[url(/images/card-bg.png)] bg-cover bg-no-repeat bg-center">
-					<div className="flex flex-col justify-center w-full space-y-5 text-white">
-						<div className="flex items-center space-x-2">
-							<h4 className="text-base font-medium">Wallet Overview</h4>
+				<Card className="py-5 px-3 md:p-8 flex justify-center items-center !rounded-2xl bg-[url(/images/card-bg.png)] bg-cover bg-no-repeat bg-center min-h-44">
+					<section className="flex flex-col md:flex-row justify-between items-start gap-5 w-full">
+						<div className="flex flex-col justify-center w-full space-y-8 text-white max-sm:mb-5">
+							<div className="flex items-center space-x-2">
+								<h4 className="text-base font-medium">Wallet Overview</h4>
 
-							<span
-								onClick={() => handleShowBalance(!showBalance)}
-								className="cursor-pointer"
-							>
-								{showBalance ? (
-									<EyesIcon color="#FFFFFF" />
-								) : (
-									<OpenEyesIcon color="#FFFFFF" />
-								)}
-							</span>
-						</div>
-						<h3 className="text-4xl font-bold">
-							{isWalletLoading ? (
-								<Line width="md" height="lg" />
-							) : showBalance && isWalletSuccess && walletData ? (
-								<>
-									<small className="text-2xl">
-										{
+								<span
+									onClick={() => handleShowBalance(!showBalance)}
+									className="cursor-pointer"
+								>
+									{showBalance ? (
+										<EyesIcon color="#FFFFFF" />
+									) : (
+										<OpenEyesIcon color="#FFFFFF" />
+									)}
+								</span>
+							</div>
+							<h3 className="text-4xl font-bold">
+								{isWalletLoading ? (
+									<Line width="md" height="lg" />
+								) : showBalance && isWalletSuccess && walletData ? (
+									<>
+										<small className="text-2xl">
+											{
+												walletData.exchangeRateTotalBalances.find(
+													(bal) => bal.currency === "USD",
+												)?.currency
+											}
+										</small>{" "}
+										{formatCurrency(
 											walletData.exchangeRateTotalBalances.find(
 												(bal) => bal.currency === "USD",
-											)?.currency
-										}
-									</small>{" "}
-									{formatCurrency(
-										walletData.exchangeRateTotalBalances.find(
-											(bal) => bal.currency === "USD",
-										)?.balance || 0,
-									)}
-								</>
-							) : (
-								<HidenBalance className="mt-4 mb-2" iconBgColor="#FFFFFF" />
-							)}
-						</h3>
-					</div>
-					<IconButton
-						Icon={TiltedCircledDownRightArrowIcon}
-						btnClass="w-48 h-12 bg-buttonColor text-zinc-50 font-semibold text-base text-nowrap px-4 py-2 gap-2 rounded-lg"
-						aria-label="Make a Deposit"
-						onClick={() => router.push(ROUTES.wallet.deposit)}
-					>
-						Make a Deposit
-					</IconButton>
+											)?.balance || 0,
+										)}
+									</>
+								) : (
+									<HidenBalance className="mt-4 mb-2" iconBgColor="#FFFFFF" />
+								)}
+							</h3>
+						</div>
+						<IconButton
+							Icon={TiltedCircledDownRightArrowIcon}
+							btnClass="w-48 h-12 bg-buttonColor text-zinc-50 font-semibold text-base text-nowrap px-4 py-2 gap-2 rounded-lg"
+							aria-label="Make a Deposit"
+							onClick={() => router.push(ROUTES.wallet.deposit)}
+							disabled={!isWalletSuccess || isWalletLoading}
+						>
+							Make a Deposit
+						</IconButton>
+					</section>
 				</Card>
 			</section>
 
@@ -145,7 +148,7 @@ const Dashbaord = () => {
 					) : pendingTasksSuccess &&
 					  pendingTasks &&
 					  pendingTasks.pendingTasks.length > 0 ? (
-						<Card className="p-5 border-2 border-[#D1D7F0] flex flex-col items-center gap-4 lg:h-60">
+						<Card className="p-5 border-2 border-[#D1D7F0] flex flex-col items-center gap-4 lg:h-80">
 							{pendingTasks.pendingTasks.slice(0, 2).map((task) => (
 								<TaskCard
 									key={`${task.id}-${task.title}`}
@@ -156,7 +159,7 @@ const Dashbaord = () => {
 
 							<Link
 								href={`${LAYOUT_ROUTES.account}${ROUTES.rewardHub}${ROUTES.taskcenter.home}?task=all`}
-								className="text-[#102477] font-bold text-base underline underline-offset-2 cursor-pointer mt-auto"
+								className="text-[#102477] font-bold text-base underline underline-offset-2 cursor-pointer mt-8 lg:mt-auto"
 							>
 								Visit Task Center
 							</Link>
