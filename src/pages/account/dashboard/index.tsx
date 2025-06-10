@@ -49,7 +49,7 @@ const Dashbaord = () => {
 	} = useGetUserWalletsBalance(WalletType.MAIN);
 
 	return (
-		<div className="space-y-12">
+		<div className="space-y-12 overflow-x-hidden">
 			<section className="space-y-12">
 				<section>
 					{isUserProfileLoading ? (
@@ -165,9 +165,7 @@ const Dashbaord = () => {
 							</Card>
 						) : (
 							<Card className="p-5 border-2 border-[#D1D7F0] flex flex-col items-center justify-center gap-6 h-[85%]">
-								{/* <div className="border"> */}
 								<TaskIconLarge />
-								{/* </div> */}
 								<p className="text-[#414141] font-medium">
 									No pending tasks available
 								</p>

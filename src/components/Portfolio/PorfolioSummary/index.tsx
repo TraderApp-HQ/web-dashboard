@@ -78,7 +78,6 @@ const PortfolioSummary: React.FC<ChartProps> = ({ chartData, colors }) => {
 		// <Card className="border-2 border-[#D1D7F0] p-5 flex flex-col lg:flex-row items-center justify-center gap-5 lg:gap-2 xl:gap-5">
 		<Card className="2xl:flex 2xl:items-center 2xl:gap-1 h-full">
 			<div className="2xl:w-[40%]">
-				{/* <Chart data={chartData} colors={colors} /> */}
 				<PieChart width={dimensions.width} height={dimensions.height}>
 					<Pie
 						data={chartData}
@@ -97,7 +96,6 @@ const PortfolioSummary: React.FC<ChartProps> = ({ chartData, colors }) => {
 				</PieChart>
 			</div>
 			<div className="flex flex-col items-center justify-center mt-4 2xl:mt-0 w-full">
-				{/* <div className="text-center border border-blue-500"> */}
 				<div className="flex items-center justify-center flex-nowrap gap-1.5">
 					<p className="font-bold text-[13px]">Profit</p>
 					<p className="font-medium text-sm text-[green]"> + 00%(00.00 USDT)</p>
