@@ -32,11 +32,11 @@ const Button: React.FC<ButtonProps> = ({
 	const sizeClassnames = useMemo<string>(() => {
 		switch (size) {
 			case "small": {
-				return "px-3 py-4 text-sm leading-4";
+				return "px-3 py-3 text-sm leading-4";
 			}
 
 			case "medium": {
-				return "px-6 py-4 text-sm font-bold";
+				return "px-6 py-3 text-sm font-bold";
 			}
 		}
 	}, [size]);
