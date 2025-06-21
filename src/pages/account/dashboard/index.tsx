@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
+import { IFetchOnboardingTasks, IUserProfile } from "~/apis/handlers/users/interfaces";
 import { WalletType } from "~/apis/handlers/wallets/enum";
 import Button from "~/components/AccountLayout/Button";
 import Card from "~/components/AccountLayout/Card";
@@ -9,8 +10,10 @@ import TaskCard from "~/components/AccountLayout/task-center/TaskCard";
 import ComponentError from "~/components/Error/ComponentError";
 import { Line } from "~/components/Loaders";
 import DashboardCardLoader from "~/components/Loaders/DashboardCardLoader";
+import { ProgressTrackerLoader } from "~/components/Loaders/ReferralProgressLoader";
 import PortfolioSummary from "~/components/Portfolio/PorfolioSummary";
 import HidenBalance from "~/components/Wallet/HidenBalance";
+import ProgressTracker from "~/components/common/ProgressTracker";
 import EyesIcon from "~/components/icons/EyesIcon";
 import NoTransactionIcon from "~/components/icons/NoTransactionIcon";
 import OpenEyesIcon from "~/components/icons/OpenEyesIcon";
@@ -18,7 +21,8 @@ import TaskIcon from "~/components/icons/TaskIcon";
 import { TaskIconLarge } from "~/components/icons/TaskIconLarge";
 import TiltedCircledDownRightArrowIcon from "~/components/icons/TiltedCircledDownRightArrowIcon";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
-import { useGetAllPendingTasks } from "~/hooks/useTask";
+import { useGetUserOnboardingFlowData } from "~/hooks/useUserOnboardingTask";
+import { useGetAllPendingTasks, useGetOnboardingTasks } from "~/hooks/useTask";
 import useUserProfileData from "~/hooks/useUserProfileData";
 import { useGetUserWalletsBalance } from "~/hooks/useWallets";
 import { formatCurrency } from "~/lib/utils";
@@ -34,7 +38,13 @@ const Dashbaord = () => {
 
 	const COLORS = ["#414141", "#DA7B07"];
 
-	const { userProfile, isUserProfileLoading, userProfileError } = useUserProfileData();
+	// Get user profile data
+	const { userProfile, isUserProfileLoading, userProfileError, isUserProfileError } =
+		useUserProfileData();
+
+	console.log("User profile***********", userProfile);
+
+	// Get pending tasks
 	const {
 		isLoading: pendingTasksLoading,
 		isSuccess: pendingTasksSuccess,
@@ -42,11 +52,30 @@ const Dashbaord = () => {
 		isError: isPendingTasksError,
 		pendingTasks,
 	} = useGetAllPendingTasks();
+
+	// Get wallet data
 	const {
 		data: walletData,
 		isLoading: isWalletLoading,
 		isSuccess: isWalletSuccess,
 	} = useGetUserWalletsBalance(WalletType.MAIN);
+
+	// Get onboarding Tasks
+	const { onboardingTasks, isLoading: isOnboardingTasksLoading } = useGetOnboardingTasks();
+
+	console.log("Onboarding Tasks==========", onboardingTasks);
+
+	// Get tailored onbording flow data
+	const {
+		showOnboardingStepsPanel,
+		showDismissOnboardingPanelBtn,
+		handleOnboardingPanelDisplay,
+		tasks,
+		optionalTasks,
+	} = useGetUserOnboardingFlowData({
+		userProfile: userProfile as IUserProfile,
+		onboardingTasks: onboardingTasks as IFetchOnboardingTasks,
+	});
 
 	return (
 		<div className="space-y-12 overflow-x-hidden">
@@ -125,6 +154,33 @@ const Dashbaord = () => {
 					</IconButton>
 				</Card>
 			</section>
+
+			{/* Onboarding Section */}
+			{userProfile && showOnboardingStepsPanel && (
+				<ProgressTracker
+					title="Finish setting up your account"
+					body=""
+					tiers={tasks}
+					hasOptionalTiers={true}
+					optionalTiersTitle="Optional Task"
+					optionalTiers={optionalTasks}
+					isLoading={isUserProfileLoading || isOnboardingTasksLoading}
+					loadingComponent={ProgressTrackerLoader}
+					isError={isUserProfileError}
+					errorComponent={({ error }) => <ComponentError errorMessage={error?.message} />}
+					progressBgColor="bg-[#08123B]"
+					hasDismissBtn={showDismissOnboardingPanelBtn}
+					dismissBtn={() => (
+						<IconButton
+							btnClass="w-32 h-12 bg-buttonColor text-zinc-50 font-semibold text-base text-nowrap rounded-lg ml-auto mb-4"
+							aria-label="Dismiss Button"
+							onClick={handleOnboardingPanelDisplay}
+						>
+							Dismiss
+						</IconButton>
+					)}
+				/>
+			)}
 
 			<section className="flex flex-col lg:flex-row gap-6 lg:gap-4 items-start justify-between w-full lg:h-[500px] 2xl:h-[400px]">
 				<section className="space-y-4 w-full lg:w-[49%] h-full">

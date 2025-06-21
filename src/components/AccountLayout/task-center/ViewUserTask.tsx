@@ -11,17 +11,22 @@ import useUserProfileData from "~/hooks/useUserProfileData";
 
 interface IViewUserTaskProps {
 	selectedTask: ITaskWithPopulate;
-	closeModal: () => void;
+	refetchTask: () => void;
+	isFetchingTask: boolean;
 }
 
-const ViewUserTask: React.FC<IViewUserTaskProps> = ({ selectedTask, closeModal }) => {
+const ViewUserTask: React.FC<IViewUserTaskProps> = ({
+	selectedTask,
+	refetchTask,
+	isFetchingTask,
+}) => {
 	const { userId } = useUserProfileData();
 	const { createUserTask, isPending, isSuccess } = useCreateUserTask();
 
-	// function to close modal
+	// function to refetch task after update
 	useEffect(() => {
 		if (isSuccess) {
-			closeModal();
+			refetchTask();
 		}
 	}, [isSuccess]);
 
@@ -120,15 +125,18 @@ const ViewUserTask: React.FC<IViewUserTaskProps> = ({ selectedTask, closeModal }
 				</section>
 			</section>
 
-			{selectedTask.status === UserTaskStatus.PENDING && (
+			{selectedTask.status === UserTaskStatus.PENDING || isFetchingTask ? (
 				<Button
 					labelText="Mark as completed"
-					onClick={() => {
-						createUserTask(task);
-					}}
-					className="my-6 text-base min-w-[40%] font-bold self-center"
-					disabled={isPending}
+					onClick={() => createUserTask(task)}
+					className="my-6 text-base min-w-[40%] font-bold self-center disabled:cursor-not-allowed disabled:opacity-50"
+					disabled={isPending || isFetchingTask}
+					isProcessing={isPending || isFetchingTask}
 				/>
+			) : (
+				<p className="text-center text-blue-600 text-2xl font-medium my-5 capitalize">
+					Task {selectedTask.status}
+				</p>
 			)}
 		</section>
 	);

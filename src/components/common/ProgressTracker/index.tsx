@@ -11,11 +11,18 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
 	loadingComponent: LoadingComponent,
 	isError,
 	errorComponent: ErrorComponent,
+	progressBgColor = "bg-[#DA7B07]",
+	hasOptionalTiers = false,
+	optionalTiersTitle,
+	optionalTiers,
+	hasDismissBtn = false,
+	dismissBtn: DismissBtn,
 }) => {
 	const progress = useMemo(() => {
-		const totalTiers = Object.keys(tiers).length;
+		const totalTiersObject = !hasOptionalTiers ? { ...tiers } : { ...tiers, ...optionalTiers };
+		const totalTiers = Object.keys(totalTiersObject).length;
 		if (!totalTiers) return 0;
-		const completedTiers = Object.values(tiers).filter(isTierCompleted).length;
+		const completedTiers = Object.values(totalTiersObject).filter(isTierCompleted).length;
 		return Math.round((completedTiers / totalTiers) * 100);
 	}, [tiers]);
 
@@ -25,9 +32,12 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
 
 	return (
 		<section className="mt-5 border border-[#DEE3F6] rounded-md bg-white text-[#3E57BF] p-5">
+			{/* dismiss btn */}
+			{hasDismissBtn && DismissBtn && <DismissBtn />}
+
 			{/* Header */}
 			<h3 className="font-bold text-lg mb-1 text-[#102477]">{title}</h3>
-			<p className="text-[#414141] font-light">{body}</p>
+			{body && <p className="text-[#414141] font-light">{body}</p>}
 
 			{!isLoading && isError && ErrorComponent ? (
 				<ErrorComponent />
@@ -37,7 +47,7 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
 					<div className="progressContainer">
 						<div className="bg-[#EEEDEC] rounded-md h-3 w-full my-2">
 							<div
-								className="bg-[#DA7B07] rounded-md h-3"
+								className={`rounded-md h-3 ${progressBgColor}`}
 								style={{ width: `${progress}%`, height: "13px" }}
 							></div>
 						</div>
@@ -50,6 +60,21 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
 							<TierComponent tier={tier} key={tierKey} />
 						))}
 					</div>
+
+					{/* Optional tiers */}
+					{hasOptionalTiers && (
+						<>
+							<h4 className="font-bold text-lg my-2 text-black capitalize">
+								{optionalTiersTitle}
+							</h4>
+
+							<div>
+								{Object.entries(optionalTiers ?? {}).map(([tierKey, tier]) => (
+									<TierComponent tier={tier} key={tierKey} />
+								))}
+							</div>
+						</>
+					)}
 				</>
 			)}
 		</section>

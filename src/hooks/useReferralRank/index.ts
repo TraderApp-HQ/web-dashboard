@@ -4,7 +4,8 @@ import { RANK_REQUIREMENTS } from "~/config/constants";
 type RankRequirements = Record<
 	ReferralRankType,
 	{
-		title: ReferralRankType;
+		title: ReferralRankType | string;
+		icon: string;
 		text: string;
 		milestones: Array<{
 			title: string;
@@ -22,6 +23,7 @@ export const useReferralRank = (rankData: IRankData | undefined) => {
 			const rank = _rank as ReferralRankType;
 			acc[rank] = {
 				title: rank,
+				icon: rank,
 				text: RANK_REQUIREMENTS[rank].text,
 				milestones: [
 					{

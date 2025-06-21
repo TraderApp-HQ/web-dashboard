@@ -94,6 +94,27 @@ export const useGetAllPendingTasks = () => {
 	return { pendingTasks, isLoading, isSuccess, isError, error };
 };
 
+export const useGetOnboardingTasks = () => {
+	const usersService = new UsersService();
+	const fetchOnboardingTasks = useCallback(
+		() => usersService.getOnboardingTasks(),
+		[usersService],
+	);
+
+	const {
+		data: onboardingTasks,
+		isLoading,
+		isSuccess,
+		isError,
+		error,
+	} = useFetch({
+		queryKey: [UsersQueryId.onboardingTasks],
+		queryFn: fetchOnboardingTasks,
+	});
+
+	return { onboardingTasks, isLoading, isSuccess, isError, error };
+};
+
 export const useCreateTask = () => {
 	const usersService = new UsersService();
 	const queryClient = useQueryClient();
@@ -184,12 +205,13 @@ export const useGetUserTask = (taskId: string) => {
 		isLoading,
 		isError,
 		error,
+		refetch,
 	} = useFetch({
 		queryKey: [taskId],
 		queryFn: getTask,
 	});
 
-	return { task, isLoading, isError, error };
+	return { task, isLoading, isError, error, refetch };
 };
 
 export const useUpdateTaskPlatformData = () => {

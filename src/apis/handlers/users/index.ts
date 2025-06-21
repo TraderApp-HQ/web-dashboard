@@ -27,6 +27,7 @@ import type {
 	ITaskData,
 	IReferrals,
 	ITaskPlatformData,
+	IFetchOnboardingTasks,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 export class UsersService {
@@ -297,6 +298,32 @@ export class UsersService {
 		const { data } = response;
 
 		return data as IFetchAllPendingTasks;
+	}
+
+	public async getOnboardingTasks(): Promise<IFetchOnboardingTasks> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/task/onboarding-tasks",
+		});
+
+		if (response.error) throw new Error(response.message || "Error fetching onboarding tasks.");
+
+		const { data } = response;
+
+		return data as IFetchOnboardingTasks;
+	}
+
+	public async updateUserOnboadingStatus(data: { field: string }): Promise<string> {
+		const response = await this.apiClient.patch<IResponse>({
+			url: "/users/toggle-user-onboarding-status",
+			data,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Update User Onboarding Status Failed");
+		}
+
+		const { message } = response;
+		return message;
 	}
 
 	public async createTask(data: ITaskData): Promise<string> {

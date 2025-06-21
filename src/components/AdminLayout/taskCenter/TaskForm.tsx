@@ -6,7 +6,7 @@ import SelectBox from "~/components/common/SelectBox";
 import TextArea from "~/components/common/TextArea";
 import Toast from "~/components/common/Toast";
 import { useCreateTask, useUpdateTask } from "~/hooks/useTask";
-import { taskCategory, taskType } from "./taskFormData";
+import { taskCategory, taskMode, taskType } from "./taskFormData";
 import { ITaskData, ITaskForm, ITaskFormError } from "~/apis/handlers/users/interfaces";
 import { Platform, PlatformAction, TaskStatus, TaskType } from "~/apis/handlers/users/enums";
 
@@ -137,6 +137,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 		const {
 			title,
 			description,
+			taskMode,
 			taskType,
 			category,
 			platformId,
@@ -154,6 +155,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 			!description ||
 			description?.length < 5 ||
 			!taskType ||
+			!taskMode ||
 			!category ||
 			(platformId && !link) ||
 			(category && !platformName) ||
@@ -180,6 +182,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				description,
 				objective,
 				taskType,
+				taskMode,
 				category,
 				platformId,
 				platformName,
@@ -220,6 +223,7 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				description,
 				objective,
 				taskType,
+				taskMode,
 				category,
 				platformId,
 				platformName,
@@ -268,6 +272,15 @@ const TaskForm: React.FC<ITaskForm> = ({ onClose, isLoading, platforms, task }) 
 				placeholder="Provide task objectives"
 				value={formData?.objective || ""}
 				onChange={(value) => updateFormData("objective", value)}
+			/>
+
+			<SelectBox
+				labelText="Task Mode"
+				placeholder="Select Task Mode"
+				options={taskMode}
+				option={taskMode.find((type) => type.value === formData?.taskMode) ?? taskMode[0]}
+				isSearchable={false}
+				setOption={({ value }) => updateFormData("taskMode", value)}
 			/>
 
 			<SelectBox
