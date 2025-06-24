@@ -30,7 +30,7 @@ export interface IUserProfile {
 	facebookUsername: string;
 	twitterUsername: string;
 	tiktokUsername: string;
-	instagramUsername?: string;
+	instagramUsername: string;
 	isPhoneVerified: boolean;
 	isIdVerified: boolean;
 	role: UserRole[];
@@ -60,6 +60,11 @@ export interface IUserSignupInput {
 	countryName?: string;
 	referralCode?: string;
 }
+
+export interface IVerifyEmail {
+	id: string;
+	email: string;
+}
 export interface IResetPasswordInput {
 	verificationToken: string;
 	password: string;
@@ -85,11 +90,15 @@ export interface ICreateUserInput {
 
 export interface IUpdateUserInput {
 	id: string;
-	firstName: string;
-	lastName: string;
-	role: UserRole[];
+	firstName?: string;
+	lastName?: string;
+	role?: UserRole[];
 	countryId?: number;
 	countryName?: string;
+	facebookUsername?: string;
+	twitterUsername?: string;
+	tiktokUsername?: string;
+	instagramUsername?: string;
 }
 
 export interface IPasswordResetInput {

@@ -20,6 +20,7 @@ interface TierAction {
 	buttonText: string;
 	buttonAction: () => void;
 	disableActionButton?: boolean;
+	buttonActionLoading?: boolean;
 	taskPill?: string;
 }
 
@@ -48,7 +49,6 @@ export interface ProgressTrackerProps {
 	error?: Error | null;
 	errorComponent?: React.ComponentType<{ error?: Error }>;
 	isError?: boolean;
-	progressBgColor?: string;
 }
 
 export type ReferralRankType = (typeof ReferralRank)[keyof typeof ReferralRank];

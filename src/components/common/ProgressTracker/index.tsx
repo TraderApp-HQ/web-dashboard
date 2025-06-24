@@ -11,7 +11,6 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
 	loadingComponent: LoadingComponent,
 	isError,
 	errorComponent: ErrorComponent,
-	progressBgColor = "bg-[#DA7B07]",
 	hasOptionalTiers = false,
 	optionalTiersTitle,
 	optionalTiers,
@@ -47,7 +46,7 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
 					<div className="progressContainer">
 						<div className="bg-[#EEEDEC] rounded-md h-3 w-full my-2">
 							<div
-								className={`rounded-md h-3 ${progressBgColor}`}
+								className="rounded-md h-3 bg-[#DA7B07]"
 								style={{ width: `${progress}%`, height: "13px" }}
 							></div>
 						</div>

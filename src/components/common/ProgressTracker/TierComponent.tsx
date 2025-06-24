@@ -3,7 +3,7 @@ import CheckMarkIcon from "~/components/icons/CheckMarkIcon";
 import { Tier } from "./types";
 import DropdownIcon from "~/components/icons/DropdownIcon";
 import { useMemo, useState } from "react";
-import { isTierCompleted } from "~/helpers";
+import { isTierCompleted, renderStatus } from "~/helpers";
 import TierIcon from "~/components/icons/TierIcon";
 
 export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
@@ -46,20 +46,21 @@ export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
 									>
 										<div className="text-[#414141] text-sm">{action.text}</div>
 
-										<div className="flex flex-row-reverse lg:flex-row items-center justify-between gap-5">
+										<div className="flex flex-row-reverse lg:flex-row items-center justify-between gap-2.5 lg:gap-5">
 											{action.taskPill && (
 												<section className="text-textLight text-sm md:text-base font-medium capitalize text-nowrap">
-													{/* {renderStatus(selectedTask.status)} */}
-													{action.taskPill}
+													{renderStatus(action.taskPill)}
 												</section>
 											)}
 											<button
 												type="button"
-												className="bg-[#1836B2] flex gap-0.5 items-center justify-center px-3 py-1 text-nowrap text-white rounded-md self-start disabled:opacity-50 disabled:cursor-not-allowed"
+												className="bg-buttonColor px-3 py-1 text-nowrap text-white rounded-md self-start disabled:opacity-50 disabled:cursor-not-allowed min-w-28 h-8 lg:min-w-40 lg:h-12 lg:font-semibold text-sm lg:text-base"
 												onClick={action.buttonAction}
 												disabled={action.disableActionButton}
 											>
-												{action.buttonText}
+												{action.buttonActionLoading
+													? "Processing..."
+													: action.buttonText}
 											</button>
 										</div>
 									</div>

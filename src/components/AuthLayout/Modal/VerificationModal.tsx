@@ -15,6 +15,8 @@ interface IVerificationModal {
 	notificationChannel: NotificationChannel;
 	verificationType: VerificationType[];
 	redirectTo?: string;
+	id?: string;
+	email?: string;
 }
 
 const initialCountdownTime = 90; // 90 seconds
@@ -27,6 +29,8 @@ export default function VerificationModal({
 	redirectTo,
 	notificationChannel,
 	verificationType,
+	id, // This is used to verify email on onboarding screen
+	email, // This is used to verify email on onboarding screen
 }: IVerificationModal) {
 	const router = useRouter();
 	/* Initialize enteredInput state as an array of strings */
@@ -37,8 +41,8 @@ export default function VerificationModal({
 	const [otpError, setOtpError] = useState<Error | null>(null);
 
 	const usersService = new UsersService();
-	const userId = searchParams.get("userid");
-	const recipient = searchParams.get("recipient");
+	const userId = searchParams.get("userid") ?? id;
+	const recipient = searchParams.get("recipient") ?? email;
 
 	/* Handle input change */
 	const inputChangeHandler = (index: number, value: string) => {

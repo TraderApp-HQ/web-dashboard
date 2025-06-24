@@ -20,15 +20,53 @@ interface IReturnUserOnboardingData {
 	tasks: Record<string, Tier>;
 	optionalTasks: Record<string, Tier>;
 	handleOnboardingPanelDisplay: () => void;
+	showFirstDepositModal: boolean;
+	handleFirstDepositModalDisplay: () => void;
+	showSocialAccountsModal: boolean;
+	handleSocialAccountsModalDisplay: () => void;
+	socialAccountsFormData: ISocialAccounts;
+	updateSocialAccountsFormData: (field: keyof ISocialAccounts, value: string) => void;
+	handleSocialAccountsUpdate: () => void;
+	isUpdatePending: boolean;
+	showVerifyEmailOtpModal: boolean;
+	handleEmailOtpModalDisplay: () => void;
+	toastData: IToastData;
+}
+interface ISocialAccounts {
+	facebookUsername: string;
+	instagramUsername: string;
+	twitterUsername: string;
+	tiktokUsername: string;
+}
+
+interface IToastData {
+	showToast: boolean;
+	type: "success" | "error";
+	title: string;
+	message: string;
 }
 
 export const useGetUserOnboardingFlowData = ({
 	userProfile,
 	onboardingTasks,
 }: IGetUserOnboardingData): IReturnUserOnboardingData => {
+	const usersService = new UsersService();
 	const [showOnboardingStepsPanel, setShowOnboardingStepsPanel] = useState<boolean>(true);
+	const [showVerifyEmailOtpModal, setShowVerifyEmailOtpModal] = useState<boolean>(false);
+	const [showFirstDepositModal, setShowFirstDepositModal] = useState<boolean>(false);
+	const [showSocialAccountsModal, setShowSocialAccountsModal] = useState<boolean>(false);
 	const [showDismissOnboardingPanelBtn, setShowDismissOnboardingPanelBtn] =
 		useState<boolean>(false);
+	const [socialAccountsFormData, setSocialAccountsFormData] = useState<ISocialAccounts>(
+		{} as ISocialAccounts,
+	);
+	const [toastData, setToastData] = useState<IToastData>({
+		showToast: false,
+		type: "success",
+		title: "",
+		message: "",
+	});
+
 	const {
 		showOnboardingSteps,
 		isEmailVerified,
@@ -40,16 +78,41 @@ export const useGetUserOnboardingFlowData = ({
 		instagramUsername,
 		twitterUsername,
 		tiktokUsername,
+		id,
+		email,
 	} = userProfile || {};
 
 	const { updateUserOnboardingStatus } = useUpdateUserOnboardingStatus();
+
+	// Verify Email Handler
+	const {
+		mutate: verifyEmail,
+		isPending: isVerifyEmailPending,
+		isError: isVerifyEmailError,
+		error: verifyEmailError,
+		isSuccess: isVerifyEmailSuccess,
+		data: verifyEmailData,
+	} = useCreate({
+		mutationFn: usersService.verifyEmail.bind(usersService),
+	});
+
+	// Update user social accounts
+	const {
+		mutate: updateUser,
+		isError,
+		error,
+		isPending,
+		isSuccess,
+	} = useCreate({
+		mutationFn: usersService.updateUser.bind(usersService),
+	});
 
 	// Handlers
 	// Memoized handler to avoid stale closures
 	const handleOnboardingPanelDisplay = useCallback(() => {
 		if (isEmailVerified && isFirstDepositMade && isTradingAccountConnected) {
 			setShowOnboardingStepsPanel(false);
-			updateUserOnboardingStatus({ field: UserOnboardingTaskField.SHOW_ONBOARDING_STEPS });
+			// updateUserOnboardingStatus({ field: UserOnboardingTaskField.SHOW_ONBOARDING_STEPS });
 		}
 	}, [
 		isEmailVerified,
@@ -58,6 +121,30 @@ export const useGetUserOnboardingFlowData = ({
 		updateUserOnboardingStatus,
 	]);
 
+	const handleEmailOtpModalDisplay = () => setShowVerifyEmailOtpModal((prev) => !prev);
+	const handleFirstDepositModalDisplay = () => setShowFirstDepositModal((prev) => !prev);
+	const handleSocialAccountsModalDisplay = () => {
+		setShowSocialAccountsModal((prev) => !prev);
+		setSocialAccountsFormData({} as ISocialAccounts);
+	};
+	const updateSocialAccountsFormData = (field: keyof ISocialAccounts, value: string) => {
+		setSocialAccountsFormData((prev) => {
+			const trimmedValue = value.trim();
+
+			return {
+				...prev,
+				[field]: trimmedValue,
+			};
+		});
+	};
+	const handleSocialAccountsUpdate = () => {
+		updateUser({
+			id,
+			...socialAccountsFormData,
+		});
+	};
+
+	// useEffects
 	// Handle display of onbaording steps sync with user profile
 	useEffect(() => {
 		if (userProfile) {
@@ -65,7 +152,7 @@ export const useGetUserOnboardingFlowData = ({
 		}
 	}, [showOnboardingSteps, userProfile]);
 
-	// Handle show dismiss button only when all required steps are done
+	// Handle dismiss button display
 	useEffect(() => {
 		setShowDismissOnboardingPanelBtn(
 			isEmailVerified && isFirstDepositMade && isTradingAccountConnected,
@@ -127,6 +214,52 @@ export const useGetUserOnboardingFlowData = ({
 		}
 	}, [onboardingTasks, userProfile]);
 
+	//  Handles modal opening and closing
+	useEffect(() => {
+		// Close social accounts modal
+		if (isSuccess && !isError) {
+			handleSocialAccountsModalDisplay();
+		}
+
+		// Open email verification otp modal
+		if (isVerifyEmailSuccess && verifyEmailData) {
+			handleEmailOtpModalDisplay();
+		}
+	}, [isSuccess, isVerifyEmailSuccess]);
+
+	// Handle Toast display
+	useEffect(() => {
+		// Verify email Otp Error
+		if (isVerifyEmailError && verifyEmailError) {
+			setToastData(() => ({
+				showToast: true,
+				type: "error",
+				title: "Verification Error",
+				message: verifyEmailError?.message ?? "Error in verifying email. Please try again.",
+			}));
+		}
+
+		// Update social account error
+		if (isError && error) {
+			setToastData(() => ({
+				showToast: true,
+				type: "error",
+				title: "Account Update Error",
+				message: error?.message ?? "Error in updating social handle. Please try again.",
+			}));
+		}
+
+		// Update Social Account success
+		if (isSuccess) {
+			setToastData(() => ({
+				showToast: true,
+				type: "success",
+				title: "Account Update",
+				message: "Social handle update successful.",
+			}));
+		}
+	}, [isVerifyEmailError, isSuccess, isError]);
+
 	const tasks = {
 		mail: {
 			title: "Email Verification",
@@ -138,7 +271,8 @@ export const useGetUserOnboardingFlowData = ({
 				{
 					text: "To finalise your registration and unlock the full access of your account, please verify your email address.",
 					buttonText: "Verify Email",
-					buttonAction: () => {},
+					buttonAction: () => verifyEmail({ id, email }),
+					buttonActionLoading: isVerifyEmailPending,
 					disableActionButton: isEmailVerified,
 				},
 			],
@@ -153,7 +287,7 @@ export const useGetUserOnboardingFlowData = ({
 				{
 					text: "To finalise your registration and unlock the full access of your account. A $10 activation fee will be deducted from your first payment.",
 					buttonText: "Make First Deposit",
-					buttonAction: () => redirectTo(`${ROUTES.wallet.deposit}?isFirstDeposit`),
+					buttonAction: () => handleFirstDepositModalDisplay(),
 					disableActionButton: isFirstDepositMade,
 				},
 			],
@@ -185,7 +319,7 @@ export const useGetUserOnboardingFlowData = ({
 				{
 					text: "To finalise your registration and unlock the full access of your account, please add your social media accounts.",
 					buttonText: "Add Accounts",
-					buttonAction: () => {},
+					buttonAction: () => handleSocialAccountsModalDisplay(),
 					disableActionButton: isSocialAccountConnected,
 				},
 			],
@@ -216,6 +350,17 @@ export const useGetUserOnboardingFlowData = ({
 		handleOnboardingPanelDisplay,
 		tasks,
 		optionalTasks,
+		showFirstDepositModal,
+		handleFirstDepositModalDisplay,
+		showSocialAccountsModal,
+		handleSocialAccountsModalDisplay,
+		socialAccountsFormData,
+		updateSocialAccountsFormData,
+		handleSocialAccountsUpdate,
+		isUpdatePending: isPending,
+		showVerifyEmailOtpModal,
+		handleEmailOtpModalDisplay,
+		toastData,
 	};
 };
 

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
+import { FaRegCircleCheck } from "react-icons/fa6";
 import { TaskCategory, UserTaskStatus } from "~/apis/handlers/users/enums";
 import { ICreateUserTask, ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
 import Button from "~/components/common/Button";
@@ -134,8 +135,11 @@ const ViewUserTask: React.FC<IViewUserTaskProps> = ({
 					isProcessing={isPending || isFetchingTask}
 				/>
 			) : (
-				<p className="text-center text-blue-600 text-2xl font-medium my-5 capitalize">
-					Task {selectedTask.status}
+				<p className="text-[#0B411F] text-sm lg:text-lg my-5 border border-[#92ECB3] bg-[#E9FBF0] rounded-lg px-5 py-3 flex items-start lg:items-center gap-3">
+					<FaRegCircleCheck color="#00944D" size={20} />
+					{selectedTask.status === UserTaskStatus.IN_REVIEW
+						? "Your task submission is currently been reviewed."
+						: "Your task is completed."}
 				</p>
 			)}
 		</section>
