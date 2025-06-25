@@ -112,7 +112,7 @@ export const useGetUserOnboardingFlowData = ({
 	const handleOnboardingPanelDisplay = useCallback(() => {
 		if (isEmailVerified && isFirstDepositMade && isTradingAccountConnected) {
 			setShowOnboardingStepsPanel(false);
-			// updateUserOnboardingStatus({ field: UserOnboardingTaskField.SHOW_ONBOARDING_STEPS });
+			updateUserOnboardingStatus({ field: UserOnboardingTaskField.SHOW_ONBOARDING_STEPS });
 		}
 	}, [
 		isEmailVerified,
