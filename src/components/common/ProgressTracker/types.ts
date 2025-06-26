@@ -54,5 +54,6 @@ export type IRankData = {
 		personalATC: IRankCriteriaStatus;
 		communityATC: IRankCriteriaStatus;
 		communitySize: IRankCriteriaStatus;
+		hasRequiredRankReferrals: IRankCriteriaStatus;
 	};
 };
