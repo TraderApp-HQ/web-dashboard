@@ -70,7 +70,7 @@ export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
 							)}
 						</div>
 
-						<div className="flex flex-col md:flex-row gap-4 md:gap-2">
+						<div className="flex flex-col lg:flex-row gap-4 lg:gap-2">
 							{tier.milestones.map((milestone, index) => (
 								<label
 									key={index}

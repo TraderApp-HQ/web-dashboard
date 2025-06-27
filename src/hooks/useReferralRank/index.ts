@@ -1,5 +1,5 @@
 import { IRankData, ReferralRankType } from "~/components/common/ProgressTracker/types";
-import { RANK_REQUIREMENTS } from "~/config/constants";
+import { RANK_REQUIREMENTS, ReferralRank } from "~/config/constants";
 
 type RankRequirements = Record<
 	ReferralRankType,
@@ -49,11 +49,23 @@ export const useReferralRank = (rankData: IRankData | undefined) => {
 								},
 							]
 						: []),
+					// Exclude TA_RECRUIT from the referral check as it does not require qualified referrals
+					...(value.hasRequiredRankReferrals.minValue > 0 &&
+					rank !== ReferralRank.TA_RECRUIT
+						? [
+								{
+									title: `Qualified Referrals (${value.hasRequiredRankReferrals.minValue}+)`,
+									hoverText: `Have at least ${value.hasRequiredRankReferrals.minValue} active referrals with equal or higher ranks`,
+									completed: value.hasRequiredRankReferrals.completed,
+								},
+							]
+						: []),
 				],
 				completed:
 					rankData[rank].personalATC.completed &&
 					rankData[rank].communityATC.completed &&
-					rankData[rank].communitySize.completed,
+					rankData[rank].communitySize.completed &&
+					rankData[rank].hasRequiredRankReferrals.completed,
 			};
 			return acc;
 		}, {} as RankRequirements);
