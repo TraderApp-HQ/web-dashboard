@@ -19,6 +19,7 @@ export const ROUTES = {
 		tradeHistory: "../trade-history",
 		tradingRules: "../trading-rules",
 		backButton: "/account/trade-center",
+		connect: "/account/trade-center/trading-accounts/connect",
 		manageTrade: "manage",
 		exchanges: "exchanges",
 	},

@@ -9,9 +9,14 @@ import {
 	TALieutenant,
 	TAMAjor,
 	TARecruit,
+	TaskIcon,
+	UserIcon,
+	ArrowCircleIcon,
+	ConnectIcon,
+	MailIcon,
 } from "./tiers";
 
-export const TierIcons: Record<ReferralRankType, React.FC> = {
+export const TierIcons: Record<ReferralRankType | string, React.FC> = {
 	[ReferralRank.TA_RECRUIT]: TARecruit,
 	[ReferralRank.TA_LIEUTENANT]: TALieutenant,
 	[ReferralRank.TA_CAPTAIN]: TACaptain,
@@ -19,4 +24,9 @@ export const TierIcons: Record<ReferralRankType, React.FC> = {
 	[ReferralRank.TA_COLONEL]: TAColonel,
 	[ReferralRank.TA_GENERAL]: TAGeneral,
 	[ReferralRank.TA_FIELD_MARSHAL]: TAFieldMarshal,
+	mail: MailIcon,
+	connect: ConnectIcon,
+	deposit: ArrowCircleIcon,
+	task: TaskIcon,
+	user: UserIcon,
 };

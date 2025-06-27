@@ -3,7 +3,7 @@ import { ReferralRankType } from "~/components/common/ProgressTracker/types";
 import { TierIcons } from "./tierIconMap";
 
 interface TierIconProps {
-	tier: ReferralRankType;
+	tier: ReferralRankType | string;
 }
 
 const TierIcon: React.FC<TierIconProps> = ({ tier }) => {

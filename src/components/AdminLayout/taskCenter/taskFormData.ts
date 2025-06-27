@@ -1,5 +1,10 @@
-import { Platform, TaskCategory, TaskType } from "~/apis/handlers/users/enums";
-import { ITaskCategory, ITaskPlatform, ITaskType } from "~/apis/handlers/users/interfaces";
+import { Platform, TaskCategory, TaskMode, TaskType } from "~/apis/handlers/users/enums";
+import {
+	ITaskCategory,
+	ITaskMode,
+	ITaskPlatform,
+	ITaskType,
+} from "~/apis/handlers/users/interfaces";
 
 export const taskCategory: ITaskCategory[] = [
 	{
@@ -47,5 +52,16 @@ export const taskType: ITaskType[] = [
 	{
 		displayText: "Time Based",
 		value: TaskType.TIME_BASED,
+	},
+];
+
+export const taskMode: ITaskMode[] = [
+	{
+		displayText: "General",
+		value: TaskMode.GENERAL,
+	},
+	{
+		displayText: "On Boarding",
+		value: TaskMode.ON_BOARDING,
 	},
 ];

@@ -5,6 +5,7 @@ export const UsersQueryId = {
 	task: "task",
 	activeTasks: "active-tasks",
 	pendingTasks: "pending-tasks",
+	onboardingTasks: "onboarding-tasks",
 };
 
 export const PAGINATION = {

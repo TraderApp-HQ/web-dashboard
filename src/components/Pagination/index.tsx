@@ -72,7 +72,10 @@ const Pagination: React.FC<PaginationProps> = ({
 				</span>
 				<SelectBox
 					options={calculateRowsPerPageOptions(totalRecord)}
-					option={{ value: rowsPerPage.toString(), displayText: rowsPerPage.toString() }}
+					option={{
+						value: rowsPerPage.toString(),
+						displayText: rowsPerPage.toString(),
+					}}
 					setOption={(selected) => setRowsPerPage(Number(selected.value))}
 					bgColor="bg-gray-100"
 					containerStyle="inline-block w-15"
