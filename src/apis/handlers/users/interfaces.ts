@@ -61,10 +61,6 @@ export interface IUserSignupInput {
 	referralCode?: string;
 }
 
-export interface IVerifyEmail {
-	id: string;
-	email: string;
-}
 export interface IResetPasswordInput {
 	verificationToken: string;
 	password: string;

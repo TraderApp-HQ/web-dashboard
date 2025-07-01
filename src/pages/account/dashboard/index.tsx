@@ -285,17 +285,13 @@ const Dashbaord = () => {
 			</div>
 
 			{/* Verify Email Modal */}
-			{showVerifyEmailOtpModal && (
-				<VerificationModal
-					openModal={showVerifyEmailOtpModal}
-					setOpenModal={handleEmailOtpModalDisplay}
-					notificationChannel={NotificationChannel.EMAIL}
-					verificationType={[VerificationType.UPDATE]}
-					redirectTo={LAYOUT_ROUTES.account}
-					id={userProfile?.id}
-					email={userProfile?.email}
-				/>
-			)}
+			<VerificationModal
+				openModal={showVerifyEmailOtpModal}
+				setOpenModal={handleEmailOtpModalDisplay}
+				notificationChannel={NotificationChannel.EMAIL}
+				verificationType={[VerificationType.UPDATE]}
+				redirectTo={LAYOUT_ROUTES.account}
+			/>
 
 			{/* First Deposit Modal */}
 			{showFirstDepositModal && (

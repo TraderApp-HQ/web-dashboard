@@ -70,7 +70,7 @@ export enum UserTaskPageTab {
 	COMPLETED = "completed",
 }
 
-export enum UserOnboardingTaskField {
+export enum UserOnboardingChecklist {
 	IS_EMAIL_VERIFIED = "isEmailVerified",
 	IS_FIRST_DEPOSIT_MADE = "isFirstDepositMade",
 	IS_TRADING_ACCOUNT_CONNECTED = "isTradingAccountConnected",

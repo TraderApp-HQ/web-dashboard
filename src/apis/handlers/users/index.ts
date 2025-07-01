@@ -28,7 +28,6 @@ import type {
 	IReferrals,
 	ITaskPlatformData,
 	IFetchOnboardingTasks,
-	IVerifyEmail,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 export class UsersService {
@@ -86,20 +85,6 @@ export class UsersService {
 
 		const { data } = response;
 		return data as IUserProfile;
-	}
-
-	public async verifyEmail(userData: IVerifyEmail): Promise<IVerifyEmail> {
-		const response = await this.apiClient.post<IResponse>({
-			url: "/auth/verify-email",
-			data: userData,
-		});
-
-		if (response.error) {
-			throw new Error(response.message || "Signup failed");
-		}
-
-		const { data } = response;
-		return data as IVerifyEmail;
 	}
 
 	public async createNewUser(userData: ICreateUserInput): Promise<IUserProfile> {

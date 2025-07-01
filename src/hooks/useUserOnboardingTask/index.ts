@@ -1,13 +1,14 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { UsersService } from "~/apis/handlers/users";
-import { UserOnboardingTaskField, UserTaskStatus } from "~/apis/handlers/users/enums";
+import { UserOnboardingChecklist, UserTaskStatus } from "~/apis/handlers/users/enums";
 import { IFetchOnboardingTasks, IUserProfile } from "~/apis/handlers/users/interfaces";
 import { Tier } from "~/components/common/ProgressTracker/types";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { redirectTo } from "~/utils/RedirectTo";
 import { useCreate } from "../useCreate";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
+import { useRouter } from "next/router";
 
 interface IGetUserOnboardingData {
 	userProfile: IUserProfile;
@@ -29,7 +30,7 @@ interface IReturnUserOnboardingData {
 	handleSocialAccountsUpdate: () => void;
 	isUpdatePending: boolean;
 	showVerifyEmailOtpModal: boolean;
-	handleEmailOtpModalDisplay: () => void;
+	handleEmailOtpModalDisplay: (value: boolean) => void;
 	toastData: IToastData;
 }
 interface ISocialAccounts {
@@ -51,8 +52,9 @@ export const useGetUserOnboardingFlowData = ({
 	onboardingTasks,
 }: IGetUserOnboardingData): IReturnUserOnboardingData => {
 	const usersService = new UsersService();
+	const router = useRouter();
+	const { userid, recipient } = router.query;
 	const [showOnboardingStepsPanel, setShowOnboardingStepsPanel] = useState<boolean>(true);
-	const [showVerifyEmailOtpModal, setShowVerifyEmailOtpModal] = useState<boolean>(false);
 	const [showFirstDepositModal, setShowFirstDepositModal] = useState<boolean>(false);
 	const [showSocialAccountsModal, setShowSocialAccountsModal] = useState<boolean>(false);
 	const [showDismissOnboardingPanelBtn, setShowDismissOnboardingPanelBtn] =
@@ -66,6 +68,7 @@ export const useGetUserOnboardingFlowData = ({
 		title: "",
 		message: "",
 	});
+	let showVerifyEmailOtpModal: boolean = Boolean(userid && recipient);
 
 	const {
 		showOnboardingSteps,
@@ -84,16 +87,15 @@ export const useGetUserOnboardingFlowData = ({
 
 	const { updateUserOnboardingStatus } = useUpdateUserOnboardingStatus();
 
-	// Verify Email Handler
+	// Verify Email OTP Handler
 	const {
-		mutate: verifyEmail,
-		isPending: isVerifyEmailPending,
-		isError: isVerifyEmailError,
-		error: verifyEmailError,
-		isSuccess: isVerifyEmailSuccess,
-		data: verifyEmailData,
+		mutate: verifyEmailOtp,
+		isPending: isVerifyEmailOtpPending,
+		isError: isVerifyEmailOtpError,
+		error: verifyEmailOtpError,
+		isSuccess: isVerifyEmailOtpSuccess,
 	} = useCreate({
-		mutationFn: usersService.verifyEmail.bind(usersService),
+		mutationFn: usersService.sendOtp.bind(usersService),
 	});
 
 	// Update user social accounts
@@ -112,7 +114,7 @@ export const useGetUserOnboardingFlowData = ({
 	const handleOnboardingPanelDisplay = useCallback(() => {
 		if (isEmailVerified && isFirstDepositMade && isTradingAccountConnected) {
 			setShowOnboardingStepsPanel(false);
-			updateUserOnboardingStatus({ field: UserOnboardingTaskField.SHOW_ONBOARDING_STEPS });
+			updateUserOnboardingStatus({ field: UserOnboardingChecklist.SHOW_ONBOARDING_STEPS });
 		}
 	}, [
 		isEmailVerified,
@@ -121,7 +123,20 @@ export const useGetUserOnboardingFlowData = ({
 		updateUserOnboardingStatus,
 	]);
 
-	const handleEmailOtpModalDisplay = () => setShowVerifyEmailOtpModal((prev) => !prev);
+	const handleEmailOtpModalDisplay = (value: boolean) => {
+		if (!value) {
+			// Clears the query when closeModal() is called
+			router.replace(
+				{
+					pathname: router.pathname,
+				},
+				undefined,
+				{ shallow: true },
+			);
+		}
+
+		showVerifyEmailOtpModal = value;
+	};
 	const handleFirstDepositModalDisplay = () => setShowFirstDepositModal((prev) => !prev);
 	const handleSocialAccountsModalDisplay = () => {
 		setShowSocialAccountsModal((prev) => !prev);
@@ -168,7 +183,7 @@ export const useGetUserOnboardingFlowData = ({
 			// Call backend API to save option in DB
 			if (socialAccountConnected) {
 				updateUserOnboardingStatus({
-					field: UserOnboardingTaskField.IS_SOCIAL_ACCOUNT_CONNECTED,
+					field: UserOnboardingChecklist.IS_SOCIAL_ACCOUNT_CONNECTED,
 				});
 			}
 		}
@@ -182,7 +197,7 @@ export const useGetUserOnboardingFlowData = ({
 			isSocialAccountConnected &&
 			isOnboardingTaskDone
 		) {
-			updateUserOnboardingStatus({ field: UserOnboardingTaskField.SHOW_ONBOARDING_STEPS });
+			updateUserOnboardingStatus({ field: UserOnboardingChecklist.SHOW_ONBOARDING_STEPS });
 		}
 	}, [
 		showOnboardingSteps,
@@ -208,7 +223,7 @@ export const useGetUserOnboardingFlowData = ({
 			// Call backend API to save option in DB
 			if (onboardingTaskStatus) {
 				updateUserOnboardingStatus({
-					field: UserOnboardingTaskField.IS_ONBOARDING_TASK_DONE,
+					field: UserOnboardingChecklist.IS_ONBOARDING_TASK_DONE,
 				});
 			}
 		}
@@ -221,21 +236,34 @@ export const useGetUserOnboardingFlowData = ({
 			handleSocialAccountsModalDisplay();
 		}
 
-		// Open email verification otp modal
-		if (isVerifyEmailSuccess && verifyEmailData) {
-			handleEmailOtpModalDisplay();
+		// Set query params based on otp verification success
+		if (isVerifyEmailOtpSuccess) {
+			const newSearchParams = new URLSearchParams();
+
+			newSearchParams.set("userid", id);
+			newSearchParams.set("recipient", email);
+
+			router.replace(
+				{
+					pathname: router.pathname,
+					query: Object.fromEntries(newSearchParams.entries()),
+				},
+				undefined,
+				{ shallow: true },
+			);
 		}
-	}, [isSuccess, isVerifyEmailSuccess]);
+	}, [isSuccess, isVerifyEmailOtpSuccess]);
 
 	// Handle Toast display
 	useEffect(() => {
 		// Verify email Otp Error
-		if (isVerifyEmailError && verifyEmailError) {
+		if (isVerifyEmailOtpError && verifyEmailOtpError) {
 			setToastData(() => ({
 				showToast: true,
 				type: "error",
 				title: "Verification Error",
-				message: verifyEmailError?.message ?? "Error in verifying email. Please try again.",
+				message:
+					verifyEmailOtpError?.message ?? "Error in verifying email. Please try again.",
 			}));
 		}
 
@@ -258,7 +286,7 @@ export const useGetUserOnboardingFlowData = ({
 				message: "Social handle update successful.",
 			}));
 		}
-	}, [isVerifyEmailError, isSuccess, isError]);
+	}, [isVerifyEmailOtpError, isSuccess, isError]);
 
 	const tasks = {
 		mail: {
@@ -271,8 +299,8 @@ export const useGetUserOnboardingFlowData = ({
 				{
 					text: "To finalise your registration and unlock the full access of your account, please verify your email address.",
 					buttonText: "Verify Email",
-					buttonAction: () => verifyEmail({ id, email }),
-					buttonActionLoading: isVerifyEmailPending,
+					buttonAction: () => verifyEmailOtp({ userId: id }),
+					buttonActionLoading: isVerifyEmailOtpPending,
 					disableActionButton: isEmailVerified,
 				},
 			],
