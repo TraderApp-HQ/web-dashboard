@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
+import { FaRegCircleCheck } from "react-icons/fa6";
 import { TaskCategory, UserTaskStatus } from "~/apis/handlers/users/enums";
 import { ICreateUserTask, ITaskWithPopulate } from "~/apis/handlers/users/interfaces";
 import Button from "~/components/common/Button";
@@ -11,17 +12,22 @@ import useUserProfileData from "~/hooks/useUserProfileData";
 
 interface IViewUserTaskProps {
 	selectedTask: ITaskWithPopulate;
-	closeModal: () => void;
+	refetchTask: () => void;
+	isFetchingTask: boolean;
 }
 
-const ViewUserTask: React.FC<IViewUserTaskProps> = ({ selectedTask, closeModal }) => {
+const ViewUserTask: React.FC<IViewUserTaskProps> = ({
+	selectedTask,
+	refetchTask,
+	isFetchingTask,
+}) => {
 	const { userId } = useUserProfileData();
 	const { createUserTask, isPending, isSuccess } = useCreateUserTask();
 
-	// function to close modal
+	// function to refetch task after update
 	useEffect(() => {
 		if (isSuccess) {
-			closeModal();
+			refetchTask();
 		}
 	}, [isSuccess]);
 
@@ -120,15 +126,21 @@ const ViewUserTask: React.FC<IViewUserTaskProps> = ({ selectedTask, closeModal }
 				</section>
 			</section>
 
-			{selectedTask.status === UserTaskStatus.PENDING && (
+			{selectedTask.status === UserTaskStatus.PENDING || isFetchingTask ? (
 				<Button
 					labelText="Mark as completed"
-					onClick={() => {
-						createUserTask(task);
-					}}
-					className="my-6 text-base min-w-[40%] font-bold self-center"
-					disabled={isPending}
+					onClick={() => createUserTask(task)}
+					className="my-6 text-base min-w-[40%] font-bold self-center disabled:cursor-not-allowed disabled:opacity-50"
+					disabled={isPending || isFetchingTask}
+					isProcessing={isPending || isFetchingTask}
 				/>
+			) : (
+				<div className="text-[#0B411F] text-sm lg:text-lg my-5 border border-[#92ECB3] bg-[#E9FBF0] rounded-lg px-5 py-3 flex items-start lg:items-center gap-3">
+					<FaRegCircleCheck color="#00944D" size={20} />
+					{selectedTask.status === UserTaskStatus.IN_REVIEW
+						? "Your task submission is currently been reviewed."
+						: "Your task is completed."}
+				</div>
 			)}
 		</section>
 	);

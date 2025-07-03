@@ -10,7 +10,7 @@ const ViewTaskModal = () => {
 	const [openTaskModal, setOpenTaskModal] = useState(true);
 	const router = useRouter();
 	const { taskId } = router.query;
-	const { task, isLoading, isError, error } = useGetUserTask(taskId as string);
+	const { task, isLoading, isError, error, refetch } = useGetUserTask(taskId as string);
 
 	const closeModal = () => {
 		router.back();
@@ -34,7 +34,13 @@ const ViewTaskModal = () => {
 					{error?.message}
 				</section>
 			) : (
-				task && <ViewUserTask selectedTask={task} closeModal={closeModal} />
+				task && (
+					<ViewUserTask
+						selectedTask={task}
+						refetchTask={refetch}
+						isFetchingTask={isLoading}
+					/>
+				)
 			)}
 		</Modal>
 	);

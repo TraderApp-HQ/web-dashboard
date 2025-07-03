@@ -34,10 +34,9 @@ const UserTaskDashboard = () => {
 	const queryKey = task as keyof IDocsLength;
 	const [rowsPerPage, setRowsPerPage] = useState<number>(PAGINATION.LIMIT);
 	const [currentPage, setCurrentPage] = useState<number>(PAGINATION.PAGE);
+	const [totalPages, setTotalPages] = useState<number>(0);
 	const [tasks, setTasks] = useState<ITaskTableData[]>([]);
 	const [docsLength, setDocsLength] = useState<IDocsLength>();
-	const [firstPageIndex, setFirstPageIndex] = useState<number>();
-	const [lastPageIndex, setLastPageIndex] = useState<number>();
 
 	const { activeTasks, isLoading } = useGetAllActiveTasks();
 
@@ -92,10 +91,10 @@ const UserTaskDashboard = () => {
 
 			const firstIndex = (currentPage - 1) * rowsPerPage;
 			const lastIndex = Math.min(rowsPerPage * currentPage, docsLength[queryKey]);
+			const totalPages = Math.ceil(docsLength[queryKey] / rowsPerPage);
 
 			setDocsLength(docsLength);
-			setFirstPageIndex(firstIndex);
-			setLastPageIndex(lastIndex);
+			setTotalPages(totalPages);
 			setTasks(taskDetails.slice(firstIndex, lastIndex));
 		}
 	}, [activeTasks, currentPage, rowsPerPage]);
@@ -125,19 +124,19 @@ const UserTaskDashboard = () => {
 			<section className="space-y-5">
 				<PageTab tabs={taskTabs} docCount={docsLength} />
 
-				<section className="bg-white rounded-xl p-2 md:p-6 overflow-x-auto">
+				<section className="overflow-x-auto">
 					{isLoading ? (
-						<>
+						<div className="bg-white rounded-xl p-2 md:p-6">
 							<section className="w-full hidden md:block">
 								<TableLoader />
 							</section>
 							<section className="w-full md:hidden">
 								<MobileTableLoader />
 							</section>
-						</>
+						</div>
 					) : tasks && tasks.length >= 1 ? (
 						<>
-							<section className="hidden md:block">
+							<section className="hidden md:block bg-white rounded-xl p-2 md:p-6">
 								<DataTable
 									hasMenueItems={true}
 									menueItemType="icon-button"
@@ -145,24 +144,36 @@ const UserTaskDashboard = () => {
 									tHead={tableHead}
 									tBody={tableBody}
 								/>
+								<section className="mt-4 p-2">
+									<Pagination
+										currentPage={currentPage}
+										totalPages={totalPages}
+										rowsPerPage={rowsPerPage}
+										totalRecord={docsLength![queryKey]}
+										setRowsPerPage={setRowsPerPage}
+										onNext={() => setCurrentPage((prev) => ++prev)}
+										onPrev={() => setCurrentPage((prev) => --prev)}
+									/>
+								</section>
 							</section>
 							<section className="md:hidden">
-								<DataTableMobile data={mobileData} />
-							</section>
-							<section className="mt-3 p-2 rounded-lg">
-								<Pagination
-									currentPage={(firstPageIndex as number) + 1}
-									totalPages={lastPageIndex as number}
-									rowsPerPage={rowsPerPage!}
-									totalRecord={docsLength![queryKey]}
-									setRowsPerPage={setRowsPerPage}
-									onNext={() => setCurrentPage((prev) => prev && ++prev)}
-									onPrev={() => setCurrentPage((prev) => prev && --prev)}
+								<DataTableMobile
+									data={mobileData}
+									showPagination={true}
+									paginationProps={{
+										currentPage: currentPage,
+										totalPages: totalPages,
+										rowsPerPage: rowsPerPage,
+										totalRecord: docsLength![queryKey],
+										setRowsPerPage: setRowsPerPage,
+										onNext: () => setCurrentPage((prev) => ++prev),
+										onPrev: () => setCurrentPage((prev) => --prev),
+									}}
 								/>
 							</section>
 						</>
 					) : (
-						<section className="text-center p-[2rem] my-8 mx-auto">
+						<section className="text-center p-[2rem] my-8 mx-auto bg-white rounded-xl">
 							<h3 className="font-semibold text-xl text-textColor mb-2">
 								No task recorded yet
 							</h3>
