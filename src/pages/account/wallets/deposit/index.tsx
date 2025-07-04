@@ -33,7 +33,8 @@ import { useInitiateDeposit, useWalletDepositOptions } from "~/hooks/useWallets"
 
 const Deposit = () => {
 	const router = useRouter();
-	const firstDeposit = "firstDeposit" in router.query;
+	const { first_deposit } = router.query;
+	const firstDeposit = first_deposit === "true";
 	const [openModal, setOpenModal] = useState(true);
 	const [depositUrlModal, setDepositUrlModal] = useState(false);
 	const [depositExpiredModal, setDepositExpiredModal] = useState(false);
@@ -289,7 +290,6 @@ const Deposit = () => {
 										className="no-spin-buttons"
 										value={amount !== undefined ? amount.toString() : ""}
 										onChange={handleChangeAmount}
-										disable={firstDeposit}
 									/>
 								)}
 
