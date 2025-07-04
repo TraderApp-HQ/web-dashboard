@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 interface IGetUserOnboardingData {
 	userProfile: IUserProfile;
 	onboardingTasks: IFetchOnboardingTasks;
+	refetchUserProfile: () => void;
 }
 
 interface IReturnUserOnboardingData {
@@ -50,6 +51,7 @@ interface IToastData {
 export const useGetUserOnboardingFlowData = ({
 	userProfile,
 	onboardingTasks,
+	refetchUserProfile,
 }: IGetUserOnboardingData): IReturnUserOnboardingData => {
 	const usersService = new UsersService();
 	const router = useRouter();
@@ -77,15 +79,12 @@ export const useGetUserOnboardingFlowData = ({
 		isTradingAccountConnected,
 		isSocialAccountConnected,
 		isOnboardingTaskDone,
-		facebookUsername,
-		instagramUsername,
-		twitterUsername,
-		tiktokUsername,
 		id,
 		email,
 	} = userProfile || {};
 
-	const { updateUserOnboardingStatus } = useUpdateUserOnboardingStatus();
+	const { updateUserOnboardingStatus, isSuccess: isUpdateUserOnboardingStatusSuccess } =
+		useUpdateUserOnboardingStatus();
 
 	// Verify Email OTP Handler
 	const {
@@ -174,21 +173,8 @@ export const useGetUserOnboardingFlowData = ({
 		);
 	}, [isEmailVerified, isFirstDepositMade, isTradingAccountConnected]);
 
-	// Handle social accounts connection status
+	// Edge case: All onboarding steps are done but showOnboardingStep is still true
 	useEffect(() => {
-		if (showOnboardingSteps && !isSocialAccountConnected) {
-			const socialAccountConnected =
-				!!facebookUsername && !!instagramUsername && !!tiktokUsername && !!twitterUsername;
-
-			// Call backend API to save option in DB
-			if (socialAccountConnected) {
-				updateUserOnboardingStatus({
-					field: UserOnboardingChecklist.IS_SOCIAL_ACCOUNT_CONNECTED,
-				});
-			}
-		}
-
-		// Edge case: All onboarding steps are done but showOnboardingStep is still true
 		if (
 			showOnboardingSteps &&
 			isEmailVerified &&
@@ -206,10 +192,6 @@ export const useGetUserOnboardingFlowData = ({
 		isTradingAccountConnected,
 		isSocialAccountConnected,
 		isOnboardingTaskDone,
-		facebookUsername,
-		instagramUsername,
-		tiktokUsername,
-		twitterUsername,
 		updateUserOnboardingStatus,
 	]);
 
@@ -227,13 +209,21 @@ export const useGetUserOnboardingFlowData = ({
 				});
 			}
 		}
-	}, [onboardingTasks, userProfile]);
+	}, [showOnboardingSteps, isOnboardingTaskDone, onboardingTasks, userProfile]);
+
+	// Refetch user profile after successful update
+	useEffect(() => {
+		if (showOnboardingSteps && isUpdateUserOnboardingStatusSuccess) {
+			refetchUserProfile();
+		}
+	}, [showOnboardingSteps, isUpdateUserOnboardingStatusSuccess, refetchUserProfile]);
 
 	//  Handles modal opening and closing
 	useEffect(() => {
-		// Close social accounts modal
+		// Close social accounts modal & reload path to refetch user profile
 		if (isSuccess && !isError) {
 			handleSocialAccountsModalDisplay();
+			router.replace(router.asPath);
 		}
 
 		// Set query params based on otp verification success
@@ -249,7 +239,7 @@ export const useGetUserOnboardingFlowData = ({
 					query: Object.fromEntries(newSearchParams.entries()),
 				},
 				undefined,
-				{ shallow: true },
+				{ shallow: false },
 			);
 		}
 	}, [isSuccess, isVerifyEmailOtpSuccess]);

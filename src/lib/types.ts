@@ -124,6 +124,7 @@ export interface ITransaction {
 	paymentProviderName?: string;
 	createdAt: string;
 	assetLogo?: AssetLogo;
+	transactionHash?: string;
 }
 
 export interface Wallet {

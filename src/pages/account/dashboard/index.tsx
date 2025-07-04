@@ -14,6 +14,7 @@ import ComponentError from "~/components/Error/ComponentError";
 import { Line } from "~/components/Loaders";
 import DashboardCardLoader from "~/components/Loaders/DashboardCardLoader";
 import { ProgressTrackerLoader } from "~/components/Loaders/ReferralProgressLoader";
+import WalletBalanceCardLoader from "~/components/Loaders/WalletBalanceCardLoader";
 import Modal from "~/components/Modal";
 import PortfolioSummary from "~/components/Portfolio/PorfolioSummary";
 import HidenBalance from "~/components/Wallet/HidenBalance";
@@ -45,8 +46,13 @@ const Dashbaord = () => {
 	const COLORS = ["#414141", "#DA7B07"];
 
 	// Get user profile data
-	const { userProfile, isUserProfileLoading, userProfileError, isUserProfileError } =
-		useUserProfileData();
+	const {
+		userProfile,
+		isUserProfileLoading,
+		userProfileError,
+		isUserProfileError,
+		refetchUserProfile,
+	} = useUserProfileData();
 
 	// Get pending tasks
 	const {
@@ -62,6 +68,7 @@ const Dashbaord = () => {
 		data: walletData,
 		isLoading: isWalletLoading,
 		isSuccess: isWalletSuccess,
+		isError: isWalletError,
 	} = useGetUserWalletsBalance(WalletType.MAIN);
 
 	// Get onboarding Tasks
@@ -88,6 +95,7 @@ const Dashbaord = () => {
 	} = useGetUserOnboardingFlowData({
 		userProfile: userProfile as IUserProfile,
 		onboardingTasks: onboardingTasks as IFetchOnboardingTasks,
+		refetchUserProfile,
 	});
 
 	return (
@@ -119,54 +127,63 @@ const Dashbaord = () => {
 					</section>
 
 					{/* <Card className="py-5 px-3 md:p-5 flex flex-col md:flex-row justify-between items-start gap-5 !rounded-2xl bg-[url(/images/card-bg.png)] bg-cover bg-no-repeat bg-center !h-[220px] md:!h-[180px]"> */}
-					<Card className="py-5 px-3 md:p-5 flex flex-col md:flex-row justify-between items-start gap-5 !rounded-2xl bg-[url(/images/dashboard-banner.png)] bg-cover bg-no-repeat bg-center !h-[220px] md:!h-[180px]">
-						<div className="flex flex-col justify-center w-full space-y-5 text-white">
-							<div className="flex items-center space-x-2">
-								<h4 className="text-base font-medium">Wallet Overview</h4>
+					{isWalletLoading ? (
+						<WalletBalanceCardLoader />
+					) : isWalletSuccess && walletData ? (
+						<Card className="py-5 px-3 md:p-5 flex flex-col md:flex-row justify-between items-start gap-5 !rounded-2xl bg-[url(/images/dashboard-banner.png)] bg-cover bg-no-repeat bg-center !h-[220px] md:!h-[180px]">
+							<div className="flex flex-col justify-center w-full space-y-5 text-white">
+								<div className="flex items-center space-x-2">
+									<h4 className="text-base font-medium">Wallet Overview</h4>
 
-								<span
-									onClick={() => handleShowBalance(!showBalance)}
-									className="cursor-pointer"
-								>
+									<span
+										onClick={() => handleShowBalance(!showBalance)}
+										className="cursor-pointer"
+									>
+										{showBalance ? (
+											<EyesIcon color="#FFFFFF" />
+										) : (
+											<OpenEyesIcon color="#FFFFFF" />
+										)}
+									</span>
+								</div>
+								<h3 className="text-4xl font-bold">
 									{showBalance ? (
-										<EyesIcon color="#FFFFFF" />
-									) : (
-										<OpenEyesIcon color="#FFFFFF" />
-									)}
-								</span>
-							</div>
-							<h3 className="text-4xl font-bold">
-								{isWalletLoading ? (
-									<Line width="md" height="lg" />
-								) : showBalance && isWalletSuccess && walletData ? (
-									<>
-										<small className="text-2xl">
-											{
+										<>
+											<small className="text-2xl">
+												{
+													walletData.exchangeRateTotalBalances.find(
+														(bal) => bal.currency === "USD",
+													)?.currency
+												}
+											</small>{" "}
+											{formatCurrency(
 												walletData.exchangeRateTotalBalances.find(
 													(bal) => bal.currency === "USD",
-												)?.currency
-											}
-										</small>{" "}
-										{formatCurrency(
-											walletData.exchangeRateTotalBalances.find(
-												(bal) => bal.currency === "USD",
-											)?.balance || 0,
-										)}
-									</>
-								) : (
-									<HidenBalance className="mt-4 mb-2" iconBgColor="#FFFFFF" />
-								)}
-							</h3>
-						</div>
-						<IconButton
-							Icon={TiltedCircledDownRightArrowIcon}
-							btnClass="w-48 h-12 bg-buttonColor text-zinc-50 font-semibold text-base text-nowrap px-4 py-2 gap-2 rounded-lg"
-							aria-label="Make a Deposit"
-							onClick={() => redirectTo(ROUTES.wallet.deposit)}
-						>
-							Make a Deposit
-						</IconButton>
-					</Card>
+												)?.balance || 0,
+											)}
+										</>
+									) : (
+										<HidenBalance className="mt-4 mb-2" iconBgColor="#FFFFFF" />
+									)}
+								</h3>
+							</div>
+							<IconButton
+								Icon={TiltedCircledDownRightArrowIcon}
+								btnClass="w-48 h-12 bg-buttonColor text-zinc-50 font-semibold text-base text-nowrap px-4 py-2 gap-2 rounded-lg"
+								aria-label="Make a Deposit"
+								onClick={() => redirectTo(ROUTES.wallet.deposit)}
+							>
+								Make a Deposit
+							</IconButton>
+						</Card>
+					) : (
+						!isWalletLoading &&
+						isWalletError && (
+							<ComponentError
+								errorMessage={"Error fetching wallet balance. Please try again."}
+							/>
+						)
+					)}
 				</section>
 
 				{/* Onboarding Section */}
@@ -338,7 +355,7 @@ const Dashbaord = () => {
 								className="tracking-widest h-12"
 								fluid={true}
 								onClick={() => {
-									redirectTo(`${ROUTES.wallet.deposit}?firstDeposit`);
+									redirectTo(`${ROUTES.wallet.deposit}?first_deposit=true`);
 									handleFirstDepositModalDisplay();
 								}}
 							>

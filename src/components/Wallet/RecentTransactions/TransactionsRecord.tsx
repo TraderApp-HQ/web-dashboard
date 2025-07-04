@@ -15,9 +15,13 @@ interface TransactionInfoItemProps {
 const TransactionInfoItem: React.FC<TransactionInfoItemProps> = ({ label, value }) => {
 	const isAddress = label === "Address";
 	return (
-		<div className="flex gap-x-6 justify-between items-center w-full px-3.5 py-5 border-b border-gray-200 last:border-0">
-			<h4 className="text-neutral-700 text-sm font-bold">{label}</h4>
-			<p className={`text-gray-500 text-sm font-bold ${isAddress && "truncate"}`}>{value}</p>
+		<div className="flex gap-x-6 lg:gap-x-10 justify-between items-start w-full px-3.5 py-5 border-b border-gray-200 last:border-0">
+			<h4 className="text-neutral-700 text-sm font-bold text-nowrap">{label}</h4>
+			<p
+				className={`text-gray-500 text-sm font-bold break-all ${isAddress && "truncate"} ${label === "Network" && "uppercase"}`}
+			>
+				{value}
+			</p>
 		</div>
 	);
 };
@@ -28,9 +32,12 @@ export function WithdrawalTransactionsRecord({ transaction }: ITransactionsRecor
 		<Card className="p-3.5 !bg-slate-50 mb-4">
 			<TransactionInfoItem label="Address" value={transaction.fromWalletAddress ?? ""} />
 			{/* <TransactionInfoItem label="Wallet" value={transaction.wallet} /> */}
-			<TransactionInfoItem label="Transaction ID" value={transaction._id ?? ""} />
+			<TransactionInfoItem label="Transaction ID" value={transaction.transactionHash ?? ""} />
 			{/* <TransactionInfoItem label="Transaction Fee" value={`$${transaction.fee}`} /> */}
-			<TransactionInfoItem label="Network" value={transaction.transactionNetwork ?? ""} />
+			<TransactionInfoItem
+				label="Network"
+				value={transaction.transactionNetwork?.replaceAll("_", " ") ?? ""}
+			/>
 			<TransactionInfoItem label="Withdrawn Amount" value={`${transaction.amount} USDT`} />
 		</Card>
 	);
@@ -41,9 +48,12 @@ export function DepositTransactionsRecord({ transaction }: ITransactionsRecordPr
 	return (
 		<Card className="p-3.5 !bg-slate-50 mb-4">
 			<TransactionInfoItem label="Address" value={transaction.fromWalletAddress ?? ""} />
-			<TransactionInfoItem label="Transaction ID" value={transaction._id ?? ""} />
+			<TransactionInfoItem label="Transaction ID" value={transaction.transactionHash ?? ""} />
 			{/* <TransactionInfoItem label="Wallet" value={transaction.wallet} /> */}
-			<TransactionInfoItem label="Network" value={transaction.transactionNetwork ?? ""} />
+			<TransactionInfoItem
+				label="Network"
+				value={transaction.transactionNetwork?.replaceAll("_", " ") ?? ""}
+			/>
 			<TransactionInfoItem
 				label="Deposit Amount"
 				value={`${transaction.fromAmount ?? transaction.amount} USDT`}

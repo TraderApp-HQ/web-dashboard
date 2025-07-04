@@ -121,7 +121,7 @@ const ConnectTradingAccount = () => {
 	}, [isTradingPlatformsSuccess, tradingPlatforms, selectedCategory, userTradingAccounts]);
 
 	const handleModalClose = () => {
-		router.push("/account/trade-center/trading-accounts");
+		router.back();
 		setIsOpen(false);
 	};
 
