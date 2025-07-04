@@ -16,11 +16,18 @@ type RankRequirements = Record<
 	}
 >;
 
+const rankOrder = Object.values(ReferralRank);
+
 export const useReferralRank = (rankData: IRankData | undefined) => {
 	if (!rankData) return { rankRequirements: {} };
 	const generateRankRequirements = (rankData: IRankData): RankRequirements => {
-		return Object.entries(rankData).reduce((acc, [_rank, value]) => {
+		const sortedEntries = Object.entries(rankData).sort(
+			([a], [b]) =>
+				rankOrder.indexOf(a as ReferralRankType) - rankOrder.indexOf(b as ReferralRankType),
+		);
+		return sortedEntries.reduce((acc, [_rank, value], idx) => {
 			const rank = _rank as ReferralRankType;
+			const previousRank = idx <= 0 ? null : rankOrder[idx - 1];
 			acc[rank] = {
 				title: rank,
 				icon: rank,
@@ -54,7 +61,7 @@ export const useReferralRank = (rankData: IRankData | undefined) => {
 					rank !== ReferralRank.TA_RECRUIT
 						? [
 								{
-									title: `Qualified Referrals (${value.hasRequiredRankReferrals.minValue}+)`,
+									title: `Referrals with rank of ${previousRank} or higher (${value.hasRequiredRankReferrals.minValue}+)`,
 									hoverText: `Have at least ${value.hasRequiredRankReferrals.minValue} active referrals with equal or higher ranks`,
 									completed: value.hasRequiredRankReferrals.completed,
 								},
