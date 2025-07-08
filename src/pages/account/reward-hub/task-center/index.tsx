@@ -142,8 +142,8 @@ const UserTaskDashboard = () => {
 								<MobileTableLoader />
 							</section>
 						</div>
-					) : isSuccess && activeTasks ? (
-						tasks && tasks.length >= 1 ? (
+					) : isSuccess && tasks ? (
+						tasks.length >= 1 ? (
 							<>
 								<section className="hidden md:block bg-white rounded-xl p-2 md:p-6">
 									<DataTable
