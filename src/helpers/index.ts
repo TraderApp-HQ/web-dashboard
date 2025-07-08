@@ -23,6 +23,7 @@ import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/type
 import DisplayChange from "~/components/common/DisplayChange";
 import RankDisplay from "~/components/common/RankDisplay";
 import DisplayTransaction from "~/components/common/DisplayTransaction";
+import { IReferrals } from "~/apis/handlers/users/interfaces";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -173,4 +174,25 @@ export const isTierCompleted = (tier: Tier): boolean => {
 	return tier.milestones.length
 		? tier.milestones.every((milestone) => milestone.completed)
 		: !!tier.completed;
+};
+
+export const getUserStatusToolTipText = (referral: IReferrals): string[] => {
+	const statusToolTipTextArray: string[] = [];
+
+	if (referral.userId.status === UserStatus.INACTIVE) {
+		if (!referral.userId.isEmailVerified) {
+			statusToolTipTextArray.push("Email not verified.");
+		}
+		if (!referral.userId.isFirstDepositMade) {
+			statusToolTipTextArray.push("First Deposit not made.");
+		}
+		if (!referral.userId.isTradingAccountConnected) {
+			statusToolTipTextArray.push("Trading account not connected.");
+		}
+		if (!referral.userId.isPersonalATCFunded) {
+			statusToolTipTextArray.push("Trading account not funded/below minimum balance.");
+		}
+	}
+
+	return statusToolTipTextArray;
 };

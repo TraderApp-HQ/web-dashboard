@@ -8,6 +8,7 @@ import AdminLayout from "~/components/AdminLayout/Layout";
 import Button from "~/components/common/Button";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import Toast from "~/components/common/Toast";
+import ComponentError from "~/components/Error/ComponentError";
 import DropdownIcon from "~/components/icons/DropdownIcon";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
@@ -168,7 +169,9 @@ const TaskCenter = () => {
 						</section>
 					</>
 				) : isError && !selectedTasks ? (
-					<p className="text-red-400 py-10 m-auto">{`An Error occured: ${error?.message}`}</p>
+					<ComponentError
+						errorMessage={error?.message ?? "An error occured, please try again!"}
+					/>
 				) : selectedTasks && selectedTasks.length >= 1 ? (
 					<section className="overflow-x-auto">
 						<section className="hidden md:block">

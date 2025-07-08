@@ -24,6 +24,7 @@ export interface IUserProfile {
 	isEmailVerified: boolean;
 	isFirstDepositMade: boolean;
 	isTradingAccountConnected: boolean;
+	isPersonalATCFunded: boolean;
 	isSocialAccountConnected: boolean;
 	isOnboardingTaskDone: boolean;
 	showOnboardingSteps: boolean;

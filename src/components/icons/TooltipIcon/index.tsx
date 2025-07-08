@@ -11,7 +11,7 @@ export interface TooltipIconProps {
 	maxWidth?: string;
 	minWidth?: string;
 	visible?: boolean;
-	text: string;
+	text: string | string[];
 	tooltipBgColor?: string;
 	tooltipTextColor?: string;
 }
@@ -81,7 +81,13 @@ const TooltipIcon: React.FC<TooltipIconProps> = ({
 				className={`absolute z-50 p-2 text-[12px] ${tooltipTextColor} bg-[#3E5BD2] border border-gray-300 rounded shadow-sm w-auto text-center font-light leading-normal max-w-${maxWidth} ${visible ? "visible" : "invisible group-hover:visible"} ${pointerClasses.container} ${contentClassName} before:content-[''] before:absolute before:border-8 before:border-solid before:border-transparent after:content-[''] after:absolute after:border-[7px] after:border-solid after:border-transparent ${pointerClasses.pointerBorder} ${pointerClasses.pointerBg}`}
 				style={{ minWidth }}
 			>
-				{text}
+				{typeof text === "string"
+					? text
+					: text?.map((line, index) => (
+							<ul key={index} className="list-disc list-inside">
+								<li className="">{line}</li>
+							</ul>
+						))}
 			</div>
 		</div>
 	);

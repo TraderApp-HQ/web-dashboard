@@ -139,7 +139,25 @@ const DataTable: React.FC<IDataTable> = ({
 											tc.styles ?? ""
 										}`}
 									>
-										{tc.displayItem}
+										{tc.toolTipText ? (
+											<section className="flex justify-center items-center gap-1">
+												{tc.displayItem}
+												<TooltipIcon
+													direction="top"
+													icon={
+														<FiHelpCircle
+															size={16}
+															className="text-gray-400 cursor-help"
+														/>
+													}
+													text={tc.toolTipText}
+													tooltipTextColor="text-white"
+													contentClassName="!text-left border-2"
+												/>
+											</section>
+										) : (
+											tc.displayItem
+										)}
 									</td>
 								))}
 								{hasActions && (
