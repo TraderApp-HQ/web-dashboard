@@ -3,7 +3,6 @@ import { ITableMobile, ITBody } from "~/components/common/DataTable/config";
 import { getUserStatusToolTipText, renderDisplayItem, renderRank, renderStatus } from "~/helpers";
 import { UsersCommunityHeadItems } from "./constants";
 import { format } from "date-fns";
-import { UserStatus } from "~/config/enum";
 
 export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 	const tableHead = [...UsersCommunityHeadItems];
@@ -41,10 +40,8 @@ export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 								justify: "justify-center items-center gap-1",
 							},
 							true,
+							statusToolTipTextArray,
 						),
-						...(referral.userId.status === UserStatus.INACTIVE && {
-							toolTipText: statusToolTipTextArray,
-						}),
 					},
 					{
 						displayItem: renderDisplayItem({
@@ -91,10 +88,8 @@ export function communityUsersMobileDataTableSelector(referrals: IReferrals[]) {
 						referral.userId.status,
 						{ justify: "justify-end" },
 						false,
+						statusToolTipTextArray,
 					),
-					...(referral.userId.status === UserStatus.INACTIVE && {
-						displayItemValueToolTipText: statusToolTipTextArray,
-					}),
 				},
 				{
 					displayItemTitle: "Registration Date",

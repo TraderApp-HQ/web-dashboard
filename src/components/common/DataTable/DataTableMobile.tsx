@@ -120,25 +120,7 @@ const DataTableMobile: FC<IDataTableMobile> = ({
 										)}
 									</div>
 									<div className="text-sm text-[#0C394B] font-semibold w-[60%] text-right">
-										{tb.displayItemValueToolTipText ? (
-											<div className="flex justify-end items-center gap-1">
-												<TooltipIcon
-													direction="left"
-													icon={
-														<FiHelpCircle
-															size={16}
-															className="text-gray-400 cursor-help"
-														/>
-													}
-													text={tb.displayItemValueToolTipText}
-													tooltipTextColor="text-white"
-													contentClassName="!text-left border-2"
-												/>
-												{tb.displayItemValue}
-											</div>
-										) : (
-											tb.displayItemValue
-										)}
+										{tb.displayItemValue}
 									</div>
 								</div>
 							);

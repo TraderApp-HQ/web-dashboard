@@ -34,7 +34,6 @@ interface ITBodyRow {
 interface ITBodyColumns {
 	displayItem: string | JSX.Element | ReactNode;
 	styles?: string;
-	toolTipText?: string | string[];
 }
 
 export interface ITableMobileItem {
@@ -45,7 +44,6 @@ export interface ITableMobileItem {
 		text: string;
 		icon?: JSX.Element | ReactNode;
 	};
-	displayItemValueToolTipText?: string | string[];
 }
 
 export interface ITableMobile {

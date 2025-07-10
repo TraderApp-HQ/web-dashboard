@@ -87,7 +87,12 @@ export function renderTransactionType(transaction: TransactionType) {
 	});
 }
 
-export function renderStatus(status: string, style?: { justify?: string }, bullet?: boolean) {
+export function renderStatus(
+	status: string,
+	style?: { justify?: string },
+	bullet?: boolean,
+	toolTipText?: string[],
+) {
 	let theme: ColourTheme;
 	switch (status) {
 		case TransactionStatus.SUCCESS:
@@ -133,7 +138,7 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 		default:
 			theme = ColourTheme.PRIMARY;
 	}
-	return React.createElement(StatusPill, { status, theme, style, bullet });
+	return React.createElement(StatusPill, { status, theme, style, bullet, toolTipText });
 }
 
 export function renderRank(rank: ReferralRankType | null) {
