@@ -29,6 +29,9 @@ describe("User Task Center", () => {
 		(useGetAllActiveTasks as jest.Mock).mockReturnValue({
 			data: activeTasksTest,
 			isLoading: false,
+			isSuccess: true,
+			isError: false,
+			error: null,
 			refetch: mockRefetch,
 		});
 	});

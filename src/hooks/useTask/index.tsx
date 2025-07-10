@@ -68,12 +68,14 @@ export const useGetAllActiveTasks = () => {
 		data: activeTasks,
 		isLoading,
 		isSuccess,
+		isError,
+		error,
 	} = useFetch({
 		queryKey: [UsersQueryId.activeTasks],
 		queryFn: fetchActiveTasks,
 	});
 
-	return { activeTasks, isLoading, isSuccess };
+	return { activeTasks, isLoading, isSuccess, isError, error };
 };
 
 export const useGetAllPendingTasks = () => {

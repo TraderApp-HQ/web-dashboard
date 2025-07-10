@@ -126,7 +126,6 @@ const Dashbaord = () => {
 						)}
 					</section>
 
-					{/* <Card className="py-5 px-3 md:p-5 flex flex-col md:flex-row justify-between items-start gap-5 !rounded-2xl bg-[url(/images/card-bg.png)] bg-cover bg-no-repeat bg-center !h-[220px] md:!h-[180px]"> */}
 					{isWalletLoading ? (
 						<WalletBalanceCardLoader />
 					) : isWalletSuccess && walletData ? (
@@ -169,7 +168,7 @@ const Dashbaord = () => {
 							</div>
 							<IconButton
 								Icon={TiltedCircledDownRightArrowIcon}
-								btnClass="w-48 h-12 bg-buttonColor text-zinc-50 font-semibold text-base text-nowrap px-4 py-2 gap-2 rounded-lg"
+								btnClass="w-48 h-12 bg-zinc-50 text-buttonColor font-semibold text-base text-nowrap px-4 py-2 gap-2 rounded-lg"
 								aria-label="Make a Deposit"
 								onClick={() => redirectTo(ROUTES.wallet.deposit)}
 							>
@@ -190,7 +189,7 @@ const Dashbaord = () => {
 				{userProfile && showOnboardingStepsPanel && (
 					<ProgressTracker
 						title="Finish setting up your account"
-						body=""
+						body="Complete the following onboarding steps below to complete your account setup."
 						tiers={tasks}
 						hasOptionalTiers={true}
 						optionalTiersTitle="Optional Task"
@@ -204,7 +203,7 @@ const Dashbaord = () => {
 						hasDismissBtn={showDismissOnboardingPanelBtn}
 						dismissBtn={() => (
 							<p
-								className="text-[#102477] font-semibold text-base text-nowrap ml-auto text-right cursor-pointer"
+								className="text-[#102477] font-semibold text-base text-nowrap cursor-pointer"
 								aria-label="Dismiss Button"
 								onClick={handleOnboardingPanelDisplay}
 							>

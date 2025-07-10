@@ -31,11 +31,13 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
 
 	return (
 		<section className="mt-5 border border-[#DEE3F6] rounded-md bg-white text-[#3E57BF] p-5">
-			{/* dismiss btn */}
-			{hasDismissBtn && DismissBtn && <DismissBtn />}
+			<section className="flex flex-row items-start justify-between gap-2 flex-nowrap">
+				{/* Header */}
+				<h3 className="font-bold text-lg mb-1 text-[#102477]">{title}</h3>
 
-			{/* Header */}
-			<h3 className="font-bold text-lg mb-1 text-[#102477]">{title}</h3>
+				{/* dismiss btn */}
+				{hasDismissBtn && DismissBtn && <DismissBtn />}
+			</section>
 			{body && <p className="text-[#414141] font-light">{body}</p>}
 
 			{!isLoading && isError && ErrorComponent ? (
