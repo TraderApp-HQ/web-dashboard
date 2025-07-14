@@ -21,6 +21,7 @@ import {
 	userTaskCenterTableSelector,
 } from "~/selectors/task-center";
 import { NestedRewardHubLayout } from "..";
+import ComponentError from "~/components/Error/ComponentError";
 
 const UserTaskDashboard = () => {
 	const taskTabs = [
@@ -38,7 +39,7 @@ const UserTaskDashboard = () => {
 	const [tasks, setTasks] = useState<ITaskTableData[]>([]);
 	const [docsLength, setDocsLength] = useState<IDocsLength>();
 
-	const { activeTasks, isLoading } = useGetAllActiveTasks();
+	const { activeTasks, isLoading, isSuccess, isError, error } = useGetAllActiveTasks();
 
 	// function to get all docs length
 	const getAllDocsLength = (data: IFetchAllActiveTasks) => {
@@ -85,7 +86,7 @@ const UserTaskDashboard = () => {
 	useEffect(() => setCurrentPage(PAGINATION.PAGE), [rowsPerPage]); // resets the page when rows per page is changed.
 
 	useEffect(() => {
-		if (activeTasks) {
+		if (isSuccess && activeTasks) {
 			const docsLength = getAllDocsLength(activeTasks);
 			const taskDetails = getAllTaskDetails(activeTasks);
 
@@ -108,7 +109,7 @@ const UserTaskDashboard = () => {
 				<section className="bg-white p-3 w-[20rem]">
 					<CardLoader />
 				</section>
-			) : (
+			) : !isLoading && isSuccess ? (
 				<Card className="sm:max-w-[20rem] flex items-start justify-between px-4 py-2">
 					<section className="space-y-10">
 						<p className="font-semibold">Accumulated Points</p>
@@ -119,6 +120,13 @@ const UserTaskDashboard = () => {
 						<UserTaskPointIcon />
 					</section>
 				</Card>
+			) : (
+				!isLoading &&
+				isError && (
+					<ComponentError
+						errorMessage={error?.message ?? "An error occured, please try again!"}
+					/>
+				)
 			)}
 
 			<section className="space-y-5">
@@ -134,54 +142,65 @@ const UserTaskDashboard = () => {
 								<MobileTableLoader />
 							</section>
 						</div>
-					) : tasks && tasks.length >= 1 ? (
-						<>
-							<section className="hidden md:block bg-white rounded-xl p-2 md:p-6">
-								<DataTable
-									hasMenueItems={true}
-									menueItemType="icon-button"
-									justifyMenueItem="justify-center"
-									tHead={tableHead}
-									tBody={tableBody}
-								/>
-								<section className="mt-4 p-2">
-									<Pagination
-										currentPage={currentPage}
-										totalPages={totalPages}
-										rowsPerPage={rowsPerPage}
-										totalRecord={docsLength![queryKey]}
-										setRowsPerPage={setRowsPerPage}
-										onNext={() => setCurrentPage((prev) => ++prev)}
-										onPrev={() => setCurrentPage((prev) => --prev)}
+					) : isSuccess && tasks ? (
+						tasks.length >= 1 ? (
+							<>
+								<section className="hidden md:block bg-white rounded-xl p-2 md:p-6">
+									<DataTable
+										hasMenueItems={true}
+										menueItemType="icon-button"
+										justifyMenueItem="justify-center"
+										tHead={tableHead}
+										tBody={tableBody}
+									/>
+									<section className="mt-4 p-2">
+										<Pagination
+											currentPage={currentPage}
+											totalPages={totalPages}
+											rowsPerPage={rowsPerPage}
+											totalRecord={docsLength![queryKey]}
+											setRowsPerPage={setRowsPerPage}
+											onNext={() => setCurrentPage((prev) => ++prev)}
+											onPrev={() => setCurrentPage((prev) => --prev)}
+										/>
+									</section>
+								</section>
+								<section className="md:hidden">
+									<DataTableMobile
+										data={mobileData}
+										showPagination={true}
+										paginationProps={{
+											currentPage: currentPage,
+											totalPages: totalPages,
+											rowsPerPage: rowsPerPage,
+											totalRecord: docsLength![queryKey],
+											setRowsPerPage: setRowsPerPage,
+											onNext: () => setCurrentPage((prev) => ++prev),
+											onPrev: () => setCurrentPage((prev) => --prev),
+										}}
 									/>
 								</section>
+							</>
+						) : (
+							<section className="text-center p-[2rem] my-8 mx-auto bg-white rounded-xl">
+								<h3 className="font-semibold text-xl text-textColor mb-2">
+									No task recorded yet
+								</h3>
+								<p className="text-[#808080] font-medium text-base md:text-lg">
+									Once a task has been added to your record, it will be displayed
+									here.
+								</p>
 							</section>
-							<section className="md:hidden">
-								<DataTableMobile
-									data={mobileData}
-									showPagination={true}
-									paginationProps={{
-										currentPage: currentPage,
-										totalPages: totalPages,
-										rowsPerPage: rowsPerPage,
-										totalRecord: docsLength![queryKey],
-										setRowsPerPage: setRowsPerPage,
-										onNext: () => setCurrentPage((prev) => ++prev),
-										onPrev: () => setCurrentPage((prev) => --prev),
-									}}
-								/>
-							</section>
-						</>
+						)
 					) : (
-						<section className="text-center p-[2rem] my-8 mx-auto bg-white rounded-xl">
-							<h3 className="font-semibold text-xl text-textColor mb-2">
-								No task recorded yet
-							</h3>
-							<p className="text-[#808080] font-medium text-base md:text-lg">
-								Once a task has been added to your record, it will be displayed
-								here.
-							</p>
-						</section>
+						!isLoading &&
+						isError && (
+							<ComponentError
+								errorMessage={
+									error?.message ?? "An error occured, please try again!"
+								}
+							/>
+						)
 					)}
 				</section>
 			</section>

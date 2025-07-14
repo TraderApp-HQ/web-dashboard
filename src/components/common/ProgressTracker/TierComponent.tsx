@@ -15,7 +15,7 @@ export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
 		>
 			<div className="flex flex-col gap-5 my-4">
 				<div className="flex items-center justify-between">
-					<div className="flex items-center gap-4">
+					<div className="flex items-center gap-2 md:gap-4">
 						<div className="w-[30px] h-[30px] bg-[#eff4ff] rounded-full flex items-center justify-center">
 							<TierIcon tier={tier.icon} />
 						</div>
@@ -54,7 +54,7 @@ export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
 											)}
 											<button
 												type="button"
-												className="bg-buttonColor px-3 py-1 text-nowrap text-white rounded-md self-start disabled:opacity-50 disabled:cursor-not-allowed min-w-28 h-8 lg:min-w-40 lg:h-12 lg:font-semibold text-sm lg:text-base"
+												className="bg-buttonColor px-3 py-1 text-nowrap text-white rounded-md self-start disabled:opacity-50 disabled:cursor-not-allowed min-w-40 h-12 lg:font-semibold text-base"
 												onClick={action.buttonAction}
 												disabled={action.disableActionButton}
 											>
