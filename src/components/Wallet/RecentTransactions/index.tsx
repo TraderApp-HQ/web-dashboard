@@ -28,6 +28,7 @@ export default function RecentTransactions() {
 		isError,
 		isLoading,
 		isSuccess,
+		refetch,
 	} = useGetUserWalletsRecentTransactions({ currentPage, rowsPerPage });
 
 	// Selectors
@@ -65,6 +66,15 @@ export default function RecentTransactions() {
 		onNext: () => setCurrentPage((prev) => prev + 1),
 		onPrev: () => setCurrentPage((prev) => prev - 1),
 	};
+
+	// Refetch wallet balance every 2 minutes
+	useEffect(() => {
+		const interval = setInterval(() => {
+			refetch();
+		}, 120000); // 2 minutes
+
+		return () => clearInterval(interval);
+	}, [refetch]);
 
 	return (
 		<section className="space-y-5">

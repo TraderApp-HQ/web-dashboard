@@ -13,7 +13,7 @@ export const useGetUserWalletsBalance = (walletType: WalletType) => {
 		() => walletsService.getWalletBalance(walletType),
 		[walletsService],
 	);
-	const { data, error, isLoading, isSuccess, isError } = useFetch({
+	const { data, error, isLoading, isSuccess, isError, refetch } = useFetch({
 		queryKey: [WalletsQueryId.walletsBalance, walletType],
 		queryFn: walletBalance,
 	});
@@ -24,6 +24,7 @@ export const useGetUserWalletsBalance = (walletType: WalletType) => {
 		isLoading,
 		isSuccess,
 		isError,
+		refetch,
 	};
 };
 
@@ -96,7 +97,7 @@ export const useGetUserWalletsRecentTransactions = ({
 		() => walletsService.getWalletRecentTransactions({ currentPage, rowsPerPage }),
 		[walletsService, currentPage, rowsPerPage],
 	);
-	const { data, error, isLoading, isSuccess, isError } = useFetch({
+	const { data, error, isLoading, isSuccess, isError, refetch } = useFetch({
 		queryKey: [WalletsQueryId.walletTransactions, currentPage, rowsPerPage],
 		queryFn: recentTransactions,
 	});
@@ -107,6 +108,7 @@ export const useGetUserWalletsRecentTransactions = ({
 		isLoading,
 		isSuccess,
 		isError,
+		refetch,
 	};
 };
 

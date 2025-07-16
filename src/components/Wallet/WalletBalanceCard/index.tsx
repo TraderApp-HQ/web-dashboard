@@ -28,7 +28,9 @@ export default function WalletBalanceCard({
 	padding,
 }: ITotalBalanceSectionProps) {
 	// Get wallet balance hook
-	const { data, isError, isLoading, isSuccess } = useGetUserWalletsBalance(WalletType.MAIN);
+	const { data, isError, isLoading, isSuccess, refetch } = useGetUserWalletsBalance(
+		WalletType.MAIN,
+	);
 
 	const router = useRouter();
 	const [showBalance, handleShowBalance] = useState<boolean>(true);
@@ -58,6 +60,15 @@ export default function WalletBalanceCard({
 			);
 		}
 	}, [data, isSuccess]);
+
+	// Refetch wallet balance every 2 minutes
+	useEffect(() => {
+		const interval = setInterval(() => {
+			refetch();
+		}, 120000); // 2 minutes
+
+		return () => clearInterval(interval);
+	}, [refetch]);
 
 	return (
 		<>
