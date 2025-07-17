@@ -8,7 +8,7 @@ export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 	const tableHead = [...UsersCommunityHeadItems];
 	const tableBody: ITBody = {
 		tBodyRows: referrals.map((referral) => {
-			const statusToolTipTextArray = getUserStatusToolTipText(referral);
+			const statusToolTipTextArray = getUserStatusToolTipText(referral.userId);
 
 			return {
 				tBodyColumns: [
@@ -58,7 +58,7 @@ export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 
 export function communityUsersMobileDataTableSelector(referrals: IReferrals[]) {
 	const dataMobile: ITableMobile[] = referrals.map((referral) => {
-		const statusToolTipTextArray = getUserStatusToolTipText(referral);
+		const statusToolTipTextArray = getUserStatusToolTipText(referral.userId);
 
 		return {
 			tHead: {

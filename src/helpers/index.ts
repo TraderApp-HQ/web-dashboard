@@ -1,7 +1,20 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from "react";
 import { GetServerSidePropsResult } from "next";
+import React from "react";
+import {
+	PlatformAction,
+	TaskCategory,
+	TaskStatus,
+	UserTaskStatus,
+} from "~/apis/handlers/users/enums";
+import { IUserProfile } from "~/apis/handlers/users/interfaces";
+import DisplayChange from "~/components/common/DisplayChange";
+import DisplayItem from "~/components/common/DisplayItem";
+import DisplayTransaction from "~/components/common/DisplayTransaction";
+import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/types";
+import RankDisplay from "~/components/common/RankDisplay";
 import StatusPill from "~/components/common/StatusPill";
+import TargetPill from "~/components/common/TargetPill";
 import {
 	ColourTheme,
 	HTMLElements,
@@ -10,20 +23,7 @@ import {
 	TransactionType,
 	UserStatus,
 } from "~/config/enum";
-import TargetPill from "~/components/common/TargetPill";
 import type { IDisplayItem, TartgetProfit } from "~/lib/types";
-import DisplayItem from "~/components/common/DisplayItem";
-import {
-	PlatformAction,
-	TaskCategory,
-	TaskStatus,
-	UserTaskStatus,
-} from "~/apis/handlers/users/enums";
-import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/types";
-import DisplayChange from "~/components/common/DisplayChange";
-import RankDisplay from "~/components/common/RankDisplay";
-import DisplayTransaction from "~/components/common/DisplayTransaction";
-import { IReferrals } from "~/apis/handlers/users/interfaces";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -181,20 +181,20 @@ export const isTierCompleted = (tier: Tier): boolean => {
 		: !!tier.completed;
 };
 
-export const getUserStatusToolTipText = (referral: IReferrals): string[] => {
+export const getUserStatusToolTipText = (user: IUserProfile): string[] => {
 	const statusToolTipTextArray: string[] = [];
 
-	if (referral.userId.status === UserStatus.INACTIVE) {
-		if (!referral.userId.isEmailVerified) {
+	if (user.status === UserStatus.INACTIVE) {
+		if (!user.isEmailVerified) {
 			statusToolTipTextArray.push("Email not verified.");
 		}
-		if (!referral.userId.isFirstDepositMade) {
+		if (!user.isFirstDepositMade) {
 			statusToolTipTextArray.push("First Deposit not made.");
 		}
-		if (!referral.userId.isTradingAccountConnected) {
+		if (!user.isTradingAccountConnected) {
 			statusToolTipTextArray.push("Trading account not connected.");
 		}
-		if (!referral.userId.isPersonalATCFunded) {
+		if (!user.isPersonalATCFunded) {
 			statusToolTipTextArray.push("Trading account not funded/below minimum balance.");
 		}
 	}

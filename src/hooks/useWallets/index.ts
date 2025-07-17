@@ -2,7 +2,12 @@ import { useQueries } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { WalletsService } from "~/apis/handlers/wallets";
 import { WalletsQueryId } from "~/apis/handlers/wallets/constants";
-import { PaymentCategory, PaymentOperation, WalletType } from "~/apis/handlers/wallets/enum";
+import {
+	CurrencyCategory,
+	PaymentCategory,
+	PaymentOperation,
+	WalletType,
+} from "~/apis/handlers/wallets/enum";
 import { useFetch } from "../useFetch";
 import { useCreate } from "../useCreate";
 import { IPaginationQuery } from "~/apis/handlers/wallets/interface";
@@ -42,7 +47,10 @@ export const useWalletDepositOptions = ({
 		queries: [
 			{
 				queryKey: [WalletsQueryId.supportedCurrencies],
-				queryFn: () => walletsService.getSupportedCurrencies(),
+				queryFn: () =>
+					walletsService.getSupportedCurrencies({
+						category: category as unknown as CurrencyCategory,
+					}),
 			},
 			{
 				queryKey: [WalletsQueryId.paymentOptions, category, operation],
