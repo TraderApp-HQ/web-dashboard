@@ -1,7 +1,7 @@
 import { APIClient } from "~/apis/apiClient";
 import { UsersService } from "~/apis/handlers/users";
 import { IResponse } from "../interfaces";
-import { PaymentCategory, PaymentOperation, WalletType } from "./enum";
+import { CurrencyCategory, PaymentCategory, PaymentOperation, WalletType } from "./enum";
 import {
 	IFactoryPaymentProviderDepositResponse,
 	IInitiateDepositInput,
@@ -40,9 +40,13 @@ export class WalletsService {
 		return data as IUserWalletResponse;
 	}
 
-	public async getSupportedCurrencies(): Promise<IWalletSupportedCurrencies[]> {
+	public async getSupportedCurrencies({
+		category,
+	}: {
+		category: CurrencyCategory;
+	}): Promise<IWalletSupportedCurrencies[]> {
 		const response = await this.apiClient.get<IResponse>({
-			url: `/wallets/supported-currencies`,
+			url: `/wallets/supported-currencies?category=${category}`,
 		});
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch supported currencies.");
