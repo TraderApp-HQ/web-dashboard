@@ -22,6 +22,7 @@ import {
 	TransactionStatus,
 	TransactionType,
 	UserStatus,
+	UserTradingStatus,
 } from "~/config/enum";
 import type { IDisplayItem, TartgetProfit } from "~/lib/types";
 
@@ -184,7 +185,7 @@ export const isTierCompleted = (tier: Tier): boolean => {
 export const getUserStatusToolTipText = (user: IUserProfile): string[] => {
 	const statusToolTipTextArray: string[] = [];
 
-	if (user.status === UserStatus.INACTIVE) {
+	if (user.tradingStatus === UserTradingStatus.INACTIVE) {
 		if (!user.isEmailVerified) {
 			statusToolTipTextArray.push("Email not verified.");
 		}

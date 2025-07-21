@@ -35,7 +35,7 @@ export function communityUsersDataTableSelector(referrals: IReferrals[]) {
 					},
 					{
 						displayItem: renderStatus(
-							referral.userId.status,
+							referral.userId.tradingStatus,
 							{
 								justify: "justify-center items-center gap-1",
 							},
@@ -85,7 +85,7 @@ export function communityUsersMobileDataTableSelector(referrals: IReferrals[]) {
 				{
 					displayItemTitle: "Status",
 					displayItemValue: renderStatus(
-						referral.userId.status,
+						referral.userId.tradingStatus,
 						{ justify: "justify-end" },
 						false,
 						statusToolTipTextArray,

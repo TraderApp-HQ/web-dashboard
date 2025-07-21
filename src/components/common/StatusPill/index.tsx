@@ -1,6 +1,6 @@
 import React from "react";
 import { ConnectionStatus } from "~/components/AccountLayout/TradeCenter/TradingAccountCard";
-import { ColourTheme, UserStatus } from "~/config/enum";
+import { ColourTheme, UserTradingStatus } from "~/config/enum";
 import { capitalizeFirstLetter } from "~/helpers";
 
 interface IOperationStatus {
@@ -63,12 +63,12 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 
 	return (
 		<div className={`flex ${style.justify}`}>
-			{status === UserStatus.INACTIVE ? (
+			{status === UserTradingStatus.INACTIVE ? (
 				<ConnectionStatus
 					errorMessages={toolTipText || []}
 					isConnected={false}
 					connectionText={statusText}
-					connectionHeadingText="activation status"
+					connectionHeadingText="trading status"
 				/>
 			) : (
 				<div

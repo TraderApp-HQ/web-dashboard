@@ -18,7 +18,7 @@ export function usersDataTableSelector(users: IUserProfile[]) {
 					{ displayItem: user.role },
 					{
 						displayItem: renderStatus(
-							user.status,
+							user.tradingStatus,
 							{ justify: "justify-start" },
 							true,
 							statusToolTipTextArray,
