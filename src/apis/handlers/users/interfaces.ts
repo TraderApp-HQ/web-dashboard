@@ -1,4 +1,4 @@
-import type { UserStatus } from "~/config/enum";
+import type { UserStatus, UserTradingStatus } from "~/config/enum";
 import type {
 	NotificationChannel,
 	Platform,
@@ -37,6 +37,7 @@ export interface IUserProfile {
 	role: UserRole[];
 	referralRank: ReferralRankType;
 	status: UserStatus;
+	tradingStatus: UserTradingStatus;
 	createdAt: string;
 	updatedAt: string;
 }

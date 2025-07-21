@@ -35,6 +35,11 @@ export enum UserStatus {
 	INACTIVE = "INACTIVE",
 }
 
+export enum UserTradingStatus {
+	ACTIVE = "ACTIVE",
+	INACTIVE = "INACTIVE",
+}
+
 export enum Category {
 	FOREX = "FOREX",
 	CRYPTO = "CRYPTO",
