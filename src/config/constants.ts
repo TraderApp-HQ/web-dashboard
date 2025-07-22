@@ -41,6 +41,7 @@ export const ROUTES = {
 	signup: "/signup",
 	passwordrecover: "/password/recover",
 	passwordreset: "/password/reset",
+	otp: "/otp",
 
 	//admin routes
 	usermanagement: {

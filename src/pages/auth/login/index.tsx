@@ -87,16 +87,14 @@ const Login = () => {
 			newSearchParams.set("userid", data.id);
 			newSearchParams.set("recipient", data.email);
 
-			router.replace(
+			router.push(
 				{
-					pathname: router.pathname,
+					pathname: LAYOUT_ROUTES.auth + ROUTES.otp,
 					query: Object.fromEntries(newSearchParams.entries()),
 				},
 				undefined,
 				{ shallow: true },
 			);
-
-			setShowVerificationModal(true);
 		}
 	}, [isSuccess, data, router]);
 
