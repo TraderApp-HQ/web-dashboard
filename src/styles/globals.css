@@ -145,3 +145,8 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
 	display: none;
 }
+
+.onboarding-carousel .slick-dots li {
+	width: fit-content !important;
+	margin: 0 2px !important;
+}

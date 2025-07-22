@@ -87,16 +87,14 @@ const Login = () => {
 			newSearchParams.set("userid", data.id);
 			newSearchParams.set("recipient", data.email);
 
-			router.replace(
+			router.push(
 				{
-					pathname: router.pathname,
+					pathname: LAYOUT_ROUTES.auth + ROUTES.otp,
 					query: Object.fromEntries(newSearchParams.entries()),
 				},
 				undefined,
 				{ shallow: true },
 			);
-
-			setShowVerificationModal(true);
 		}
 	}, [isSuccess, data, router]);
 
@@ -112,15 +110,13 @@ const Login = () => {
 	};
 
 	return (
-		<section className="py-[100px] h-full md:px-[20px] flex items-center justify-center max-[768px]:pt-[0px]">
+		<section className="py-[200px] h-full md:px-[20px] flex items-center justify-center max-[768px]:pt-[0px]">
 			<div className="max-w-[419px] w-full">
-				<header className="text-center mb-[40px]">
-					<p className="text-[32px] text-[#102477] font-extrabold">Welcome back!</p>
-					<div className="flex items-center justify-center gap-x-[13px]">
-						<p className="font-bold text-[#B25E09]">
-							Enter your details to login to your account.
-						</p>
-					</div>
+				<header className="mb-[40px]">
+					<p className="text-xl text-slate-950 font-bold">Welcome back!</p>
+					<p className="text-xl text-slate-950 font-bold" data-testid="heading">
+						Please Login to Your Account
+					</p>
 				</header>
 				<form className="space-y-[16px]" noValidate>
 					{/* email address */}
@@ -131,7 +127,7 @@ const Login = () => {
 							pattern={"[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$"}
 							type="text"
 							placeholder={"Enter your email address"}
-							labelText={"Email address"}
+							labelText={"Email Address"}
 						/>
 					</div>
 					{/* password */}
@@ -159,7 +155,7 @@ const Login = () => {
 					<div className="py-[16px] space-y-[16px]">
 						<button
 							type="button"
-							className="transition-opacity duration-300 bg-[#1836B2] rounded-md px-[10px] py-4 font-semibold w-full text-white disabled:opacity-60"
+							className="transition-opacity duration-300 bg-[#1836B2] rounded-2xl px-[10px] py-4 font-semibold w-full text-white disabled:opacity-60"
 							onClick={handleLogin}
 							disabled={!validCredential || isPending}
 						>

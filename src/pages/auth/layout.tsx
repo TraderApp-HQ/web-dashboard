@@ -11,7 +11,7 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
 			<div className="hidden md:inline-block md:w-[45%]">
 				<SplashScreen />
 			</div>
-			<div className="h-screen overflow-y-auto flex justify-center items-center md:w-[55%]">
+			<div className="h-screen overflow-y-auto flex justify-center items-center md:w-[55%] bg-[#E5E9F8]">
 				<div className="px-5 md:px-0 w-full md:w-[550px]">{children}</div>
 			</div>
 		</div>
