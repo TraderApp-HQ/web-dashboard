@@ -51,7 +51,7 @@ export const useFetchActiveSignals = ({
 		queryKey: [AssetsQueryId.signals],
 		queryFn: fetchSignals,
 		refetch: true,
-		refetchTime: 120000, // Refetches from database every 2 minutes
+		refetchTime: 60000, // Refetches from database every 1 minute
 	});
 
 	useEffect(() => {
