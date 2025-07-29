@@ -197,7 +197,7 @@ const Signup = () => {
 
 	return (
 		<>
-			<section className="h-full md:px-[20px] items-center flex justify-center max-[768px]:pt-[0px]">
+			<section className="pt-[200px] pb-[100px] min-h-svh md:px-[20px] items-center flex justify-center">
 				<div className="max-w-[419px] w-full">
 					<header className="mb-[20px]">
 						<p className="text-xl text-slate-950 font-bold" data-testid="heading">

@@ -9,11 +9,9 @@ import { NotificationChannel, VerificationType } from "~/apis/handlers/users/enu
 import Toast from "~/components/common/Toast";
 import AuthLayout from "../layout";
 import { useSearchParams } from "next/navigation";
-import useUnProtectedRoute from "~/hooks/useUnProtectedRoute";
 
 const Login = () => {
 	const router = useRouter();
-	useUnProtectedRoute({ path: router.pathname });
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordValid, setPasswordValid] = useState(false);
@@ -87,14 +85,16 @@ const Login = () => {
 			newSearchParams.set("userid", data.id);
 			newSearchParams.set("recipient", data.email);
 
-			router.push(
+			router.replace(
 				{
-					pathname: LAYOUT_ROUTES.auth + ROUTES.otp,
+					pathname: router.pathname,
 					query: Object.fromEntries(newSearchParams.entries()),
 				},
 				undefined,
 				{ shallow: true },
 			);
+
+			setShowVerificationModal(true);
 		}
 	}, [isSuccess, data, router]);
 
@@ -110,7 +110,7 @@ const Login = () => {
 	};
 
 	return (
-		<section className="py-[200px] h-full md:px-[20px] flex items-center justify-center max-[768px]:pt-[0px]">
+		<section className="py-[100px] h-full md:px-[20px] flex items-center justify-center max-[768px]:pt-[0px]">
 			<div className="max-w-[419px] w-full">
 				<header className="mb-[40px]">
 					<p className="text-xl text-slate-950 font-bold">Welcome back!</p>
