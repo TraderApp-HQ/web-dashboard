@@ -1,13 +1,27 @@
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
+import LoadingLogo from "~/components/common/LoadingLogo";
 import TraderAppLogoPale from "~/components/icons/TraderAppLogoWhite";
 import OnboardingCarousel from "~/components/OnboardingCarousel";
 import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
+import { usePWAMobileDetection } from "~/hooks/usePWAMobileDetection";
 import useUnProtectedRoute from "~/hooks/useUnProtectedRoute";
 
 const Onboarding = () => {
 	const router = useRouter();
+	const { isMobileAndPWA, isLoading } = usePWAMobileDetection();
 	useUnProtectedRoute({ path: router.pathname });
+
+	useEffect(() => {
+		if (!isLoading && !isMobileAndPWA) {
+			router.push(LAYOUT_ROUTES.auth + ROUTES.login);
+		}
+	}, [isMobileAndPWA, isLoading, router]);
+
+	if (isLoading || !isMobileAndPWA) {
+		return <LoadingLogo />;
+	}
+
 	return (
 		<div className="h-screen overflow-y-auto  bg-blue-800">
 			<div className="px-5 py-12">
@@ -38,9 +52,6 @@ const Onboarding = () => {
 						</div>
 					</div>
 				</div>
-			</div>
-			<div className="w-96 h-8 left-0 bottom-0 right-0 absolute mx-auto">
-				<div className="w-32 h-[5px] left-[130px] bottom-[10px] absolute bg-white rounded-[100px]" />
 			</div>
 		</div>
 	);

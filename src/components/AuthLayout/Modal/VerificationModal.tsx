@@ -235,9 +235,10 @@ export default function VerificationModal({
 							{enteredInput.map((value, index) => (
 								<input
 									key={index}
-									type="number"
+									type="text"
 									placeholder=""
-									max={1}
+									inputMode="numeric"
+									pattern="\d*"
 									maxLength={1}
 									value={value}
 									ref={(ref) => {
