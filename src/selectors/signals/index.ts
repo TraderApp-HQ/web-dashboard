@@ -38,13 +38,15 @@ export function activeSignalsDataTableSelector(
 				},
 				{
 					displayItem:
-						signal.status !== SignalStatus.PENDING &&
-						`${signal.currentPrice ?? "-"} USDT`,
+						signal.status !== SignalStatus.PENDING
+							? `${signal.currentPrice ?? "-"} USDT`
+							: "-",
 				},
 				{
 					displayItem:
-						signal.status !== SignalStatus.PENDING &&
-						renderPercentageChange(signal.currentChange),
+						signal.status !== SignalStatus.PENDING
+							? renderPercentageChange(signal.currentChange)
+							: "-",
 				},
 				{
 					displayItem: renderTargetProfits({
@@ -104,7 +106,7 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			{
 				displayItemTitle: "Current Price",
 				displayItemValue:
-					signal.status !== SignalStatus.PENDING && `$${signal.currentPrice}`,
+					signal.status !== SignalStatus.PENDING ? `$${signal.currentPrice}` : "-",
 			},
 			{
 				displayItemTitle: "Targeted Profits",
@@ -120,8 +122,9 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			{
 				displayItemTitle: "Change",
 				displayItemValue:
-					signal.status !== SignalStatus.PENDING &&
-					renderPercentageChange(signal.currentChange),
+					signal.status !== SignalStatus.PENDING
+						? renderPercentageChange(signal.currentChange)
+						: "-",
 			},
 			{
 				displayItemTitle: "Status",
