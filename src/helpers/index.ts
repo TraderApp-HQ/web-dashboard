@@ -110,11 +110,14 @@ export function renderStatus(
 		case TransactionStatus.PENDING:
 		case UserTaskStatus.PENDING:
 		case TaskStatus.NOT_STARTED:
-		case OperationStatus.PAUSED:
 		case SignalStatus.PENDING:
-		case SignalStatus.PAUSED:
 		case OperationStatus.PROCESSING: {
 			theme = ColourTheme.WARNING;
+			break;
+		}
+		case OperationStatus.PAUSED:
+		case SignalStatus.PAUSED: {
+			theme = ColourTheme.PAUSED;
 			break;
 		}
 		case SignalStatus.INACTIVE:
