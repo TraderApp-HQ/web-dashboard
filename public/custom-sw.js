@@ -1,3 +1,13 @@
+self.addEventListener("message", (event) => {
+	if (event.data && event.data.type === "SKIP_WAITING") {
+		self.skipWaiting();
+	}
+});
+
+// This line is required for next-pwa to inject the precache manifest
+self.__WB_MANIFEST;
+
+// Your push notification handlers
 self.addEventListener("push", function (event) {
 	const data = event.data ? event.data.json() : {};
 	const title = data.title || "TraderApp Notification";

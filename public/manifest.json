@@ -1,6 +1,6 @@
 {
-	"name": "TraderApp Staging",
-	"short_name": "TraderApp Staging",
+	"name": "TraderApp Dev",
+	"short_name": "TraderApp Dev",
 	"description": "Copy Trading Platform",
 	"start_url": "/",
 	"display": "standalone",
