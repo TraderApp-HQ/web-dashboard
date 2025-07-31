@@ -515,4 +515,26 @@ export class UsersService {
 			throw new Error(response.message || "Referral tracking failed");
 		}
 	}
+
+	public async savePushSubscription(subscription: PushSubscription): Promise<void> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/notifications/subscribe-to-push-notifications",
+			data: subscription,
+		});
+		if (response.error) {
+			throw new Error(response.message || "Failed to save push subscription");
+		}
+		console.log("subscription", subscription);
+	}
+
+	public async removePushSubscription(subscription: PushSubscription): Promise<void> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/notifications/unsubscribe-from-push-notifications",
+			data: subscription,
+		});
+		if (response.error) {
+			throw new Error(response.message || "Failed to remove push subscription");
+		}
+		console.log("subscription", subscription);
+	}
 }

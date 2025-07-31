@@ -51,6 +51,7 @@ const withPwa = nextPwa({
 	skipWaiting: true,
 	// important to avoid running the generation everytime on your local environment
 	disable: process.env.NODE_ENV === "development",
+	swSrc: "public/custom-sw.js", // <-- add this line
 });
 
 export default withPwa(nextConfig);
