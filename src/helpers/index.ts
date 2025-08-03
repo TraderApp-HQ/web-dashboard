@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { GetServerSidePropsResult } from "next";
 import React from "react";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
 import {
 	PlatformAction,
 	TaskCategory,
@@ -101,6 +102,7 @@ export function renderStatus(
 		case UserTaskStatus.DONE:
 		case TaskStatus.STARTED:
 		case OperationStatus.ACTIVE:
+		case SignalStatus.ACTIVE:
 		case OperationStatus.COMPLETED: {
 			theme = ColourTheme.SUCCESS;
 			break;
@@ -108,11 +110,17 @@ export function renderStatus(
 		case TransactionStatus.PENDING:
 		case UserTaskStatus.PENDING:
 		case TaskStatus.NOT_STARTED:
-		case OperationStatus.PAUSED:
+		case SignalStatus.PENDING:
 		case OperationStatus.PROCESSING: {
 			theme = ColourTheme.WARNING;
 			break;
 		}
+		case OperationStatus.PAUSED:
+		case SignalStatus.PAUSED: {
+			theme = ColourTheme.PAUSED;
+			break;
+		}
+		case SignalStatus.INACTIVE:
 		case TaskStatus.COMPLETED:
 		case UserTaskStatus.IN_REVIEW: {
 			theme = ColourTheme.REVIEW;

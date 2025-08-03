@@ -16,6 +16,7 @@ export enum SignalRisk {
 }
 
 export enum SignalStatus {
+	PENDING = "PENDING",
 	ACTIVE = "ACTIVE",
 	PAUSED = "PAUSED",
 	INACTIVE = "INACTIVE",

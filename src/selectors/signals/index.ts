@@ -36,8 +36,18 @@ export function activeSignalsDataTableSelector(
 						isAssetItem: true,
 					}),
 				},
-				{ displayItem: `${signal.currentPrice ?? "-"} USDT` },
-				{ displayItem: renderPercentageChange(signal.currentChange) },
+				{
+					displayItem:
+						signal.status !== SignalStatus.PENDING
+							? `${signal.currentPrice ?? "-"} USDT`
+							: "-",
+				},
+				{
+					displayItem:
+						signal.status !== SignalStatus.PENDING
+							? renderPercentageChange(signal.currentChange)
+							: "-",
+				},
 				{
 					displayItem: renderTargetProfits({
 						targetProfits: signal.targetProfits,
@@ -95,7 +105,8 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 		tBody: [
 			{
 				displayItemTitle: "Current Price",
-				displayItemValue: `$${signal.currentPrice}`,
+				displayItemValue:
+					signal.status !== SignalStatus.PENDING ? `$${signal.currentPrice}` : "-",
 			},
 			{
 				displayItemTitle: "Targeted Profits",
@@ -110,7 +121,10 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			},
 			{
 				displayItemTitle: "Change",
-				displayItemValue: renderPercentageChange(signal.currentChange),
+				displayItemValue:
+					signal.status !== SignalStatus.PENDING
+						? renderPercentageChange(signal.currentChange)
+						: "-",
 			},
 			{
 				displayItemTitle: "Status",
