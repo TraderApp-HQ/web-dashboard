@@ -3,6 +3,7 @@ import UserProfileField from "~/components/AccountLayout/UserProfileField";
 import UserTile from "~/components/AccountLayout/UserTile";
 import useUserProfileData from "~/hooks/useUserProfileData";
 import { NestedSettingsLayout } from "..";
+import EnablePushNotificationsButton from "~/components/EnablePushNotificationsButton";
 
 const ProfileSettings = () => {
 	const { userProfile, userEmail, userFullName, userInitials } = useUserProfileData();
@@ -32,6 +33,9 @@ const ProfileSettings = () => {
 			<div className="flex flex-row flex-wrap items-center max-[640px]:justify-center gap-4 mt-6 border-b">
 				<UserProfileField fieldLabel="Country" fieldValue={userProfile?.countryName} />
 				<UserProfileField fieldLabel="Phone number" fieldValue={userProfile?.phone} />
+			</div>
+			<div className="mt-8">
+				<EnablePushNotificationsButton />
 			</div>
 		</div>
 	);
