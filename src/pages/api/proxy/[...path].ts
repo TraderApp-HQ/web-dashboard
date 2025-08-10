@@ -54,6 +54,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		});
 	}
 
+	// Add this at the beginning of the handler
+	console.log("Request headers:", Object.keys(req.headers));
+	console.log("Cookie header:", req.headers.cookie);
+	console.log("Origin:", req.headers.origin);
+	console.log("Host:", req.headers.host);
+
 	try {
 		// Extract query parameters (excluding the 'path' parameter)
 		const queryParams = new URLSearchParams();
@@ -100,17 +106,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			headers["Cookie"] = req.headers.cookie as string;
 			// console.log("All cookies being forwarded:", req.headers.cookie);
 
-			// // Parse cookies to see what's available
-			// const cookies = req.headers.cookie.split(";").reduce(
-			// 	(acc, cookie) => {
-			// 		const [key, value] = cookie.trim().split("=");
-			// 		acc[key] = value;
-			// 		return acc;
-			// 	},
-			// 	{} as Record<string, string>,
-			// );
+			// Parse cookies to see what's available
+			const cookies = req.headers.cookie.split(";").reduce(
+				(acc, cookie) => {
+					const [key, value] = cookie.trim().split("=");
+					acc[key] = value;
+					return acc;
+				},
+				{} as Record<string, string>,
+			);
 
-			// console.log("Parsed cookies:", cookies);
+			console.log("Parsed cookies:", cookies);
+		} else if (req.headers["x-cookies"]) {
+			// Fallback to custom header
+			headers["Cookie"] = req.headers["x-cookies"] as string;
+			console.log("Fallback cookies", req.headers["x-cookies"]);
 		}
 
 		const response = await fetch(targetUrl, {

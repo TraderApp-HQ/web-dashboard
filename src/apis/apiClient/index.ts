@@ -67,6 +67,14 @@ export class APIClient {
 			headers.Authorization = `Bearer ${getAccessToken()}`;
 		}
 
+		// Add a custom header to pass cookies if needed
+		if (typeof document !== "undefined") {
+			const cookies = document.cookie;
+			if (cookies) {
+				headers["x-Cookies"] = cookies;
+			}
+		}
+
 		const requestOptions: RequestInit = {
 			method,
 			headers,
