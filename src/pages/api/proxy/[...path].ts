@@ -55,10 +55,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 
 	// Add this at the beginning of the handler
-	console.log("Request headers:", Object.keys(req.headers));
+	console.log("=== REQUEST DEBUG ===");
+	console.log("Method:", req.method);
+	console.log("URL:", req.url);
+	console.log("All headers:", Object.keys(req.headers));
 	console.log("Cookie header:", req.headers.cookie);
+	console.log("Cookie header type:", typeof req.headers.cookie);
+	console.log("Cookie header length:", req.headers.cookie?.length);
 	console.log("Origin:", req.headers.origin);
-	console.log("Host:", req.headers.host);
+	console.log("Referer:", req.headers.referer);
+	console.log("=====================");
 
 	try {
 		// Extract query parameters (excluding the 'path' parameter)
@@ -113,6 +119,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			console.log("Using cookies from query param:", decodeURIComponent(cookiesFromQuery));
 		} else {
 			console.log("No cookies found from any source");
+			console.log("Available headers:", Object.keys(req.headers));
+			console.log("All header values:", req.headers);
 		}
 
 		const response = await fetch(targetUrl, {
