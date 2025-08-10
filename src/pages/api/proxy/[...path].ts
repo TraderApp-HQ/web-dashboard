@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
 		res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
 		res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-		res.setHeader("Access-Control-Allow-Credentials", "true");
+		res.setHeader("Access-Control-Allow-Credentials", "true"); // Add this
 		res.status(200).end();
 		return;
 	}
@@ -98,7 +98,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		// Forward cookies - this is crucial for refresh tokens
 		if (req.headers.cookie) {
 			headers["Cookie"] = req.headers.cookie as string;
+			// console.log("All cookies being forwarded:", req.headers.cookie);
+
+			// // Parse cookies to see what's available
+			// const cookies = req.headers.cookie.split(";").reduce(
+			// 	(acc, cookie) => {
+			// 		const [key, value] = cookie.trim().split("=");
+			// 		acc[key] = value;
+			// 		return acc;
+			// 	},
+			// 	{} as Record<string, string>,
+			// );
+
+			// console.log("Parsed cookies:", cookies);
 		}
+
 		const response = await fetch(targetUrl, {
 			method: req.method,
 			headers,
@@ -112,7 +126,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
 		res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
 		res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-		res.setHeader("Access-Control-Allow-Credentials", "true");
+		res.setHeader("Access-Control-Allow-Credentials", "true"); // Add this
 
 		res.status(response.status).json(data);
 	} catch (error: any) {

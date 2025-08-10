@@ -71,7 +71,6 @@ export class APIClient {
 			method,
 			headers,
 			credentials: "include", // Add this to include cookies
-
 			...options,
 		};
 
