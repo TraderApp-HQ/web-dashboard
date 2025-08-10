@@ -98,21 +98,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		// Forward cookies - this is crucial for refresh tokens
 		if (req.headers.cookie) {
 			headers["Cookie"] = req.headers.cookie as string;
-			console.log("All cookies being forwarded:", req.headers.cookie);
+			// console.log("All cookies being forwarded:", req.headers.cookie);
 
-			// Parse cookies to see what's available
-			const cookies = req.headers.cookie.split(";").reduce(
-				(acc, cookie) => {
-					const [key, value] = cookie.trim().split("=");
-					acc[key] = value;
-					return acc;
-				},
-				{} as Record<string, string>,
-			);
+			// // Parse cookies to see what's available
+			// const cookies = req.headers.cookie.split(";").reduce(
+			// 	(acc, cookie) => {
+			// 		const [key, value] = cookie.trim().split("=");
+			// 		acc[key] = value;
+			// 		return acc;
+			// 	},
+			// 	{} as Record<string, string>,
+			// );
 
-			console.log("Parsed cookies:", cookies);
-		} else {
-			console.log("No cookies found in request");
+			// console.log("Parsed cookies:", cookies);
 		}
 
 		const response = await fetch(targetUrl, {
