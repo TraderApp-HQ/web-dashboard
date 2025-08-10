@@ -4,9 +4,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	// Handle preflight requests
 	if (req.method === "OPTIONS") {
-		res.setHeader("Access-Control-Allow-Origin", "*");
+		res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
 		res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
 		res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+		res.setHeader("Access-Control-Allow-Credentials", "true");
 		res.status(200).end();
 		return;
 	}
@@ -94,6 +95,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			headers["User-Agent"] = req.headers["user-agent"] as string;
 		}
 
+		// Forward cookies - this is crucial for refresh tokens
+		if (req.headers.cookie) {
+			headers["Cookie"] = req.headers.cookie as string;
+		}
 		const response = await fetch(targetUrl, {
 			method: req.method,
 			headers,
@@ -104,9 +109,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		const data = await response.json();
 
 		// Add CORS headers
-		res.setHeader("Access-Control-Allow-Origin", "*");
+		res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
 		res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
 		res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+		res.setHeader("Access-Control-Allow-Credentials", "true");
 
 		res.status(response.status).json(data);
 	} catch (error: any) {
