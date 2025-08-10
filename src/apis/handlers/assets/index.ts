@@ -68,7 +68,6 @@ export class AssetsService {
 	public async getAllSignals(): Promise<IFetchSignals> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/signals`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -82,7 +81,6 @@ export class AssetsService {
 	public async getActiveSignals(): Promise<IFetchSignals> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/signals/active`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -96,7 +94,6 @@ export class AssetsService {
 	public async getSignalsHistory(): Promise<IFetchSignals> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/signals/history`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -136,7 +133,6 @@ export class AssetsService {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
 			url: `/exchanges?${queryParams.toString()}`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -158,7 +154,6 @@ export class AssetsService {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
 			url: `/coins?category=${category}&page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&sortBy=${sortBy}`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -174,7 +169,6 @@ export class AssetsService {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
 			url: `/currencies`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -192,7 +186,6 @@ export class AssetsService {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
 			url: `exchanges/supported/exchanges?coinId=${coinId}&currencyId=${currencyId}`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
