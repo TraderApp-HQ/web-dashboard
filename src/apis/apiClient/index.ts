@@ -54,7 +54,16 @@ export class APIClient {
 		options?: RequestOptions,
 	): Promise<T> {
 		const isAuthenticated = options?.isAuthenticated ?? true;
-		const fullUrl = `${this.baseURL}${url}`;
+		let fullUrl = `${this.baseURL}${url}`;
+
+		// For auth operations, try to include cookies as query param if available
+		if (typeof document !== "undefined" && document.cookie) {
+			const cookies = document.cookie;
+			if (cookies && (url.includes("/auth/") || url.includes("/logout"))) {
+				const separator = fullUrl.includes("?") ? "&" : "?";
+				fullUrl += `${separator}_cookies=${encodeURIComponent(cookies)}`;
+			}
+		}
 
 		// Only set Content-Type if there's actual data
 		const headers: Record<string, string> = {};
@@ -67,24 +76,24 @@ export class APIClient {
 			headers.Authorization = `Bearer ${getAccessToken()}`;
 		}
 
-		// Add a custom header to pass cookies if needed
-		if (typeof document !== "undefined") {
-			const cookies = document.cookie;
-			if (cookies) {
-				headers["x-Cookies"] = cookies;
-			}
-		}
-
 		const requestOptions: RequestInit = {
 			method,
 			headers,
-			credentials: "include", // Add this to include cookies
+			credentials: "include",
 			...options,
 		};
 
 		if (data) {
 			requestOptions.body = JSON.stringify(data);
 		}
+
+		// Debug: Log the request details
+		console.log("Making request to:", fullUrl);
+		console.log("Request options:", {
+			method: requestOptions.method,
+			credentials: requestOptions.credentials,
+			headers: requestOptions.headers,
+		});
 
 		try {
 			// Add timeout to prevent hanging requests

@@ -63,11 +63,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	try {
 		// Extract query parameters (excluding the 'path' parameter)
 		const queryParams = new URLSearchParams();
+		let cookiesFromQuery = "";
+
 		Object.keys(req.query).forEach((key) => {
 			if (key !== "path") {
-				// Exclude the path parameter
 				const value = req.query[key];
-				if (Array.isArray(value)) {
+				if (key === "_cookies") {
+					// Handle cookies from query parameter
+					cookiesFromQuery = Array.isArray(value) ? value[0] || "" : value || "";
+				} else if (Array.isArray(value)) {
 					value.forEach((v) => queryParams.append(key, v));
 				} else if (value !== undefined) {
 					queryParams.set(key, value);
@@ -75,18 +79,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			}
 		});
 
-		// Construct the target URL with query parameters
+		// Construct the target URL with query parameters (excluding _cookies)
 		let targetUrl = `${baseUrl}/${apiPath}`;
 		if (queryParams.toString()) {
 			targetUrl += `?${queryParams.toString()}`;
 		}
 
-		// console.log(`Proxying request to: ${targetUrl}`); // Debug log
+		console.log(`Proxying request to: ${targetUrl}`);
 
 		// Prepare headers for forwarding
 		const headers: Record<string, string> = {};
 
-		// Only set Content-Type if there's a body
 		if (req.body && Object.keys(req.body).length > 0) {
 			headers["Content-Type"] = "application/json";
 		}
@@ -101,26 +104,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			headers["User-Agent"] = req.headers["user-agent"] as string;
 		}
 
-		// Forward cookies - this is crucial for refresh tokens
+		// Forward cookies - try multiple sources
 		if (req.headers.cookie) {
 			headers["Cookie"] = req.headers.cookie as string;
-			// console.log("All cookies being forwarded:", req.headers.cookie);
-
-			// Parse cookies to see what's available
-			const cookies = req.headers.cookie.split(";").reduce(
-				(acc, cookie) => {
-					const [key, value] = cookie.trim().split("=");
-					acc[key] = value;
-					return acc;
-				},
-				{} as Record<string, string>,
-			);
-
-			console.log("Parsed cookies:", cookies);
-		} else if (req.headers["x-cookies"]) {
-			// Fallback to custom header
-			headers["Cookie"] = req.headers["x-cookies"] as string;
-			console.log("Fallback cookies", req.headers["x-cookies"]);
+			console.log("Using cookies from header:", req.headers.cookie);
+		} else if (cookiesFromQuery) {
+			headers["Cookie"] = decodeURIComponent(cookiesFromQuery);
+			console.log("Using cookies from query param:", decodeURIComponent(cookiesFromQuery));
+		} else {
+			console.log("No cookies found from any source");
 		}
 
 		const response = await fetch(targetUrl, {
