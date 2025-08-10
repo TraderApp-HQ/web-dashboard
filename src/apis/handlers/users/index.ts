@@ -34,10 +34,9 @@ export class UsersService {
 	private apiClient: APIClient;
 
 	constructor() {
-		if (!process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL)
-			throw Error("Users service backend url not found");
+		// Remove the environment variable check since we're using proxy
 		this.apiClient = new APIClient(
-			process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL,
+			"/api/proxy", // This will be overridden in APIClient
 			this.refreshUserAccessToken.bind(this),
 		);
 	}

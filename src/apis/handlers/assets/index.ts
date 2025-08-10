@@ -21,10 +21,9 @@ export class AssetsService {
 
 	constructor() {
 		this.usersService = new UsersService();
-		if (!process.env.NEXT_PUBLIC_ASSETS_SERVICE_API_URL)
-			throw Error("Assets service backend url not found");
+		// Remove the environment variable check since we're using proxy
 		this.apiClient = new APIClient(
-			process.env.NEXT_PUBLIC_ASSETS_SERVICE_API_URL,
+			"/api/proxy", // This will be overridden in APIClient
 			this.usersService.refreshUserAccessToken.bind(this.usersService),
 		);
 	}
