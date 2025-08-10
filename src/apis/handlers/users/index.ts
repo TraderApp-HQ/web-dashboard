@@ -61,7 +61,6 @@ export class UsersService {
 	public async logoutUser() {
 		const response = await this.apiClient.delete<IResponse>({
 			url: "/auth/logout",
-			options: { credentials: "include" },
 		});
 
 		// if (response.error && response.error.statusCode === 500) {
@@ -141,7 +140,6 @@ export class UsersService {
 			const response = await this.apiClient.post<IResponse>({
 				url: "/auth/refresh-token",
 				data: {},
-				options: { credentials: "include" },
 			});
 
 			if (response.error) {
@@ -173,7 +171,6 @@ export class UsersService {
 				data,
 				verificationType,
 			},
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
