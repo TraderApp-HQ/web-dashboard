@@ -22,7 +22,8 @@ export class APIClient {
 	private refreshToken: () => Promise<string | null>;
 
 	constructor(baseURL: string, refreshToken: () => Promise<string | null>) {
-		this.baseURL = baseURL;
+		// Use the proxy route instead of direct API calls
+		this.baseURL = "/api/proxy";
 		this.refreshToken = refreshToken;
 	}
 
@@ -53,7 +54,7 @@ export class APIClient {
 		options?: RequestOptions,
 	): Promise<T> {
 		const isAuthenticated = options?.isAuthenticated ?? true;
-		const fullUrl = new URL(url, this.baseURL).toString();
+		const fullUrl = `${this.baseURL}${url}`;
 
 		// Only set Content-Type if there's actual data
 		const headers: Record<string, string> = {};
@@ -69,8 +70,6 @@ export class APIClient {
 		const requestOptions: RequestInit = {
 			method,
 			headers,
-			mode: "cors", // Explicitly set CORS mode
-			// credentials: "include", // Include cookies if needed
 			...options,
 		};
 
@@ -90,12 +89,8 @@ export class APIClient {
 
 			clearTimeout(timeoutId);
 
-			// Check if response is actually available
-			if (!response) {
-				throw new Error("Network request failed - no response received");
-			}
-
 			const responseData: IResponse = await response.json();
+
 			if (!response.ok) {
 				// check if error is unauthorized invalid token, then refresh users tokens and retry the initial request
 				if (response.status === 401 && responseData.message === "Invalid Token") {
@@ -120,17 +115,18 @@ export class APIClient {
 			}
 			return responseData as T;
 		} catch (error: any) {
+			// Handle timeout errors
+			if (error.name === "AbortError") {
+				throw new Error("Request timeout - network may be restricted");
+			}
+
 			// Check if it's a CORS/preflight error
 			if (error.name === "TypeError" && error.message.includes("Failed to fetch")) {
 				throw new Error("Network request blocked - possible CORS or network restriction");
 			}
 
-			if (error.name === "AbortError") {
-				throw new Error("Request timeout - network may be restricted");
-			}
-
 			if (options?.retry && error.response?.status >= 500) {
-				await this.delay(3000); // 5 seconds delay
+				await this.delay(3000); // 3 seconds delay
 				return this.request<T>(method, url, data, { ...options, retry: false });
 			}
 			throw error;
