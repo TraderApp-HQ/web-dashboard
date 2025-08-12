@@ -185,7 +185,7 @@ export class AssetsService {
 	}: ISupportedExchangeInput): Promise<IExchange[]> {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
-			url: `exchanges/supported/exchanges?coinId=${coinId}&currencyId=${currencyId}`,
+			url: `/exchanges/supported/exchanges?coinId=${coinId}&currencyId=${currencyId}`,
 		});
 
 		if (response.error) {
