@@ -32,12 +32,13 @@ import type {
 import type { IResponse } from "../interfaces";
 export class UsersService {
 	private apiClient: APIClient;
+	private authApiClient: APIClient;
 
 	constructor() {
-		// Remove the environment variable check since we're using proxy
-		this.apiClient = new APIClient(
-			"/api/proxy", // This will be overridden in APIClient
-			this.refreshUserAccessToken.bind(this),
+		this.apiClient = new APIClient("/api/proxy", this.refreshUserAccessToken.bind(this));
+		this.authApiClient = new APIClient(
+			process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL as string,
+			async () => null, // avoid recursion for auth endpoints
 		);
 	}
 
@@ -59,7 +60,7 @@ export class UsersService {
 	}
 
 	public async logoutUser() {
-		const response = await this.apiClient.delete<IResponse>({
+		const response = await this.authApiClient.delete<IResponse>({
 			url: "/auth/logout",
 		});
 
@@ -137,7 +138,7 @@ export class UsersService {
 
 	public async refreshUserAccessToken(): Promise<string | null> {
 		try {
-			const response = await this.apiClient.post<IResponse>({
+			const response = await this.authApiClient.post<IResponse>({
 				url: "/auth/refresh-token",
 				data: {},
 			});

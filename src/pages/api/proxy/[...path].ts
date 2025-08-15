@@ -20,9 +20,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		return res.status(404).json({ error: "No path provided" });
 	}
 
-	// console.log("API Path:", apiPath); // Debug log
-	// console.log("Query params:", req.query); // Debug log
-
 	// Route to different services based on path - using NEXT_PUBLIC_ prefix
 	const usersServicePaths = ["auth", "users", "countries", "task", "notifications"];
 	const walletsServicePaths = ["wallets", "transactions"];
@@ -43,8 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		return res.status(404).json({ error: "Service not found", path: apiPath });
 	}
 
-	// console.log("Base URL:", baseUrl); // Debug log
-
 	// Check if baseUrl is configured
 	if (!baseUrl) {
 		return res.status(500).json({
@@ -53,18 +48,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			code: "CONFIG_ERROR",
 		});
 	}
-
-	// Add this at the beginning of the handler
-	console.log("=== REQUEST DEBUG ===");
-	console.log("Method:", req.method);
-	console.log("URL:", req.url);
-	console.log("All headers:", Object.keys(req.headers));
-	console.log("Cookie header:", req.headers.cookie);
-	console.log("Cookie header type:", typeof req.headers.cookie);
-	console.log("Cookie header length:", req.headers.cookie?.length);
-	console.log("Origin:", req.headers.origin);
-	console.log("Referer:", req.headers.referer);
-	console.log("=====================");
 
 	try {
 		// Extract query parameters (excluding the 'path' parameter)
@@ -90,8 +73,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		if (queryParams.toString()) {
 			targetUrl += `?${queryParams.toString()}`;
 		}
-
-		console.log(`Proxying request to: ${targetUrl}`);
 
 		// Prepare headers for forwarding
 		const headers: Record<string, string> = {};

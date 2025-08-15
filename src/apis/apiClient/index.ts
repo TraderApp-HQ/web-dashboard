@@ -22,8 +22,8 @@ export class APIClient {
 	private refreshToken: () => Promise<string | null>;
 
 	constructor(baseURL: string, refreshToken: () => Promise<string | null>) {
-		// Use the proxy route instead of direct API calls
-		this.baseURL = "/api/proxy";
+		// Use the provided baseURL instead of hardcoding
+		this.baseURL = baseURL;
 		this.refreshToken = refreshToken;
 	}
 
