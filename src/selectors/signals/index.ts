@@ -30,9 +30,9 @@ export function activeSignalsDataTableSelector(
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: signal.asset.name, style: "text-base font-normal" },
-						itemSubText: { text: signal.asset.symbol },
-						itemImage: signal.asset.logo,
+						itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
+						itemSubText: { text: signal.baseAsset.symbol },
+						itemImage: signal.baseAsset.logo,
 						isAssetItem: true,
 					}),
 				},
@@ -90,9 +90,9 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 	const dataMobile: ITableMobile[] = activeSignals.map((signal) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
-				itemText: { text: signal.asset.name, style: "text-base font-normal" },
-				itemSubText: { text: signal.asset.symbol },
-				itemImage: signal.asset.logo,
+				itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
+				itemSubText: { text: signal.baseAsset.symbol },
+				itemImage: signal.baseAsset.logo,
 			}),
 			displayItemValue: "",
 		},
@@ -143,8 +143,8 @@ export function signalsHistoryDataTableSelector(data: ISignal[]) {
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: signal.asset.name, style: "text-base font-normal" },
-						itemImage: signal.asset.logo,
+						itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
+						itemImage: signal.baseAsset.logo,
 						isAssetItem: true,
 					}),
 				},
@@ -162,9 +162,9 @@ export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 	const dataMobile: ITableMobile[] = data.map((signal) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
-				itemText: { text: signal.asset.name, style: "text-base font-normal" },
-				itemSubText: { text: signal.asset.symbol },
-				itemImage: signal.asset.logo,
+				itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
+				itemSubText: { text: signal.baseAsset.symbol },
+				itemImage: signal.baseAsset.logo,
 			}),
 			displayItemValue: "",
 		},
@@ -200,15 +200,15 @@ export function signalsPerfomanceSummary(signals: ISignal[]): IPerformanceSummar
 
 	const bestSignal: IPerformanceData | undefined = bestPerformer
 		? {
-				itemLogo: bestPerformer.asset.logo,
-				itemName: bestPerformer.asset.name,
+				itemLogo: bestPerformer.baseAsset.logo,
+				itemName: bestPerformer.baseAsset.name,
 				itemPercentageChange: bestPerformer.maxGain,
 			}
 		: undefined;
 	const worstSignal: IPerformanceData | undefined = worstPerformer
 		? {
-				itemLogo: worstPerformer.asset.logo,
-				itemName: worstPerformer.asset.name,
+				itemLogo: worstPerformer.baseAsset.logo,
+				itemName: worstPerformer.baseAsset.name,
 				itemPercentageChange: worstPerformer.maxGain,
 			}
 		: undefined;

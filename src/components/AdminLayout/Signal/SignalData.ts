@@ -31,19 +31,19 @@ export const signalData = [
 		createdAt: "2024-08-13T14:44:05.376Z",
 		endedAt: "2024-08-13T14:44:05.376Z",
 		maxGain: 0,
-		asset: {
+		baseAsset: {
 			id: "52",
 			name: "XRP",
 			symbol: "XRP",
 			logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png",
 		},
-		baseCurrency: {
+		quoteCurrency: {
 			id: "52",
 			name: "XRP",
 			symbol: "XRP",
 			logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png",
 		},
-		supportedExchanges: [
+		supportedTradingPlatform: [
 			{
 				_id: "270",
 				name: "Binance",
@@ -81,19 +81,19 @@ export const signalData = [
 		createdAt: "2024-08-13T14:44:05.376Z",
 		endedAt: "2024-08-13T14:44:05.376Z",
 		maxGain: 0,
-		asset: {
+		baseAsset: {
 			id: "52",
 			name: "BTC",
 			symbol: "BTC",
 			logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png",
 		},
-		baseCurrency: {
+		quoteCurrency: {
 			id: "52",
 			name: "BTC",
 			symbol: "BTC",
 			logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png",
 		},
-		supportedExchanges: [
+		supportedTradingPlatform: [
 			{
 				_id: "270",
 				name: "Binance",

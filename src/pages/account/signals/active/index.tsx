@@ -46,12 +46,14 @@ const ActiveSignals = () => {
 
 	return (
 		<section className="space-y-5">
-			<ActiveSignalCard
-				summary={performanceSummary}
-				isLoading={isLoading}
-				isSuccess={isSuccess}
-				isError={isError}
-			/>
+			{activeSignals.length >= 2 && (
+				<ActiveSignalCard
+					summary={performanceSummary}
+					isLoading={isLoading}
+					isSuccess={isSuccess}
+					isError={isError}
+				/>
+			)}
 
 			{!isLoading && isError ? (
 				<section className="pb-3 rounded-2xl space-y-2">

@@ -2,7 +2,11 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Candlestick, SignalRisk } from "~/apis/handlers/assets/enums";
-import type { IExchange, ISignalAsset, ISignalMilestone } from "~/apis/handlers/assets/interfaces";
+import type {
+	ISignalAsset,
+	ISignalMilestone,
+	ITradingPlatform,
+} from "~/apis/handlers/assets/interfaces";
 import IconButton from "~/components/AccountLayout/IconButton";
 import UploadButton from "~/components/AccountLayout/UploadButton";
 import AdminLayout from "~/components/AdminLayout/Layout";
@@ -21,7 +25,7 @@ import { Category, TradeSide, TradeSignalModalScreen, TradeType } from "~/config
 import useGetAssets from "~/hooks/useAssets";
 import { useCreateSignal } from "~/hooks/useCreateSignal";
 import useCurrencies from "~/hooks/useCurrencies";
-import useSupportedExchanges from "~/hooks/useSupportedExchanges";
+import useSupportedTradingPlatforms from "~/hooks/useSupportedTradingPlatforms";
 import { convertEnumToOptions, handleKeyDown } from "~/lib/utils";
 
 function CreateSignal() {
@@ -35,16 +39,17 @@ function CreateSignal() {
 		tradeChart: false,
 	});
 
-	const [assetOptions, setAssetOptions] = useState<ISelectBoxOption[]>([]);
-	const [baseCurrencyOptions, setBaseCurrencyOptions] = useState<ISelectBoxOption[]>([]);
-	const [exchangeOptions, setExchangeOptions] = useState<ICheckedBoxOption[]>([]);
+	const [baseAssetOptions, setBaseAssetOptions] = useState<ISelectBoxOption[]>([]);
+	const [quoteCurrencyOptions, setQuoteCurrencyOptions] = useState<ISelectBoxOption[]>([]);
+	const [tradingPlatformOptions, setTradingPlatformOptions] = useState<ICheckedBoxOption[]>([]);
 
 	const [assetCategory, setAssetCategory] = useState<ISelectBoxOption>();
 	const [tradeType, setTradeType] = useState<TradeType>();
 	const [tradeSide, setTradeSide] = useState<TradeSide>();
-	const [selectedAsset, setSelectedAsset] = useState<ISignalAsset>();
-	const [selectedBaseCurrency, setSelectedBaseCurrency] = useState<ISignalAsset>();
-	const [selectedSupportedExchange, setSelectedSupportedExchange] = useState<IExchange[]>();
+	const [selectedBaseAsset, setSelectedBaseAsset] = useState<ISignalAsset>();
+	const [selectedQuoteCurrency, setSelectedQuoteCurrency] = useState<ISignalAsset>();
+	const [selectedSupportedTradingPlatform, setSelectedSupportedTradingPlatform] =
+		useState<ITradingPlatform[]>();
 	const [entryPrice, setEntryPrice] = useState<string>();
 	const [entryPriceUpperBound, setEntryPriceUpperBound] = useState<string>();
 	const [entryPriceLowerBound, setEntryPriceLowerBound] = useState<string>();
@@ -56,8 +61,8 @@ function CreateSignal() {
 	const [tradeNote, setTradeNote] = useState<string>();
 	const [signalImage, setSignalImage] = useState("");
 
-	const [resetSelectedAsset, setResetSelectedAsset] = useState(false);
-	const [resetSelectedBaseCurrency, setResetSelectedBaseCurrency] = useState(false);
+	const [resetSelectedBaseAsset, setResetSelectedBaseAsset] = useState(false);
+	const [resetSelectedQuoteCurrency, setResetSelectedQuoteCurrency] = useState(false);
 	const [resetSelectedCandle, setResetSelectedCandle] = useState(false);
 	const [resetSelectedRisk, setResetSelectedRisk] = useState(false);
 
@@ -90,10 +95,10 @@ function CreateSignal() {
 	// Validation function to check if any state value is empty
 	const assetModalButton =
 		assetCategory &&
-		selectedAsset &&
-		selectedBaseCurrency &&
-		selectedSupportedExchange &&
-		selectedSupportedExchange.length > 0;
+		selectedBaseAsset &&
+		selectedQuoteCurrency &&
+		selectedSupportedTradingPlatform &&
+		selectedSupportedTradingPlatform.length > 0;
 
 	const tradeTypeModalButton =
 		tradeType === TradeType.SPOT || (tradeType === TradeType.FUTURES && tradeSide);
@@ -118,12 +123,12 @@ function CreateSignal() {
 		tradeNote;
 
 	const {
-		data: exchanges,
-		isSuccess: isExchangeSuccess,
-		isLoading: isExchangeLoading,
-	} = useSupportedExchanges({
-		coinId: Number(selectedAsset?.id ?? 0),
-		currencyId: Number(selectedBaseCurrency?.id ?? 0),
+		data: tradingPlatforms,
+		isSuccess: isTradingPlatformsSuccess,
+		isLoading: isTradingPlatformsLoading,
+	} = useSupportedTradingPlatforms({
+		baseAssetId: Number(selectedBaseAsset?.id),
+		quoteCurrencyId: Number(selectedQuoteCurrency?.id),
 	});
 
 	const {
@@ -150,43 +155,43 @@ function CreateSignal() {
 
 	useEffect(() => {
 		if (isCurrencySuccess && currencies) {
-			const baseCurrency: ISelectBoxOption<ISignalAsset>[] = currencies.map((currency) => ({
+			const quoteCurrency: ISelectBoxOption<ISignalAsset>[] = currencies.map((currency) => ({
 				displayText: currency.name,
 				value: currency.id,
 				imgUrl: currency.logo,
 				symbol: currency.symbol,
 				data: currency,
 			}));
-			setBaseCurrencyOptions(baseCurrency);
+			setQuoteCurrencyOptions(quoteCurrency);
 		}
 	}, [isCurrencySuccess, currencies]);
 
 	useEffect(() => {
 		if (isAssetSuccess && assets) {
-			const assetsOptions: ISelectBoxOption<ISignalAsset>[] = assets.map((asset) => ({
+			const baseAssetsOptions: ISelectBoxOption<ISignalAsset>[] = assets.map((asset) => ({
 				displayText: asset.name,
 				value: asset.id,
 				imgUrl: asset.logo,
 				data: asset,
 			}));
-			setAssetOptions(assetsOptions);
+			setBaseAssetOptions(baseAssetsOptions);
 		}
 	}, [isAssetSuccess, assets]);
 
 	useEffect(() => {
-		if (isExchangeSuccess && exchanges) {
-			const options = exchanges.map((exchange) => ({
-				displayText: exchange.name?.toString(),
-				value: exchange._id,
-				imgUrl: exchange.logo?.toString(),
+		if (isTradingPlatformsSuccess && tradingPlatforms) {
+			const options = tradingPlatforms.map((platform) => ({
+				displayText: platform.name?.toString(),
+				value: platform._id,
+				imgUrl: platform.logo?.toString(),
 			}));
-			setExchangeOptions(options);
+			setTradingPlatformOptions(options);
 		}
-	}, [isExchangeSuccess, exchanges]);
+	}, [isTradingPlatformsSuccess, tradingPlatforms]);
 
-	const handleBaseCurrencyChange = (option: ISelectBoxOption<ISignalAsset>) => {
-		setResetSelectedBaseCurrency(false);
-		setSelectedBaseCurrency({
+	const handleQuoteCurrencyChange = (option: ISelectBoxOption<ISignalAsset>) => {
+		setResetSelectedQuoteCurrency(false);
+		setSelectedQuoteCurrency({
 			id: option.data?.id ?? "",
 			name: option.data?.name ?? "",
 			symbol: option.data?.symbol ?? "",
@@ -194,9 +199,9 @@ function CreateSignal() {
 		});
 	};
 
-	const handleAssetChange = (option: ISelectBoxOption<ISignalAsset>) => {
-		setResetSelectedAsset(false);
-		setSelectedAsset({
+	const handleBaseAssetChange = (option: ISelectBoxOption<ISignalAsset>) => {
+		setResetSelectedBaseAsset(false);
+		setSelectedBaseAsset({
 			id: option.data?.id ?? "",
 			name: option.data?.name ?? "",
 			symbol: option.data?.symbol ?? "",
@@ -226,7 +231,7 @@ function CreateSignal() {
 	};
 
 	const handleExchangeChange = (option: ICheckedBoxOption) => {
-		setSelectedSupportedExchange((prev) => {
+		setSelectedSupportedTradingPlatform((prev) => {
 			// Ensure prev is always an array
 			const currentExchanges = prev ?? [];
 
@@ -277,18 +282,18 @@ function CreateSignal() {
 	const onReset = () => {
 		setSignalImage("");
 		setTargetProfits(undefined);
-		setResetSelectedAsset(true);
-		setResetSelectedBaseCurrency(true);
+		setResetSelectedBaseAsset(true);
+		setResetSelectedQuoteCurrency(true);
 		setResetSelectedCandle(true);
 		setEntryPrice(undefined);
 		setEntryPriceUpperBound(undefined);
 		setEntryPriceLowerBound(undefined);
 		setStopLoss(undefined);
-		setSelectedBaseCurrency(undefined);
+		setSelectedQuoteCurrency(undefined);
 		setResetSelectedRisk(true);
-		setSelectedSupportedExchange(undefined);
+		setSelectedSupportedTradingPlatform(undefined);
 		setTradeNote(undefined);
-		setSelectedAsset(undefined);
+		setSelectedBaseAsset(undefined);
 	};
 
 	// Setup query to backend
@@ -297,10 +302,10 @@ function CreateSignal() {
 	// Make call to backend
 	const handleCreateSignal = () => {
 		createSignal({
-			asset: Number(selectedAsset?.id ?? 0),
-			assetName: selectedAsset?.symbol as string,
-			baseCurrency: Number(selectedBaseCurrency?.id ?? 0),
-			baseCurrencyName: selectedBaseCurrency?.symbol as string,
+			baseAsset: Number(selectedBaseAsset?.id ?? 0),
+			baseAssetName: selectedBaseAsset?.symbol as string,
+			quoteCurrency: Number(selectedQuoteCurrency?.id ?? 0),
+			quoteCurrencyName: selectedQuoteCurrency?.symbol as string,
 			targetProfits: targetProfits as ISignalMilestone[],
 			stopLoss: stopLoss as ISignalMilestone,
 			entryPrice: Number(entryPrice),
@@ -311,8 +316,8 @@ function CreateSignal() {
 			risk: selectedRisk?.value as SignalRisk,
 			isSignalTradable: false,
 			chart: signalImage.split(",")[1],
-			supportedExchanges: selectedSupportedExchange?.map((exchange) =>
-				Number(exchange._id),
+			tradingPlatform: selectedSupportedTradingPlatform?.map((platform) =>
+				Number(platform._id),
 			) ?? [0],
 			category: assetCategory?.value as Category,
 			tradeType: tradeType,
@@ -398,15 +403,15 @@ function CreateSignal() {
 							placeholder={"Select Asset Category"}
 							option={assetCategory}
 							setOption={(opt) => {
-								setAssetOptions([]);
+								setBaseAssetOptions([]);
 								setAssetCategory(opt);
 							}}
 						/>
 
 						<SelectBox
-							labelText="Quote Asset"
+							labelText="Base Asset"
 							isSearchable={true}
-							options={assetOptions}
+							options={baseAssetOptions}
 							placeholder={
 								isAssetLoading
 									? "Loading..."
@@ -414,31 +419,31 @@ function CreateSignal() {
 										? `${assetError} `
 										: assets?.length === 0
 											? "No asset found"
-											: "Select Quote Asset"
+											: "Select Base Asset"
 							}
-							option={assetOptions.find(
-								(opt) => opt.displayText === selectedAsset?.name,
+							option={baseAssetOptions.find(
+								(opt) => opt.displayText === selectedBaseAsset?.name,
 							)}
-							setOption={handleAssetChange}
-							clear={resetSelectedAsset}
+							setOption={handleBaseAssetChange}
+							clear={resetSelectedBaseAsset}
 						/>
 
 						<SelectBox
-							labelText="Base Currency"
+							labelText="Quote Currency"
 							isSearchable={true}
-							options={baseCurrencyOptions}
+							options={quoteCurrencyOptions}
 							placeholder={
 								isCurrencyLoading
 									? "Loading..."
 									: isCurrencyError
 										? `${currencyError}`
-										: "Select Base Currency"
+										: "Select Quote Currency"
 							}
-							option={baseCurrencyOptions.find(
-								(opt) => opt.displayText === selectedBaseCurrency?.name,
+							option={quoteCurrencyOptions.find(
+								(opt) => opt.displayText === selectedQuoteCurrency?.name,
 							)}
-							setOption={handleBaseCurrencyChange}
-							clear={resetSelectedBaseCurrency}
+							setOption={handleQuoteCurrencyChange}
+							clear={resetSelectedQuoteCurrency}
 						/>
 
 						<div>
@@ -446,27 +451,27 @@ function CreateSignal() {
 								htmlFor="Supported Exchanges"
 								className="text-textColor text-sm font-normal leading-none"
 							>
-								Choose Trading Platforms
+								Choose Trading Platform
 							</label>
 
-							{isExchangeLoading ? (
+							{isTradingPlatformsLoading ? (
 								<p>Loading....</p>
-							) : exchangeOptions.length === 0 ? (
+							) : tradingPlatformOptions.length === 0 ? (
 								<p className="bg-[#F5F8FE] text-red-500 text-center py-9 px-4 rounded-md">
-									Please select asset and base currency.
+									Please select Base Asset and Quote Currency.
 								</p>
 							) : (
-								exchangeOptions.map((exchange) => (
+								tradingPlatformOptions.map((platform) => (
 									<Checkbox
-										key={exchange.displayText}
-										label={exchange.displayText}
-										onChange={() => handleExchangeChange(exchange)}
+										key={platform.displayText}
+										label={platform.displayText}
+										onChange={() => handleExchangeChange(platform)}
 										checked={
-											selectedSupportedExchange?.some(
-												(x) => x._id === exchange.value,
+											selectedSupportedTradingPlatform?.some(
+												(x) => x._id === platform.value,
 											) ?? false
 										}
-										imageUrl={exchange.imgUrl}
+										imageUrl={platform.imgUrl}
 										className="bg-[#F5F8FE] py-3 px-4 rounded-md cursor-pointer"
 									/>
 								))
