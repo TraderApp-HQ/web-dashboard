@@ -9,10 +9,12 @@ import TableLoader from "~/components/Loaders/TableLoader";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import { useSignalHistory } from "~/apis/handlers/assets/hooks";
 import data from "~/pages/account/signals/data.json";
+import ComponentError from "~/components/Error/ComponentError";
 
 function SignalsHistory() {
 	const {
 		isLoading,
+		isError,
 		isSuccess,
 		signalHistory,
 		signalsTableHead,
@@ -92,7 +94,11 @@ function SignalsHistory() {
 					options={data.assets}
 				/>
 			</div>
-			{!isLoading && signalHistory.length === 0 ? (
+			{!isLoading && isError ? (
+				<section className="pb-3 rounded-2xl space-y-2">
+					<ComponentError />
+				</section>
+			) : !isLoading && isSuccess && signalHistory.length === 0 ? (
 				<SignalsEmptyState />
 			) : (
 				<div className="pb-8 rounded-2xl">

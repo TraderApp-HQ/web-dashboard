@@ -316,7 +316,7 @@ function CreateSignal() {
 			risk: selectedRisk?.value as SignalRisk,
 			isSignalTradable: false,
 			chart: signalImage.split(",")[1],
-			tradingPlatform: selectedSupportedTradingPlatform?.map((platform) =>
+			supportedTradingPlatform: selectedSupportedTradingPlatform?.map((platform) =>
 				Number(platform._id),
 			) ?? [0],
 			category: assetCategory?.value as Category,

@@ -65,7 +65,7 @@ export interface ICreateSignalInput {
 	risk: SignalRisk;
 	isSignalTradable: boolean;
 	chart: string;
-	tradingPlatform: number[];
+	supportedTradingPlatform: number[];
 	baseAsset: number;
 	baseAssetName: string;
 	quoteCurrency: number;

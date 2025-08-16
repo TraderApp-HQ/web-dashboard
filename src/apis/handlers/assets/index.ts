@@ -193,7 +193,6 @@ export class AssetsService {
 		}
 
 		const { data } = response;
-		console.log("Exchange response =====", data);
 		return data as ITradingPlatform[];
 	}
 }

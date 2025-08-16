@@ -9,6 +9,7 @@ import TableLoader from "~/components/Loaders/TableLoader";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import { IActiveSignalCardProps } from "~/components/common/DataTable/config";
 import { NestedSignalsLayout } from "../";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
 
 const ActiveSignals = () => {
 	// const { term: urlTerm } = useParams<{ term?: string }>();
@@ -46,7 +47,8 @@ const ActiveSignals = () => {
 
 	return (
 		<section className="space-y-5">
-			{activeSignals.length >= 2 && (
+			{activeSignals.filter((signal) => signal.status === SignalStatus.ACTIVE).length >=
+				2 && (
 				<ActiveSignalCard
 					summary={performanceSummary}
 					isLoading={isLoading}

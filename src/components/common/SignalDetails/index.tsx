@@ -56,14 +56,14 @@ const SignalDetail: React.FC<IProps> = ({ children }) => {
 					{isSuccess && signal && (
 						<div className="flex gap-2 items-center my-6">
 							<Image
-								src={signal?.asset?.logo}
-								alt={signal?.asset?.name}
+								src={signal?.baseAsset?.logo}
+								alt={signal?.baseAsset?.name}
 								width={40}
 								height={40}
 							/>
 							<h2>
-								{capitalizeFirstLetter(`${signal?.asset?.name}`)}
-								<span>({signal?.asset?.symbol.toUpperCase()})</span>
+								{capitalizeFirstLetter(`${signal?.baseAsset?.name}`)}
+								<span>({signal?.baseAsset?.symbol.toUpperCase()})</span>
 							</h2>
 						</div>
 					)}
@@ -142,7 +142,7 @@ const SignalDetail: React.FC<IProps> = ({ children }) => {
 													Date/Time
 												</h2>
 												<p className="text-neutral-500 text-sm font-semibold leading-none">
-													{signal?.createdAt}
+													{new Date(signal.createdAt).toDateString()}
 												</p>
 											</div>
 										</div>
@@ -164,7 +164,7 @@ const SignalDetail: React.FC<IProps> = ({ children }) => {
 													Asset Market Cap
 												</h2>
 												<p className="text-neutral-500 text-sm font-semibold leading-none">
-													{signal?.asset.marketCap ?? 0}
+													{signal?.baseAsset.marketCap ?? 0}
 												</p>
 											</div>
 											<div className="flex justify-between sm:flex-col flex-row gap-8">

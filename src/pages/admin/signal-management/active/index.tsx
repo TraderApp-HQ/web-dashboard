@@ -122,7 +122,8 @@ function ActiveSignals() {
 
 	return (
 		<>
-			{activeSignals.length >= 2 && (
+			{activeSignals.filter((signal) => signal.status === SignalStatus.ACTIVE).length >=
+				2 && (
 				<ActiveSignalCard
 					summary={performanceSummary}
 					isLoading={isLoading}
