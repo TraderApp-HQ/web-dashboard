@@ -42,7 +42,7 @@ export interface ISignal {
 	maxGain: number;
 	createdAt: string;
 	endedAt?: string;
-	supportedTradingPlatform: ITradingPlatform[];
+	supportedTradingPlatforms: ITradingPlatform[];
 }
 
 export interface IFetchSignals {
@@ -65,7 +65,7 @@ export interface ICreateSignalInput {
 	risk: SignalRisk;
 	isSignalTradable: boolean;
 	chart: string;
-	supportedTradingPlatform: number[];
+	supportedTradingPlatforms: number[];
 	baseAsset: number;
 	baseAssetName: string;
 	quoteCurrency: number;
@@ -101,7 +101,7 @@ export interface IFetchTradingPlatform {
 	isPassphraseRequired?: boolean;
 }
 
-export interface IGetTradingPlatformInput {
+export interface IGetTradingPlatformsInput {
 	page?: number;
 	rowsPerPage?: number;
 	orderBy?: "asc" | "desc";
@@ -116,7 +116,7 @@ export interface IGetAssetsInput {
 	category: Category;
 }
 
-export interface ISupportedTradingPlatformInput {
+export interface ISupportedTradingPlatformsInput {
 	baseAssetId: number;
 	quoteCurrencyId: number;
 }
@@ -130,7 +130,7 @@ interface IActiveSignalsData {
 	baseAssetName: string;
 	quoteCurrencyName: string;
 	assetPair: string;
-	tradingPlatform: TradingPlatform[];
+	tradingPlatforms: TradingPlatform[];
 }
 
 interface ISignalPriceData {

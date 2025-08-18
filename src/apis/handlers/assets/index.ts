@@ -9,8 +9,8 @@ import type {
 	ISignal,
 	ISignalAsset,
 	ISignalUpdateInput,
-	IGetTradingPlatformInput,
-	ISupportedTradingPlatformInput,
+	IGetTradingPlatformsInput,
+	ISupportedTradingPlatformsInput,
 	ITradingPlatform,
 } from "./interfaces";
 // import { SignalStatus } from "./enums";
@@ -110,7 +110,7 @@ export class AssetsService {
 		rowsPerPage,
 		orderBy,
 		status,
-	}: IGetTradingPlatformInput): Promise<IFetchTradingPlatform[]> {
+	}: IGetTradingPlatformsInput): Promise<IFetchTradingPlatform[]> {
 		// Construct query parameters
 		const queryParams = new URLSearchParams();
 
@@ -182,10 +182,10 @@ export class AssetsService {
 	public async getSupportedTradingPlatforms({
 		baseAssetId,
 		quoteCurrencyId,
-	}: ISupportedTradingPlatformInput): Promise<ITradingPlatform[]> {
+	}: ISupportedTradingPlatformsInput): Promise<ITradingPlatform[]> {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
-			url: `/exchanges/supported-trading-platform?baseAssetId=${baseAssetId}&quoteCurrencyId=${quoteCurrencyId}`,
+			url: `/exchanges/supported-trading-platforms?baseAssetId=${baseAssetId}&quoteCurrencyId=${quoteCurrencyId}`,
 		});
 
 		if (response.error) {
