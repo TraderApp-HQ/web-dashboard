@@ -91,6 +91,19 @@ export class AssetsService {
 		return data as IFetchSignals;
 	}
 
+	public async getPendingSignals(): Promise<IFetchSignals> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/signals/pending`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch pending signal records");
+		}
+
+		const { data } = response;
+		return data as IFetchSignals;
+	}
+
 	public async getSignalsHistory(): Promise<IFetchSignals> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/signals/history`,

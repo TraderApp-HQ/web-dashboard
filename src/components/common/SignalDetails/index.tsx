@@ -22,9 +22,11 @@ const SignalDetail: React.FC<IProps> = ({ children }) => {
 	const id = router.query.id as string;
 	const basePath = router.pathname.startsWith("/account")
 		? "/account/signals/active/"
-		: "/admin/signal-management/active/";
+		: router.pathname.includes("/active")
+			? "/admin/signal-management/active/"
+			: "/admin/signal-management/pending/";
 
-	const fetchSignal = useCallback(() => signalsService?.getSignal(`${id}`), [id, signalsService]);
+	const fetchSignal = useCallback(() => signalsService?.getSignal(id), [id, signalsService]);
 
 	const {
 		data: signal,
