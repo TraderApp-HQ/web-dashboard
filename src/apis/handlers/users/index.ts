@@ -32,14 +32,9 @@ import type {
 import type { IResponse } from "../interfaces";
 export class UsersService {
 	private apiClient: APIClient;
-	private authApiClient: APIClient;
 
 	constructor() {
 		this.apiClient = new APIClient("/api/proxy", this.refreshUserAccessToken.bind(this));
-		this.authApiClient = new APIClient(
-			process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL as string,
-			async () => null, // avoid recursion for auth endpoints
-		);
 	}
 
 	public async loginUser({ email, password }: IUserLoginInput): Promise<IUserProfile> {
@@ -60,16 +55,34 @@ export class UsersService {
 	}
 
 	public async logoutUser() {
-		const response = await this.authApiClient.delete<IResponse>({
-			url: "/auth/logout",
-		});
+		try {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL}/auth/logout`,
+				{
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials: "include", // This ensures cookies are sent
+				},
+			);
 
-		// if (response.error && response.error.statusCode === 500) {
-		// 	throw new Error(response.message || "Logout failed");
-		// }
-		removeAccessToken();
-		window.location.href = "/auth/login";
-		return response.data;
+			const data = await response.json();
+
+			if (!response.ok) {
+				console.error("Logout failed:", data);
+				// Don't throw error on logout failure, just proceed with cleanup
+			}
+
+			removeAccessToken();
+			window.location.href = "/auth/login";
+			return data;
+		} catch (error) {
+			console.error("Logout error:", error);
+			// Still cleanup even if request fails
+			// removeAccessToken();
+			// window.location.href = "/auth/login";
+		}
 	}
 
 	public async signupUser(userData: IUserSignupInput): Promise<IUserProfile> {
@@ -138,19 +151,39 @@ export class UsersService {
 
 	public async refreshUserAccessToken(): Promise<string | null> {
 		try {
-			const response = await this.authApiClient.post<IResponse>({
-				url: "/auth/refresh-token",
-				data: {},
-			});
+			console.log("Attempting to refresh token...");
 
-			if (response.error) {
-				throw new Error(response.message || "Token refresh failed");
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL}/auth/refresh-token`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials: "include", // This ensures cookies are sent
+					body: JSON.stringify({}),
+				},
+			);
+
+			console.log("Refresh response status:", response.status);
+
+			const data = await response.json();
+			console.log("Refresh response data:", data);
+
+			if (!response.ok || data.error) {
+				throw new Error(data.message || "Token refresh failed");
 			}
 
-			const { data } = response;
-			setAccessToken(data?.accessToken);
-			return data?.accessToken || null;
+			if (data.data?.accessToken) {
+				setAccessToken(data.data.accessToken);
+				console.log("Token refreshed successfully");
+				return data.data.accessToken;
+			} else {
+				console.log("No access token in response");
+				return null;
+			}
 		} catch (error: any) {
+			console.error("Token refresh failed:", error);
 			removeAccessToken();
 			const params = new URLSearchParams();
 			const redirectTo = new URLSearchParams(window.location.search).get("redirect_to");
@@ -165,23 +198,36 @@ export class UsersService {
 		data,
 		verificationType,
 	}: IVerifyOtp): Promise<IUserAuth | void> {
-		const response = await this.apiClient.put<IResponse>({
-			url: "/auth/verify-otp",
-			data: {
-				userId,
-				data,
-				verificationType,
-			},
-		});
+		try {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL}/auth/verify-otp`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials: "include", // This ensures cookies are received and stored
+					body: JSON.stringify({
+						userId,
+						data,
+						verificationType,
+					}),
+				},
+			);
 
-		if (response.error) {
-			throw new Error(response.message || "Otp validation failed");
-		}
+			const responseData = await response.json();
 
-		const { data: resData } = response;
-		if (verificationType?.includes(VerificationType.AUTHENTICATE)) {
-			setAccessToken(resData.accessToken);
-			return resData as IUserAuth;
+			if (!response.ok || responseData.error) {
+				throw new Error(responseData.message || "Otp validation failed");
+			}
+
+			const { data: resData } = responseData;
+			if (verificationType?.includes(VerificationType.AUTHENTICATE)) {
+				setAccessToken(resData.accessToken);
+				return resData as IUserAuth;
+			}
+		} catch (error: any) {
+			throw new Error(error.message || "Otp validation failed");
 		}
 	}
 
