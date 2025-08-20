@@ -97,7 +97,9 @@ const ConnectTradingAccount = () => {
 					imgUrl: platform.logo,
 					data: platform,
 				}))
-				.filter((platform) => platform.data.category === selectedCategory?.value)
+				.filter((platform) =>
+					platform.data.category.includes(selectedCategory?.value as Category),
+				)
 				.filter(
 					// filter out user's already connected accounts
 					(platform) =>

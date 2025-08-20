@@ -7,8 +7,8 @@ import type { PaginationProps } from "~/components/interfaces";
 
 const signalData = mockSignalData.map((signal) => ({
 	...signal,
-	assetName: signal.asset.name,
-	baseCurrencyName: signal.baseCurrency.name,
+	baseAssetName: signal.baseAsset.name,
+	quoteCurrencyName: signal.quoteCurrency.name,
 }));
 
 jest.mock("~/apis/handlers/assets/hooks");

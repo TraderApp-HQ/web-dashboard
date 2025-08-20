@@ -13,8 +13,8 @@ import type { PaginationProps } from "~/components/interfaces";
 jest.setTimeout(30000);
 const signalData = mockSignalData.map((signal) => ({
 	...signal,
-	assetName: signal.asset.name,
-	baseCurrencyName: signal.baseCurrency.name,
+	baseAssetName: signal.baseAsset.name,
+	quoteCurrencyName: signal.quoteCurrency.name,
 }));
 
 jest.mock("~/apis/handlers/assets/hooks");
@@ -69,8 +69,8 @@ function generateLargeSignalData(count: number) {
 	return Array.from({ length: count }, (_, i) => ({
 		...signalData[0],
 		id: `signal-${i}`,
-		asset: { ...signalData[0].asset, name: `Asset${i}` },
-		baseCurrency: { ...signalData[0].baseCurrency, name: `Base${i}` },
+		asset: { ...signalData[0].baseAsset, name: `Asset${i}` },
+		baseCurrency: { ...signalData[0].quoteCurrency, name: `Base${i}` },
 		createdAt: `2024-08-13T14:44:05.${(100 + i).toString().padStart(3, "0")}Z`,
 		endedAt: `2024-08-13T14:44:05.${(200 + i).toString().padStart(3, "0")}Z`,
 		maxGain: i,
@@ -121,7 +121,7 @@ describe("SignalsHistory Table and Pagination Integration", () => {
 
 		await waitFor(() => {
 			signalData.slice(0, 10).forEach((signal) => {
-				expect(tableData).toHaveTextContent(signal.asset.name);
+				expect(tableData).toHaveTextContent(signal.baseAsset.name);
 				expect(tableData).toHaveTextContent(signal.maxGain.toString());
 				expect(tableData).toHaveTextContent(format(signal.createdAt, "dd MMM h:mm a"));
 				expect(tableData).toHaveTextContent(format(signal.endedAt, "dd MMM h:mm a"));

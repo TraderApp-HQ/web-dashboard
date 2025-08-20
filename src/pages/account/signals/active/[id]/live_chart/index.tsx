@@ -8,24 +8,24 @@ import { useRouter } from "next/router";
 
 const LiveChart = () => {
 	const { isLoading, isSuccess, activeSignals } = useFetchActiveSignals({});
-	const [selectedsignal, setSelectedsignal] = useState<ISignal>();
+	const [selectedSignal, setSelectedSignal] = useState<ISignal>();
 	const router = useRouter();
 
 	const id = router.query.id as string;
 
 	useEffect(() => {
 		if (!isLoading && isSuccess) {
-			const signalAsset = activeSignals.filter((asset) => asset.id === id);
-			setSelectedsignal(signalAsset[0]);
+			const signalAsset = activeSignals.find((asset) => asset.id === id);
+			setSelectedSignal(signalAsset);
 		}
 	}, [isLoading, isSuccess, activeSignals]);
 
 	return (
 		<>
-			{!isLoading && isSuccess && (
+			{!isLoading && isSuccess && selectedSignal && (
 				<div className="sm:w-[100%] grid gap-y-8">
 					<div className="flex justify-center rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:rounded-2xl">
-						<TradingViewWidget signal={selectedsignal} />
+						<TradingViewWidget signal={selectedSignal} />
 					</div>
 				</div>
 			)}

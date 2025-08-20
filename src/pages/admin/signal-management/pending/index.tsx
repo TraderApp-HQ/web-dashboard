@@ -6,17 +6,16 @@ import { useEffect, useState } from "react";
 import { AssetsService } from "~/apis/handlers/assets";
 import { AssetsQueryId } from "~/apis/handlers/assets/constants";
 import { SignalStatus } from "~/apis/handlers/assets/enums";
-import { useFetchActiveSignals } from "~/apis/handlers/assets/hooks";
+import { useFetchPendingSignals } from "~/apis/handlers/assets/hooks";
 import DropdownMenu, { DropdownMenuItem } from "~/components/AccountLayout/DropdownMenu";
 import SearchForm from "~/components/AccountLayout/SearchForm";
 import Select from "~/components/AccountLayout/Select";
 import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
-import PerformanceSummaryCard from "~/components/Cards/PerfomanceSummaryCard";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
-import { IActiveSignalCardProps } from "~/components/common/DataTable/config";
 import Date from "~/components/common/Date";
 import Button from "~/components/common/old/Button";
 import Toast from "~/components/common/Toast";
+import ComponentError from "~/components/Error/ComponentError";
 import DropdownIcon from "~/components/icons/DropdownIcon";
 import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import TableLoader from "~/components/Loaders/TableLoader";
@@ -24,9 +23,8 @@ import DeleteModal from "~/components/Modal/DeleteModal";
 import { useCreate } from "~/hooks/useCreate";
 import signalsData from "~/pages/account/signals/data.json";
 import { AdminNestedSignalsLayout } from "..";
-import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
 
-function ActiveSignals() {
+function PendingSignals() {
 	const signalsService = new AssetsService();
 	const queryClient = useQueryClient();
 	// const { term: urlTerm } = useParams<{ term?: string }>();
@@ -63,7 +61,7 @@ function ActiveSignals() {
 		data,
 	} = useCreate({
 		mutationFn: signalsService.updateSignal.bind(signalsService),
-		onSuccess: () => queryClient.invalidateQueries({ queryKey: [AssetsQueryId.signals] }),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: [AssetsQueryId.pending] }),
 	});
 
 	const handleDeleteModalConfirm = () => {
@@ -81,21 +79,20 @@ function ActiveSignals() {
 
 	const handleResumeSignal = (id: string, currentStatus: SignalStatus) => {
 		const newSignalStatus =
-			currentStatus === SignalStatus.ACTIVE ? SignalStatus.PAUSED : SignalStatus.ACTIVE;
+			currentStatus === SignalStatus.PENDING ? SignalStatus.PAUSED : SignalStatus.PENDING;
 		updateSignal({ id, status: newSignalStatus });
 	};
 
 	const {
 		isLoading,
 		isError: isFetchError,
+		error: fetchError,
 		isSuccess,
-		activeSignals,
+		pendingSignals,
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
-		performanceSummary,
-	} = useFetchActiveSignals({
-		isAdmin: true,
+	} = useFetchPendingSignals({
 		handleSetToggleDeleteModal,
 		handleResumeSignal,
 	});
@@ -122,16 +119,9 @@ function ActiveSignals() {
 
 	return (
 		<>
-			{activeSignals.filter((signal) => signal.status === SignalStatus.ACTIVE).length >=
-				2 && (
-				<ActiveSignalCard
-					summary={performanceSummary}
-					isLoading={isLoading}
-					isSuccess={isSuccess}
-					isError={isFetchError}
-				/>
-			)}
-			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
+			<div
+				className={clsx("flex justify-between", pendingSignals.length === 0 ? "mt-0" : "")}
+			>
 				<SearchForm
 					onChange={(e) => setSearchTerm(e.target.value)}
 					aria-label="search asset"
@@ -199,27 +189,31 @@ function ActiveSignals() {
 				</DropdownMenu>
 			</div>
 
-			{!isLoading && activeSignals.length === 0 ? (
+			{!isLoading && pendingSignals.length === 0 ? (
 				<SignalsEmptyState />
+			) : !isLoading && isFetchError ? (
+				<ComponentError errorMessage={fetchError?.message} />
 			) : (
-				<div className="pb-8 rounded-2xl">
-					<h3 className="font-bold text-base text-[#08123B]">
-						All Active Signal ({activeSignals.length})
-					</h3>
-					<div className="mt-2 mb-8">
-						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
-							{isLoading && <TableLoader />}
-							{isSuccess && signalsTableBody && (
-								<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
-							)}
+				isSuccess && (
+					<div className="pb-8 rounded-2xl">
+						<h3 className="font-bold text-base text-[#08123B]">
+							All Pending Signal ({pendingSignals.length})
+						</h3>
+						<div className="mt-2 mb-8">
+							<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
+								{isLoading && <TableLoader />}
+								{isSuccess && signalsTableBody && (
+									<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
+								)}
+							</div>
+							<div className="md:hidden relative">
+								{isLoading && <MobileTableLoader />}
+								{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
+							</div>
 						</div>
-						<div className="md:hidden relative">
-							{isLoading && <MobileTableLoader />}
-							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
-						</div>
+						<div className="border w-[30%] ml-auto">pagination component goes here</div>
 					</div>
-					<div className="border w-[30%] ml-auto">pagination component goes here</div>
-				</div>
+				)
 			)}
 
 			<DeleteModal
@@ -254,27 +248,7 @@ function ActiveSignals() {
 	);
 }
 
-const ActiveSignalCard: React.FC<IActiveSignalCardProps> = ({
-	summary,
-	isLoading,
-	isError,
-	isSuccess,
-}) => {
-	return (
-		<>
-			{isLoading && <PerformanceSummaryCardLoader />}
-			{isError && <div>Error fetching data</div>}
-			{isSuccess && (
-				<div className="flex flex-col md:flex-row gap-4">
-					<PerformanceSummaryCard data={summary?.bestSignal} label="best performer" />
-					<PerformanceSummaryCard data={summary?.worstSignal} label="worst performer" />
-				</div>
-			)}
-		</>
-	);
-};
-
-ActiveSignals.getLayout = (page: React.ReactElement) => (
+PendingSignals.getLayout = (page: React.ReactElement) => (
 	<AdminNestedSignalsLayout>{page}</AdminNestedSignalsLayout>
 );
-export default ActiveSignals;
+export default PendingSignals;

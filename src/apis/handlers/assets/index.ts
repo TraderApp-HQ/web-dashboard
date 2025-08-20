@@ -3,15 +3,15 @@ import type { IResponse } from "~/apis/handlers/interfaces";
 import { UsersService } from "~/apis/handlers/users";
 import type {
 	ICreateSignalInput,
-	IExchange,
 	IFetchTradingPlatform,
 	IFetchSignals,
 	IGetAssetsInput,
-	IGetExchangesInput,
 	ISignal,
 	ISignalAsset,
 	ISignalUpdateInput,
-	ISupportedExchangeInput,
+	IGetTradingPlatformsInput,
+	ISupportedTradingPlatformsInput,
+	ITradingPlatform,
 } from "./interfaces";
 // import { SignalStatus } from "./enums";
 
@@ -91,6 +91,19 @@ export class AssetsService {
 		return data as IFetchSignals;
 	}
 
+	public async getPendingSignals(): Promise<IFetchSignals> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/signals/pending`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch pending signal records");
+		}
+
+		const { data } = response;
+		return data as IFetchSignals;
+	}
+
 	public async getSignalsHistory(): Promise<IFetchSignals> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/signals/history`,
@@ -110,7 +123,7 @@ export class AssetsService {
 		rowsPerPage,
 		orderBy,
 		status,
-	}: IGetExchangesInput): Promise<IFetchTradingPlatform[]> {
+	}: IGetTradingPlatformsInput): Promise<IFetchTradingPlatform[]> {
 		// Construct query parameters
 		const queryParams = new URLSearchParams();
 
@@ -161,7 +174,7 @@ export class AssetsService {
 		}
 
 		const { data } = response;
-		return data.coins as ISignalAsset[];
+		return data.assets as ISignalAsset[];
 	}
 
 	//Currencies
@@ -179,13 +192,13 @@ export class AssetsService {
 		return data as ISignalAsset[];
 	}
 
-	public async getSupportedExchanges({
-		coinId,
-		currencyId,
-	}: ISupportedExchangeInput): Promise<IExchange[]> {
+	public async getSupportedTradingPlatforms({
+		baseAssetId,
+		quoteCurrencyId,
+	}: ISupportedTradingPlatformsInput): Promise<ITradingPlatform[]> {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
-			url: `/exchanges/supported/exchanges?coinId=${coinId}&currencyId=${currencyId}`,
+			url: `/exchanges/supported-trading-platforms?baseAssetId=${baseAssetId}&quoteCurrencyId=${quoteCurrencyId}`,
 		});
 
 		if (response.error) {
@@ -193,7 +206,7 @@ export class AssetsService {
 		}
 
 		const { data } = response;
-		return data as IExchange[];
+		return data as ITradingPlatform[];
 	}
 }
 

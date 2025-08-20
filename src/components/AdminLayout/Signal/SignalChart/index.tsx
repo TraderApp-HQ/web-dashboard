@@ -10,14 +10,14 @@ const SignalChart = () => {
 	const id = router.query.id as string;
 
 	const signalsService = new AssetsService();
-	const fetchSignal = useCallback(() => signalsService?.getSignal(`${id}`), [id, signalsService]);
+	const fetchSignal = useCallback(() => signalsService?.getSignal(id), [id, signalsService]);
 
 	const {
 		data: signal,
 		isLoading,
 		isSuccess,
 	} = useFetch({
-		queryKey: [AssetsQueryId.signals],
+		queryKey: [AssetsQueryId.signal],
 		queryFn: fetchSignal,
 	});
 
