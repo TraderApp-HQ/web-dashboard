@@ -80,8 +80,8 @@ export class UsersService {
 		} catch (error) {
 			console.error("Logout error:", error);
 			// Still cleanup even if request fails
-			// removeAccessToken();
-			// window.location.href = "/auth/login";
+			removeAccessToken();
+			window.location.href = "/auth/login";
 		}
 	}
 
