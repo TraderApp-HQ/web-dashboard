@@ -25,3 +25,7 @@ export const WalletsQueryId = {
 	supportedCurrencies: "wallet-supported-currencies",
 	paymentOptions: "wallet-payment-options",
 };
+
+export const WITHDRAWAL_LIMIT = {
+	MINIMUM_AMOUNTS: { USDT: 5 },
+};
