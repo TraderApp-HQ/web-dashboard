@@ -15,6 +15,7 @@ export interface ModalOptions {
 	backBtnIcon?: React.ReactNode;
 	showBackButton?: boolean;
 	className?: string;
+	closeOnOutsideClick?: boolean;
 }
 
 const Modal: React.FC<ModalOptions> = ({
@@ -28,6 +29,7 @@ const Modal: React.FC<ModalOptions> = ({
 	backBtnIcon,
 	showBackButton,
 	className,
+	closeOnOutsideClick = true,
 }) => {
 	const close = useCallback(() => {
 		if (onClose) {
@@ -41,6 +43,7 @@ const Modal: React.FC<ModalOptions> = ({
 
 	useEffect(() => {
 		const handleClickOutside = (event: { target: any }) => {
+			if (!closeOnOutsideClick) return;
 			if (ref.current && !ref.current.contains(event.target)) {
 				close();
 			}
@@ -87,12 +90,11 @@ const Modal: React.FC<ModalOptions> = ({
 		<div
 			className={clsx(
 				"bg-gray-600 bg-opacity-70 flex fixed top-0 right-0 left-0 z-50 justify-center items-center w-full h-full",
-				"bg-gray-600 bg-opacity-70 flex fixed top-0 right-0 left-0 z-50 justify-center items-center w-full h-full",
 				openModal ? "" : "hidden",
 			)}
 		>
 			<div ref={ref} className={clsx("w-full relative max-w-2xl p-2 md:p-4", width)}>
-				<div className="bg-white relative rounded-xl py-8 md:px-8 px-4 shadow max-h-[70vh] flex flex-col">
+				<div className="bg-white relative rounded-xl py-8 md:px-8 px-4 shadow max-h-[72vh] flex flex-col">
 					<div
 						className={`flex items-start justify-between w-full pb-2 ${headerDivider && "border-b-2 border-[#D1D7F0]"}`}
 					>
