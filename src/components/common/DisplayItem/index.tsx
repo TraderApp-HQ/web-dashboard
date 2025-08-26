@@ -11,16 +11,18 @@ const DisplayItem: React.FC<IDisplayItem> = ({
 	styles,
 	useAvatar,
 	avatarInitials,
+	assetTradeSide,
+	assetleverage,
 }) => {
 	return (
 		<div
-			className={`flex items-center space-x-2 md:justify-center justify-end ${styles} ${isAssetItem ? "md:w-[60%] md:mx-auto md:!justify-start" : ""}`}
+			className={`flex items-center space-x-3 md:justify-center justify-end ${styles} ${isAssetItem ? "md:w-[60%] md:mx-auto md:!justify-start" : ""}`}
 		>
 			{itemImage && !useAvatar && (
 				<Image
 					src={itemImage}
 					alt="Asset Logo"
-					className="w-[30px] h-[30px]"
+					className="w-[40px] h-[40px]"
 					width={30}
 					height={30}
 				/>
@@ -35,6 +37,11 @@ const DisplayItem: React.FC<IDisplayItem> = ({
 					<span className={`text-xs font-normal ${itemSubText?.style}`}>
 						{itemSubText.text}
 					</span>
+				)}
+				{isAssetItem && (
+					<div className="flex items-center gap-2">
+						{assetTradeSide} {assetleverage}
+					</div>
 				)}
 			</div>
 		</div>

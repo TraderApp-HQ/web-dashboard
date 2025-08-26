@@ -36,6 +36,7 @@ interface IDataTable {
 	};
 	showPagination?: boolean;
 	paginationProps?: PaginationProps;
+	paginationStyles?: string;
 }
 
 const DataTable: React.FC<IDataTable> = ({
@@ -55,6 +56,7 @@ const DataTable: React.FC<IDataTable> = ({
 	filterProps,
 	showPagination,
 	paginationProps,
+	paginationStyles = "mt-4",
 }) => {
 	return (
 		<>
@@ -167,7 +169,7 @@ const DataTable: React.FC<IDataTable> = ({
 			</div>
 
 			{showPagination && paginationProps && (
-				<div className="mt-4">
+				<div className={paginationStyles}>
 					<Pagination {...paginationProps} />
 				</div>
 			)}

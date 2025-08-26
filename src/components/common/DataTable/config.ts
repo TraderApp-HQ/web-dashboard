@@ -69,3 +69,10 @@ export interface IActiveSignalCardProps {
 	isSuccess: boolean;
 	isError: boolean;
 }
+
+export interface IPaginationData {
+	page: number;
+	totalPages: number;
+	totalRecords: number;
+	startAfterDoc: string;
+}

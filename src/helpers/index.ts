@@ -20,6 +20,7 @@ import {
 	ColourTheme,
 	HTMLElements,
 	OperationStatus,
+	TradeSide,
 	TransactionStatus,
 	TransactionType,
 	UserStatus,
@@ -39,6 +40,8 @@ export function renderDisplayItem({
 	isAssetItem,
 	useAvatar,
 	avatarInitials,
+	assetTradeSide,
+	assetleverage,
 }: IDisplayItem) {
 	return React.createElement(DisplayItem, {
 		itemText,
@@ -48,6 +51,8 @@ export function renderDisplayItem({
 		isAssetItem,
 		useAvatar,
 		avatarInitials,
+		assetTradeSide,
+		assetleverage,
 	});
 }
 
@@ -94,9 +99,11 @@ export function renderStatus(
 	style?: { justify?: string },
 	bullet?: boolean,
 	toolTipText?: string[],
+	statusTextStyle?: string,
 ) {
 	let theme: ColourTheme;
 	switch (status) {
+		case TradeSide.LONG:
 		case TransactionStatus.SUCCESS:
 		case TaskCategory.REFERRAL:
 		case UserTaskStatus.DONE:
@@ -126,6 +133,7 @@ export function renderStatus(
 			theme = ColourTheme.REVIEW;
 			break;
 		}
+		case TradeSide.SHORT:
 		case TransactionStatus.FAILED:
 		case OperationStatus.FAILED: {
 			theme = ColourTheme.DANGER;
@@ -147,7 +155,14 @@ export function renderStatus(
 		default:
 			theme = ColourTheme.PRIMARY;
 	}
-	return React.createElement(StatusPill, { status, theme, style, bullet, toolTipText });
+	return React.createElement(StatusPill, {
+		status,
+		theme,
+		style,
+		bullet,
+		toolTipText,
+		statusTextStyle,
+	});
 }
 
 export function renderRank(rank: ReferralRankType | null) {
@@ -209,4 +224,32 @@ export const getUserStatusToolTipText = (user: IUserProfile): string[] => {
 	}
 
 	return statusToolTipTextArray;
+};
+
+export const getSignalPriceInputValidationMessage = ({
+	tradeSide,
+	entryPrice,
+	comparePrice,
+	boundary,
+}: {
+	tradeSide: TradeSide;
+	entryPrice: number;
+	comparePrice: number;
+	boundary: "up" | "low";
+}) => {
+	let message = "";
+
+	if (boundary === "up") {
+		if (tradeSide === TradeSide.LONG && comparePrice < entryPrice)
+			message = "Price must be above entry price";
+		if (tradeSide === TradeSide.SHORT && comparePrice > entryPrice)
+			message = "Price must be below entry price";
+	} else if (boundary === "low") {
+		if (tradeSide === TradeSide.LONG && comparePrice > entryPrice)
+			message = "Price must be below entry price";
+		if (tradeSide === TradeSide.SHORT && comparePrice < entryPrice)
+			message = "Price must be above entry price";
+	}
+
+	return message;
 };

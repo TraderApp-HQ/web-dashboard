@@ -3,6 +3,7 @@ import { AssetsQueryId } from "~/apis/handlers/assets/constants";
 import { SignalStatus } from "~/apis/handlers/assets/enums";
 import { ISignal } from "~/apis/handlers/assets/interfaces";
 import type {
+	IPaginationData,
 	IPerformanceSummaryData,
 	ITBody,
 	ITHead,
@@ -19,6 +20,7 @@ import {
 	signalsPerfomanceSummary,
 } from "~/selectors/signals";
 import { AssetsService } from "..";
+import { PAGINATION } from "../../users/constants";
 
 interface UseFetchActiveSignalsProps {
 	handleSetToggleDeleteModal?: (id: string) => void;
@@ -136,6 +138,8 @@ export const useFetchPendingSignals = ({
 	const { data, error, isLoading, isSuccess, isError } = useFetch({
 		queryKey: [AssetsQueryId.pending],
 		queryFn: () => signalsService.getPendingSignals(),
+		refetch: true,
+		refetchTime: 120000, // Refetches from database every 2 minute
 	});
 
 	useEffect(() => {
@@ -171,6 +175,15 @@ export const useSignalHistory = () => {
 	const [signalsTableBody, setSignalsTableBody] = useState<ITBody>();
 	const [signalsMobileTableBody, setSignalsMobileTableBody] = useState<ITableMobile[]>([]);
 
+	//  Paginaion configurations
+	const [rowsPerPage, setRowsPerPage] = useState<number>(PAGINATION.LIMIT);
+	const [paginationData, setPaginationData] = useState<IPaginationData>({
+		page: PAGINATION.PAGE,
+		totalPages: 0,
+		totalRecords: 0,
+		startAfterDoc: "",
+	});
+
 	const fetchSignals = useCallback(() => signalsService.getSignalsHistory(), [signalsService]);
 	const {
 		data: allSignals,
@@ -184,6 +197,8 @@ export const useSignalHistory = () => {
 	});
 
 	useEffect(() => {
+		if (!allSignals) return;
+
 		const { tableHead, tableBody } = signalsHistoryDataTableSelector(allSignals?.signals ?? []);
 		const dataMobile = signalsHistoryDataTableMobileSelector(allSignals?.signals ?? []);
 
@@ -191,20 +206,23 @@ export const useSignalHistory = () => {
 		setSignalsTableHead(tableHead);
 		setSignalsTableBody(tableBody);
 		setSignalsMobileTableBody(dataMobile);
-	}, [isLoading, isSuccess, allSignals]);
+		setPaginationData((prev) => ({
+			...prev,
+			page: allSignals?.page ?? 1,
+			totalPages: allSignals?.totalPages ?? 1,
+			totalRecords: allSignals?.totalRecords ?? 1,
+			startAfterDoc: allSignals?.startAfterDoc ?? null,
+		}));
+		setRowsPerPage(allSignals?.rowsPerPage ?? 10);
+	}, [allSignals]);
 
-	// const { sendMessage, lastMessage, readyState, getWebSocket } = useWebSocket("ws://localhost:8080/stream/signals", {
-	//   onOpen: () => console.log("WebSocket opened"),
-	//   onClose: () => console.log("WebSocket closed"),
-	//   onError: (error) => console.log("WebSocket error", error),
-	//   onMessage: (message) => console.log("WebSocket message", message),
-	//   shouldReconnect: (closeEvent) => true, // Will attempt to reconnect on all close events
-	// });
-	// useEffect(() => {
-	//   if (lastMessage !== null) {
-	//     setMessageHistory((prev) => prev.concat(lastMessage));
-	//   }
-	// }, [lastMessage]);
+	// Pagination
+	const handleSetCurrentPage = (value: number) => {
+		setPaginationData((prev) => ({
+			...prev,
+			page: value,
+		}));
+	};
 
 	return {
 		isError,
@@ -215,5 +233,9 @@ export const useSignalHistory = () => {
 		signalsTableHead,
 		signalsTableBody,
 		signalsMobileTableBody,
+		paginationData,
+		handleSetCurrentPage,
+		setRowsPerPage,
+		rowsPerPage,
 	};
 };
