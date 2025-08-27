@@ -13,11 +13,11 @@ interface ChartProps {
 
 const Chart: React.FC<ChartProps> = ({ data, colors }) => {
 	return (
-		<PieChart width={300} height={400}>
+		<PieChart width={350} height={200}>
 			<Pie
 				data={data}
-				cx={120}
-				cy={200}
+				// cx={120}
+				// cy={200}
 				innerRadius={60}
 				outerRadius={80}
 				fill="#8884d8"

@@ -19,6 +19,7 @@ const SignalsLayout = ({ children }: IProps) => {
 	const router = useRouter();
 	const tabs = [
 		{ title: "Active Signals", href: "active" },
+		{ title: "Pending Signals", href: "pending" },
 		{ title: "Signals History", href: "history" },
 	];
 

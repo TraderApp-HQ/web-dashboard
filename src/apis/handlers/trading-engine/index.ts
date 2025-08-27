@@ -16,10 +16,9 @@ export class TradingEngineService {
 
 	constructor() {
 		this.usersService = new UsersService();
-		if (!process.env.NEXT_PUBLIC_TRADING_ENGINE_SERVICE_API_URL)
-			throw Error("Trading Engine service backend url not found");
+		// Remove the environment variable check since we're using proxy
 		this.apiClient = new APIClient(
-			process.env.NEXT_PUBLIC_TRADING_ENGINE_SERVICE_API_URL,
+			"/api/proxy", // This will be overridden in APIClient
 			this.usersService.refreshUserAccessToken.bind(this.usersService),
 		);
 	}

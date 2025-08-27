@@ -4,7 +4,8 @@ export const UsersQueryId = {
 	taskPlatform: "task-platform",
 	task: "task",
 	activeTasks: "active-tasks",
-	pendingTasksCount: "pending-tasks-count",
+	pendingTasks: "pending-tasks",
+	onboardingTasks: "onboarding-tasks",
 };
 
 export const PAGINATION = {

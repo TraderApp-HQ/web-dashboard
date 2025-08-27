@@ -97,7 +97,9 @@ const ConnectTradingAccount = () => {
 					imgUrl: platform.logo,
 					data: platform,
 				}))
-				.filter((platform) => platform.data.category === selectedCategory?.value)
+				.filter((platform) =>
+					platform.data.category.includes(selectedCategory?.value as Category),
+				)
 				.filter(
 					// filter out user's already connected accounts
 					(platform) =>
@@ -121,7 +123,7 @@ const ConnectTradingAccount = () => {
 	}, [isTradingPlatformsSuccess, tradingPlatforms, selectedCategory, userTradingAccounts]);
 
 	const handleModalClose = () => {
-		router.push("/account/trade-center/trading-accounts");
+		router.back();
 		setIsOpen(false);
 	};
 

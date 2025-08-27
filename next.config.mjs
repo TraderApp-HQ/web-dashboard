@@ -3,6 +3,31 @@ import nextPwa from "next-pwa";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactStrictMode: true,
+	async headers() {
+		return [
+			{
+				source: "/api/:path*",
+				headers: [
+					{
+						key: "Access-Control-Allow-Credentials",
+						value: "true",
+					},
+					{
+						key: "Access-Control-Allow-Origin",
+						value: "*",
+					},
+					{
+						key: "Access-Control-Allow-Methods",
+						value: "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+					},
+					{
+						key: "Access-Control-Allow-Headers",
+						value: "Content-Type, Authorization, Cookie",
+					},
+				],
+			},
+		];
+	},
 	images: {
 		remotePatterns: [
 			{
@@ -51,6 +76,7 @@ const withPwa = nextPwa({
 	skipWaiting: true,
 	// important to avoid running the generation everytime on your local environment
 	disable: process.env.NODE_ENV === "development",
+	swSrc: "public/custom-sw.js", // <-- add this line
 });
 
 export default withPwa(nextConfig);

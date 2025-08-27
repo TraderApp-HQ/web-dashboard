@@ -2,7 +2,12 @@ import { useQueries } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { WalletsService } from "~/apis/handlers/wallets";
 import { WalletsQueryId } from "~/apis/handlers/wallets/constants";
-import { PaymentCategory, PaymentOperation, WalletType } from "~/apis/handlers/wallets/enum";
+import {
+	CurrencyCategory,
+	PaymentCategory,
+	PaymentOperation,
+	WalletType,
+} from "~/apis/handlers/wallets/enum";
 import { useFetch } from "../useFetch";
 import { useCreate } from "../useCreate";
 import { IPaginationQuery } from "~/apis/handlers/wallets/interface";
@@ -13,7 +18,7 @@ export const useGetUserWalletsBalance = (walletType: WalletType) => {
 		() => walletsService.getWalletBalance(walletType),
 		[walletsService],
 	);
-	const { data, error, isLoading, isSuccess, isError } = useFetch({
+	const { data, error, isLoading, isSuccess, isError, refetch } = useFetch({
 		queryKey: [WalletsQueryId.walletsBalance, walletType],
 		queryFn: walletBalance,
 	});
@@ -24,6 +29,7 @@ export const useGetUserWalletsBalance = (walletType: WalletType) => {
 		isLoading,
 		isSuccess,
 		isError,
+		refetch,
 	};
 };
 
@@ -41,7 +47,10 @@ export const useWalletDepositOptions = ({
 		queries: [
 			{
 				queryKey: [WalletsQueryId.supportedCurrencies],
-				queryFn: () => walletsService.getSupportedCurrencies(),
+				queryFn: () =>
+					walletsService.getSupportedCurrencies({
+						category: category as unknown as CurrencyCategory,
+					}),
 			},
 			{
 				queryKey: [WalletsQueryId.paymentOptions, category, operation],
@@ -96,7 +105,7 @@ export const useGetUserWalletsRecentTransactions = ({
 		() => walletsService.getWalletRecentTransactions({ currentPage, rowsPerPage }),
 		[walletsService, currentPage, rowsPerPage],
 	);
-	const { data, error, isLoading, isSuccess, isError } = useFetch({
+	const { data, error, isLoading, isSuccess, isError, refetch } = useFetch({
 		queryKey: [WalletsQueryId.walletTransactions, currentPage, rowsPerPage],
 		queryFn: recentTransactions,
 	});
@@ -107,6 +116,7 @@ export const useGetUserWalletsRecentTransactions = ({
 		isLoading,
 		isSuccess,
 		isError,
+		refetch,
 	};
 };
 

@@ -1,7 +1,21 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from "react";
 import { GetServerSidePropsResult } from "next";
+import React from "react";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
+import {
+	PlatformAction,
+	TaskCategory,
+	TaskStatus,
+	UserTaskStatus,
+} from "~/apis/handlers/users/enums";
+import { IUserProfile } from "~/apis/handlers/users/interfaces";
+import DisplayChange from "~/components/common/DisplayChange";
+import DisplayItem from "~/components/common/DisplayItem";
+import DisplayTransaction from "~/components/common/DisplayTransaction";
+import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/types";
+import RankDisplay from "~/components/common/RankDisplay";
 import StatusPill from "~/components/common/StatusPill";
+import TargetPill from "~/components/common/TargetPill";
 import {
 	ColourTheme,
 	HTMLElements,
@@ -9,20 +23,9 @@ import {
 	TransactionStatus,
 	TransactionType,
 	UserStatus,
+	UserTradingStatus,
 } from "~/config/enum";
-import TargetPill from "~/components/common/TargetPill";
 import type { IDisplayItem, TartgetProfit } from "~/lib/types";
-import DisplayItem from "~/components/common/DisplayItem";
-import {
-	PlatformAction,
-	TaskCategory,
-	TaskStatus,
-	UserTaskStatus,
-} from "~/apis/handlers/users/enums";
-import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/types";
-import DisplayChange from "~/components/common/DisplayChange";
-import RankDisplay from "~/components/common/RankDisplay";
-import DisplayTransaction from "~/components/common/DisplayTransaction";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
@@ -86,7 +89,12 @@ export function renderTransactionType(transaction: TransactionType) {
 	});
 }
 
-export function renderStatus(status: string, style?: { justify?: string }, bullet?: boolean) {
+export function renderStatus(
+	status: string,
+	style?: { justify?: string },
+	bullet?: boolean,
+	toolTipText?: string[],
+) {
 	let theme: ColourTheme;
 	switch (status) {
 		case TransactionStatus.SUCCESS:
@@ -94,6 +102,7 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 		case UserTaskStatus.DONE:
 		case TaskStatus.STARTED:
 		case OperationStatus.ACTIVE:
+		case SignalStatus.ACTIVE:
 		case OperationStatus.COMPLETED: {
 			theme = ColourTheme.SUCCESS;
 			break;
@@ -101,11 +110,17 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 		case TransactionStatus.PENDING:
 		case UserTaskStatus.PENDING:
 		case TaskStatus.NOT_STARTED:
-		case OperationStatus.PAUSED:
+		case SignalStatus.PENDING:
 		case OperationStatus.PROCESSING: {
 			theme = ColourTheme.WARNING;
 			break;
 		}
+		case OperationStatus.PAUSED:
+		case SignalStatus.PAUSED: {
+			theme = ColourTheme.PAUSED;
+			break;
+		}
+		case SignalStatus.INACTIVE:
 		case TaskStatus.COMPLETED:
 		case UserTaskStatus.IN_REVIEW: {
 			theme = ColourTheme.REVIEW;
@@ -132,7 +147,7 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 		default:
 			theme = ColourTheme.PRIMARY;
 	}
-	return React.createElement(StatusPill, { status, theme, style, bullet });
+	return React.createElement(StatusPill, { status, theme, style, bullet, toolTipText });
 }
 
 export function renderRank(rank: ReferralRankType | null) {
@@ -173,4 +188,25 @@ export const isTierCompleted = (tier: Tier): boolean => {
 	return tier.milestones.length
 		? tier.milestones.every((milestone) => milestone.completed)
 		: !!tier.completed;
+};
+
+export const getUserStatusToolTipText = (user: IUserProfile): string[] => {
+	const statusToolTipTextArray: string[] = [];
+
+	if (user.tradingStatus === UserTradingStatus.INACTIVE) {
+		if (!user.isEmailVerified) {
+			statusToolTipTextArray.push("Email not verified.");
+		}
+		if (!user.isFirstDepositMade) {
+			statusToolTipTextArray.push("First Deposit not made.");
+		}
+		if (!user.isTradingAccountConnected) {
+			statusToolTipTextArray.push("Trading account not connected.");
+		}
+		if (!user.isPersonalATCFunded) {
+			statusToolTipTextArray.push("Trading account not funded/below minimum balance.");
+		}
+	}
+
+	return statusToolTipTextArray;
 };

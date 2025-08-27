@@ -30,14 +30,24 @@ export function activeSignalsDataTableSelector(
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: signal.asset.name, style: "text-base font-normal" },
-						itemSubText: { text: signal.asset.symbol },
-						itemImage: signal.asset.logo,
+						itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
+						itemSubText: { text: signal.baseAsset.symbol },
+						itemImage: signal.baseAsset.logo,
 						isAssetItem: true,
 					}),
 				},
-				{ displayItem: `${signal.currentPrice ?? "-"} USDT` },
-				{ displayItem: renderPercentageChange(signal.currentChange) },
+				{
+					displayItem:
+						signal.status !== SignalStatus.PENDING
+							? `${signal.currentPrice ?? "-"} USDT`
+							: "-",
+				},
+				{
+					displayItem:
+						signal.status !== SignalStatus.PENDING
+							? renderPercentageChange(signal.currentChange)
+							: "-",
+				},
 				{
 					displayItem: renderTargetProfits({
 						targetProfits: signal.targetProfits,
@@ -58,7 +68,7 @@ export function activeSignalsDataTableSelector(
 							onClick: () => handleSetToggleDeleteModal(signal.id),
 						}
 					: undefined,
-				handleResumeSignal
+				handleResumeSignal && isAdmin
 					? {
 							label:
 								signal.status === SignalStatus.ACTIVE
@@ -80,9 +90,9 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 	const dataMobile: ITableMobile[] = activeSignals.map((signal) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
-				itemText: { text: signal.asset.name, style: "text-base font-normal" },
-				itemSubText: { text: signal.asset.symbol },
-				itemImage: signal.asset.logo,
+				itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
+				itemSubText: { text: signal.baseAsset.symbol },
+				itemImage: signal.baseAsset.logo,
 			}),
 			displayItemValue: "",
 		},
@@ -95,7 +105,8 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 		tBody: [
 			{
 				displayItemTitle: "Current Price",
-				displayItemValue: `$${signal.currentPrice}`,
+				displayItemValue:
+					signal.status !== SignalStatus.PENDING ? `$${signal.currentPrice}` : "-",
 			},
 			{
 				displayItemTitle: "Targeted Profits",
@@ -110,7 +121,10 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			},
 			{
 				displayItemTitle: "Change",
-				displayItemValue: renderPercentageChange(signal.currentChange),
+				displayItemValue:
+					signal.status !== SignalStatus.PENDING
+						? renderPercentageChange(signal.currentChange)
+						: "-",
 			},
 			{
 				displayItemTitle: "Status",
@@ -129,8 +143,8 @@ export function signalsHistoryDataTableSelector(data: ISignal[]) {
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: signal.asset.name, style: "text-base font-normal" },
-						itemImage: signal.asset.logo,
+						itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
+						itemImage: signal.baseAsset.logo,
 						isAssetItem: true,
 					}),
 				},
@@ -148,9 +162,9 @@ export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 	const dataMobile: ITableMobile[] = data.map((signal) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
-				itemText: { text: signal.asset.name, style: "text-base font-normal" },
-				itemSubText: { text: signal.asset.symbol },
-				itemImage: signal.asset.logo,
+				itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
+				itemSubText: { text: signal.baseAsset.symbol },
+				itemImage: signal.baseAsset.logo,
 			}),
 			displayItemValue: "",
 		},
@@ -186,18 +200,135 @@ export function signalsPerfomanceSummary(signals: ISignal[]): IPerformanceSummar
 
 	const bestSignal: IPerformanceData | undefined = bestPerformer
 		? {
-				itemLogo: bestPerformer.asset.logo,
-				itemName: bestPerformer.asset.name,
+				itemLogo: bestPerformer.baseAsset.logo,
+				itemName: bestPerformer.baseAsset.name,
 				itemPercentageChange: bestPerformer.maxGain,
 			}
 		: undefined;
 	const worstSignal: IPerformanceData | undefined = worstPerformer
 		? {
-				itemLogo: worstPerformer.asset.logo,
-				itemName: worstPerformer.asset.name,
+				itemLogo: worstPerformer.baseAsset.logo,
+				itemName: worstPerformer.baseAsset.name,
 				itemPercentageChange: worstPerformer.maxGain,
 			}
 		: undefined;
 
 	return { bestSignal, worstSignal };
+}
+
+export function pendingSignalsDataTableSelector(
+	pendingSignals: ISignal[],
+	handleSetToggleDeleteModal?: (id: string) => void,
+	handleResumeSignal?: (id: string, currentStatus: SignalStatus) => void,
+) {
+	const tableHead = [...ActiveSignalsTableHeadItems];
+	const tableBody: ITBody = {
+		tBodyRows: pendingSignals.map((signal) => ({
+			tBodyColumns: [
+				{
+					displayItem: renderDisplayItem({
+						itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
+						itemSubText: { text: signal.baseAsset.symbol },
+						itemImage: signal.baseAsset.logo,
+						isAssetItem: true,
+					}),
+				},
+				{
+					displayItem:
+						signal.status !== SignalStatus.PENDING
+							? `${signal.currentPrice ?? "-"} USDT`
+							: "-",
+				},
+				{
+					displayItem:
+						signal.status !== SignalStatus.PENDING
+							? renderPercentageChange(signal.currentChange)
+							: "-",
+				},
+				{
+					displayItem: renderTargetProfits({
+						targetProfits: signal.targetProfits,
+						// containerStyles: "!justify-start md:!pl-24",
+					}),
+				},
+				{ displayItem: new Date(signal.createdAt).toDateString() },
+				{ displayItem: renderStatus(signal.status) },
+			],
+			actions: [
+				{
+					label: "View",
+					url: `pending/${signal.id}/screenshot_chat`,
+				},
+				handleSetToggleDeleteModal
+					? {
+							label: "Delete signal",
+							onClick: () => handleSetToggleDeleteModal(signal.id),
+						}
+					: undefined,
+				handleResumeSignal
+					? {
+							label:
+								signal.status === SignalStatus.PENDING
+									? "Pending signal"
+									: "Paused signal",
+							isToggle: signal.status === SignalStatus.PENDING,
+							setToggle: () => handleResumeSignal(signal.id, signal.status),
+							id: signal.id,
+						}
+					: undefined,
+			].filter((action) => action !== undefined) as ITableActions[],
+		})),
+	};
+
+	return { tableHead, tableBody };
+}
+
+export function pendingSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
+	const dataMobile: ITableMobile[] = activeSignals.map((signal) => ({
+		tHead: {
+			displayItemTitle: renderDisplayItem({
+				itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
+				itemSubText: { text: signal.baseAsset.symbol },
+				itemImage: signal.baseAsset.logo,
+			}),
+			displayItemValue: "",
+		},
+		actions: [
+			{
+				label: "View",
+				url: `pending/${signal.id}/screenshot_chat`,
+			},
+		],
+		tBody: [
+			{
+				displayItemTitle: "Current Price",
+				displayItemValue:
+					signal.status !== SignalStatus.PENDING ? `$${signal.currentPrice}` : "-",
+			},
+			{
+				displayItemTitle: "Targeted Profits",
+				displayItemValue: renderTargetProfits({
+					targetProfits: signal.targetProfits,
+					styles: "text-sm",
+				}),
+			},
+			{
+				displayItemTitle: "Date / Time",
+				displayItemValue: new Date(signal.createdAt).toDateString(),
+			},
+			{
+				displayItemTitle: "Change",
+				displayItemValue:
+					signal.status !== SignalStatus.PENDING
+						? renderPercentageChange(signal.currentChange)
+						: "-",
+			},
+			{
+				displayItemTitle: "Status",
+				displayItemValue: renderStatus(signal.status),
+			},
+		],
+	}));
+
+	return dataMobile;
 }

@@ -23,3 +23,8 @@ export enum ModalType {
 	ADDRESS = "Address",
 	EXPIRED = "Expired",
 }
+
+export enum CurrencyCategory {
+	CRYPTO = "Crypto",
+	FIAT = "Fiat",
+}

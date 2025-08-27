@@ -33,6 +33,8 @@ import { useInitiateDeposit, useWalletDepositOptions } from "~/hooks/useWallets"
 
 const Deposit = () => {
 	const router = useRouter();
+	const { first_deposit } = router.query;
+	const firstDeposit = first_deposit === "true";
 	const [openModal, setOpenModal] = useState(true);
 	const [depositUrlModal, setDepositUrlModal] = useState(false);
 	const [depositExpiredModal, setDepositExpiredModal] = useState(false);
@@ -48,7 +50,7 @@ const Deposit = () => {
 	const [selectedNetwork, setSelectedNetwork] = useState<ISupportedNetworks | undefined>(
 		undefined,
 	);
-	const [amount, setAmount] = useState<number | undefined>(undefined);
+	const [amount, setAmount] = useState<number | undefined>(firstDeposit ? 95 : undefined);
 	const [depositWalletInfo, setDepositWalletInfo] = useState<
 		IFactoryPaymentProviderDepositResponse | undefined
 	>(undefined);
@@ -221,60 +223,65 @@ const Deposit = () => {
 					) : !isLoading && isError ? (
 						<ComponentError errorMessage={error?.message} />
 					) : (
-						<section className="space-y-5 px-1">
-							<SelectBox
-								labelText="Currency"
-								placeholder="Select a currency"
-								isSearchable={false}
-								options={(supportedCurrencies ?? [])?.map((currency) => ({
-									displayText: currency.symbol,
-									value: currency.id,
-									imgUrl: currency.logoUrl,
-								}))}
-								option={{
-									displayText: selectedCurrency?.symbol || "",
-									value: selectedCurrency?.id || "",
-									imgUrl: selectedCurrency?.logoUrl || "",
-								}}
-								setOption={handleSelectCurrency}
-							/>
-							<SelectBox
-								labelText="Payment Options"
-								placeholder="Select a payment option"
-								isSearchable={false}
-								options={(paymentOptions ?? [])?.map((option) => ({
-									displayText: option.symbol,
-									value: option.paymentMethodId,
-									imgUrl: option.logoUrl,
-								}))}
-								option={{
-									displayText: selectedPaymentOption?.symbol || "",
-									value: selectedPaymentOption?.paymentMethodId || "",
-									imgUrl: selectedPaymentOption?.logoUrl || "",
-								}}
-								setOption={handleSelectPaymentOption}
-							/>
-							<SelectBox
-								labelText="Network"
-								placeholder="Select network"
-								isSearchable={false}
-								options={(selectedPaymentOption?.supportNetworks ?? [])?.map(
-									(network) => ({
-										displayText: network.name,
-										value: network.name,
-									}),
-								)}
-								option={{
-									displayText: selectedNetwork?.name ?? "Select network",
-									value: selectedNetwork?.name ?? "",
-								}}
-								setOption={handleSelectNetwork}
-								fontStyles={`${!selectedNetwork?.name && "text-textGray"}`}
-							/>
+						isFetchSuccess &&
+						selectedCurrency &&
+						selectedPaymentOption && (
+							<section className="space-y-5 px-1">
+								<SelectBox
+									labelText="Currency"
+									placeholder="Select a currency"
+									isSearchable={false}
+									options={(supportedCurrencies ?? [])?.map((currency) => ({
+										displayText: currency.symbol,
+										value: currency.id,
+										imgUrl: currency.logoUrl,
+									}))}
+									option={{
+										displayText: selectedCurrency?.symbol || "",
+										value: selectedCurrency?.id || "",
+										imgUrl: selectedCurrency?.logoUrl || "",
+									}}
+									setOption={handleSelectCurrency}
+								/>
+								<SelectBox
+									labelText="Payment Options"
+									placeholder="Select a payment option"
+									isSearchable={false}
+									options={(paymentOptions ?? [])?.map((option) => ({
+										displayText: option.symbol,
+										value: option.paymentMethodId,
+										imgUrl: option.logoUrl,
+									}))}
+									option={{
+										displayText: selectedPaymentOption?.symbol || "",
+										value: selectedPaymentOption?.paymentMethodId || "",
+										imgUrl: selectedPaymentOption?.logoUrl || "",
+									}}
+									setOption={handleSelectPaymentOption}
+								/>
+								<SelectBox
+									labelText="Network"
+									placeholder="Select network"
+									isSearchable={false}
+									options={(selectedPaymentOption?.supportNetworks ?? [])?.map(
+										(network) => ({
+											displayText: network.name,
+											value: network.name,
+										}),
+									)}
+									option={{
+										displayText: selectedNetwork?.name ?? "Select network",
+										value: selectedNetwork?.name ?? "",
+									}}
+									setOption={handleSelectNetwork}
+									fontStyles={`${!selectedNetwork?.name && "text-textGray"}`}
+								/>
 
-							{selectedCurrency &&
-								selectedPaymentOption &&
-								selectedCurrency?.symbol !== selectedPaymentOption?.symbol && (
+								{(firstDeposit ||
+									(selectedCurrency &&
+										selectedPaymentOption &&
+										selectedCurrency?.symbol !==
+											selectedPaymentOption?.symbol)) && (
 									<InputField
 										type="number"
 										labelText="Amount in USDT"
@@ -286,14 +293,15 @@ const Deposit = () => {
 									/>
 								)}
 
-							<Button
-								labelText="Continue"
-								className="w-full tracking-widest"
-								isProcessing={isPending}
-								onClick={handleDepositTransaction}
-								disabled={disableButton || isPending}
-							/>
-						</section>
+								<Button
+									labelText="Continue"
+									className="w-full tracking-widest"
+									isProcessing={isPending}
+									onClick={handleDepositTransaction}
+									disabled={disableButton || isPending}
+								/>
+							</section>
+						)
 					)}
 				</Modal>
 			)}

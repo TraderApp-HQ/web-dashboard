@@ -16,6 +16,7 @@ export enum SignalRisk {
 }
 
 export enum SignalStatus {
+	PENDING = "PENDING",
 	ACTIVE = "ACTIVE",
 	PAUSED = "PAUSED",
 	INACTIVE = "INACTIVE",
@@ -26,7 +27,7 @@ export enum TradeStatus {
 	inactive = "INACTIVE",
 }
 
-export enum Exchange {
+export enum TradingPlatform {
 	binance = "binance",
 	kucoin = "kucoin",
 }

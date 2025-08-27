@@ -24,6 +24,7 @@ const useUserProfileData = () => {
 		isLoading: isUserProfileLoading,
 		isError: isUserProfileError,
 		error: userProfileError,
+		refetch: refetchUserProfile,
 	} = useFetch({
 		queryKey: [UsersQueryId.userProfile],
 		queryFn: fetchUser,
@@ -65,6 +66,7 @@ const useUserProfileData = () => {
 		isUserProfileError,
 		userProfileError,
 		isAdmin,
+		refetchUserProfile,
 	};
 };
 

@@ -13,6 +13,8 @@ import ComponentError from "~/components/Error/ComponentError";
 import { useGetUserWalletsBalance } from "~/hooks/useWallets";
 import { WalletType } from "~/apis/handlers/wallets/enum";
 import WalletBalanceCardLoader from "~/components/Loaders/WalletBalanceCardLoader";
+import useFeatureFlag from "~/hooks/useFeatureFlag";
+import useUserProfileData from "~/hooks/useUserProfileData";
 
 interface ITotalBalanceSectionProps {
 	showBalanceText?: string;
@@ -28,7 +30,18 @@ export default function WalletBalanceCard({
 	padding,
 }: ITotalBalanceSectionProps) {
 	// Get wallet balance hook
-	const { data, isError, isLoading, isSuccess } = useGetUserWalletsBalance(WalletType.MAIN);
+	const { data, isError, isLoading, isSuccess, refetch } = useGetUserWalletsBalance(
+		WalletType.MAIN,
+	);
+
+	// Get User Id
+	const { userId } = useUserProfileData();
+
+	// Feature flag to show multiple wallet balances
+	const showMultipleWalletBalance = useFeatureFlag({
+		userId,
+		flagName: "release-multiple-wallet-balance",
+	});
 
 	const router = useRouter();
 	const [showBalance, handleShowBalance] = useState<boolean>(true);
@@ -58,6 +71,15 @@ export default function WalletBalanceCard({
 			);
 		}
 	}, [data, isSuccess]);
+
+	// Refetch wallet balance every 2 minutes
+	useEffect(() => {
+		const interval = setInterval(() => {
+			refetch();
+		}, 120000); // 2 minutes
+
+		return () => clearInterval(interval);
+	}, [refetch]);
 
 	return (
 		<>
@@ -111,17 +133,19 @@ export default function WalletBalanceCard({
 											</h2>
 										</section>
 
-										<section className="flex items-center">
-											<SelectBox
-												isSearchable={false}
-												options={individualWalletBalanceOptions}
-												option={individualWalletBalanceOptions[0]}
-												bgColor="bg-[#F1F5FF]"
-												buttonClassName="px-3 py-2"
-												fontStyles="font-medium text-base capitalize text-[#1E1E1E]"
-												optionsClass="!p-1"
-											/>
-										</section>
+										{showMultipleWalletBalance && (
+											<section className="flex items-center">
+												<SelectBox
+													isSearchable={false}
+													options={individualWalletBalanceOptions}
+													option={individualWalletBalanceOptions[0]}
+													bgColor="bg-[#F1F5FF]"
+													buttonClassName="px-3 py-2"
+													fontStyles="font-medium text-base capitalize text-[#1E1E1E]"
+													optionsClass="!p-1"
+												/>
+											</section>
+										)}
 									</section>
 								) : (
 									<HidenBalance />

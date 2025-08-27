@@ -1,16 +1,16 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import AccountLayout from "~/components/AccountLayout/Layout";
 import ViewUserTask from "~/components/AccountLayout/task-center/ViewUserTask";
 import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
 import { useGetUserTask } from "~/hooks/useTask";
+import AccountLayout from "~/components/AccountLayout/Layout";
 
 const ViewTaskModal = () => {
 	const [openTaskModal, setOpenTaskModal] = useState(true);
 	const router = useRouter();
 	const { taskId } = router.query;
-	const { task, isLoading, isError, error } = useGetUserTask(taskId as string);
+	const { task, isLoading, isError, error, refetch } = useGetUserTask(taskId as string);
 
 	const closeModal = () => {
 		router.back();
@@ -34,7 +34,13 @@ const ViewTaskModal = () => {
 					{error?.message}
 				</section>
 			) : (
-				task && <ViewUserTask selectedTask={task} closeModal={closeModal} />
+				task && (
+					<ViewUserTask
+						selectedTask={task}
+						refetchTask={refetch}
+						isFetchingTask={isLoading}
+					/>
+				)
 			)}
 		</Modal>
 	);

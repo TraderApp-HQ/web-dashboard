@@ -1,7 +1,12 @@
-export { TARecruit } from "./TARecruit";
-export { TALieutenant } from "./TALieutenant";
+export { ArrowCircleIcon } from "./ArrowCircleIcon";
+export { ConnectIcon } from "./ConnectIcon";
+export { MailIcon } from "./MailIcon";
 export { TACaptain } from "./TACaptain";
-export { TAMAjor } from "./TAMajor";
 export { TAColonel } from "./TAColonel";
-export { TAGeneral } from "./TAGeneral";
 export { TAFieldMarshal } from "./TAFieldMarshal";
+export { TAGeneral } from "./TAGeneral";
+export { TALieutenant } from "./TALieutenant";
+export { TAMAjor } from "./TAMajor";
+export { TARecruit } from "./TARecruit";
+export { TaskIcon } from "./TaskIcon";
+export { UserIcon } from "./UserIcon";

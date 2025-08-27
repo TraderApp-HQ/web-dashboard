@@ -12,7 +12,7 @@ const ReferalCard: React.FC<ICurrentRankCardProps> = ({ title, subtext, Icon }) 
 	return (
 		<Card className="w-12/12 lg:w-[35%]  2xl:w-[25%] px-3 py-7">
 			<div className="flex-col justify-center items-start space-y-6 ml-0 sm:ml-3">
-				<div className="flex justify-between items-center gap-14 md:gap-16">
+				<div className="flex justify-between items-center gap-14 md:gap-4">
 					<div>
 						<h3 className="text-neutral-700 text-sm font-semibold leading-tight mb-2">
 							{title}

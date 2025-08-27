@@ -68,31 +68,53 @@ export const useGetAllActiveTasks = () => {
 		data: activeTasks,
 		isLoading,
 		isSuccess,
+		isError,
+		error,
 	} = useFetch({
 		queryKey: [UsersQueryId.activeTasks],
 		queryFn: fetchActiveTasks,
 	});
 
-	return { activeTasks, isLoading, isSuccess };
+	return { activeTasks, isLoading, isSuccess, isError, error };
 };
 
-export const useGetAllPendingTasksCount = () => {
+export const useGetAllPendingTasks = () => {
 	const usersService = new UsersService();
-	const fetchPendingTasksCount = useCallback(
-		() => usersService.getAllPendingTasksCount(),
+	const fetchPendingTasks = useCallback(() => usersService.getAllPendingTasks(), [usersService]);
+
+	const {
+		data: pendingTasks,
+		isLoading,
+		isSuccess,
+		isError,
+		error,
+	} = useFetch({
+		queryKey: [UsersQueryId.pendingTasks],
+		queryFn: fetchPendingTasks,
+	});
+
+	return { pendingTasks, isLoading, isSuccess, isError, error };
+};
+
+export const useGetOnboardingTasks = () => {
+	const usersService = new UsersService();
+	const fetchOnboardingTasks = useCallback(
+		() => usersService.getOnboardingTasks(),
 		[usersService],
 	);
 
 	const {
-		data: pendingTasksCount,
+		data: onboardingTasks,
 		isLoading,
 		isSuccess,
+		isError,
+		error,
 	} = useFetch({
-		queryKey: [UsersQueryId.pendingTasksCount],
-		queryFn: fetchPendingTasksCount,
+		queryKey: [UsersQueryId.onboardingTasks],
+		queryFn: fetchOnboardingTasks,
 	});
 
-	return { pendingTasksCount, isLoading, isSuccess };
+	return { onboardingTasks, isLoading, isSuccess, isError, error };
 };
 
 export const useCreateTask = () => {
@@ -185,12 +207,13 @@ export const useGetUserTask = (taskId: string) => {
 		isLoading,
 		isError,
 		error,
+		refetch,
 	} = useFetch({
 		queryKey: [taskId],
 		queryFn: getTask,
 	});
 
-	return { task, isLoading, isError, error };
+	return { task, isLoading, isError, error, refetch };
 };
 
 export const useUpdateTaskPlatformData = () => {

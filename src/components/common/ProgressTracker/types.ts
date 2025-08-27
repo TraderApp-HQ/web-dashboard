@@ -8,15 +8,25 @@ export interface Milestone {
 }
 
 export interface TierBase {
-	title: ReferralRankType;
+	title: ReferralRankType | string;
+	icon: string;
 	text: string;
 	milestones: Milestone[];
 	completed?: boolean;
 }
 
-export interface TierWithAction extends TierBase {
-	actionButton: true;
+interface TierAction {
+	text: string;
 	buttonText: string;
+	buttonAction: () => void;
+	disableActionButton?: boolean;
+	buttonActionLoading?: boolean;
+	taskPill?: string;
+}
+
+export interface TierWithAction extends Omit<TierBase, "text"> {
+	actionButton: true;
+	action: TierAction[];
 }
 
 export interface TierNoAction extends TierBase {
@@ -28,7 +38,12 @@ export type Tier = TierWithAction | TierNoAction;
 export interface ProgressTrackerProps {
 	title: string | React.ReactElement;
 	body: string;
-	tiers: Record<ReferralRankType, Tier> | Record<string, never>;
+	tiers: Record<ReferralRankType | string, Tier> | Record<string, never>;
+	hasOptionalTiers?: boolean;
+	optionalTiersTitle?: string;
+	optionalTiers?: Record<string, Tier> | Record<string, never>;
+	hasDismissBtn?: boolean;
+	dismissBtn?: React.ComponentType;
 	isLoading?: boolean;
 	loadingComponent?: React.ComponentType;
 	error?: Error | null;
@@ -54,5 +69,6 @@ export type IRankData = {
 		personalATC: IRankCriteriaStatus;
 		communityATC: IRankCriteriaStatus;
 		communitySize: IRankCriteriaStatus;
+		hasRequiredRankReferrals: IRankCriteriaStatus;
 	};
 };

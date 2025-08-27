@@ -25,6 +25,7 @@ interface ISelectBoxProps {
 	optionsClass?: string;
 	dropPosition?: "top" | "bottom";
 	caretSize?: string;
+	placeholderClassName?: string;
 }
 
 /**
@@ -53,6 +54,7 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 	optionsClass,
 	dropPosition = "bottom",
 	caretSize = "1em",
+	placeholderClassName,
 }: ISelectBoxProps): JSX.Element => {
 	const [selectedOption, setSelectedOption] = useState<ISelectBoxOption | undefined>(undefined);
 	const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -125,14 +127,14 @@ const SelectBox: React.FC<ISelectBoxProps> = ({
 
 				<div
 					// data-testid={options.map(({ displayText }) => displayText).join("")}
-					className={`p-[16px] placeholder-[#808080] w-full text-[#102477] invalid:text-[#808080] rounded-lg font-normal outline-[1px] outline-[#6579CC] appearance-none bg-no-repeat bg-[center_right_1em] invalid:[&:not(:empty)]:visited:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${
+					className={`p-[16px] placeholder-gray-400 w-full text-[#102477] invalid:text-[#808080] rounded-lg font-normal outline-[1px] outline-[#6579CC] appearance-none bg-no-repeat bg-[center_right_1em] invalid:[&:not(:empty)]:visited:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${
 						isOpen ? "border-[#7949FF]" : "border-gray-100"
 					} rounded-md p-2 flex justify-between items-center cursor-pointer space-x-2 ${bgColor ? bgColor : "bg-[#F5F8FE]"} ${buttonClassName || ""}`}
 					onClick={() => setIsOpen(!isOpen)}
 					data-testid={placeholder}
 				>
 					{clear || !selectedOption ? (
-						<span role="button" className="text-[#808080]">
+						<span role="button" className={`text-[#808080] ${placeholderClassName}`}>
 							{placeholder ?? "Select option"}
 						</span>
 					) : (

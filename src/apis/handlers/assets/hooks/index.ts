@@ -12,6 +12,8 @@ import { useFetch } from "~/hooks/useFetch";
 import {
 	activeSignalsDataTableMobileSelector,
 	activeSignalsDataTableSelector,
+	pendingSignalsDataTableMobileSelector,
+	pendingSignalsDataTableSelector,
 	signalsHistoryDataTableMobileSelector,
 	signalsHistoryDataTableSelector,
 	signalsPerfomanceSummary,
@@ -51,7 +53,7 @@ export const useFetchActiveSignals = ({
 		queryKey: [AssetsQueryId.signals],
 		queryFn: fetchSignals,
 		refetch: true,
-		refetchTime: 120000, // Refetches from database every 2 minutes
+		refetchTime: 120000, // Refetches from database every 2 minute
 	});
 
 	useEffect(() => {
@@ -118,6 +120,47 @@ export const useFetchActiveSignals = ({
 		signalsTableBody,
 		signalsMobileTableBody,
 		performanceSummary,
+	};
+};
+
+export const useFetchPendingSignals = ({
+	handleSetToggleDeleteModal,
+	handleResumeSignal,
+}: UseFetchActiveSignalsProps) => {
+	const signalsService = new AssetsService();
+	const [pendingSignals, setPendingSignals] = useState<ISignal[]>([]);
+	const [signalsTableHead, setSignalsTableHead] = useState<ITHead[]>([]);
+	const [signalsTableBody, setSignalsTableBody] = useState<ITBody>();
+	const [signalsMobileTableBody, setSignalsMobileTableBody] = useState<ITableMobile[]>([]);
+
+	const { data, error, isLoading, isSuccess, isError } = useFetch({
+		queryKey: [AssetsQueryId.pending],
+		queryFn: () => signalsService.getPendingSignals(),
+	});
+
+	useEffect(() => {
+		const { tableHead, tableBody } = pendingSignalsDataTableSelector(
+			data?.signals ?? [],
+			handleSetToggleDeleteModal,
+			handleResumeSignal,
+		);
+		const dataMobile = pendingSignalsDataTableMobileSelector(data?.signals ?? []);
+
+		setSignalsTableHead(tableHead);
+		setSignalsTableBody(tableBody);
+		setSignalsMobileTableBody(dataMobile);
+		setPendingSignals(data?.signals ?? []);
+	}, [data, isSuccess, isLoading]);
+
+	return {
+		isError,
+		error,
+		isLoading,
+		isSuccess,
+		pendingSignals,
+		signalsTableHead,
+		signalsTableBody,
+		signalsMobileTableBody,
 	};
 };
 

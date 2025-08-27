@@ -10,13 +10,19 @@ export enum TrafficType {
 }
 
 /** Add/revise feature flags here, and then fill out the configuration below. */
-export type FeatureFlag = "release-send-otp" | "release-referral-tracking";
+export type FeatureFlag =
+	| "release-send-otp"
+	| "release-referral-tracking"
+	| "release-multiple-wallet-balance";
 
 export const FEATURE_FLAG_CONFIG: FeatureFlagConfig = {
 	"release-send-otp": {
 		level: TrafficType.USER,
 	},
 	"release-referral-tracking": {
+		level: TrafficType.USER,
+	},
+	"release-multiple-wallet-balance": {
 		level: TrafficType.USER,
 	},
 };

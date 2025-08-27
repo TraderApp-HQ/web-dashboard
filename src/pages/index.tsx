@@ -1,6 +1,8 @@
 // import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import LoadingLogo from "~/components/common/LoadingLogo";
+import { usePWAMobileDetection } from "~/hooks/usePWAMobileDetection";
 
 // export const getServerSideProps: GetServerSideProps = async (context) => {
 // 	return {
@@ -13,9 +15,21 @@ import { useEffect } from "react";
 
 const Home = () => {
 	const router = useRouter();
+	const { isMobileAndPWA, isLoading } = usePWAMobileDetection();
 	useEffect(() => {
-		router.push("/auth/login");
-	}, []);
+		if (!isLoading) {
+			if (isMobileAndPWA) {
+				router.push("/onboarding");
+			} else {
+				router.push("/auth/login");
+			}
+		}
+	}, [isLoading, isMobileAndPWA]);
+
+	if (isLoading) {
+		return <LoadingLogo />;
+	}
+	return null;
 };
 
 export default Home;

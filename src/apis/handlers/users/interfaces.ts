@@ -1,9 +1,10 @@
-import type { UserStatus } from "~/config/enum";
+import type { UserStatus, UserTradingStatus } from "~/config/enum";
 import type {
 	NotificationChannel,
 	Platform,
 	PlatformAction,
 	TaskCategory,
+	TaskMode,
 	TaskStatus,
 	TaskType,
 	UserRole,
@@ -21,11 +22,22 @@ export interface IUserProfile {
 	countryId: number;
 	countryName: string;
 	isEmailVerified: boolean;
+	isFirstDepositMade: boolean;
+	isTradingAccountConnected: boolean;
+	isPersonalATCFunded: boolean;
+	isSocialAccountConnected: boolean;
+	isOnboardingTaskDone: boolean;
+	showOnboardingSteps: boolean;
+	facebookUsername: string;
+	twitterUsername: string;
+	tiktokUsername: string;
+	instagramUsername: string;
 	isPhoneVerified: boolean;
 	isIdVerified: boolean;
 	role: UserRole[];
 	referralRank: ReferralRankType;
 	status: UserStatus;
+	tradingStatus: UserTradingStatus;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -50,6 +62,7 @@ export interface IUserSignupInput {
 	countryName?: string;
 	referralCode?: string;
 }
+
 export interface IResetPasswordInput {
 	verificationToken: string;
 	password: string;
@@ -75,11 +88,15 @@ export interface ICreateUserInput {
 
 export interface IUpdateUserInput {
 	id: string;
-	firstName: string;
-	lastName: string;
-	role: UserRole[];
+	firstName?: string;
+	lastName?: string;
+	role?: UserRole[];
 	countryId?: number;
 	countryName?: string;
+	facebookUsername?: string;
+	twitterUsername?: string;
+	tiktokUsername?: string;
+	instagramUsername?: string;
 }
 
 export interface IPasswordResetInput {
@@ -186,6 +203,7 @@ export interface ITask {
 	title: string;
 	description: string;
 	objective?: string;
+	taskMode: TaskMode;
 	taskType: string;
 	category: string;
 	platformId?: string;
@@ -203,6 +221,7 @@ export interface ITaskWithPopulate {
 	title: string;
 	description: string;
 	objective?: string;
+	taskMode: TaskMode;
 	taskType: string;
 	category: string;
 	platformId?: ITaskPlatforms;
@@ -249,10 +268,22 @@ export interface IFetchAllActiveTasks {
 	userTask: IUserTableData[];
 }
 
-export interface IFetchAllPendingTasksCount {
-	pendingTasksCount: number;
+export interface IFetchAllPendingTasks {
+	pendingTasks: IPendingTask[];
 }
 
+export interface IPendingTask {
+	id: string;
+	title: string;
+}
+
+export interface IFetchOnboardingTasks {
+	onboardingTasks: IOnboardingTask[];
+}
+
+export interface IOnboardingTask extends IPendingTask {
+	status: UserTaskStatus;
+}
 export interface ITaskCategory {
 	displayText: string;
 	value: TaskCategory;
@@ -266,6 +297,11 @@ export interface ITaskPlatform {
 export interface ITaskType {
 	displayText: string;
 	value: TaskType;
+}
+
+export interface ITaskMode {
+	displayText: string;
+	value: TaskMode;
 }
 
 export interface ITaskForm {
@@ -286,6 +322,7 @@ export interface ITaskData {
 	title: string;
 	description: string;
 	objective?: string;
+	taskMode: TaskMode;
 	taskType: TaskType;
 	category: TaskCategory;
 	platformId?: string;

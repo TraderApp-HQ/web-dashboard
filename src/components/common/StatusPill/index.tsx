@@ -1,5 +1,6 @@
 import React from "react";
-import { ColourTheme } from "~/config/enum";
+import { ConnectionStatus } from "~/components/AccountLayout/TradeCenter/TradingAccountCard";
+import { ColourTheme, UserTradingStatus } from "~/config/enum";
 import { capitalizeFirstLetter } from "~/helpers";
 
 interface IOperationStatus {
@@ -9,6 +10,7 @@ interface IOperationStatus {
 		justify?: string;
 	};
 	bullet?: boolean;
+	toolTipText?: string[];
 }
 
 const OperationStatus: React.FC<IOperationStatus> = ({
@@ -16,6 +18,7 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 	theme,
 	style = { justify: "justify-end sm:justify-center" },
 	bullet = true, // defaults to true to display bullet
+	toolTipText,
 }) => {
 	const statusText = capitalizeFirstLetter(status);
 	let roundedIconStyles: string;
@@ -30,6 +33,11 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 		case ColourTheme.WARNING: {
 			roundedIconStyles = "bg-[#B25E09]";
 			statusContainerStyles = "bg-[#FCE7CC] text-[#B25E09]";
+			break;
+		}
+		case ColourTheme.PAUSED: {
+			roundedIconStyles = "bg-[#414141]";
+			statusContainerStyles = "bg-[#F0F0F0] text-[#414141]";
 			break;
 		}
 		case ColourTheme.DANGER: {
@@ -60,12 +68,21 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 
 	return (
 		<div className={`flex ${style.justify}`}>
-			<div
-				className={`flex px-3 py-1.5 font-black rounded-lg justify-center items-center gap-2 ${statusContainerStyles}`}
-			>
-				{bullet && <div className={`p-1 rounded-full ${roundedIconStyles}`}></div>}
-				<div className="capitalize">{statusText}</div>
-			</div>
+			{status === UserTradingStatus.INACTIVE ? (
+				<ConnectionStatus
+					errorMessages={toolTipText || []}
+					isConnected={false}
+					connectionText={statusText}
+					connectionHeadingText="trading status"
+				/>
+			) : (
+				<div
+					className={`flex px-3 py-1.5 font-black rounded-lg justify-center items-center gap-2 ${statusContainerStyles}`}
+				>
+					{bullet && <div className={`p-1 rounded-full ${roundedIconStyles}`}></div>}
+					<div className="capitalize">{statusText}</div>
+				</div>
+			)}
 		</div>
 	);
 };

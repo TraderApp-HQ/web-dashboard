@@ -146,7 +146,7 @@ export const userTaskCenterTableSelector = (task: ITaskTableData[]) => {
 				actions: [
 					{
 						label: "View",
-						url: `${LAYOUT_ROUTES.account}${ROUTES.taskcenter.home}/${task.id}`,
+						url: `${LAYOUT_ROUTES.account}${ROUTES.rewardHub}${ROUTES.taskcenter.home}/${task.id}`,
 					},
 				] as ITableActions[],
 			};
@@ -187,7 +187,7 @@ export const userTaskCenterMobileTableSelector = (tasks: ITaskTableData[]) => {
 		actions: [
 			{
 				label: "View",
-				url: `${LAYOUT_ROUTES.account}${ROUTES.taskcenter.home}/${task.id}`,
+				url: `${LAYOUT_ROUTES.account}${ROUTES.rewardHub}${ROUTES.taskcenter.home}/${task.id}`,
 			},
 		] as ITableActions[],
 	}));

@@ -2,6 +2,7 @@ export enum ColourTheme {
 	SUCCESS = "SUCCESS",
 	DANGER = "DANGER",
 	WARNING = "WARNING",
+	PAUSED = "PAUSED",
 	PRIMARY = "PRIMARY",
 	SECONDARY = "SECONDARY",
 	REVIEW = "REVIEW",
@@ -31,6 +32,11 @@ export enum HTMLElements {
 }
 
 export enum UserStatus {
+	ACTIVE = "ACTIVE",
+	INACTIVE = "INACTIVE",
+}
+
+export enum UserTradingStatus {
 	ACTIVE = "ACTIVE",
 	INACTIVE = "INACTIVE",
 }

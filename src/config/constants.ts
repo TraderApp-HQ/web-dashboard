@@ -19,6 +19,7 @@ export const ROUTES = {
 		tradeHistory: "../trade-history",
 		tradingRules: "../trading-rules",
 		backButton: "/account/trade-center",
+		connect: "/account/trade-center/trading-accounts/connect",
 		manageTrade: "manage",
 		exchanges: "exchanges",
 	},
@@ -34,12 +35,13 @@ export const ROUTES = {
 		transfer: "/account/wallets/transfer",
 		transactionDetails: "transaction-details",
 	},
-	referrals: "/referrals",
+	rewardHub: "/reward-hub",
 	settings: "/settings",
 	login: "/login",
 	signup: "/signup",
 	passwordrecover: "/password/recover",
 	passwordreset: "/password/reset",
+	otp: "/otp",
 
 	//admin routes
 	usermanagement: {

@@ -1,6 +1,6 @@
 import { Category, TradeSide, TradeType } from "~/config/enum";
 import { ConnectionType } from "../trading-engine/enums";
-import type { Candlestick, Exchange, SignalRisk, SignalStatus, TradeStatus } from "./enums";
+import type { Candlestick, SignalRisk, SignalStatus, TradeStatus, TradingPlatform } from "./enums";
 
 export interface ISignalAsset {
 	id: string;
@@ -16,7 +16,7 @@ export interface ISignalMilestone {
 	isReached: boolean;
 }
 
-export interface IExchange {
+export interface ITradingPlatform {
 	_id: string;
 	name: string;
 	logo: string;
@@ -24,10 +24,10 @@ export interface IExchange {
 
 export interface ISignal {
 	id: string;
-	asset: ISignalAsset;
-	assetName: string;
-	baseCurrency: ISignalAsset;
-	baseCurrencyName: string;
+	baseAsset: ISignalAsset;
+	baseAssetName: string;
+	quoteCurrency: ISignalAsset;
+	quoteCurrencyName: string;
 	targetProfits: ISignalMilestone[];
 	stopLoss: ISignalMilestone;
 	entryPrice: number;
@@ -42,7 +42,7 @@ export interface ISignal {
 	maxGain: number;
 	createdAt: string;
 	endedAt?: string;
-	supportedExchanges: IExchange[];
+	supportedTradingPlatforms: ITradingPlatform[];
 }
 
 export interface IFetchSignals {
@@ -65,11 +65,11 @@ export interface ICreateSignalInput {
 	risk: SignalRisk;
 	isSignalTradable: boolean;
 	chart: string;
-	supportedExchanges: number[];
-	asset: number;
-	assetName: string;
-	baseCurrency: number;
-	baseCurrencyName: string;
+	supportedTradingPlatforms: number[];
+	baseAsset: number;
+	baseAssetName: string;
+	quoteCurrency: number;
+	quoteCurrencyName: string;
 	category: Category;
 	tradeSide?: TradeSide;
 	tradeType?: TradeType;
@@ -87,7 +87,7 @@ export interface IFetchTradingPlatform {
 	logo: string;
 	isIpAddressWhitelistRequired: boolean;
 	connectionTypes: ConnectionType[];
-	category: Category;
+	category: Category[];
 	slug: string;
 	description?: string;
 	status: TradeStatus;
@@ -101,7 +101,7 @@ export interface IFetchTradingPlatform {
 	isPassphraseRequired?: boolean;
 }
 
-export interface IGetExchangesInput {
+export interface IGetTradingPlatformsInput {
 	page?: number;
 	rowsPerPage?: number;
 	orderBy?: "asc" | "desc";
@@ -116,9 +116,9 @@ export interface IGetAssetsInput {
 	category: Category;
 }
 
-export interface ISupportedExchangeInput {
-	coinId: number;
-	currencyId: number;
+export interface ISupportedTradingPlatformsInput {
+	baseAssetId: number;
+	quoteCurrencyId: number;
 }
 
 interface IActiveSignalsData {
@@ -127,10 +127,10 @@ interface IActiveSignalsData {
 	targetProfits: ISignalMilestone[];
 	entryPrice: number;
 	isSignalTradable: boolean;
-	assetName: string;
-	baseCurrencyName: string;
+	baseAssetName: string;
+	quoteCurrencyName: string;
 	assetPair: string;
-	exchanges: Exchange[];
+	tradingPlatforms: TradingPlatform[];
 }
 
 interface ISignalPriceData {
@@ -141,6 +141,6 @@ interface ISignalPriceData {
 
 export interface ISignalPrice {
 	signalId: string;
-	exchange: Exchange;
+	tradingPlatform: TradingPlatform;
 	signalData: ISignalPriceData;
 }

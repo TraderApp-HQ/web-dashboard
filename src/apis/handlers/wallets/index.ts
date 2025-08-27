@@ -1,7 +1,7 @@
 import { APIClient } from "~/apis/apiClient";
 import { UsersService } from "~/apis/handlers/users";
 import { IResponse } from "../interfaces";
-import { PaymentCategory, PaymentOperation, WalletType } from "./enum";
+import { CurrencyCategory, PaymentCategory, PaymentOperation, WalletType } from "./enum";
 import {
 	IFactoryPaymentProviderDepositResponse,
 	IInitiateDepositInput,
@@ -19,10 +19,9 @@ export class WalletsService {
 
 	constructor() {
 		this.usersService = new UsersService();
-		if (!process.env.NEXT_PUBLIC_WALLETS_SERVICE_API_URL)
-			throw Error("Wallets service backend url not found");
+		// Remove the environment variable check since we're using proxy
 		this.apiClient = new APIClient(
-			process.env.NEXT_PUBLIC_WALLETS_SERVICE_API_URL,
+			"/api/proxy", // This will be overridden in APIClient
 			this.usersService.refreshUserAccessToken.bind(this.usersService),
 		);
 	}
@@ -40,9 +39,13 @@ export class WalletsService {
 		return data as IUserWalletResponse;
 	}
 
-	public async getSupportedCurrencies(): Promise<IWalletSupportedCurrencies[]> {
+	public async getSupportedCurrencies({
+		category,
+	}: {
+		category: CurrencyCategory;
+	}): Promise<IWalletSupportedCurrencies[]> {
 		const response = await this.apiClient.get<IResponse>({
-			url: `/wallets/supported-currencies`,
+			url: `/wallets/supported-currencies?category=${category}`,
 		});
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch supported currencies.");

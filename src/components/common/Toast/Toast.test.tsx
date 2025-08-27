@@ -57,7 +57,7 @@ describe("Toast Component", () => {
 		render(<Toast type="warning" title="Warning!" autoVanish={true} autoVanishTimeout={1} />);
 
 		// Check if the toast is initially visible
-		expect(screen.getByTestId("toast-message")).toBeVisible();
+		expect(screen.getByTestId("toast-message")).not.toHaveClass("hidden");
 
 		// Wait for the toast to disappear after 1 second
 		await waitFor(() => expect(screen.getByTestId("toast-message")).toHaveClass("hidden"), {

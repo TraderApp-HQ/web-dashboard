@@ -122,12 +122,15 @@ function ActiveSignals() {
 
 	return (
 		<>
-			<ActiveSignalCard
-				summary={performanceSummary}
-				isLoading={isLoading}
-				isSuccess={isSuccess}
-				isError={isFetchError}
-			/>
+			{activeSignals.filter((signal) => signal.status === SignalStatus.ACTIVE).length >=
+				2 && (
+				<ActiveSignalCard
+					summary={performanceSummary}
+					isLoading={isLoading}
+					isSuccess={isSuccess}
+					isError={isFetchError}
+				/>
+			)}
 			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
 				<SearchForm
 					onChange={(e) => setSearchTerm(e.target.value)}
