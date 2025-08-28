@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface Signal {
 	id: string;
 	asset: string;
@@ -152,6 +154,8 @@ export interface IDisplayItem {
 	isAssetItem?: boolean;
 	useAvatar?: boolean;
 	avatarInitials?: string;
+	assetTradeSide?: JSX.Element | ReactNode;
+	assetleverage?: JSX.Element | ReactNode;
 }
 export type Asset = AssetItem | null;
 

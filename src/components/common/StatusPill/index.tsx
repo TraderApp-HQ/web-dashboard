@@ -11,6 +11,7 @@ interface IOperationStatus {
 	};
 	bullet?: boolean;
 	toolTipText?: string[];
+	statusTextStyle?: string;
 }
 
 const OperationStatus: React.FC<IOperationStatus> = ({
@@ -19,6 +20,7 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 	style = { justify: "justify-end sm:justify-center" },
 	bullet = true, // defaults to true to display bullet
 	toolTipText,
+	statusTextStyle = "capitalize",
 }) => {
 	const statusText = capitalizeFirstLetter(status);
 	let roundedIconStyles: string;
@@ -30,14 +32,15 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 			statusContainerStyles = "bg-[#EDFDF8] text-[#08875D]";
 			break;
 		}
-		case ColourTheme.WARNING: {
+		case ColourTheme.PAUSED: {
 			roundedIconStyles = "bg-[#B25E09]";
 			statusContainerStyles = "bg-[#FCE7CC] text-[#B25E09]";
 			break;
 		}
-		case ColourTheme.PAUSED: {
-			roundedIconStyles = "bg-[#414141]";
-			statusContainerStyles = "bg-[#F0F0F0] text-[#414141]";
+		case ColourTheme.PRIMARY:
+		case ColourTheme.WARNING: {
+			roundedIconStyles = "bg-[#808080]";
+			statusContainerStyles = "bg-[#F7F7F7] text-[#808080]";
 			break;
 		}
 		case ColourTheme.DANGER: {
@@ -80,7 +83,7 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 					className={`flex px-3 py-1.5 font-black rounded-lg justify-center items-center gap-2 ${statusContainerStyles}`}
 				>
 					{bullet && <div className={`p-1 rounded-full ${roundedIconStyles}`}></div>}
-					<div className="capitalize">{statusText}</div>
+					<div className={`${statusTextStyle}`}>{statusText}</div>
 				</div>
 			)}
 		</div>

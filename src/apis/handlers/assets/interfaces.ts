@@ -37,12 +37,15 @@ export interface ISignal {
 	candlestick: Candlestick;
 	risk: SignalRisk;
 	isSignalTradable: boolean;
+	isSignalTriggered: boolean;
 	chartUrl: string;
 	status: SignalStatus;
 	maxGain: number;
 	createdAt: string;
 	endedAt?: string;
 	supportedTradingPlatforms: ITradingPlatform[];
+	leverage: number;
+	tradeSide: string;
 }
 
 export interface IFetchSignals {
@@ -73,7 +76,6 @@ export interface ICreateSignalInput {
 	category: Category;
 	tradeSide?: TradeSide;
 	tradeType?: TradeType;
-	leverage?: number;
 }
 
 export interface ISignalUpdateInput {

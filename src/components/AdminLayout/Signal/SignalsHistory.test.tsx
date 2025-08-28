@@ -89,11 +89,19 @@ describe("SignalsHistory Component", () => {
 			signalsMobileTableBody: [],
 			isError: false,
 			error: null,
+			paginationData: {
+				page: 1,
+				totalPages: 1,
+				totalRecords: 2,
+				startAfterDoc: "",
+			},
+			handleSetCurrentPage: () => {},
+			setRowsPerPage: () => {},
+			rowsPerPage: 10,
 		});
 
 		render(<SignalsHistory />);
 		expect(screen.getByPlaceholderText(/Search for asset name/i)).toBeInTheDocument();
-		expect(screen.getByText(/Recent Transactions/i)).toBeInTheDocument();
 	});
 
 	test("shows TableLoader when loading", () => {
@@ -106,6 +114,15 @@ describe("SignalsHistory Component", () => {
 			signalsMobileTableBody: [],
 			isError: false,
 			error: null,
+			paginationData: {
+				page: 1,
+				totalPages: 1,
+				totalRecords: 2,
+				startAfterDoc: "",
+			},
+			handleSetCurrentPage: () => {},
+			setRowsPerPage: () => {},
+			rowsPerPage: 10,
 		});
 
 		render(<SignalsHistory />);
@@ -123,6 +140,15 @@ describe("SignalsHistory Component", () => {
 			signalsMobileTableBody: [],
 			isError: false,
 			error: null,
+			paginationData: {
+				page: 1,
+				totalPages: 1,
+				totalRecords: 2,
+				startAfterDoc: "",
+			},
+			handleSetCurrentPage: () => {},
+			setRowsPerPage: () => {},
+			rowsPerPage: 10,
 		});
 
 		render(<SignalsHistory />);

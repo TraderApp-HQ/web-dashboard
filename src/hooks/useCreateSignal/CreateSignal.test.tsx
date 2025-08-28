@@ -5,6 +5,7 @@ import { useCreateSignal } from "~/hooks/useCreateSignal";
 import useCurrencies from "~/hooks/useCurrencies";
 import useSupportedTradingPlatforms from "~/hooks/useSupportedTradingPlatforms";
 import CreateSignal from "~/pages/admin/signal-management/create-signal";
+import useGetAssetCurrentPrice from "~/hooks/useAssetCurrentPrice";
 // import { signalData } from "../../components/AdminLayout/Signal/SignalData";
 
 // Mocking hooks and dependencies
@@ -15,6 +16,7 @@ jest.mock("~/hooks/useCreateSignal");
 jest.mock("~/hooks/useAssets");
 jest.mock("~/hooks/useCurrencies");
 jest.mock("~/hooks/useSupportedTradingPlatforms");
+jest.mock("~/hooks/useAssetCurrentPrice");
 
 describe("CreateSignal Component", () => {
 	const mockPush = jest.fn();
@@ -50,6 +52,14 @@ describe("CreateSignal Component", () => {
 			data: [{ _id: 3, name: "Binance", logo: "/logo3.png" }],
 			isSuccess: true,
 			isLoading: false,
+		});
+		(useGetAssetCurrentPrice as jest.Mock).mockReturnValue({
+			data: { price: 1234.5678 },
+			isLoading: false,
+			isSuccess: true,
+			isError: false,
+			error: null,
+			refetch: jest.fn(),
 		});
 	});
 

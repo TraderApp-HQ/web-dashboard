@@ -117,6 +117,25 @@ export class AssetsService {
 		return data as IFetchSignals;
 	}
 
+	public async getAssetCurrentPrice({
+		asset,
+		quote,
+	}: {
+		asset: string;
+		quote: string;
+	}): Promise<{ price: number }> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/signals/asset-current-price?asset=${asset}&quote=${quote}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch signal current price.");
+		}
+
+		const { data } = response;
+		return data as { price: number };
+	}
+
 	//Exchanges
 	public async getAllTradingPlatforms({
 		page,
