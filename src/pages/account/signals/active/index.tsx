@@ -76,14 +76,13 @@ const ActiveSignals = () => {
 			) : !isLoading && isSuccess && activeSignals.length === 0 ? (
 				<SignalsEmptyState />
 			) : (
-				<section className="mt-2 mb-8">
+				<section className="mt-2 mb-8 rounded-2xl bg-white">
 					<section className="hidden md:block overflow-x-auto">
 						{isSuccess && signalsTableBody && (
 							<DataTable
 								tHead={signalsTableHead}
 								tBody={signalsTableBody}
 								tableStyles="bg-white px-10"
-								tableHeadStyles="bg-[#F3F4F6]"
 								tableHeadItemStyles="text-center"
 								showPagination={true}
 								paginationProps={{
@@ -95,7 +94,7 @@ const ActiveSignals = () => {
 									onNext: () => setCurrentPage((prev) => prev + 1),
 									onPrev: () => setCurrentPage((prev) => prev - 1),
 								}}
-								paginationStyles="bg-[#F3F4F6] rounded-b-2xl py-2 px-4"
+								paginationStyles="p-4"
 							/>
 						)}
 					</section>

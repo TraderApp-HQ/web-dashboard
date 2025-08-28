@@ -33,7 +33,7 @@ export function activeSignalsDataTableSelector(
 						itemImage: signal.baseAsset.logo,
 						itemText: {
 							text: `${signal.baseAsset.symbol} / ${signal.quoteCurrency.symbol}`,
-							style: "text-lg font-bold",
+							style: "font-bold",
 						},
 						isAssetItem: true,
 						assetTradeSide: renderStatus(
@@ -41,12 +41,14 @@ export function activeSignalsDataTableSelector(
 							{ justify: "justify-center" },
 							false,
 							[],
-							"uppercase",
+							"uppercase text-[10px] font-semibold",
 						),
 						assetleverage: renderStatus(
 							`${signal.leverage}x`,
 							{ justify: "justify-center" },
 							false,
+							[],
+							"text-[10px]",
 						),
 					}),
 				},
@@ -116,7 +118,7 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			displayItemTitle: renderDisplayItem({
 				itemText: {
 					text: `${signal.baseAsset.symbol} / ${signal.quoteCurrency.symbol}`,
-					style: "text-base font-bold",
+					style: "font-bold",
 				},
 				itemImage: signal.baseAsset.logo,
 				isAssetItem: true,
@@ -125,12 +127,14 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 					{ justify: "justify-center" },
 					false,
 					[],
-					"uppercase",
+					"uppercase text-[10px] font-semibold",
 				),
 				assetleverage: renderStatus(
 					`${signal.leverage}x`,
 					{ justify: "justify-center" },
 					false,
+					[],
+					"text-[10px]",
 				),
 			}),
 			displayItemValue: "",
@@ -286,7 +290,7 @@ export function pendingSignalsDataTableSelector(
 					displayItem: renderDisplayItem({
 						itemText: {
 							text: `${signal.baseAsset.symbol} / ${signal.quoteCurrency.symbol}`,
-							style: "text-lg font-bold",
+							style: "font-bold",
 						},
 						itemImage: signal.baseAsset.logo,
 						isAssetItem: true,
@@ -295,12 +299,14 @@ export function pendingSignalsDataTableSelector(
 							{ justify: "justify-center" },
 							false,
 							[],
-							"uppercase",
+							"uppercase text-[10px] font-semibold",
 						),
 						assetleverage: renderStatus(
 							`${signal.leverage}x`,
 							{ justify: "justify-center" },
 							false,
+							[],
+							"text-[10px]",
 						),
 					}),
 				},
@@ -366,7 +372,7 @@ export function pendingSignalsDataTableMobileSelector(activeSignals: ISignal[]) 
 			displayItemTitle: renderDisplayItem({
 				itemText: {
 					text: `${signal.baseAsset.symbol} / ${signal.quoteCurrency.symbol}`,
-					style: "text-base font-bold",
+					style: "font-bold",
 				},
 				itemImage: signal.baseAsset.logo,
 				isAssetItem: true,
@@ -375,12 +381,14 @@ export function pendingSignalsDataTableMobileSelector(activeSignals: ISignal[]) 
 					{ justify: "justify-center" },
 					false,
 					[],
-					"uppercase",
+					"uppercase text-[10px] font-semibold",
 				),
 				assetleverage: renderStatus(
 					`${signal.leverage}x`,
 					{ justify: "justify-center" },
 					false,
+					[],
+					"text-[10px]",
 				),
 			}),
 			displayItemValue: "",

@@ -10,8 +10,12 @@ import MobileTableLoader from "~/components/Loaders/MobileTableLoader";
 import { useSignalHistory } from "~/apis/handlers/assets/hooks";
 import data from "~/pages/account/signals/data.json";
 import ComponentError from "~/components/Error/ComponentError";
+import { usePathname } from "next/navigation";
 
 function SignalsHistory() {
+	const path = usePathname();
+	const adminTableBgStyle = path.startsWith("/admin");
+
 	const {
 		isLoading,
 		isError,
@@ -105,18 +109,20 @@ function SignalsHistory() {
 			) : !isLoading && isSuccess && signalHistory.length === 0 ? (
 				<SignalsEmptyState />
 			) : (
-				<div className="mt-2 mb-8">
+				<div
+					className={`mt-2 mb-8 rounded-2xl ${adminTableBgStyle ? "bg-[#F3F4F6]" : "bg-white"}`}
+				>
 					<div className="hidden md:block overflow-x-auto">
 						{isSuccess && signalsTableBody && (
 							<DataTable
 								tHead={signalsTableHead}
 								tBody={signalsTableBody}
 								tableStyles="bg-white px-10"
-								tableHeadStyles="bg-[#F3F4F6]"
+								tableHeadStyles={adminTableBgStyle ? "bg-[#F3F4F6]" : "bg-white"}
 								tableHeadItemStyles="text-center"
 								showPagination={true}
 								paginationProps={paginationProps}
-								paginationStyles="bg-[#F3F4F6] rounded-b-2xl py-2 px-4"
+								paginationStyles="p-4"
 							/>
 						)}
 					</div>

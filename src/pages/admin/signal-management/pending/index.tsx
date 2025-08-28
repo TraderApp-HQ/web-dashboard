@@ -215,7 +215,7 @@ function PendingSignals() {
 				<SignalsEmptyState />
 			) : (
 				isSuccess && (
-					<div className="mt-2 mb-8">
+					<div className="mt-2 mb-8 rounded-2xl bg-[#F3F4F6]">
 						<div className="hidden md:block overflow-x-auto">
 							{isSuccess && signalsTableBody && (
 								<DataTable
@@ -236,7 +236,7 @@ function PendingSignals() {
 										onNext: () => setCurrentPage((prev) => prev + 1),
 										onPrev: () => setCurrentPage((prev) => prev - 1),
 									}}
-									paginationStyles="bg-[#F3F4F6] rounded-b-2xl py-2 px-4"
+									paginationStyles="p-4"
 								/>
 							)}
 						</div>

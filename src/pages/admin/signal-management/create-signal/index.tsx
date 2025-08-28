@@ -643,7 +643,7 @@ function CreateSignal() {
 						{renderDisplayItem({
 							itemText: {
 								text: `${selectedBaseAsset?.symbol} / ${selectedQuoteCurrency?.symbol}`,
-								style: "text-lg font-bold",
+								style: "font-bold",
 							},
 							styles: "!mx-0 md:!mx-0 !justify-start",
 							itemImage: selectedBaseAsset?.logo,
@@ -653,7 +653,7 @@ function CreateSignal() {
 								{ justify: "justify-center" },
 								false,
 								[],
-								"uppercase",
+								"uppercase text-[10px] font-semibold",
 							),
 						})}
 

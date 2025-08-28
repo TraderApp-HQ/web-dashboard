@@ -22,7 +22,7 @@ const DisplayItem: React.FC<IDisplayItem> = ({
 				<Image
 					src={itemImage}
 					alt="Asset Logo"
-					className="w-[40px] h-[40px]"
+					className="w-[32px] h-[32px]"
 					width={30}
 					height={30}
 				/>
