@@ -9,6 +9,7 @@ import {
 import { format } from "date-fns";
 import { signalData as mockSignalData } from "~/components/AdminLayout/Signal/SignalData";
 import type { PaginationProps } from "~/components/interfaces";
+import { usePathname } from "next/navigation";
 
 jest.setTimeout(30000);
 const signalData = mockSignalData.map((signal) => ({
@@ -17,6 +18,13 @@ const signalData = mockSignalData.map((signal) => ({
 	quoteCurrencyName: signal.quoteCurrency.name,
 }));
 
+jest.mock("next/navigation", () => {
+	const actual = jest.requireActual("next/navigation");
+	return {
+		...actual,
+		usePathname: jest.fn(),
+	};
+});
 jest.mock("~/apis/handlers/assets/hooks");
 jest.mock("~/components/Pagination", () => {
 	const MockPagination = ({
@@ -85,6 +93,7 @@ describe("SignalsHistory Table and Pagination Integration", () => {
 			configurable: true,
 			value: 1024,
 		});
+		(usePathname as jest.Mock).mockReturnValue("/admin/signal-management/history");
 	});
 
 	afterEach(() => {
