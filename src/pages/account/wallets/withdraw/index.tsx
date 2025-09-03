@@ -38,7 +38,7 @@ const Withdraw = () => {
 		undefined,
 	);
 	const [amount, setAmount] = useState<number | undefined>(undefined);
-	const [amountToRecieve, setAmountToRecieve] = useState<number>(0);
+	const [amountToReceive, setAmountToReceive] = useState<number>(0);
 	const [receivingAddress, setReceivingAddress] = useState("");
 
 	const {
@@ -63,7 +63,7 @@ const Withdraw = () => {
 				selectedCurrency.symbol as keyof typeof WITHDRAWAL_LIMIT.MINIMUM_AMOUNTS
 			];
 
-		if (amount <= totalFees || amountToRecieve <= 0) {
+		if (amount <= totalFees || amountToReceive <= 0) {
 			return `Amount must be greater than total fees`;
 		}
 
@@ -78,7 +78,7 @@ const Withdraw = () => {
 		return "";
 	}, [
 		amount,
-		amountToRecieve,
+		amountToReceive,
 		selectedCurrency,
 		availableCurrencyBalance,
 		processingFee,
@@ -134,7 +134,8 @@ const Withdraw = () => {
 	} = useCompleteWithdrawal();
 
 	useEffect(() => {
-		setAmountToRecieve(Math.max((amount ?? 0) - (processingFee + networkFee), 0));
+		const res = Number(Math.max((amount ?? 0) - (processingFee + networkFee), 0));
+		setAmountToReceive(res);
 	}, [amount]);
 
 	useEffect(() => {
@@ -318,7 +319,7 @@ const Withdraw = () => {
 						<div className="flex justify-between items-center">
 							<span className="text-slate-900 text-sm">Amount To Receive</span>
 							<span className="text-slate-900 text-base font-medium">
-								{amountToRecieve.toLocaleString("en-US", {
+								{amountToReceive.toLocaleString("en-US", {
 									maximumFractionDigits: 2,
 									minimumFractionDigits: 2,
 								})}{" "}
@@ -349,7 +350,8 @@ const Withdraw = () => {
 								paymentMethodId: paymentOption?.paymentMethodId ?? "",
 								providerId: paymentOption?.providerId ?? "",
 								network: selectedNetwork.slug,
-								amount: amountToRecieve,
+								amount: amount ?? 0,
+								amountToReceive,
 								destinationAddress: receivingAddress,
 							});
 						}}
@@ -357,7 +359,7 @@ const Withdraw = () => {
 							!selectedCurrency ||
 							!selectedNetwork ||
 							!receivingAddress ||
-							amountToRecieve <= 0 ||
+							amountToReceive <= 0 ||
 							!!amountError
 						}
 					/>

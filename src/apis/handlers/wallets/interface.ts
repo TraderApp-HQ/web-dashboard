@@ -83,6 +83,7 @@ export interface IInitiateWithdrawalInput {
 	providerId: string;
 	network: string;
 	amount: number;
+	amountToReceive: number;
 	destinationAddress: string;
 }
 
