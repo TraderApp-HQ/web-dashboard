@@ -146,3 +146,19 @@ export const useGetUserWalletsTransaction = ({
 		isError,
 	};
 };
+
+export const useInitiateWithdrawal = () => {
+	const walletsService = new WalletsService();
+	const { mutate, data, isPending, isError, isSuccess, error } = useCreate({
+		mutationFn: walletsService.initiateWithdrawal.bind(walletsService),
+	});
+
+	return {
+		initiateWithdrawal: mutate,
+		isError,
+		data,
+		isPending,
+		isSuccess,
+		error,
+	};
+};

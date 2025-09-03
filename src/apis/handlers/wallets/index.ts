@@ -5,6 +5,8 @@ import { CurrencyCategory, PaymentCategory, PaymentOperation, WalletType } from 
 import {
 	IFactoryPaymentProviderDepositResponse,
 	IInitiateDepositInput,
+	IInitiateWithdrawalInput,
+	IInitiateWithdrawalResponse,
 	IPaginatedResult,
 	IPaginationQuery,
 	IPaymentOptions,
@@ -124,5 +126,21 @@ export class WalletsService {
 		const { data } = response;
 
 		return data as ITransactionsHistory;
+	}
+
+	public async initiateWithdrawal(
+		withdrawalData: IInitiateWithdrawalInput,
+	): Promise<IInitiateWithdrawalResponse> {
+		const response = await this.apiClient.post<IResponse<IInitiateWithdrawalResponse>>({
+			url: "/wallets/initiate-withdrawal",
+			data: withdrawalData,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to initiate withdrawal");
+		}
+
+		const { data } = response;
+		return data;
 	}
 }

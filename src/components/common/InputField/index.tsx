@@ -19,6 +19,7 @@ export type IInputFieldProps = {
 	onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 	inputError?: string;
 	disable?: boolean;
+	id?: string;
 };
 
 const InputField: React.FC<IInputFieldProps> = ({
@@ -35,6 +36,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 	onKeyDown,
 	inputError,
 	disable,
+	id,
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
 	const inputType = type === "password" && showPassword ? "text" : type;
@@ -56,6 +58,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 			<div className="relative mt-1">
 				<input
 					{...props}
+					id={id}
 					value={value?.toLocaleString()}
 					onChange={(e) => {
 						if (onChange) onChange(e.target.value);

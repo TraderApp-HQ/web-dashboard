@@ -76,6 +76,16 @@ export interface IInitiateDepositInput {
 	amount?: number;
 }
 
+export interface IInitiateWithdrawalInput {
+	userId: string;
+	currencyId: string;
+	paymentMethodId: string;
+	providerId: string;
+	network: string;
+	amount: number;
+	destinationAddress: string;
+}
+
 export interface IFactoryPaymentProviderDepositResponse {
 	id: string;
 	currency: string;
@@ -137,4 +147,9 @@ export interface ITransactionsHistory {
 	currency: string;
 	status: TransactionStatus;
 	createdAt: string;
+}
+
+export interface IInitiateWithdrawalResponse {
+	withdrawalRequestId: string;
+	expiresInSec: string;
 }

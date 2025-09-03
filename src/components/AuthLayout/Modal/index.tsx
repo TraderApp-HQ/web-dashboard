@@ -1,20 +1,21 @@
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
 import React, { Fragment } from "react";
 
 interface IModal {
 	open: boolean;
 	setOpen(boo: boolean): void;
 	children: React.ReactNode;
+	width?: string;
 }
-export default function Modal({ children, open, setOpen }: IModal) {
+export default function Modal({ children, open, setOpen, width = "579px" }: IModal) {
 	function closeModal() {
 		setOpen(!open);
 	}
 	return (
 		<div>
 			<Transition appear show={open} as={Fragment}>
-				<Dialog as="div" className="relative z-10" onClose={closeModal}>
-					<Transition.Child
+				<Dialog as="div" className="relative z-[500]" onClose={closeModal}>
+					<TransitionChild
 						as={Fragment}
 						enter="ease-out duration-300"
 						enterFrom="opacity-0"
@@ -24,11 +25,11 @@ export default function Modal({ children, open, setOpen }: IModal) {
 						leaveTo="opacity-0"
 					>
 						<div className="fixed inset-0 bg-[rgba(75,74,74,0.58)]" />
-					</Transition.Child>
+					</TransitionChild>
 
 					<div className="fixed inset-0 overflow-y-auto">
 						<div className="flex min-h-full items-center justify-center p-4 text-center">
-							<Transition.Child
+							<TransitionChild
 								as={Fragment}
 								enter="ease-out duration-300"
 								enterFrom="opacity-0 scale-95"
@@ -37,10 +38,13 @@ export default function Modal({ children, open, setOpen }: IModal) {
 								leaveFrom="opacity-100 scale-100"
 								leaveTo="opacity-0 scale-95"
 							>
-								<Dialog.Panel className="w-full max-w-[579px] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+								<DialogPanel
+									className="w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+									style={{ maxWidth: width }}
+								>
 									{children}
-								</Dialog.Panel>
-							</Transition.Child>
+								</DialogPanel>
+							</TransitionChild>
 						</div>
 					</div>
 				</Dialog>
