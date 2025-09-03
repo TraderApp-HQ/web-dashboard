@@ -86,6 +86,12 @@ export interface IInitiateWithdrawalInput {
 	destinationAddress: string;
 }
 
+export interface ICompleteWithdrawalInput {
+	userId: string;
+	otp: string;
+	withdrawalRequestId: string;
+}
+
 export interface IFactoryPaymentProviderDepositResponse {
 	id: string;
 	currency: string;
@@ -152,4 +158,10 @@ export interface ITransactionsHistory {
 export interface IInitiateWithdrawalResponse {
 	withdrawalRequestId: string;
 	expiresInSec: string;
+}
+
+export interface ICompleteWithdrawalResponse {
+	transactionId: string;
+	status: TransactionStatus;
+	externalTransactionId: string;
 }

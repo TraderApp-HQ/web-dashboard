@@ -41,6 +41,22 @@ const InputField: React.FC<IInputFieldProps> = ({
 	const [showPassword, setShowPassword] = useState(false);
 	const inputType = type === "password" && showPassword ? "text" : type;
 
+	const normalizedValue = (() => {
+		if (value === null || value === undefined) return undefined;
+		if (value instanceof Date) {
+			// For date inputs use YYYY-MM-DD (expected by <input type="date">)
+			if (type === "date") {
+				const year = value.getFullYear();
+				const month = String(value.getMonth() + 1).padStart(2, "0");
+				const day = String(value.getDate()).padStart(2, "0");
+				return `${year}-${month}-${day}`;
+			}
+			return value.toString();
+		}
+		if (typeof value === "number") return String(value);
+		return value;
+	})();
+
 	const handleShowHidePassword = () => {
 		setShowPassword(!showPassword);
 	};
@@ -59,7 +75,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 				<input
 					{...props}
 					id={id}
-					value={value?.toLocaleString()}
+					value={normalizedValue}
 					onChange={(e) => {
 						if (onChange) onChange(e.target.value);
 					}}
@@ -69,6 +85,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 					disabled={disable}
 					placeholder={placeholder}
 					onKeyDown={onKeyDown}
+					inputMode={props?.inputMode ?? (type === "number" ? "decimal" : undefined)}
 					className={`placeholder-gray-400 w-full text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[16px] outline-[1px] outline-[#6579CC] invalid:[&:not(:placeholder-shown)]:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${className}`}
 				/>
 				{type === "password" && (

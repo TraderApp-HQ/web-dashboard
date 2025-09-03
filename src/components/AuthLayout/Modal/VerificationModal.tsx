@@ -19,6 +19,7 @@ interface IVerificationModal {
 	width?: string;
 	useHeaderImage?: boolean;
 	title?: string;
+	isProcessing?: boolean;
 }
 
 const initialCountdownTime = 90; // 90 seconds
@@ -35,6 +36,7 @@ export default function VerificationModal({
 	useHeaderImage,
 	width,
 	title,
+	isProcessing = false,
 }: IVerificationModal) {
 	const router = useRouter();
 	/* Initialize enteredInput state as an array of strings */
@@ -267,6 +269,7 @@ export default function VerificationModal({
 									onChange={(e) => inputChangeHandler(index, e.target.value)}
 									onPaste={handlePaste}
 									onKeyDown={(e) => handleKeyDown(index, e)}
+									data-testid={`otp-input-${index}`}
 									className="placeholder-[#808080] w-[40px] sm:w-[54px] h-[40px] sm:h-[54px] text-[#102477] bg-[#F5F8FE] rounded-lg font-normal outline-[1px] outline-[#6579CC] no-spin-buttons text-center"
 								/>
 							))}
@@ -285,14 +288,14 @@ export default function VerificationModal({
 								type="button"
 								className="max-w-[364px] rounded-lg p-[10px] font-semibold w-full text-white"
 								style={
-									isInputsEmpty || isPending
+									isInputsEmpty || isPending || isProcessing
 										? { background: "#BFD3E0" }
 										: { background: "#1836B2" }
 								}
 								onClick={handleVerification}
-								disabled={isInputsEmpty || isPending}
+								disabled={isInputsEmpty || isPending || isProcessing}
 							>
-								Confirm
+								{isProcessing ? "Processing..." : "Confirm"}
 							</button>
 							<div style={{ display: "flex" }}>
 								<div className="text-[#08123B] text-center">

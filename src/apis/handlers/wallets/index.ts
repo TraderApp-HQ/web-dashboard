@@ -3,6 +3,8 @@ import { UsersService } from "~/apis/handlers/users";
 import { IResponse } from "../interfaces";
 import { CurrencyCategory, PaymentCategory, PaymentOperation, WalletType } from "./enum";
 import {
+	ICompleteWithdrawalInput,
+	ICompleteWithdrawalResponse,
 	IFactoryPaymentProviderDepositResponse,
 	IInitiateDepositInput,
 	IInitiateWithdrawalInput,
@@ -138,6 +140,22 @@ export class WalletsService {
 
 		if (response.error) {
 			throw new Error(response.message || "Failed to initiate withdrawal");
+		}
+
+		const { data } = response;
+		return data;
+	}
+
+	public async completeWithdrawal(
+		withdrawalData: ICompleteWithdrawalInput,
+	): Promise<ICompleteWithdrawalResponse> {
+		const response = await this.apiClient.post<IResponse<ICompleteWithdrawalResponse>>({
+			url: "/wallets/complete-withdrawal",
+			data: withdrawalData,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to complete withdrawal");
 		}
 
 		const { data } = response;

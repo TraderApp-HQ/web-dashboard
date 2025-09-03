@@ -6,6 +6,7 @@ import SelectBox from "~/components/common/SelectBox";
 import Button from "~/components/common/Button";
 import InputField from "~/components/common/InputField";
 import {
+	useCompleteWithdrawal,
 	useGetUserWalletsBalance,
 	useInitiateWithdrawal,
 	useWalletDepositOptions,
@@ -123,6 +124,14 @@ const Withdraw = () => {
 		isError: isInitiateWithdrawalError,
 		error: initiateWithdrawalError,
 	} = useInitiateWithdrawal();
+
+	const {
+		completeWithdrawal,
+		isSuccess: isCompleteWithdrawalSuccess,
+		isPending: isCompleteWithdrawalPending,
+		isError: isCompleteWithdrawalError,
+		error: completeWithdrawalError,
+	} = useCompleteWithdrawal();
 
 	useEffect(() => {
 		setAmountToRecieve(Math.max((amount ?? 0) - (processingFee + networkFee), 0));
@@ -355,17 +364,20 @@ const Withdraw = () => {
 				</section>
 			</Modal>
 			<VerificationModal
-				openModal={openOTPModal}
+				openModal={openOTPModal && !isCompleteWithdrawalSuccess}
 				setOpenModal={setOpenOTPModal}
 				notificationChannel={NotificationChannel.EMAIL}
 				verificationType={[]}
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				verificationFn={(otp) => {
-					// TODO: Implement complete withdrawal logic
-					// Handle OTP verification here
+					completeWithdrawal({
+						userId,
+						otp,
+						withdrawalRequestId: initiateWithdrawalData?.withdrawalRequestId ?? "",
+					});
 				}}
 				width="480px"
 				title="Verification code"
+				isProcessing={isCompleteWithdrawalPending}
 			/>
 
 			{isInitiateWithdrawalError && (
@@ -374,6 +386,28 @@ const Withdraw = () => {
 					variant="filled"
 					title="Withdrawal Error"
 					message={initiateWithdrawalError?.message ?? "Something went wrong!"}
+					autoVanish
+					autoVanishTimeout={5}
+				/>
+			)}
+
+			{isCompleteWithdrawalSuccess && (
+				<Toast
+					type="success"
+					variant="filled"
+					title="Withdrawal Success"
+					message={`You have successfully withdrawn ${amount} ${selectedCurrency?.symbol} from your main account`}
+					autoVanish
+					autoVanishTimeout={5}
+				/>
+			)}
+
+			{isCompleteWithdrawalError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Withdrawal Error"
+					message={completeWithdrawalError?.message ?? "Something went wrong!"}
 					autoVanish
 					autoVanishTimeout={5}
 				/>
