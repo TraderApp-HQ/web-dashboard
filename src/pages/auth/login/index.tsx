@@ -182,6 +182,7 @@ const Login = () => {
 					notificationChannel={NotificationChannel.EMAIL}
 					verificationType={[VerificationType.AUTHENTICATE]}
 					redirectTo={redirectTo ?? LAYOUT_ROUTES.account}
+					useHeaderImage={true}
 				/>
 			)}
 			{isError && (

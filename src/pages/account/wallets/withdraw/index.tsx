@@ -5,15 +5,27 @@ import AccountLayout from "~/components/AccountLayout/Layout";
 import SelectBox from "~/components/common/SelectBox";
 import Button from "~/components/common/Button";
 import InputField from "~/components/common/InputField";
-import { useGetUserWalletsBalance, useWalletDepositOptions } from "~/hooks/useWallets";
+import {
+	useCompleteWithdrawal,
+	useGetUserWalletsBalance,
+	useInitiateWithdrawal,
+	useWalletDepositOptions,
+} from "~/hooks/useWallets";
 import { PaymentCategory, PaymentOperation, WalletType } from "~/apis/handlers/wallets/enum";
 import { ISupportedNetworks, IWalletSupportedCurrencies } from "~/apis/handlers/wallets/interface";
 import { ISelectBoxOption } from "~/components/interfaces";
 import { WITHDRAWAL_LIMIT } from "~/apis/handlers/wallets/constants";
+import useUserProfileData from "~/hooks/useUserProfileData";
+import VerificationModal from "~/components/AuthLayout/Modal/VerificationModal";
+import { NotificationChannel } from "~/apis/handlers/users/enums";
+import Toast from "~/components/common/Toast";
 
 const Withdraw = () => {
 	const router = useRouter();
 	const [openModal, setOpenModal] = useState(true);
+	const [openOTPModal, setOpenOTPModal] = useState(false);
+
+	const { userId } = useUserProfileData();
 
 	const processingFee = 2;
 	const networkFee = 1;
@@ -26,7 +38,7 @@ const Withdraw = () => {
 		undefined,
 	);
 	const [amount, setAmount] = useState<number | undefined>(undefined);
-	const [amountToRecieve, setAmountToRecieve] = useState<number>(0);
+	const [amountToReceive, setAmountToReceive] = useState<number>(0);
 	const [receivingAddress, setReceivingAddress] = useState("");
 
 	const {
@@ -51,12 +63,12 @@ const Withdraw = () => {
 				selectedCurrency.symbol as keyof typeof WITHDRAWAL_LIMIT.MINIMUM_AMOUNTS
 			];
 
-		if (amount < minWithdrawal) {
-			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
+		if (amount <= totalFees || amountToReceive <= 0) {
+			return `Amount must be greater than total fees`;
 		}
 
-		if (amount <= totalFees || amountToRecieve <= 0) {
-			return `Amount must be greater than total fees`;
+		if (amount < minWithdrawal) {
+			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
 		}
 
 		if (amount > availableCurrencyBalance) {
@@ -66,7 +78,7 @@ const Withdraw = () => {
 		return "";
 	}, [
 		amount,
-		amountToRecieve,
+		amountToReceive,
 		selectedCurrency,
 		availableCurrencyBalance,
 		processingFee,
@@ -104,9 +116,33 @@ const Withdraw = () => {
 		operation: PaymentOperation.WITHDRAWAL,
 	});
 
+	const {
+		initiateWithdrawal,
+		data: initiateWithdrawalData,
+		isPending,
+		isSuccess: isInitiateWithdrawalSuccess,
+		isError: isInitiateWithdrawalError,
+		error: initiateWithdrawalError,
+	} = useInitiateWithdrawal();
+
+	const {
+		completeWithdrawal,
+		isSuccess: isCompleteWithdrawalSuccess,
+		isPending: isCompleteWithdrawalPending,
+		isError: isCompleteWithdrawalError,
+		error: completeWithdrawalError,
+	} = useCompleteWithdrawal();
+
 	useEffect(() => {
-		setAmountToRecieve(Math.max((amount ?? 0) - (processingFee + networkFee), 0));
+		const res = Number(Math.max((amount ?? 0) - (processingFee + networkFee), 0));
+		setAmountToReceive(res);
 	}, [amount]);
+
+	useEffect(() => {
+		if (isInitiateWithdrawalSuccess && initiateWithdrawalData) {
+			setOpenOTPModal(true);
+		}
+	}, [isInitiateWithdrawalSuccess, initiateWithdrawalData]);
 
 	return (
 		<>
@@ -115,7 +151,7 @@ const Withdraw = () => {
 				width="md:w-[525px]"
 				title="Withdraw crypto"
 				onClose={handleMeClose}
-				closeOnOutsideClick={true}
+				closeOnOutsideClick={!openOTPModal}
 			>
 				<section className="space-y-5 px-1">
 					<SelectBox
@@ -236,7 +272,8 @@ const Withdraw = () => {
 						<div className="relative mt-2">
 							<InputField
 								type="number"
-								placeholder="00.000"
+								id="amount"
+								placeholder="00.00"
 								className="pr-16 no-spin-buttons w-full py-4 bg-[#F5F8FE] rounded-lg"
 								onChange={(amount) => {
 									setAmount(Math.abs(+amount));
@@ -247,7 +284,11 @@ const Withdraw = () => {
 								USDT
 							</div>
 						</div>
-						{amountError && <p className="mt-2 text-xs text-red-600">{amountError}</p>}
+						<p
+							className={`mt-2 text-xs text-red-600 ${amountError ? "" : "invisible"}`}
+						>
+							{amountError || "\u00A0"}
+						</p>
 					</div>
 
 					<div className="bg-[#F5F8FE] rounded-lg p-4 space-y-3">
@@ -278,7 +319,7 @@ const Withdraw = () => {
 						<div className="flex justify-between items-center">
 							<span className="text-slate-900 text-sm">Amount To Receive</span>
 							<span className="text-slate-900 text-base font-medium">
-								{amountToRecieve.toLocaleString("en-US", {
+								{amountToReceive.toLocaleString("en-US", {
 									maximumFractionDigits: 2,
 									minimumFractionDigits: 2,
 								})}{" "}
@@ -290,20 +331,89 @@ const Withdraw = () => {
 					<Button
 						labelText="Withdraw"
 						className="w-full tracking-widest"
-						isProcessing={false}
+						isProcessing={isPending}
 						onClick={() => {
-							// TODO: Implement withdrawal logic here
+							if (
+								!selectedCurrency ||
+								!selectedNetwork ||
+								!receivingAddress ||
+								!paymentOptions
+							) {
+								return;
+							}
+							const paymentOption = paymentOptions.find(
+								(paymentOption) => paymentOption.symbol === selectedCurrency.symbol,
+							);
+							initiateWithdrawal({
+								userId,
+								currencyId: selectedCurrency.id,
+								paymentMethodId: paymentOption?.paymentMethodId ?? "",
+								providerId: paymentOption?.providerId ?? "",
+								network: selectedNetwork.slug,
+								amount: amount ?? 0,
+								amountToReceive,
+								destinationAddress: receivingAddress,
+							});
 						}}
 						disabled={
 							!selectedCurrency ||
 							!selectedNetwork ||
 							!receivingAddress ||
-							amountToRecieve <= 0 ||
+							amountToReceive <= 0 ||
 							!!amountError
 						}
 					/>
 				</section>
 			</Modal>
+			<VerificationModal
+				openModal={openOTPModal && !isCompleteWithdrawalSuccess}
+				setOpenModal={setOpenOTPModal}
+				notificationChannel={NotificationChannel.EMAIL}
+				verificationType={[]}
+				verificationFn={(otp) => {
+					completeWithdrawal({
+						userId,
+						otp,
+						withdrawalRequestId: initiateWithdrawalData?.withdrawalRequestId ?? "",
+					});
+				}}
+				width="480px"
+				title="Verification code"
+				isProcessing={isCompleteWithdrawalPending}
+			/>
+
+			{isInitiateWithdrawalError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Withdrawal Error"
+					message={initiateWithdrawalError?.message ?? "Something went wrong!"}
+					autoVanish
+					autoVanishTimeout={5}
+				/>
+			)}
+
+			{isCompleteWithdrawalSuccess && (
+				<Toast
+					type="success"
+					variant="filled"
+					title="Withdrawal Success"
+					message={`You have successfully withdrawn ${amount} ${selectedCurrency?.symbol} from your main account`}
+					autoVanish
+					autoVanishTimeout={5}
+				/>
+			)}
+
+			{isCompleteWithdrawalError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Withdrawal Error"
+					message={completeWithdrawalError?.message ?? "Something went wrong!"}
+					autoVanish
+					autoVanishTimeout={5}
+				/>
+			)}
 		</>
 	);
 };

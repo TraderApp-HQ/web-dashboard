@@ -15,6 +15,11 @@ interface IVerificationModal {
 	notificationChannel: NotificationChannel;
 	verificationType: VerificationType[];
 	redirectTo?: string;
+	verificationFn?: (otp: string) => void;
+	width?: string;
+	useHeaderImage?: boolean;
+	title?: string;
+	isProcessing?: boolean;
 }
 
 const initialCountdownTime = 90; // 90 seconds
@@ -27,6 +32,11 @@ export default function VerificationModal({
 	redirectTo,
 	notificationChannel,
 	verificationType,
+	verificationFn,
+	useHeaderImage,
+	width,
+	title,
+	isProcessing = false,
 }: IVerificationModal) {
 	const router = useRouter();
 	/* Initialize enteredInput state as an array of strings */
@@ -172,6 +182,10 @@ export default function VerificationModal({
 	const handleVerification = async () => {
 		// verify otp
 		const enteredOTP = enteredInput.join("");
+		if (verificationFn) {
+			verificationFn(enteredOTP);
+			return;
+		}
 		verifyOtp({
 			userId: userId!,
 			verificationType,
@@ -208,21 +222,29 @@ export default function VerificationModal({
 	}, [otpError]);
 
 	return (
-		<Modal open={openModal} setOpen={setOpenModal} data-testId="otp-modal">
+		<Modal open={openModal} setOpen={setOpenModal} data-testId="otp-modal" width={width}>
 			<section>
 				<div>
-					<header className="flex flex-col items-center mb-[25px] text-center">
-						<Image
-							src="/images/auth/pen.png"
-							width={73}
-							height={73}
-							alt="pen"
-							className="mb-[12px] w-[73px] h-[73px]"
-						/>
-						<p className="text-[26px] text-[#102477] font-bold">OTP verification</p>
+					<header className="flex flex-col items-center mb-4 text-center">
+						{useHeaderImage && (
+							<Image
+								src="/images/auth/pen.png"
+								width={73}
+								height={73}
+								alt="pen"
+								className="mb-[12px] w-[73px] h-[73px]"
+							/>
+						)}
+						<p
+							className={`text-2xl text-[#102477] font-bold ${useHeaderImage ? "" : "py-2"}`}
+						>
+							{title ?? "OTP verification"}
+						</p>
 						<div className="flex items-center justify-center gap-x-[13px]">
 							<p className="font-normal text-[#08123B]">
-								We sent a 6 digit OTP to {recipient}
+								{recipient
+									? `We sent a 6 digit OTP to ${recipient}`
+									: "Please enter the code sent to your email"}
 							</p>
 						</div>
 					</header>
@@ -247,6 +269,7 @@ export default function VerificationModal({
 									onChange={(e) => inputChangeHandler(index, e.target.value)}
 									onPaste={handlePaste}
 									onKeyDown={(e) => handleKeyDown(index, e)}
+									data-testid={`otp-input-${index}`}
 									className="placeholder-[#808080] w-[40px] sm:w-[54px] h-[40px] sm:h-[54px] text-[#102477] bg-[#F5F8FE] rounded-lg font-normal outline-[1px] outline-[#6579CC] no-spin-buttons text-center"
 								/>
 							))}
@@ -263,16 +286,16 @@ export default function VerificationModal({
 						>
 							<button
 								type="button"
-								className="max-w-[364px] rounded-2xl p-[10px] font-semibold w-full text-white"
+								className="max-w-[364px] rounded-lg p-[10px] font-semibold w-full text-white"
 								style={
-									isInputsEmpty || isPending
+									isInputsEmpty || isPending || isProcessing
 										? { background: "#BFD3E0" }
 										: { background: "#1836B2" }
 								}
 								onClick={handleVerification}
-								disabled={isInputsEmpty || isPending}
+								disabled={isInputsEmpty || isPending || isProcessing}
 							>
-								Confirm
+								{isProcessing ? "Processing..." : "Confirm"}
 							</button>
 							<div style={{ display: "flex" }}>
 								<div className="text-[#08123B] text-center">
