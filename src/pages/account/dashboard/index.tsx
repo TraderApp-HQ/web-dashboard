@@ -34,6 +34,10 @@ import useUserProfileData from "~/hooks/useUserProfileData";
 import { useGetUserWalletsBalance } from "~/hooks/useWallets";
 import { formatCurrency } from "~/lib/utils";
 import { redirectTo } from "~/utils/RedirectTo";
+import Image from "next/image";
+// refactor this import to match the module system
+import Check from "/public/icons/check.svg";
+import Tick from "/public/icons/icon.svg";
 
 const Dashbaord = () => {
 	const [showBalance, handleShowBalance] = useState(true);
@@ -53,7 +57,6 @@ const Dashbaord = () => {
 		isUserProfileError,
 		refetchUserProfile,
 	} = useUserProfileData();
-
 	// Get pending tasks
 	const {
 		isLoading: pendingTasksLoading,
@@ -329,17 +332,32 @@ const Dashbaord = () => {
 								</p>
 							</section>
 							<hr />
-							<section className="flex items-center justify-between gap-3">
-								<h3 className="text-textBlack text-sm font-medium">Discount</h3>
-								<p className="text-[#373F50] font-bold text-base">$05.00</p>
+							<section className=" items-center justify-evenly gap-3 p-3  bg-[#f9fbff] rounded-md">
+								<h3 className="text-textBlack p-1 text-sm font-medium">
+									Promo code
+								</h3>
+								<div className="flex items-center gap-3">
+									<button className=" p-2 text-sm border border-gray-300 rounded-lg">
+										WELCOME90
+									</button>
+									<Image
+										className="bg-green-700 rounded-full p-1"
+										width={20}
+										height={20}
+										src={Check}
+										alt="icon"
+									/>
+								</div>
 							</section>
-							<section className="flex items-center justify-between gap-3">
-								<h3 className="text-textBlack text-sm font-medium">Subtotal</h3>
-								<p className="text-[#373F50] font-bold text-base">$95.00</p>
+							<section className="flex items-center justify-evenly border-green-400 border gap-3 px-2 py-4 rounded-lg bg-green-50">
+								<Image src={Tick} alt="icon" />
+								<p className=" text-[#08123B] text-base">
+									A 90% discount has been auto applied to your activation fees.
+								</p>
 							</section>
 							<section className="flex items-center justify-between gap-3">
 								<h3 className="text-textBlack text-sm font-medium">Total</h3>
-								<p className="text-[#373F50] font-bold text-base">$95.00</p>
+								<p className="text-[#373F50] font-bold text-3xl">$10.00</p>
 							</section>
 							<section className="space-y-3 pb-5">
 								<h3 className="text-textBlack text-base font-bold">
