@@ -76,6 +76,7 @@ export interface ICreateSignalInput {
 	category: Category;
 	tradeSide?: TradeSide;
 	tradeType?: TradeType;
+	leverage?: number;
 }
 
 export interface ISignalUpdateInput {

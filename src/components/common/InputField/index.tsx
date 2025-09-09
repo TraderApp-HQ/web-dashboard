@@ -20,6 +20,7 @@ export type IInputFieldProps = {
 	inputError?: string;
 	disable?: boolean;
 	id?: string;
+	signalValueInputLabel?: string;
 };
 
 const InputField: React.FC<IInputFieldProps> = ({
@@ -37,6 +38,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 	inputError,
 	disable,
 	id,
+	signalValueInputLabel,
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
 	const inputType = type === "password" && showPassword ? "text" : type;
@@ -88,6 +90,11 @@ const InputField: React.FC<IInputFieldProps> = ({
 					inputMode={props?.inputMode ?? (type === "number" ? "decimal" : undefined)}
 					className={`placeholder-gray-400 w-full text-[#102477] bg-[#F5F8FE] rounded-lg font-normal p-[16px] outline-[1px] outline-[#6579CC] invalid:[&:not(:placeholder-shown)]:border-red-500 invalid:[&:not(:placeholder-shown)]:border-[1px] ${className}`}
 				/>
+				{signalValueInputLabel && (
+					<p className="font-bold text-[#1836B2] text-[16px] absolute top-[50%] right-10 translate-y-[-50%] ">
+						{signalValueInputLabel}
+					</p>
+				)}
 				{type === "password" && (
 					<p
 						className="absolute top-0 right-[16px] font-bold text-[#1836B2] text-[12px] translate-y-[100%] cursor-pointer"
@@ -99,7 +106,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 				{icon && (
 					<div
 						onClick={icon.onClick}
-						className="absolute top-0 right-[6px] h-full flex items-center cursor-pointer"
+						className="absolute -top-1.5 -right-2 h-full flex items-center cursor-pointer"
 					>
 						{icon.name}
 					</div>
