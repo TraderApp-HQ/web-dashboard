@@ -35,9 +35,6 @@ import { useGetUserWalletsBalance } from "~/hooks/useWallets";
 import { formatCurrency } from "~/lib/utils";
 import { redirectTo } from "~/utils/RedirectTo";
 import Image from "next/image";
-// refactor this import to match the module system
-import Check from "/public/icons/check.svg";
-import Tick from "/public/icons/icon.svg";
 
 const Dashbaord = () => {
 	const [showBalance, handleShowBalance] = useState(true);
@@ -344,13 +341,13 @@ const Dashbaord = () => {
 										className="bg-green-700 rounded-full p-1"
 										width={20}
 										height={20}
-										src={Check}
+										src="/icons/check.svg"
 										alt="icon"
 									/>
 								</div>
 							</section>
 							<section className="flex items-center justify-evenly border-green-400 border gap-3 px-2 py-4 rounded-lg bg-green-50">
-								<Image src={Tick} alt="icon" />
+								<Image width={20} height={20} src="/icons/icon.svg" alt="icon" />
 								<p className=" text-[#08123B] text-base">
 									A 90% discount has been auto applied to your activation fees.
 								</p>

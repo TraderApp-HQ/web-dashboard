@@ -1,6 +1,6 @@
 {
-	"name": "TraderApp Dev",
-	"short_name": "TraderApp Dev",
+	"name": "TraderApp ",
+	"short_name": "TraderApp ",
 	"description": "Copy Trading Platform",
 	"start_url": "/",
 	"display": "standalone",
