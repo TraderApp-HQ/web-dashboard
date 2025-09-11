@@ -1,4 +1,16 @@
-const SuccessIcon = () => {
+import React from "react";
+
+interface SuccessIconProps {
+	className?: string;
+	backgroundColor?: string;
+	tickColor?: string;
+}
+
+const SuccessIcon: React.FC<SuccessIconProps> = ({
+	className = "",
+	backgroundColor = "#F4F6FE",
+	tickColor = "#1836B2",
+}) => {
 	return (
 		<svg
 			width="114"
@@ -6,17 +18,18 @@ const SuccessIcon = () => {
 			viewBox="0 0 114 113"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
+			className={className}
 		>
 			<g filter="url(#filter0_b_1767_21176)">
 				<circle cx="57" cy="56.5" r="56.5" fill="white" />
 			</g>
 			<g filter="url(#filter1_b_1767_21176)">
-				<circle cx="57.0002" cy="56.5002" r="54.6774" fill="#F4F6FE" />
+				<circle cx="57.0002" cy="56.5002" r="54.6774" fill={backgroundColor} />
 			</g>
 			<g clipPath="url(#clip0_1767_21176)">
 				<path
 					d="M52.141 64.2096L74.4785 41.8696L77.9171 45.3058L52.141 71.082L36.6758 55.6167L40.112 52.1806L52.141 64.2096Z"
-					fill="#1836B2"
+					fill={tickColor}
 				/>
 			</g>
 			<defs>
