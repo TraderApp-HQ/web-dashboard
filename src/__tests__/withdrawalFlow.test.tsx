@@ -166,8 +166,9 @@ describe("Withdraw page end‑to‑end validations", () => {
 	it("opens OTP modal on successful initiation and handles completion", async () => {
 		const mockComplete = jest.fn();
 		(
-			require("~/hooks/useWallets") as typeof import("~/hooks/useWallets")
-		).useInitiateWithdrawal.mockReturnValue({
+			(require("~/hooks/useWallets") as typeof import("~/hooks/useWallets"))
+				.useInitiateWithdrawal as jest.Mock
+		).mockReturnValue({
 			initiateWithdrawal: jest.fn(),
 			data: { withdrawalRequestId: "req123" },
 			isPending: false,
@@ -176,8 +177,9 @@ describe("Withdraw page end‑to‑end validations", () => {
 			error: null,
 		});
 		(
-			require("~/hooks/useWallets") as typeof import("~/hooks/useWallets")
-		).useCompleteWithdrawal.mockReturnValue({
+			(require("~/hooks/useWallets") as typeof import("~/hooks/useWallets"))
+				.useCompleteWithdrawal as jest.Mock
+		).mockReturnValue({
 			completeWithdrawal: mockComplete,
 			data: null,
 			isPending: false,
@@ -203,10 +205,11 @@ describe("Withdraw page end‑to‑end validations", () => {
 		});
 	});
 
-	it("shows success toast on completion", async () => {
+	it("shows success modal on completion", async () => {
 		(
-			require("~/hooks/useWallets") as typeof import("~/hooks/useWallets")
-		).useCompleteWithdrawal.mockReturnValue({
+			(require("~/hooks/useWallets") as typeof import("~/hooks/useWallets"))
+				.useCompleteWithdrawal as jest.Mock
+		).mockReturnValue({
 			completeWithdrawal: jest.fn(),
 			data: {},
 			isPending: false,
@@ -217,6 +220,8 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		renderPage();
 
-		await waitFor(() => expect(screen.getByText(/Withdrawal Success/i)).toBeInTheDocument());
+		await waitFor(() =>
+			expect(screen.getByText(/You have successfully withdrawn/i)).toBeInTheDocument(),
+		);
 	});
 });
