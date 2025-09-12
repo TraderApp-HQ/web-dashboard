@@ -34,8 +34,12 @@ import useUserProfileData from "~/hooks/useUserProfileData";
 import { useGetUserWalletsBalance } from "~/hooks/useWallets";
 import { formatCurrency } from "~/lib/utils";
 import { redirectTo } from "~/utils/RedirectTo";
+<<<<<<< HEAD
 import CheckIcon from "~/components/icons/CheckIcon";
 import CompleteIcon from "~/components/icons/CompleteIcon";
+=======
+import Image from "next/image";
+>>>>>>> 16b82a250f3d8542db544c2e471926e2337d3f75
 
 const Dashbaord = () => {
 	const [showBalance, handleShowBalance] = useState(true);
@@ -338,19 +342,31 @@ const Dashbaord = () => {
 									<button className=" p-2 text-sm border border-gray-300 rounded-lg">
 										WELCOME90
 									</button>
+<<<<<<< HEAD
 									<CheckIcon />
 									{/* <Image
+=======
+									<Image
+>>>>>>> 16b82a250f3d8542db544c2e471926e2337d3f75
 										className="bg-green-700 rounded-full p-1"
 										width={20}
 										height={20}
 										src="/icons/check.svg"
 										alt="icon"
+<<<<<<< HEAD
 									/> */}
 								</div>
 							</section>
 							<section className="flex items-center justify-evenly border-green-400 border gap-3 px-2 py-4 rounded-lg bg-green-50">
 								{/* <Image width={20} height={20} src="/icons/tick.svg" alt="icon" /> */}
 								<CompleteIcon />
+=======
+									/>
+								</div>
+							</section>
+							<section className="flex items-center justify-evenly border-green-400 border gap-3 px-2 py-4 rounded-lg bg-green-50">
+								<Image width={20} height={20} src="/icons/icon.svg" alt="icon" />
+>>>>>>> 16b82a250f3d8542db544c2e471926e2337d3f75
 								<p className=" text-[#08123B] text-base">
 									A 90% discount has been auto applied to your activation fees.
 								</p>
