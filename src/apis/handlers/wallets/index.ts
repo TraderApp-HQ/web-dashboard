@@ -161,4 +161,24 @@ export class WalletsService {
 		const { data } = response;
 		return data;
 	}
+
+	public async sendOtp({
+		userId,
+		withdrawalRequestId,
+	}: {
+		userId: string;
+		withdrawalRequestId: string;
+	}): Promise<IInitiateWithdrawalResponse> {
+		const response = await this.apiClient.post<IResponse<IInitiateWithdrawalResponse>>({
+			url: "/wallets/resend-withdrawal-otp",
+			data: { userId, withdrawalRequestId },
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to send OTP");
+		}
+
+		const { data } = response;
+		return data;
+	}
 }
