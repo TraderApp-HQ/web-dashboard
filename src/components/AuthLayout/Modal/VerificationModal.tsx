@@ -20,6 +20,9 @@ interface IVerificationModal {
 	useHeaderImage?: boolean;
 	title?: string;
 	isProcessing?: boolean;
+	resendOtpFn?: () => Promise<void> | void;
+	isSendOtpSuccessProp?: boolean;
+	isResendPending?: boolean;
 }
 
 const initialCountdownTime = 90; // 90 seconds
@@ -37,6 +40,9 @@ export default function VerificationModal({
 	width,
 	title,
 	isProcessing = false,
+	resendOtpFn,
+	isSendOtpSuccessProp,
+	isResendPending,
 }: IVerificationModal) {
 	const router = useRouter();
 	/* Initialize enteredInput state as an array of strings */
@@ -122,6 +128,7 @@ export default function VerificationModal({
 
 	useEffect(() => {
 		setCountdown(initialCountdownTime);
+		setEnteredInput(["", "", "", "", "", ""]);
 	}, [openModal]);
 
 	// check if otp is set on first load then open otp modal. This is typically used on page reload
@@ -136,10 +143,8 @@ export default function VerificationModal({
 	}, [inputRefs.current[0]]);
 
 	const resendOtp = () => {
-		sendOtp({ userId: userId! });
-		setCountdown(initialCountdownTime);
-		setEnteredInput(["", "", "", "", "", ""]);
-		focusFirstInputField();
+		resendOtpFn ? resendOtpFn() : sendOtp({ userId: userId! });
+		return;
 	};
 
 	useEffect(() => {
@@ -167,6 +172,7 @@ export default function VerificationModal({
 		mutate: sendOtp,
 		error: sendOtpError,
 		isError: isSendOtpErrorFlag,
+		isSuccess: isSendOtpSuccess,
 	} = useCreate({
 		mutationFn: usersService.sendOtp.bind(usersService),
 	});
@@ -178,6 +184,14 @@ export default function VerificationModal({
 	useEffect(() => {
 		setOtpError(isSendOtpErrorFlag ? sendOtpError : null);
 	}, [isSendOtpErrorFlag]);
+
+	useEffect(() => {
+		if (isSendOtpSuccess || isSendOtpSuccessProp) {
+			setCountdown(initialCountdownTime);
+			setEnteredInput(["", "", "", "", "", ""]);
+			focusFirstInputField();
+		}
+	}, [isSendOtpSuccess, isSendOtpSuccessProp]);
 
 	const handleVerification = async () => {
 		// verify otp
@@ -309,8 +323,19 @@ export default function VerificationModal({
 												{String(countdown % 60).padStart(2, "0")}
 											</span>
 										) : (
-											<span onClick={countdown === 0 ? resendOtp : undefined}>
-												Resend code
+											<span
+												onClick={
+													countdown === 0 && !isResendPending
+														? resendOtp
+														: undefined
+												}
+												className={
+													isResendPending
+														? "opacity-50 cursor-not-allowed"
+														: ""
+												}
+											>
+												{isResendPending ? "Resending..." : "Resend code"}
 											</span>
 										)}
 									</strong>

@@ -9,6 +9,7 @@ import {
 	useCompleteWithdrawal,
 	useGetUserWalletsBalance,
 	useInitiateWithdrawal,
+	useSendWithdrawalOtp,
 	useWalletDepositOptions,
 } from "~/hooks/useWallets";
 import { PaymentCategory, PaymentOperation, WalletType } from "~/apis/handlers/wallets/enum";
@@ -43,6 +44,9 @@ const Withdraw = () => {
 	const [amount, setAmount] = useState<number | undefined>(undefined);
 	const [amountToReceive, setAmountToReceive] = useState<number>(0);
 	const [receivingAddress, setReceivingAddress] = useState("");
+	const [currentWithdrawalRequestId, setCurrentWithdrawalRequestId] = useState<
+		string | undefined
+	>(undefined);
 
 	const {
 		data: walletBalanceData,
@@ -136,6 +140,15 @@ const Withdraw = () => {
 		error: completeWithdrawalError,
 	} = useCompleteWithdrawal();
 
+	const {
+		sendWithdrawalOtp,
+		data: sendWithdrawalOtpData,
+		isSuccess: isSendWithdrawalOtpSuccess,
+		isPending: isSendWithdrawalOtpPending,
+		isError: isSendWithdrawalOtpError,
+		error: sendWithdrawalOtpError,
+	} = useSendWithdrawalOtp();
+
 	useEffect(() => {
 		const res = Number(Math.max((amount ?? 0) - (processingFee + networkFee), 0));
 		setAmountToReceive(res);
@@ -144,8 +157,15 @@ const Withdraw = () => {
 	useEffect(() => {
 		if (isInitiateWithdrawalSuccess && initiateWithdrawalData) {
 			setOpenOTPModal(true);
+			setCurrentWithdrawalRequestId(initiateWithdrawalData.withdrawalRequestId);
 		}
 	}, [isInitiateWithdrawalSuccess, initiateWithdrawalData]);
+
+	useEffect(() => {
+		if (isSendWithdrawalOtpSuccess && sendWithdrawalOtpData?.withdrawalRequestId) {
+			setCurrentWithdrawalRequestId(sendWithdrawalOtpData.withdrawalRequestId);
+		}
+	}, [isSendWithdrawalOtpSuccess, sendWithdrawalOtpData]);
 
 	useEffect(() => {
 		if (isCompleteWithdrawalSuccess) {
@@ -373,12 +393,20 @@ const Withdraw = () => {
 					completeWithdrawal({
 						userId,
 						otp,
-						withdrawalRequestId: initiateWithdrawalData?.withdrawalRequestId ?? "",
+						withdrawalRequestId: currentWithdrawalRequestId ?? "",
 					});
 				}}
 				width="480px"
 				title="Verification code"
 				isProcessing={isCompleteWithdrawalPending}
+				resendOtpFn={() =>
+					sendWithdrawalOtp({
+						userId,
+						withdrawalRequestId: currentWithdrawalRequestId ?? "",
+					})
+				}
+				isSendOtpSuccessProp={isSendWithdrawalOtpSuccess}
+				isResendPending={isSendWithdrawalOtpPending}
 			/>
 
 			{isInitiateWithdrawalError && (
@@ -398,6 +426,17 @@ const Withdraw = () => {
 					variant="filled"
 					title="Withdrawal Error"
 					message={completeWithdrawalError?.message ?? "Something went wrong!"}
+					autoVanish
+					autoVanishTimeout={5}
+				/>
+			)}
+
+			{isSendWithdrawalOtpError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Withdrawal Error"
+					message={sendWithdrawalOtpError?.message ?? "Something went wrong!"}
 					autoVanish
 					autoVanishTimeout={5}
 				/>

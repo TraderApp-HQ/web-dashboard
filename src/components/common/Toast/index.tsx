@@ -127,7 +127,7 @@ const Toast: React.FC<ToastProps> = ({
 	return (
 		<div
 			data-testid="toast-message"
-			className={`fixed z-50 right-1 top-1 min-w-[400px] ${styles} ${type === "success" && "bg-[#F7FFFC]"}`}
+			className={`fixed z-[5000] right-1 top-1 min-w-[400px] ${styles} ${type === "success" && "bg-[#F7FFFC]"}`}
 		>
 			<div className="flex-shrink-0 self-baseline">{typeClasses[type].icon}</div>
 			<div className="ml-3 w-full">

@@ -178,3 +178,12 @@ export const useCompleteWithdrawal = () => {
 		error,
 	};
 };
+
+export const useSendWithdrawalOtp = () => {
+	const walletsService = new WalletsService();
+	const { mutate, isPending, isSuccess, isError, error, data } = useCreate({
+		mutationFn: walletsService.sendOtp.bind(walletsService),
+	});
+
+	return { sendWithdrawalOtp: mutate, data, isPending, isSuccess, isError, error };
+};
