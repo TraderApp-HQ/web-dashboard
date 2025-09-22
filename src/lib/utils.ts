@@ -41,5 +41,5 @@ export const formatCurrency = (value: number) =>
 		useGrouping: true, // Ensures thousand separators
 	}).format(value);
 
-export const uniqueDateFormat = (dateString: string | number | Date) =>
-	format(new Date(dateString), "do MMMM, yyyy");
+export const uniqueDateFormat = (dateString: string | number | Date, includeTime: boolean = true) =>
+	format(new Date(dateString), includeTime ? "MMM dd, yyyy, h:mma" : "do MMMM, yyyy");
