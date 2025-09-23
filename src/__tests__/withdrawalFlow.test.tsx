@@ -304,7 +304,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		// Fast-forward countdown to 0 to reveal "Resend code"
 		act(() => {
-			jest.advanceTimersByTime(90_000);
+			jest.advanceTimersByTime(60_000);
 		});
 
 		// Should show disabled state; clicking shouldn't call resend
@@ -358,13 +358,13 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		// Reach 0 to show "Resend code"
 		act(() => {
-			jest.advanceTimersByTime(90_000);
+			jest.advanceTimersByTime(60_000);
 		});
 
 		// Click resend -> success -> countdown should reset to "Retry in 1:30"
 		fireEvent.click(screen.getByText(/Resend code/i));
 		await waitFor(() => expect(screen.getByText(/Retry in/i)).toBeInTheDocument());
-		expect(screen.getByText(/Retry in 1:30/i)).toBeInTheDocument();
+		expect(screen.getByText(/Retry in 1:00/i)).toBeInTheDocument();
 
 		// Now mock error case (no reset)
 		(
@@ -386,7 +386,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		// Fast-forward again to 0 to show "Resend code"
 		act(() => {
-			jest.advanceTimersByTime(90_000);
+			jest.advanceTimersByTime(60_000);
 		});
 		expect(screen.getByText(/Resend code/i)).toBeInTheDocument();
 
@@ -453,7 +453,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		// Reach 0 and click resend -> updates currentWithdrawalRequestId to req456
 		act(() => {
-			jest.advanceTimersByTime(90_000);
+			jest.advanceTimersByTime(60_000);
 		});
 		fireEvent.click(screen.getByText(/Resend code/i));
 

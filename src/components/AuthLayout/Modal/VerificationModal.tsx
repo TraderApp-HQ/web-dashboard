@@ -23,9 +23,8 @@ interface IVerificationModal {
 	resendOtpFn?: () => Promise<void> | void;
 	isSendOtpSuccessProp?: boolean;
 	isResendPending?: boolean;
+	countDownTime?: number;
 }
-
-const initialCountdownTime = 90; // 90 seconds
 
 export default function VerificationModal({
 	openModal,
@@ -43,11 +42,12 @@ export default function VerificationModal({
 	resendOtpFn,
 	isSendOtpSuccessProp,
 	isResendPending,
+	countDownTime = 90, // 90 seconds
 }: IVerificationModal) {
 	const router = useRouter();
 	/* Initialize enteredInput state as an array of strings */
 	const [enteredInput, setEnteredInput] = useState(["", "", "", "", "", ""]);
-	const [countdown, setCountdown] = useState(initialCountdownTime);
+	const [countdown, setCountdown] = useState(countDownTime);
 	const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 	const [searchParams] = useState(new URLSearchParams(router.asPath.split("?")[1]));
 	const [otpError, setOtpError] = useState<Error | null>(null);
@@ -127,7 +127,7 @@ export default function VerificationModal({
 	}, [enteredInput.length]);
 
 	useEffect(() => {
-		setCountdown(initialCountdownTime);
+		setCountdown(countDownTime);
 		setEnteredInput(["", "", "", "", "", ""]);
 	}, [openModal]);
 
@@ -187,7 +187,7 @@ export default function VerificationModal({
 
 	useEffect(() => {
 		if (isSendOtpSuccess || isSendOtpSuccessProp) {
-			setCountdown(initialCountdownTime);
+			setCountdown(countDownTime);
 			setEnteredInput(["", "", "", "", "", ""]);
 			focusFirstInputField();
 		}
