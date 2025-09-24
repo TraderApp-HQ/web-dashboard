@@ -42,4 +42,4 @@ export const formatCurrency = (value: number) =>
 	}).format(value);
 
 export const uniqueDateFormat = (dateString: string | number | Date, includeTime: boolean = true) =>
-	format(new Date(dateString), includeTime ? "MMM dd, yyyy, h:mma" : "do MMMM, yyyy");
+	format(new Date(dateString), includeTime ? "do MMM, yyyy, h:mma" : "do MMMM, yyyy");
