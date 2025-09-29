@@ -334,16 +334,16 @@ const Dashbaord = () => {
 								<h3 className="text-textBlack p-1 text-sm font-medium">
 									Promo code
 								</h3>
-								<div className="flex items-center gap-3">
+								<div className="flex items-center gap-2">
 									<button className=" p-2 text-sm border border-gray-300 rounded-lg">
 										WELCOME90
 									</button>
 									<CheckIcon />
 								</div>
 							</section>
-							<section className="flex items-center justify-evenly border-green-400 border gap-3 px-2 py-4 rounded-lg bg-green-50">
+							<section className="flex items-center justify-center border-green-400 border gap-2 px-2 py-4 rounded-lg bg-green-50">
 								<CompleteIcon />
-								<p className=" text-[#08123B] text-base">
+								<p className=" text-[#08123B] text-base ">
 									A 90% discount has been auto applied to your activation fees.
 								</p>
 							</section>
