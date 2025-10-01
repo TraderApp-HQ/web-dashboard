@@ -20,6 +20,7 @@ import { AdminNestedTradeCenterLayout } from "..";
 import TradeTargetModal from "~/components/Modal/TradeTargetModal";
 import TradeBreakEvenModal from "~/components/Modal/TradeBreakEvenModal";
 import CancelTradeModal from "~/components/Modal/CancelTradeModal";
+import TradeTriggerModal from "~/components/Modal/TradeTriggerModal";
 
 function OpenTrades() {
 	const router = useRouter();
@@ -127,6 +128,16 @@ function OpenTrades() {
 					selectedTrade={selectedTrade}
 				/>
 			)}
+
+			{openModal &&
+				action === OpenTradesActionType.TRIGGER_ORDER_PLACEMENT &&
+				selectedTrade && (
+					<TradeTriggerModal
+						openModal
+						handleModalClose={handleModalClose}
+						selectedTrade={selectedTrade}
+					/>
+				)}
 		</section>
 	);
 }

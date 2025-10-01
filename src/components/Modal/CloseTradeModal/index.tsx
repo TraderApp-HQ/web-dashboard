@@ -73,7 +73,7 @@ const CloseTradeModal = ({
 					<InputField
 						type="number"
 						labelText="Quantity"
-						labelClassName="!text-black !font-medium"
+						labelClassName="!text-black !font-semibold"
 						props={{ name: "quantity" }}
 						placeholder="Quantity"
 						value={String(selectedTrade.baseQuantity) ?? ""}

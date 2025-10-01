@@ -5,7 +5,7 @@ import InputField from "~/components/common/InputField";
 import { renderDisplayItem, renderStatus } from "~/helpers";
 import Modal from "..";
 
-const TradeTargetModal = ({
+const TradeTriggerModal = ({
 	openModal,
 	handleModalClose,
 	selectedTrade,
@@ -16,6 +16,8 @@ const TradeTargetModal = ({
 }) => {
 	const [trade, setTrade] = useState<IMasterTrade>(selectedTrade);
 
+	console.log("Trade", trade);
+
 	return (
 		<Modal
 			openModal={openModal}
@@ -24,7 +26,7 @@ const TradeTargetModal = ({
 					data-testid="trade-modal-form"
 					className="font-bold text-lg md:text-2xl text-textColor flex items-center"
 				>
-					Set TP/SL
+					Trigger Order Placement
 				</p>
 			}
 			headerDivider={true}
@@ -49,18 +51,23 @@ const TradeTargetModal = ({
 						),
 					})}
 
-				<section className="bg-[#F8F9FC] rounded-md p-5 space-y-5 font-semibold">
-					<p className="flex items-center justify-between">
-						<span className="text-[#414141] text-sm">Entry Price</span>
-						<span className="text-[#808080] text-base">{trade.entryPrice}</span>
-					</p>
-					<p className="flex items-center justify-between">
-						<span className="text-[#414141] text-sm">Market Price</span>
-						<span className="text-[#808080] text-base">{trade.currentPrice}</span>
-					</p>
-				</section>
-
 				<section className="space-y-4">
+					<InputField
+						type="number"
+						labelText="Entry Price"
+						labelClassName="!text-black !font-semibold"
+						props={{ name: "entry" }}
+						placeholder="Entry price"
+						value={String(trade.entryPrice) ?? ""}
+						onChange={(value: string) => {
+							setTrade((prev) => ({
+								...prev,
+								entryPrice: Number(value),
+							}));
+						}}
+						className="no-spin-buttons !font-semibold !text-base"
+					/>
+
 					<div>
 						<InputField
 							type="number"
@@ -104,12 +111,21 @@ const TradeTargetModal = ({
 					</div>
 				</section>
 
+				<section className="bg-[#FFF6EB] rounded-md p-5 font-medium">
+					<p className="text-[#595B60] text-sm">
+						This will trigger orders placement for users at the specified entry price,
+						take profit price and stop loss price.
+					</p>
+				</section>
+
 				<section className="pt-6">
 					<Button
 						labelText="Confirm"
 						className="w-full !font-bold text-base"
 						onClick={() => {}}
-						disabled={!trade.takeProfitPrice || !trade.stopLossPrice}
+						disabled={
+							!trade.takeProfitPrice || !trade.stopLossPrice || !trade.entryPrice
+						}
 					/>
 				</section>
 			</div>
@@ -117,4 +133,4 @@ const TradeTargetModal = ({
 	);
 };
 
-export default TradeTargetModal;
+export default TradeTriggerModal;
