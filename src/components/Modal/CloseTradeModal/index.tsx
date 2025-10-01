@@ -77,7 +77,7 @@ const CloseTradeModal = ({
 						props={{ name: "quantity" }}
 						placeholder="Quantity"
 						value={String(selectedTrade.baseQuantity) ?? ""}
-						className="no-spin-buttons disabled:cursor-not-allowed font-semibold text-base"
+						className="no-spin-buttons disabled:cursor-not-allowed !font-semibold !text-base"
 						disable={true}
 					/>
 

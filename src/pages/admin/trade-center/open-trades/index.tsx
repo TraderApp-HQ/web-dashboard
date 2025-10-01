@@ -17,6 +17,7 @@ import HiddenBalances from "~/components/Wallet/HidenBalance";
 import { useFetchOpenTrades } from "~/hooks/useTrades";
 import { formatCurrency } from "~/lib/utils";
 import { AdminNestedTradeCenterLayout } from "..";
+import TradeTargetModal from "~/components/Modal/TradeTargetModal";
 
 function OpenTrades() {
 	const router = useRouter();
@@ -95,6 +96,14 @@ function OpenTrades() {
 			{/* /////////////////////////// Modals ///////////////////////////// */}
 			{openModal && action === OpenTradesActionType.CLOSE_TRADE && selectedTrade && (
 				<CloseTradeModal
+					openModal
+					handleModalClose={handleModalClose}
+					selectedTrade={selectedTrade}
+				/>
+			)}
+
+			{openModal && action === OpenTradesActionType.SET_TP_N_SL && selectedTrade && (
+				<TradeTargetModal
 					openModal
 					handleModalClose={handleModalClose}
 					selectedTrade={selectedTrade}
