@@ -19,6 +19,7 @@ import { formatCurrency } from "~/lib/utils";
 import { AdminNestedTradeCenterLayout } from "..";
 import TradeTargetModal from "~/components/Modal/TradeTargetModal";
 import TradeBreakEvenModal from "~/components/Modal/TradeBreakEvenModal";
+import CancelTradeModal from "~/components/Modal/CancelTradeModal";
 
 function OpenTrades() {
 	const router = useRouter();
@@ -113,6 +114,14 @@ function OpenTrades() {
 
 			{openModal && action === OpenTradesActionType.BREAK_EVEN && selectedTrade && (
 				<TradeBreakEvenModal
+					openModal
+					handleModalClose={handleModalClose}
+					selectedTrade={selectedTrade}
+				/>
+			)}
+
+			{openModal && action === OpenTradesActionType.CANCEL_TRADE && selectedTrade && (
+				<CancelTradeModal
 					openModal
 					handleModalClose={handleModalClose}
 					selectedTrade={selectedTrade}
