@@ -1,5 +1,10 @@
-import { AccountType, Category, Currency } from "~/config/enum";
-import type { AccountConnectionStatus, ConnectionType, TradingPlatform } from "./enums";
+import { AccountType, Category, Currency, TradeSide } from "~/config/enum";
+import type {
+	AccountConnectionStatus,
+	ConnectionType,
+	MasterTradeStatus,
+	TradingPlatform,
+} from "./enums";
 
 export interface IConnectManualInput {
 	userId: string;
@@ -107,4 +112,29 @@ export interface IAddFund {
 	accountType: AccountType;
 	currency: Currency;
 	amount: number;
+}
+
+export interface IMasterTrade {
+	id: string;
+	signalId?: string;
+	baseAsset: string;
+	baseAssetLogoUrl: string;
+	quoteCurrency: string;
+	baseQuantity: number;
+	quoteTotal: number;
+	currentPrice: number;
+	entryPrice: number;
+	stopLossPrice: number;
+	takeProfitPrice: number;
+	ordersTriggerPrice: number;
+	targetOrdersAmountToFill: number;
+	chartUrl?: string;
+	tradeNote?: string;
+	pair: string;
+	side: TradeSide;
+	pnl: number;
+	pnlPercentage: number;
+	status: MasterTradeStatus;
+	createdAt: Date;
+	updatedAt: Date;
 }

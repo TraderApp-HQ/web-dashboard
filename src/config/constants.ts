@@ -50,7 +50,6 @@ export const ROUTES = {
 		details: "/details",
 		create: "create-user",
 	},
-
 	financemodel: "/finance-model",
 	signalmanagement: "/signal-management",
 	systemmanagement: "/system-management",
@@ -62,6 +61,7 @@ export const ROUTES = {
 		edit: "/edit",
 		updateData: "/update-data",
 	},
+	adminTradeCenter: "/trade-center",
 };
 
 export const ENDPOINTS = {

@@ -103,7 +103,7 @@ const Modal: React.FC<ModalOptions> = ({
 								{showBackButton && backBtnIcon && backBtnIcon}
 								{title}
 							</h1>
-							<p className="text-[12px] text-[#BEBFC1]">{description}</p>
+							<p className="text-[14px] text-[#BEBFC1]">{description}</p>
 						</div>
 						<div className="cursor-pointer ml-4" onClick={close} aria-label="close">
 							<CancelIcon />

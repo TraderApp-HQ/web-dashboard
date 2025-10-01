@@ -6,6 +6,7 @@ import type {
 	IConnectManualInput,
 	IDeleteAccountInput,
 	IGetTradingAccountInput,
+	IMasterTrade,
 	ITradingAccountInfo,
 	IUpdateAccountInput,
 } from "./interfaces";
@@ -108,5 +109,18 @@ export class TradingEngineService {
 		}
 
 		return response.message;
+	}
+
+	public async getOpenTrades(): Promise<IMasterTrade[]> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/trade`,
+		});
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch current open trades.");
+		}
+
+		const { data } = response;
+
+		return data as IMasterTrade[];
 	}
 }
