@@ -76,7 +76,7 @@ const TradeDetails: React.FC<{ trade: OpenTrade }> = ({ trade }) => {
 				</Button>
 			</div>
 			<WalletBalanceCard
-				padding="-2.5"
+				cardStyle="-2.5"
 				showBalanceText="Holdings"
 				btcBalance={String(data.wallet.totalBalance)}
 				totalBalanceStyle="text-3xl"
