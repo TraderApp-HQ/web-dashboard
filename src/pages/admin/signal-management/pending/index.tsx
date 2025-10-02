@@ -113,6 +113,17 @@ function PendingSignals() {
 		console.log("searchterm::::::::::::::::::", searchterm);
 	};
 
+	//  Paginaion configurations
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+	const totalRecord = pendingSignals.length; // Example total rows
+	const totalPages = Math.ceil(totalRecord / rowsPerPage);
+
+	useEffect(() => {
+		// Reset to the first page when rowsPerPage changes
+		setCurrentPage(1);
+	}, [rowsPerPage]);
+
 	if (isPending) {
 		return <div>updating signals status.....</div>;
 	}
@@ -189,29 +200,49 @@ function PendingSignals() {
 				</DropdownMenu>
 			</div>
 
-			{!isLoading && pendingSignals.length === 0 ? (
-				<SignalsEmptyState />
+			{isLoading ? (
+				<>
+					<div className="hidden md:block">
+						<TableLoader />
+					</div>
+					<div className="md:hidden">
+						<MobileTableLoader />
+					</div>
+				</>
 			) : !isLoading && isFetchError ? (
 				<ComponentError errorMessage={fetchError?.message} />
+			) : !isLoading && isSuccess && pendingSignals.length === 0 ? (
+				<SignalsEmptyState />
 			) : (
 				isSuccess && (
-					<div className="pb-8 rounded-2xl">
-						<h3 className="font-bold text-base text-[#08123B]">
-							All Pending Signal ({pendingSignals.length})
-						</h3>
-						<div className="mt-2 mb-8">
-							<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
-								{isLoading && <TableLoader />}
-								{isSuccess && signalsTableBody && (
-									<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
-								)}
-							</div>
-							<div className="md:hidden relative">
-								{isLoading && <MobileTableLoader />}
-								{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
-							</div>
+					<div className="mt-2 mb-8 rounded-2xl bg-[#F3F4F6]">
+						<div className="hidden md:block overflow-x-auto">
+							{isSuccess && signalsTableBody && (
+								<DataTable
+									tHead={signalsTableHead}
+									tBody={signalsTableBody}
+									tableStyles="bg-white px-10"
+									tableHeadStyles="bg-[#F3F4F6]"
+									tableHeadItemStyles="text-center"
+									showSearch={true}
+									showFilter={true}
+									showPagination={true}
+									paginationProps={{
+										currentPage,
+										totalPages,
+										rowsPerPage,
+										totalRecord,
+										setRowsPerPage,
+										onNext: () => setCurrentPage((prev) => prev + 1),
+										onPrev: () => setCurrentPage((prev) => prev - 1),
+									}}
+									paginationStyles="p-4"
+								/>
+							)}
 						</div>
-						<div className="border w-[30%] ml-auto">pagination component goes here</div>
+						<div className="md:hidden relative">
+							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
+						</div>
 					</div>
 				)
 			)}

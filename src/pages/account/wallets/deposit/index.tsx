@@ -393,7 +393,9 @@ const Deposit = () => {
 							</section>
 
 							<section className="space-y-2 py-4">
-								<p className="text-[#808080] font-normal text-xs">Deposit ddress</p>
+								<p className="text-[#808080] font-normal text-xs">
+									Deposit Address
+								</p>
 								<section className="flex items-start justify-between">
 									<p className="break-all text-textColor text-sm sm:text-base font-semibold">
 										{depositWalletInfo?.walletAddress}

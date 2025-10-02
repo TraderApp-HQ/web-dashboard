@@ -1,4 +1,7 @@
 export enum Candlestick {
+	fiveMin = "5m",
+	fifteenMin = "15m",
+	thirtyMin = "30m",
 	oneHour = "1HR",
 	twoHours = "2HRS",
 	fourHours = "4HRS",

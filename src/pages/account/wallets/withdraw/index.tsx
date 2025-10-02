@@ -5,16 +5,32 @@ import AccountLayout from "~/components/AccountLayout/Layout";
 import SelectBox from "~/components/common/SelectBox";
 import Button from "~/components/common/Button";
 import InputField from "~/components/common/InputField";
-import { useGetUserWalletsBalance, useWalletDepositOptions } from "~/hooks/useWallets";
+import {
+	useCompleteWithdrawal,
+	useGetUserWalletsBalance,
+	useInitiateWithdrawal,
+	useSendWithdrawalOtp,
+	useWalletDepositOptions,
+} from "~/hooks/useWallets";
 import { PaymentCategory, PaymentOperation, WalletType } from "~/apis/handlers/wallets/enum";
 import { ISupportedNetworks, IWalletSupportedCurrencies } from "~/apis/handlers/wallets/interface";
 import { ISelectBoxOption } from "~/components/interfaces";
 import { WITHDRAWAL_LIMIT } from "~/apis/handlers/wallets/constants";
+import useUserProfileData from "~/hooks/useUserProfileData";
+import VerificationModal from "~/components/AuthLayout/Modal/VerificationModal";
+import { NotificationChannel } from "~/apis/handlers/users/enums";
+import Toast from "~/components/common/Toast";
+import SuccessIcon from "~/components/icons/SuccessIcon";
 
 const Withdraw = () => {
 	const router = useRouter();
 	const [openModal, setOpenModal] = useState(true);
+	const [openOTPModal, setOpenOTPModal] = useState(false);
 
+	const { userId } = useUserProfileData();
+
+	// TODO: fetch processing fee and network fee from server
+	// and update hardcoded "USDT" currency to use {selectedCurrency?.symbol}
 	const processingFee = 2;
 	const networkFee = 1;
 
@@ -26,8 +42,11 @@ const Withdraw = () => {
 		undefined,
 	);
 	const [amount, setAmount] = useState<number | undefined>(undefined);
-	const [amountToRecieve, setAmountToRecieve] = useState<number>(0);
+	const [amountToReceive, setAmountToReceive] = useState<number>(0);
 	const [receivingAddress, setReceivingAddress] = useState("");
+	const [currentWithdrawalRequestId, setCurrentWithdrawalRequestId] = useState<
+		string | undefined
+	>(undefined);
 
 	const {
 		data: walletBalanceData,
@@ -51,12 +70,12 @@ const Withdraw = () => {
 				selectedCurrency.symbol as keyof typeof WITHDRAWAL_LIMIT.MINIMUM_AMOUNTS
 			];
 
-		if (amount < minWithdrawal) {
-			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
+		if (amount <= totalFees || amountToReceive <= 0) {
+			return `Amount must be greater than total fees`;
 		}
 
-		if (amount <= totalFees || amountToRecieve <= 0) {
-			return `Amount must be greater than total fees`;
+		if (amount < minWithdrawal) {
+			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
 		}
 
 		if (amount > availableCurrencyBalance) {
@@ -66,7 +85,7 @@ const Withdraw = () => {
 		return "";
 	}, [
 		amount,
-		amountToRecieve,
+		amountToReceive,
 		selectedCurrency,
 		availableCurrencyBalance,
 		processingFee,
@@ -104,206 +123,325 @@ const Withdraw = () => {
 		operation: PaymentOperation.WITHDRAWAL,
 	});
 
+	const {
+		initiateWithdrawal,
+		data: initiateWithdrawalData,
+		isPending,
+		isSuccess: isInitiateWithdrawalSuccess,
+		isError: isInitiateWithdrawalError,
+		error: initiateWithdrawalError,
+	} = useInitiateWithdrawal();
+
+	const {
+		completeWithdrawal,
+		isSuccess: isCompleteWithdrawalSuccess,
+		isPending: isCompleteWithdrawalPending,
+		isError: isCompleteWithdrawalError,
+		error: completeWithdrawalError,
+	} = useCompleteWithdrawal();
+
+	const {
+		sendWithdrawalOtp,
+		data: sendWithdrawalOtpData,
+		isSuccess: isSendWithdrawalOtpSuccess,
+		isPending: isSendWithdrawalOtpPending,
+		isError: isSendWithdrawalOtpError,
+		error: sendWithdrawalOtpError,
+	} = useSendWithdrawalOtp();
+
 	useEffect(() => {
-		setAmountToRecieve(Math.max((amount ?? 0) - (processingFee + networkFee), 0));
+		const res = Number(Math.max((amount ?? 0) - (processingFee + networkFee), 0));
+		setAmountToReceive(res);
 	}, [amount]);
+
+	useEffect(() => {
+		if (isInitiateWithdrawalSuccess && initiateWithdrawalData) {
+			setOpenOTPModal(true);
+			setCurrentWithdrawalRequestId(initiateWithdrawalData.withdrawalRequestId);
+		}
+	}, [isInitiateWithdrawalSuccess, initiateWithdrawalData]);
+
+	useEffect(() => {
+		if (isSendWithdrawalOtpSuccess && sendWithdrawalOtpData?.withdrawalRequestId) {
+			setCurrentWithdrawalRequestId(sendWithdrawalOtpData.withdrawalRequestId);
+		}
+	}, [isSendWithdrawalOtpSuccess, sendWithdrawalOtpData]);
+
+	useEffect(() => {
+		if (isCompleteWithdrawalSuccess) {
+			setOpenOTPModal(false);
+		}
+	}, [isCompleteWithdrawalSuccess]);
 
 	return (
 		<>
-			<Modal
-				openModal={openModal}
-				width="md:w-[525px]"
-				title="Withdraw crypto"
-				onClose={handleMeClose}
-				closeOnOutsideClick={true}
-			>
-				<section className="space-y-5 px-1">
-					<SelectBox
-						labelText="Currency"
-						placeholder="Select Currency"
-						isSearchable={false}
-						options={(supportedCurrencies ?? [])?.map((currency) => ({
-							displayText: currency.symbol,
-							value: currency.id,
-							imgUrl: currency.logoUrl,
-						}))}
-						option={{
-							displayText: selectedCurrency?.symbol || "",
-							value: selectedCurrency?.id || "",
-							imgUrl: selectedCurrency?.logoUrl,
-						}}
-						setOption={handleSelectCurrency}
-						clear={!selectedCurrency}
-					/>
-
-					<div>
-						<label
-							htmlFor="receiving-address"
-							className="text-textColor text-sm font-medium block mb-2"
-						>
-							Receiving Address
-						</label>
-						<div className="relative">
-							<InputField
-								type="text"
-								placeholder="Enter Receiving Address"
-								className="pr-16 w-full py-4 bg-[#F5F8FE] rounded-lg"
-								onChange={(address) => setReceivingAddress(address)}
-								value={receivingAddress}
-							/>
+			{/* Conditional Modal: Show success modal if withdrawal is successful, otherwise show withdrawal form */}
+			{isCompleteWithdrawalSuccess && !openOTPModal ? (
+				<Modal
+					openModal={true}
+					onClose={() => {
+						setOpenModal(false);
+						router.back();
+					}}
+					width="md:w-[539px]"
+				>
+					<div className="flex flex-col items-center gap-5 text-center">
+						<div className="inline-flex flex-col justify-center items-center gap-3">
+							<SuccessIcon backgroundColor="#ECFDF5" tickColor="#047857" />
+							<div className="justify-start text-blue-900 text-2xl font-semibold leading-9">
+								Successful
+							</div>
+							<div className="w-80 text-center justify-start text-gray-700 text-sm font-medium">
+								{`You have successfully withdrawn ${amount} ${selectedCurrency?.symbol} from your main account.`}
+							</div>
 						</div>
+						<Button
+							labelText="Continue"
+							onClick={() => {
+								setOpenModal(false);
+								router.back();
+							}}
+							className="w-full"
+						/>
 					</div>
+				</Modal>
+			) : (
+				<Modal
+					openModal={openModal}
+					width="md:w-[525px]"
+					title="Withdraw crypto"
+					onClose={handleMeClose}
+					closeOnOutsideClick={!openOTPModal}
+				>
+					<section className="space-y-5 px-1">
+						<SelectBox
+							labelText="Currency"
+							placeholder="Select Currency"
+							isSearchable={false}
+							options={(supportedCurrencies ?? [])?.map((currency) => ({
+								displayText: currency.symbol,
+								value: currency.id,
+								imgUrl: currency.logoUrl,
+							}))}
+							option={{
+								displayText: selectedCurrency?.symbol || "",
+								value: selectedCurrency?.id || "",
+								imgUrl: selectedCurrency?.logoUrl,
+							}}
+							setOption={handleSelectCurrency}
+							clear={!selectedCurrency}
+						/>
 
-					<SelectBox
-						labelText="Network"
-						placeholder="Select Network"
-						isSearchable={false}
-						options={(networks ?? []).map((network) => ({
-							displayText: network.name,
-							value: network.name,
-						}))}
-						option={{
-							displayText: selectedNetwork?.name ?? "",
-							value: selectedNetwork?.name ?? "",
-						}}
-						setOption={handleSelectNetwork}
-						clear={!selectedNetwork}
-					/>
-
-					{/* Amount field */}
-					{/* <div>
-						<label
-							htmlFor="amount"
-							className="text-textColor text-sm font-medium block mb-2"
-						>
-							Amount
-						</label>
-
-						{selectedCurrency && (
-							<div className="flex justify-between -mt-2 mb-2">
-								<p className="text-xs text-gray-500">
-									Balance:{" "}
-									{availableCurrencyBalance.toLocaleString("en-US", {
-										maximumFractionDigits: 4,
-									})}{" "}
-									{selectedCurrency?.symbol}
-								</p>
-								<button
-									type="button"
-									onClick={() => {
-										setAmount(Math.max(availableCurrencyBalance, 0));
-									}}
-									className="text-xs text-buttonColor font-semibold"
-								>
-									Max
-								</button>
-							</div>
-						)}
-
-						<div className="relative">
-							<InputField
-								type="number"
-								placeholder="00.000"
-								className="pr-16 no-spin-buttons w-full py-4 bg-[#F5F8FE] rounded-lg"
-								onChange={(amount) => {
-									setAmount(Math.abs(+amount));
-								}}
-								value={amount?.toString()}
-							/>
-							<div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-900 font-semibold">
-								USDT
-							</div>
-						</div>
-						{amountError && <p className="mt-2 text-xs text-red-600">{amountError}</p>}
-					</div> */}
-					<div>
-						<div className="flex items-center justify-between">
-							<label htmlFor="amount" className="text-textColor text-sm font-medium">
-								Amount
+						<div>
+							<label
+								htmlFor="receiving-address"
+								className="text-textColor text-sm font-medium block mb-2"
+							>
+								Receiving Address
 							</label>
-
-							{selectedCurrency && (
-								<p className="text-xs text-gray-500">
-									Balance:{" "}
-									{availableCurrencyBalance.toLocaleString("en-US", {
-										maximumFractionDigits: 4,
-									})}{" "}
-									{selectedCurrency?.symbol}
-								</p>
-							)}
-						</div>
-
-						<div className="relative mt-2">
-							<InputField
-								type="number"
-								placeholder="00.000"
-								className="pr-16 no-spin-buttons w-full py-4 bg-[#F5F8FE] rounded-lg"
-								onChange={(amount) => {
-									setAmount(Math.abs(+amount));
-								}}
-								value={amount?.toString()}
-							/>
-							<div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-900 font-semibold">
-								USDT
+							<div className="relative">
+								<InputField
+									type="text"
+									placeholder="Enter Receiving Address"
+									className="pr-16 w-full py-4 bg-[#F5F8FE] rounded-lg"
+									onChange={(address) => setReceivingAddress(address)}
+									value={receivingAddress}
+								/>
 							</div>
 						</div>
-						{amountError && <p className="mt-2 text-xs text-red-600">{amountError}</p>}
-					</div>
 
-					<div className="bg-[#F5F8FE] rounded-lg p-4 space-y-3">
-						<div className="flex justify-between items-center">
-							<span className="text-zinc-500 text-sm">Processing Fees</span>
-							<span className="text-slate-900 text-base font-medium">
-								{processingFee.toLocaleString("en-US", {
-									maximumFractionDigits: 2,
-									minimumFractionDigits: 2,
-								})}{" "}
-								USDT
-							</span>
+						<SelectBox
+							labelText="Network"
+							placeholder="Select Network"
+							isSearchable={false}
+							options={(networks ?? []).map((network) => ({
+								displayText: network.name,
+								value: network.name,
+							}))}
+							option={{
+								displayText: selectedNetwork?.name ?? "",
+								value: selectedNetwork?.name ?? "",
+							}}
+							setOption={handleSelectNetwork}
+							clear={!selectedNetwork}
+						/>
+
+						<div>
+							<div className="flex items-center justify-between">
+								<label
+									htmlFor="amount"
+									className="text-textColor text-sm font-medium"
+								>
+									Amount
+								</label>
+
+								{selectedCurrency && (
+									<p className="text-xs text-gray-500">
+										Balance:{" "}
+										{availableCurrencyBalance.toLocaleString("en-US", {
+											maximumFractionDigits: 4,
+										})}{" "}
+										{selectedCurrency?.symbol}
+									</p>
+								)}
+							</div>
+
+							<div className="relative mt-2">
+								<InputField
+									type="number"
+									id="amount"
+									placeholder="00.00"
+									className="pr-16 no-spin-buttons w-full py-4 bg-[#F5F8FE] rounded-lg"
+									onChange={(amount) => {
+										setAmount(Math.abs(+amount));
+									}}
+									value={amount?.toString()}
+								/>
+								<div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-900 font-semibold">
+									USDT
+								</div>
+							</div>
+							<p
+								className={`mt-2 text-xs text-red-600 ${amountError ? "" : "invisible"}`}
+							>
+								{amountError || "\u00A0"}
+							</p>
 						</div>
 
-						<div className="flex justify-between items-center">
-							<span className="text-zinc-500 text-sm">Network Fees</span>
-							<span className="text-slate-900 text-base font-medium">
-								{networkFee.toLocaleString("en-US", {
-									maximumFractionDigits: 2,
-									minimumFractionDigits: 2,
-								})}{" "}
-								USDT
-							</span>
+						<div className="bg-[#F5F8FE] rounded-lg p-4 space-y-3">
+							<div className="flex justify-between items-center">
+								<span className="text-zinc-500 text-sm">Processing Fees</span>
+								<span className="text-slate-900 text-base font-medium">
+									{processingFee.toLocaleString("en-US", {
+										maximumFractionDigits: 2,
+										minimumFractionDigits: 2,
+									})}{" "}
+									USDT
+								</span>
+							</div>
+
+							<div className="flex justify-between items-center">
+								<span className="text-zinc-500 text-sm">Network Fees</span>
+								<span className="text-slate-900 text-base font-medium">
+									{networkFee.toLocaleString("en-US", {
+										maximumFractionDigits: 2,
+										minimumFractionDigits: 2,
+									})}{" "}
+									USDT
+								</span>
+							</div>
+
+							<div className="border-t border-[#E5E7EB] pt-3 mt-3"></div>
+
+							<div className="flex justify-between items-center">
+								<span className="text-slate-900 text-sm">Amount To Receive</span>
+								<span className="text-slate-900 text-base font-medium">
+									{amountToReceive.toLocaleString("en-US", {
+										maximumFractionDigits: 2,
+										minimumFractionDigits: 2,
+									})}{" "}
+									USDT
+								</span>
+							</div>
 						</div>
 
-						<div className="border-t border-[#E5E7EB] pt-3 mt-3"></div>
+						<Button
+							labelText="Withdraw"
+							className="w-full tracking-widest"
+							isProcessing={isPending}
+							onClick={() => {
+								if (
+									!selectedCurrency ||
+									!selectedNetwork ||
+									!receivingAddress ||
+									!paymentOptions
+								) {
+									return;
+								}
+								const paymentOption = paymentOptions.find(
+									(paymentOption) =>
+										paymentOption.symbol === selectedCurrency.symbol,
+								);
+								initiateWithdrawal({
+									userId,
+									currencyId: selectedCurrency.id,
+									paymentMethodId: paymentOption?.paymentMethodId ?? "",
+									providerId: paymentOption?.providerId ?? "",
+									network: selectedNetwork.slug,
+									amount: amount ?? 0,
+									amountToReceive,
+									destinationAddress: receivingAddress,
+								});
+							}}
+							disabled={
+								!selectedCurrency ||
+								!selectedNetwork ||
+								!receivingAddress ||
+								amountToReceive <= 0 ||
+								!!amountError
+							}
+						/>
+					</section>
+				</Modal>
+			)}
+			<VerificationModal
+				openModal={openOTPModal && !isCompleteWithdrawalSuccess}
+				setOpenModal={setOpenOTPModal}
+				notificationChannel={NotificationChannel.EMAIL}
+				verificationType={[]}
+				verificationFn={(otp) => {
+					completeWithdrawal({
+						userId,
+						otp,
+						withdrawalRequestId: currentWithdrawalRequestId ?? "",
+					});
+				}}
+				width="480px"
+				title="Verification code"
+				isProcessing={isCompleteWithdrawalPending}
+				resendOtpFn={() =>
+					sendWithdrawalOtp({
+						userId,
+						withdrawalRequestId: currentWithdrawalRequestId ?? "",
+					})
+				}
+				isSendOtpSuccessProp={isSendWithdrawalOtpSuccess}
+				isResendPending={isSendWithdrawalOtpPending}
+				countDownTime={60}
+			/>
 
-						<div className="flex justify-between items-center">
-							<span className="text-slate-900 text-sm">Amount To Receive</span>
-							<span className="text-slate-900 text-base font-medium">
-								{amountToRecieve.toLocaleString("en-US", {
-									maximumFractionDigits: 2,
-									minimumFractionDigits: 2,
-								})}{" "}
-								USDT
-							</span>
-						</div>
-					</div>
+			{isInitiateWithdrawalError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Withdrawal Error"
+					message={initiateWithdrawalError?.message ?? "Something went wrong!"}
+					autoVanish
+					autoVanishTimeout={5}
+				/>
+			)}
 
-					<Button
-						labelText="Withdraw"
-						className="w-full tracking-widest"
-						isProcessing={false}
-						onClick={() => {
-							// TODO: Implement withdrawal logic here
-						}}
-						disabled={
-							!selectedCurrency ||
-							!selectedNetwork ||
-							!receivingAddress ||
-							amountToRecieve <= 0 ||
-							!!amountError
-						}
-					/>
-				</section>
-			</Modal>
+			{isCompleteWithdrawalError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Withdrawal Error"
+					message={completeWithdrawalError?.message ?? "Something went wrong!"}
+					autoVanish
+					autoVanishTimeout={5}
+				/>
+			)}
+
+			{isSendWithdrawalOtpError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Withdrawal Error"
+					message={sendWithdrawalOtpError?.message ?? "Something went wrong!"}
+					autoVanish
+					autoVanishTimeout={5}
+				/>
+			)}
 		</>
 	);
 };

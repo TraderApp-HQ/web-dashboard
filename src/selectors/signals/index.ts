@@ -16,7 +16,7 @@ import {
 } from "~/helpers";
 import type { ISignal } from "~/apis/handlers/assets/interfaces";
 import { SignalStatus } from "~/apis/handlers/assets/enums";
-import { format } from "date-fns";
+import { format, formatDistanceToNowStrict } from "date-fns";
 
 export function activeSignalsDataTableSelector(
 	activeSignals: ISignal[],
@@ -30,10 +30,26 @@ export function activeSignalsDataTableSelector(
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
-						itemSubText: { text: signal.baseAsset.symbol },
 						itemImage: signal.baseAsset.logo,
+						itemText: {
+							text: `${signal.baseAsset.symbol} / ${signal.quoteCurrency.symbol}`,
+							style: "font-bold",
+						},
 						isAssetItem: true,
+						assetTradeSide: renderStatus(
+							signal.tradeSide,
+							{ justify: "justify-center" },
+							false,
+							[],
+							"uppercase text-[10px] font-semibold",
+						),
+						assetleverage: renderStatus(
+							`${signal.leverage}x`,
+							{ justify: "justify-center" },
+							false,
+							[],
+							"text-[10px]",
+						),
 					}),
 				},
 				{
@@ -54,8 +70,18 @@ export function activeSignalsDataTableSelector(
 						// containerStyles: "!justify-start md:!pl-24",
 					}),
 				},
-				{ displayItem: new Date(signal.createdAt).toDateString() },
-				{ displayItem: renderStatus(signal.status) },
+				{
+					displayItem: formatDistanceToNowStrict(new Date(signal.createdAt), {
+						addSuffix: true,
+					}),
+				},
+				{
+					displayItem: renderStatus(
+						signal.status,
+						{ justify: "justify-end sm:justify-center" },
+						false,
+					),
+				},
 			],
 			actions: [
 				{
@@ -90,9 +116,26 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 	const dataMobile: ITableMobile[] = activeSignals.map((signal) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
-				itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
-				itemSubText: { text: signal.baseAsset.symbol },
+				itemText: {
+					text: `${signal.baseAsset.symbol} / ${signal.quoteCurrency.symbol}`,
+					style: "font-bold",
+				},
 				itemImage: signal.baseAsset.logo,
+				isAssetItem: true,
+				assetTradeSide: renderStatus(
+					signal.tradeSide,
+					{ justify: "justify-center" },
+					false,
+					[],
+					"uppercase text-[10px] font-semibold",
+				),
+				assetleverage: renderStatus(
+					`${signal.leverage}x`,
+					{ justify: "justify-center" },
+					false,
+					[],
+					"text-[10px]",
+				),
 			}),
 			displayItemValue: "",
 		},
@@ -117,7 +160,9 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			},
 			{
 				displayItemTitle: "Date / Time",
-				displayItemValue: new Date(signal.createdAt).toDateString(),
+				displayItemValue: formatDistanceToNowStrict(new Date(signal.createdAt), {
+					addSuffix: true,
+				}),
 			},
 			{
 				displayItemTitle: "Change",
@@ -128,7 +173,11 @@ export function activeSignalsDataTableMobileSelector(activeSignals: ISignal[]) {
 			},
 			{
 				displayItemTitle: "Status",
-				displayItemValue: renderStatus(signal.status),
+				displayItemValue: renderStatus(
+					signal.status,
+					{ justify: "justify-end sm:justify-center" },
+					false,
+				),
 			},
 		],
 	}));
@@ -188,14 +237,26 @@ export function signalsHistoryDataTableMobileSelector(data: ISignal[]) {
 }
 
 export function signalsPerfomanceSummary(signals: ISignal[]): IPerformanceSummaryData {
+	if (signals.length === 0) {
+		return { bestSignal: undefined, worstSignal: undefined };
+	}
+
 	let bestPerformer: ISignal = signals[0];
 	let worstPerformer: ISignal = signals[0];
 
 	signals.forEach((signal) => {
-		bestPerformer =
-			signal.maxGain > (bestPerformer?.maxGain || -Infinity) ? signal : bestPerformer;
-		worstPerformer =
-			signal.maxGain < (worstPerformer?.maxGain || Infinity) ? signal : worstPerformer;
+		// Skip signals with invalid maxGain
+		if (typeof signal.maxGain !== "number" || isNaN(signal.maxGain)) {
+			return;
+		}
+
+		if (signal.maxGain > bestPerformer.maxGain) {
+			bestPerformer = signal;
+		}
+
+		if (signal.maxGain < worstPerformer.maxGain) {
+			worstPerformer = signal;
+		}
 	});
 
 	const bestSignal: IPerformanceData | undefined = bestPerformer
@@ -227,23 +288,35 @@ export function pendingSignalsDataTableSelector(
 			tBodyColumns: [
 				{
 					displayItem: renderDisplayItem({
-						itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
-						itemSubText: { text: signal.baseAsset.symbol },
+						itemText: {
+							text: `${signal.baseAsset.symbol} / ${signal.quoteCurrency.symbol}`,
+							style: "font-bold",
+						},
 						itemImage: signal.baseAsset.logo,
 						isAssetItem: true,
+						assetTradeSide: renderStatus(
+							signal.tradeSide,
+							{ justify: "justify-center" },
+							false,
+							[],
+							"uppercase text-[10px] font-semibold",
+						),
+						assetleverage: renderStatus(
+							`${signal.leverage}x`,
+							{ justify: "justify-center" },
+							false,
+							[],
+							"text-[10px]",
+						),
 					}),
 				},
 				{
-					displayItem:
-						signal.status !== SignalStatus.PENDING
-							? `${signal.currentPrice ?? "-"} USDT`
-							: "-",
+					displayItem: `${signal.currentPrice ?? "-"} USDT`,
 				},
 				{
-					displayItem:
-						signal.status !== SignalStatus.PENDING
-							? renderPercentageChange(signal.currentChange)
-							: "-",
+					displayItem: signal.isSignalTriggered
+						? renderPercentageChange(signal.currentChange)
+						: "-",
 				},
 				{
 					displayItem: renderTargetProfits({
@@ -251,8 +324,18 @@ export function pendingSignalsDataTableSelector(
 						// containerStyles: "!justify-start md:!pl-24",
 					}),
 				},
-				{ displayItem: new Date(signal.createdAt).toDateString() },
-				{ displayItem: renderStatus(signal.status) },
+				{
+					displayItem: formatDistanceToNowStrict(new Date(signal.createdAt), {
+						addSuffix: true,
+					}),
+				},
+				{
+					displayItem: renderStatus(
+						signal.status,
+						{ justify: "justify-end sm:justify-center" },
+						false,
+					),
+				},
 			],
 			actions: [
 				{
@@ -287,9 +370,26 @@ export function pendingSignalsDataTableMobileSelector(activeSignals: ISignal[]) 
 	const dataMobile: ITableMobile[] = activeSignals.map((signal) => ({
 		tHead: {
 			displayItemTitle: renderDisplayItem({
-				itemText: { text: signal.baseAsset.name, style: "text-base font-normal" },
-				itemSubText: { text: signal.baseAsset.symbol },
+				itemText: {
+					text: `${signal.baseAsset.symbol} / ${signal.quoteCurrency.symbol}`,
+					style: "font-bold",
+				},
 				itemImage: signal.baseAsset.logo,
+				isAssetItem: true,
+				assetTradeSide: renderStatus(
+					signal.tradeSide,
+					{ justify: "justify-center" },
+					false,
+					[],
+					"uppercase text-[10px] font-semibold",
+				),
+				assetleverage: renderStatus(
+					`${signal.leverage}x`,
+					{ justify: "justify-center" },
+					false,
+					[],
+					"text-[10px]",
+				),
 			}),
 			displayItemValue: "",
 		},
@@ -302,8 +402,7 @@ export function pendingSignalsDataTableMobileSelector(activeSignals: ISignal[]) 
 		tBody: [
 			{
 				displayItemTitle: "Current Price",
-				displayItemValue:
-					signal.status !== SignalStatus.PENDING ? `$${signal.currentPrice}` : "-",
+				displayItemValue: `$${signal.currentPrice}`,
 			},
 			{
 				displayItemTitle: "Targeted Profits",
@@ -314,18 +413,23 @@ export function pendingSignalsDataTableMobileSelector(activeSignals: ISignal[]) 
 			},
 			{
 				displayItemTitle: "Date / Time",
-				displayItemValue: new Date(signal.createdAt).toDateString(),
+				displayItemValue: formatDistanceToNowStrict(new Date(signal.createdAt), {
+					addSuffix: true,
+				}),
 			},
 			{
 				displayItemTitle: "Change",
-				displayItemValue:
-					signal.status !== SignalStatus.PENDING
-						? renderPercentageChange(signal.currentChange)
-						: "-",
+				displayItemValue: signal.isSignalTriggered
+					? renderPercentageChange(signal.currentChange)
+					: "-",
 			},
 			{
 				displayItemTitle: "Status",
-				displayItemValue: renderStatus(signal.status),
+				displayItemValue: renderStatus(
+					signal.status,
+					{ justify: "justify-end sm:justify-center" },
+					false,
+				),
 			},
 		],
 	}));

@@ -47,8 +47,11 @@ const ActiveSignals = () => {
 
 	return (
 		<section className="space-y-5">
-			{activeSignals.filter((signal) => signal.status === SignalStatus.ACTIVE).length >=
-				2 && (
+			{activeSignals.filter(
+				(signal) =>
+					signal.status === SignalStatus.ACTIVE ||
+					(signal.status === SignalStatus.PAUSED && signal.isSignalTriggered),
+			).length >= 2 && (
 				<ActiveSignalCard
 					summary={performanceSummary}
 					isLoading={isLoading}
@@ -57,57 +60,60 @@ const ActiveSignals = () => {
 				/>
 			)}
 
-			{!isLoading && isError ? (
-				<section className="pb-3 rounded-2xl space-y-2">
-					<h3 className="font-bold text-base text-[#08123B]">All Active Signal</h3>
+			{isLoading ? (
+				<>
+					<div className="hidden md:block">
+						<TableLoader />
+					</div>
+					<div className="md:hidden">
+						<MobileTableLoader />
+					</div>
+				</>
+			) : !isLoading && isError ? (
+				<section className="pb-3 rounded-2xl">
 					<ComponentError />
 				</section>
 			) : !isLoading && isSuccess && activeSignals.length === 0 ? (
 				<SignalsEmptyState />
 			) : (
-				<section className="pb-6 rounded-2xl">
-					<h3 className="font-bold text-base text-[#08123B]">
-						All Active Signal ({activeSignals.length})
-					</h3>
-					<section className="mt-2 mb-8">
-						<section className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
-							{isLoading && <TableLoader />}
-							{isSuccess && signalsTableBody && (
-								<DataTable
-									tableStyles="mb-4"
-									tHead={signalsTableHead}
-									tBody={signalsTableBody}
-									showPagination={true}
-									paginationProps={{
-										currentPage,
-										totalPages,
-										rowsPerPage,
-										totalRecord,
-										setRowsPerPage,
-										onNext: () => setCurrentPage((prev) => prev + 1),
-										onPrev: () => setCurrentPage((prev) => prev - 1),
-									}}
-								/>
-							)}
-						</section>
-						<section className="md:hidden relative">
-							{isLoading && <MobileTableLoader />}
-							{isSuccess && (
-								<DataTableMobile
-									data={signalsMobileTableBody}
-									showPagination={true}
-									paginationProps={{
-										currentPage,
-										totalPages,
-										rowsPerPage,
-										totalRecord,
-										setRowsPerPage,
-										onNext: () => setCurrentPage((prev) => prev + 1),
-										onPrev: () => setCurrentPage((prev) => prev - 1),
-									}}
-								/>
-							)}
-						</section>
+				<section className="mt-2 mb-8 rounded-2xl bg-white">
+					<section className="hidden md:block overflow-x-auto">
+						{isSuccess && signalsTableBody && (
+							<DataTable
+								tHead={signalsTableHead}
+								tBody={signalsTableBody}
+								tableStyles="bg-white px-10"
+								tableHeadItemStyles="text-center"
+								showPagination={true}
+								paginationProps={{
+									currentPage,
+									totalPages,
+									rowsPerPage,
+									totalRecord,
+									setRowsPerPage,
+									onNext: () => setCurrentPage((prev) => prev + 1),
+									onPrev: () => setCurrentPage((prev) => prev - 1),
+								}}
+								paginationStyles="p-4"
+							/>
+						)}
+					</section>
+					<section className="md:hidden relative">
+						{isSuccess && (
+							<DataTableMobile
+								data={signalsMobileTableBody}
+								showPagination={true}
+								paginationProps={{
+									currentPage,
+									totalPages,
+									rowsPerPage,
+									totalRecord,
+									setRowsPerPage,
+									onNext: () => setCurrentPage((prev) => prev + 1),
+									onPrev: () => setCurrentPage((prev) => prev - 1),
+								}}
+							/>
+						)}
 					</section>
 				</section>
 			)}

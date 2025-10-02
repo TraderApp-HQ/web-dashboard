@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { useSignalHistory } from "~/apis/handlers/assets/hooks";
 import SignalsHistory from "~/components/AdminLayout/Signal/SignalsHistory";
@@ -9,6 +9,7 @@ import {
 import { format } from "date-fns";
 import { signalData as mockSignalData } from "~/components/AdminLayout/Signal/SignalData";
 import type { PaginationProps } from "~/components/interfaces";
+import { usePathname } from "next/navigation";
 
 jest.setTimeout(30000);
 const signalData = mockSignalData.map((signal) => ({
@@ -17,6 +18,13 @@ const signalData = mockSignalData.map((signal) => ({
 	quoteCurrencyName: signal.quoteCurrency.name,
 }));
 
+jest.mock("next/navigation", () => {
+	const actual = jest.requireActual("next/navigation");
+	return {
+		...actual,
+		usePathname: jest.fn(),
+	};
+});
 jest.mock("~/apis/handlers/assets/hooks");
 jest.mock("~/components/Pagination", () => {
 	const MockPagination = ({
@@ -85,6 +93,7 @@ describe("SignalsHistory Table and Pagination Integration", () => {
 			configurable: true,
 			value: 1024,
 		});
+		(usePathname as jest.Mock).mockReturnValue("/admin/signal-management/history");
 	});
 
 	afterEach(() => {
@@ -108,6 +117,15 @@ describe("SignalsHistory Table and Pagination Integration", () => {
 			signalsMobileTableBody: dataMobile,
 			isError: false,
 			error: null,
+			paginationData: {
+				page: 1,
+				totalPages: 0,
+				totalRecords: 0,
+				startAfterDoc: "",
+			},
+			handleSetCurrentPage: () => {},
+			setRowsPerPage: () => {},
+			rowsPerPage: 10,
 		});
 
 		render(<SignalsHistory />);
@@ -143,6 +161,15 @@ describe("SignalsHistory Table and Pagination Integration", () => {
 			signalsMobileTableBody: [],
 			isError: false,
 			error: null,
+			paginationData: {
+				page: 1,
+				totalPages,
+				totalRecords,
+				startAfterDoc: "",
+			},
+			handleSetCurrentPage: () => {},
+			setRowsPerPage: () => {},
+			rowsPerPage: initialRowsPerPage,
 		});
 
 		render(<SignalsHistory />);
@@ -176,15 +203,30 @@ describe("SignalsHistory Table and Pagination Integration", () => {
 		const { tableHead, tableBody } = signalsHistoryDataTableSelector(largeSignalData);
 		const dataMobile = signalsHistoryDataTableMobileSelector(largeSignalData);
 
-		mockUseSignalHistory.mockReturnValue({
-			isLoading: false,
-			isSuccess: true,
-			signalHistory: largeSignalData,
-			signalsTableHead: tableHead,
-			signalsTableBody: tableBody,
-			signalsMobileTableBody: dataMobile,
-			isError: false,
-			error: null,
+		mockUseSignalHistory.mockImplementation(() => {
+			const [page, setPage] = useState<number>(1);
+			const [rows, setRows] = useState<number>(initialRowsPerPage);
+			const totalPages = Math.ceil(totalRecords / rows);
+
+			return {
+				isLoading: false,
+				isSuccess: true,
+				signalHistory: largeSignalData,
+				signalsTableHead: tableHead,
+				signalsTableBody: tableBody,
+				signalsMobileTableBody: dataMobile,
+				isError: false,
+				error: null,
+				paginationData: {
+					page,
+					totalPages,
+					totalRecords,
+					startAfterDoc: "",
+				},
+				handleSetCurrentPage: setPage,
+				setRowsPerPage: setRows,
+				rowsPerPage: rows,
+			};
 		});
 
 		render(<SignalsHistory />);
@@ -220,15 +262,30 @@ describe("SignalsHistory Table and Pagination Integration", () => {
 		const { tableHead, tableBody } = signalsHistoryDataTableSelector(largeSignalData);
 		const dataMobile = signalsHistoryDataTableMobileSelector(largeSignalData);
 
-		mockUseSignalHistory.mockReturnValue({
-			isLoading: false,
-			isSuccess: true,
-			signalHistory: largeSignalData,
-			signalsTableHead: tableHead,
-			signalsTableBody: tableBody,
-			signalsMobileTableBody: dataMobile,
-			isError: false,
-			error: null,
+		mockUseSignalHistory.mockImplementation(() => {
+			const [page, setPage] = useState<number>(1);
+			const [rows, setRows] = useState<number>(initialRowsPerPage);
+			const totalPages = Math.ceil(totalRecords / rows);
+
+			return {
+				isLoading: false,
+				isSuccess: true,
+				signalHistory: largeSignalData,
+				signalsTableHead: tableHead,
+				signalsTableBody: tableBody,
+				signalsMobileTableBody: dataMobile,
+				isError: false,
+				error: null,
+				paginationData: {
+					page,
+					totalPages,
+					totalRecords,
+					startAfterDoc: "",
+				},
+				handleSetCurrentPage: setPage,
+				setRowsPerPage: setRows,
+				rowsPerPage: rows,
+			};
 		});
 
 		render(<SignalsHistory />);
@@ -263,15 +320,36 @@ describe("SignalsHistory Table and Pagination Integration", () => {
 		const { tableHead, tableBody } = signalsHistoryDataTableSelector(largeSignalData);
 		const dataMobile = signalsHistoryDataTableMobileSelector(largeSignalData);
 
-		mockUseSignalHistory.mockReturnValue({
-			isLoading: false,
-			isSuccess: true,
-			signalHistory: largeSignalData,
-			signalsTableHead: tableHead,
-			signalsTableBody: tableBody,
-			signalsMobileTableBody: dataMobile,
-			isError: false,
-			error: null,
+		// Page setter helper
+		let setPageExternal: (n: number) => void = () => {};
+
+		mockUseSignalHistory.mockImplementation(() => {
+			const [page, setPage] = useState<number>(1);
+			const [rows, setRows] = useState<number>(10);
+			const totalPages = Math.ceil(totalRecords / rows);
+
+			// expose page setter function to test scope
+			setPageExternal = setPage;
+
+			return {
+				isLoading: false,
+				isSuccess: true,
+				signalHistory: largeSignalData,
+				signalsTableHead: tableHead,
+				signalsTableBody: tableBody,
+				signalsMobileTableBody: dataMobile,
+				isError: false,
+				error: null,
+				paginationData: {
+					page,
+					totalPages,
+					totalRecords,
+					startAfterDoc: "",
+				},
+				handleSetCurrentPage: setPage,
+				setRowsPerPage: setRows,
+				rowsPerPage: rows,
+			};
 		});
 
 		render(<SignalsHistory />);
@@ -290,6 +368,11 @@ describe("SignalsHistory Table and Pagination Integration", () => {
 		).toBe(2);
 
 		fireEvent.change(rowsSelect, { target: { value: newRowsPerPage.toString() } });
+
+		// Force manual page reset after rows is selected
+		await waitFor(() => {
+			setPageExternal(1);
+		});
 
 		await waitFor(() => {
 			expect(rowsSelect).toHaveValue(newRowsPerPage.toString());

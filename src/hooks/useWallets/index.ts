@@ -146,3 +146,44 @@ export const useGetUserWalletsTransaction = ({
 		isError,
 	};
 };
+
+export const useInitiateWithdrawal = () => {
+	const walletsService = new WalletsService();
+	const { mutate, data, isPending, isError, isSuccess, error } = useCreate({
+		mutationFn: walletsService.initiateWithdrawal.bind(walletsService),
+	});
+
+	return {
+		initiateWithdrawal: mutate,
+		isError,
+		data,
+		isPending,
+		isSuccess,
+		error,
+	};
+};
+
+export const useCompleteWithdrawal = () => {
+	const walletsService = new WalletsService();
+	const { mutate, data, isPending, isSuccess, isError, error } = useCreate({
+		mutationFn: walletsService.completeWithdrawal.bind(walletsService),
+	});
+
+	return {
+		completeWithdrawal: mutate,
+		isError,
+		isPending,
+		data,
+		isSuccess,
+		error,
+	};
+};
+
+export const useSendWithdrawalOtp = () => {
+	const walletsService = new WalletsService();
+	const { mutate, isPending, isSuccess, isError, error, data } = useCreate({
+		mutationFn: walletsService.sendOtp.bind(walletsService),
+	});
+
+	return { sendWithdrawalOtp: mutate, data, isPending, isSuccess, isError, error };
+};
