@@ -49,7 +49,7 @@ function OpenTrades() {
 	return (
 		<section>
 			<div className="space-y-5">
-				<TradingAccountSUmmaryCard
+				<TradingAccountSummaryCard
 					isLoading={isLoading}
 					isSuccess={isSuccess}
 					isError={isError}
@@ -150,7 +150,7 @@ interface ITradingAccountSummaryCardProps {
 	isSuccess: boolean;
 }
 
-const TradingAccountSUmmaryCard: React.FC<ITradingAccountSummaryCardProps> = ({
+export const TradingAccountSummaryCard: React.FC<ITradingAccountSummaryCardProps> = ({
 	isLoading,
 	isError,
 	isSuccess,

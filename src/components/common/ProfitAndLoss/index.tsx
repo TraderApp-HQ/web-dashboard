@@ -28,7 +28,7 @@ const ProfitAndLoss = ({ price, value, type }: IProfitAndLoss) => {
 	}
 
 	return (
-		<div className="space-y-1 text-center">
+		<div className="space-y-1 text-right md:text-center">
 			<p className="font-medium text-gray-500 text-sm">{price}</p>
 			<p className={`${textColor} font-normal text-xs`}>
 				{value}
