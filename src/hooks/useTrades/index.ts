@@ -4,8 +4,11 @@ import { TradingEngineService } from "~/apis/handlers/trading-engine";
 import { TradingEngineQueryId } from "~/apis/handlers/trading-engine/constants";
 import { OpenTradesActionType } from "~/apis/handlers/trading-engine/enums";
 import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
-import { ITBody, ITHead } from "~/components/common/DataTable/config";
-import { openTradesDataTableSelector } from "~/selectors/trade-center";
+import { ITableMobile, ITBody, ITHead } from "~/components/common/DataTable/config";
+import {
+	openTradesDataTableSelector,
+	openTradesMobileDataTableSelector,
+} from "~/selectors/trade-center";
 import { useFetch } from "../useFetch";
 
 export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
@@ -13,6 +16,7 @@ export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
 	const tradingEngineService = new TradingEngineService();
 	const [tradesTableHead, setTradesTableHead] = useState<ITHead[]>([]);
 	const [tradesTableBody, setTradesTableBody] = useState<ITBody>();
+	const [mobileTableData, setMobileTableData] = useState<ITableMobile[]>([]);
 	const [trades, setTrades] = useState<IMasterTrade[]>();
 
 	const fetchOpenTrades = () => tradingEngineService.getOpenTrades();
@@ -53,10 +57,16 @@ export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
 			openTrades: data,
 			handleTradeAction,
 		});
+		const mobileData = openTradesMobileDataTableSelector({
+			isAdmin,
+			openTrades: data,
+			handleTradeAction,
+		});
 
 		setTrades(data);
 		setTradesTableHead(tableHead);
 		setTradesTableBody(tableBody);
+		setMobileTableData(mobileData);
 	}, [data, isSuccess, isLoading]);
 
 	return {
@@ -66,6 +76,7 @@ export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
 		isError,
 		tradesTableHead,
 		tradesTableBody,
+		mobileTableData,
 		trades,
 	};
 };
