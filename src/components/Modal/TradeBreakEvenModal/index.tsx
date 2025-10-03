@@ -2,15 +2,18 @@ import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
 import Button from "~/components/common/Button";
 import { renderDisplayItem, renderStatus } from "~/helpers";
 import Modal from "..";
+import React from "react";
 
-const TradeBreakEvenModal = ({
-	openModal,
-	handleModalClose,
-	selectedTrade,
-}: {
+interface ITradeBrealEvenModalProps {
 	openModal: boolean;
 	handleModalClose: () => void;
 	selectedTrade: IMasterTrade;
+}
+
+const TradeBreakEvenModal: React.FC<ITradeBrealEvenModalProps> = ({
+	openModal,
+	handleModalClose,
+	selectedTrade,
 }) => {
 	return (
 		<Modal
