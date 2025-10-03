@@ -4,7 +4,7 @@ import { OpenTradesActionType } from "~/apis/handlers/trading-engine/enums";
 import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
 import Card from "~/components/AccountLayout/Card";
 import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
-import { DataTable } from "~/components/common/DataTable";
+import { DataTable, DataTableMobile } from "~/components/common/DataTable";
 import SelectBox from "~/components/common/SelectBox";
 import ComponentError from "~/components/Error/ComponentError";
 import EyesIcon from "~/components/icons/EyesIcon";
@@ -28,8 +28,16 @@ function OpenTrades() {
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [selectedTrade, setSelectedTrade] = useState<IMasterTrade | null>(null);
 
-	const { error, isError, isLoading, isSuccess, tradesTableBody, tradesTableHead, trades } =
-		useFetchOpenTrades({ isAdmin: true });
+	const {
+		error,
+		isError,
+		isLoading,
+		isSuccess,
+		tradesTableBody,
+		tradesTableHead,
+		mobileTableData,
+		trades,
+	} = useFetchOpenTrades({ isAdmin: true });
 	const openTradesCount = trades && trades.length > 0 && trades.length;
 
 	const handleModalClose = () => {
@@ -89,7 +97,7 @@ function OpenTrades() {
 								)}
 							</div>
 							<div className="md:hidden relative">
-								{/* {isSuccess && <DataTableMobile data={signalsMobileTableBody} />} */}
+								{isSuccess && <DataTableMobile data={mobileTableData} />}
 							</div>
 						</div>
 					</div>

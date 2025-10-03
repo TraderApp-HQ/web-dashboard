@@ -210,6 +210,7 @@ export function openTradesMobileDataTableSelector({
 								tradeId: trade.id,
 								action: OpenTradesActionType.TRIGGER_ORDER_PLACEMENT,
 							}),
+						styles: "text-nowrap",
 					}
 				: undefined,
 			isAdmin && trade.status === MasterTradeStatus.PENDING
