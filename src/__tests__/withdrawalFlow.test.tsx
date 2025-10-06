@@ -304,7 +304,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		// Fast-forward countdown to 0 to reveal "Resend code"
 		act(() => {
-			jest.advanceTimersByTime(60_000);
+			jest.advanceTimersByTime(90_000);
 		});
 
 		// Should show disabled state; clicking shouldn't call resend
@@ -358,13 +358,13 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		// Reach 0 to show "Resend code"
 		act(() => {
-			jest.advanceTimersByTime(60_000);
+			jest.advanceTimersByTime(90_000);
 		});
 
 		// Click resend -> success -> countdown should reset to "Retry in 1:30"
 		fireEvent.click(screen.getByText(/Resend code/i));
 		await waitFor(() => expect(screen.getByText(/Retry in/i)).toBeInTheDocument());
-		expect(screen.getByText(/Retry in 1:00/i)).toBeInTheDocument();
+		expect(screen.getByText(/Retry in 1:30/i)).toBeInTheDocument();
 
 		// Now mock error case (no reset)
 		(
@@ -386,7 +386,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		// Fast-forward again to 0 to show "Resend code"
 		act(() => {
-			jest.advanceTimersByTime(60_000);
+			jest.advanceTimersByTime(90_000);
 		});
 		expect(screen.getByText(/Resend code/i)).toBeInTheDocument();
 
@@ -453,7 +453,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		// Reach 0 and click resend -> updates currentWithdrawalRequestId to req456
 		act(() => {
-			jest.advanceTimersByTime(60_000);
+			jest.advanceTimersByTime(90_000);
 		});
 		fireEvent.click(screen.getByText(/Resend code/i));
 
@@ -468,6 +468,82 @@ describe("Withdraw page end‑to‑end validations", () => {
 			userId: "user-1",
 			otp: "123456",
 			withdrawalRequestId: "req456", // updated id from resend
+		});
+
+		jest.useRealTimers();
+	});
+
+	// NEW: continues using the same withdrawalRequestId after resend
+	it("continues using the same withdrawalRequestId after resend", async () => {
+		jest.useFakeTimers();
+
+		// Open OTP modal with initial id
+		(
+			(require("~/hooks/useWallets") as typeof import("~/hooks/useWallets"))
+				.useInitiateWithdrawal as jest.Mock
+		).mockReturnValue({
+			initiateWithdrawal: jest.fn(),
+			data: { withdrawalRequestId: "req123" },
+			isPending: false,
+			isSuccess: true,
+			isError: false,
+			error: null,
+		});
+
+		// Resend succeeds but returns the SAME id (app behavior)
+		(
+			(require("~/hooks/useWallets") as typeof import("~/hooks/useWallets"))
+				.useSendWithdrawalOtp as jest.Mock
+		).mockImplementation(() => {
+			const ReactLib = require("react");
+			const [success, setSuccess] = ReactLib.useState(false);
+			const [data, setData] = ReactLib.useState(null);
+			const sendWithdrawalOtp = jest.fn(() => {
+				setData({ withdrawalRequestId: "req123" }); // same id
+				setSuccess(true);
+			});
+			return {
+				sendWithdrawalOtp,
+				data,
+				isPending: false,
+				isSuccess: success,
+				isError: false,
+				error: null,
+			};
+		});
+
+		const mockComplete = jest.fn();
+		(
+			(require("~/hooks/useWallets") as typeof import("~/hooks/useWallets"))
+				.useCompleteWithdrawal as jest.Mock
+		).mockReturnValue({
+			completeWithdrawal: mockComplete,
+			data: null,
+			isPending: false,
+			isSuccess: false,
+			isError: false,
+			error: null,
+		});
+
+		renderPage();
+
+		// Reach 0 and click resend -> keeps currentWithdrawalRequestId as req123
+		act(() => {
+			jest.advanceTimersByTime(90_000);
+		});
+		fireEvent.click(screen.getByText(/Resend code/i));
+
+		// Enter OTP and confirm
+		const otpInputs = screen.getAllByTestId(/otp-input-/);
+		otpInputs.forEach((input, index) => {
+			fireEvent.change(input, { target: { value: (index + 1).toString() } });
+		});
+		fireEvent.click(screen.getByText(/Confirm/i));
+
+		expect(mockComplete).toHaveBeenCalledWith({
+			userId: "user-1",
+			otp: "123456",
+			withdrawalRequestId: "req123", // unchanged id
 		});
 
 		jest.useRealTimers();
