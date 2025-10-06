@@ -8,6 +8,8 @@ export enum ColourTheme {
 	REVIEW = "REVIEW",
 	TERTIARY = "TERTIARY",
 	TERTIARY2 = "TERTIARY2",
+	INVOICE_PROFIT = "INVOICE_PROFIT",
+	INVOICE_BILLED = "INVOICE_BILLED",
 }
 
 export enum OperationStatus {
@@ -84,4 +86,15 @@ export enum TransactionType {
 	WITHDRAWAL = "WITHDRAWAL",
 	TRANSFER = "TRANSFER",
 	CONVERT = "CONVERT",
+}
+
+export enum InvoiceStatus {
+	PENDING = "PENDING",
+	PAID = "PAID",
+	FAILED = "FAILED",
+}
+
+export enum InvoiceType {
+	TRADING_FEE = "TRADING_FEE",
+	PROFIT_SHARE = "PROFIT_SHARE",
 }

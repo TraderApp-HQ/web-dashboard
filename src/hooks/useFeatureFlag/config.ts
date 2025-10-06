@@ -13,7 +13,8 @@ export enum TrafficType {
 export type FeatureFlag =
 	| "release-send-otp"
 	| "release-referral-tracking"
-	| "release-multiple-wallet-balance";
+	| "release-multiple-wallet-balance"
+	| "release-invoices";
 
 export const FEATURE_FLAG_CONFIG: FeatureFlagConfig = {
 	"release-send-otp": {
@@ -23,6 +24,9 @@ export const FEATURE_FLAG_CONFIG: FeatureFlagConfig = {
 		level: TrafficType.USER,
 	},
 	"release-multiple-wallet-balance": {
+		level: TrafficType.USER,
+	},
+	"release-invoices": {
 		level: TrafficType.USER,
 	},
 };
