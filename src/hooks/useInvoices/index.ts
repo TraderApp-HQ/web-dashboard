@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 import { IPaginationQuery } from "~/apis/handlers/interfaces";
-import { InvoicesService } from "~/apis/handlers/invoices";
+import { WalletsService } from "~/apis/handlers/wallets";
 import { useFetch } from "../useFetch";
 
 export const useGetOutstandingUserInvoices = ({ currentPage, rowsPerPage }: IPaginationQuery) => {
-	const invoicesService = new InvoicesService();
+	const walletsService = new WalletsService();
 	const fetchOutstandingInvoices = useCallback(
-		() => invoicesService.getOutstandingUserInvoices({ currentPage, rowsPerPage }),
+		() => walletsService.getOutstandingUserInvoices({ currentPage, rowsPerPage }),
 		[currentPage, rowsPerPage],
 	);
 

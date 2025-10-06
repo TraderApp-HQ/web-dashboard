@@ -1,5 +1,4 @@
 import { APIClient } from "~/apis/apiClient";
-import { UsersService } from "~/apis/handlers/users";
 import { IPaginatedResult, IPaginationQuery, IResponse } from "../interfaces";
 import { CurrencyCategory, PaymentCategory, PaymentOperation, WalletType } from "./enum";
 import {
@@ -9,6 +8,7 @@ import {
 	IInitiateDepositInput,
 	IInitiateWithdrawalInput,
 	IInitiateWithdrawalResponse,
+	IInvoiceListItem,
 	IPaymentOptions,
 	ITransactionsHistory,
 	IUserWalletResponse,
@@ -18,11 +18,9 @@ import { createServiceClient } from "../_shared/serviceClient";
 
 export class WalletsService {
 	private apiClient: APIClient;
-	private usersService: UsersService;
 
 	constructor() {
-		const { usersService, apiClient } = createServiceClient();
-		this.usersService = usersService;
+		const { apiClient } = createServiceClient();
 		this.apiClient = apiClient;
 	}
 
@@ -176,6 +174,21 @@ export class WalletsService {
 			throw new Error(response.message || "Failed to send OTP");
 		}
 
+		const { data } = response;
+		return data;
+	}
+
+	public async getOutstandingUserInvoices({
+		currentPage,
+		rowsPerPage,
+	}: IPaginationQuery): Promise<IPaginatedResult<IInvoiceListItem>> {
+		const response = await this.apiClient.get<IResponse<IPaginatedResult<IInvoiceListItem>>>({
+			url: `/invoices?page=${currentPage}&limit=${rowsPerPage}&outstandingOnly=true`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch invoices");
+		}
 		const { data } = response;
 		return data;
 	}
