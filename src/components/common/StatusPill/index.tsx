@@ -12,6 +12,7 @@ interface IOperationStatus {
 	bullet?: boolean;
 	toolTipText?: string[];
 	statusTextStyle?: string;
+	isCustom?: boolean;
 }
 
 const OperationStatus: React.FC<IOperationStatus> = ({
@@ -21,10 +22,11 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 	bullet = true, // defaults to true to display bullet
 	toolTipText,
 	statusTextStyle = "capitalize",
+	isCustom = false,
 }) => {
-	const statusText = capitalizeFirstLetter(status);
-	let roundedIconStyles: string;
-	let statusContainerStyles: string;
+	const statusText = !isCustom ? capitalizeFirstLetter(status) : status;
+	let roundedIconStyles: string = "";
+	let statusContainerStyles: string = "";
 
 	switch (theme) {
 		case ColourTheme.SUCCESS: {
@@ -63,13 +65,23 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 			statusContainerStyles = "bg-[#F2FCFF] text-[#234475]";
 			break;
 		}
+		case ColourTheme.INVOICE_PROFIT: {
+			statusContainerStyles = "bg-[#EDF0FD] text-[#312589]";
+			break;
+		}
+		case ColourTheme.INVOICE_BILLED: {
+			statusContainerStyles = "bg-[#FFF3F1] text-[#AF625A]";
+			break;
+		}
 		default: {
 			roundedIconStyles = "";
 			statusContainerStyles = "";
 		}
 	}
 
-	return (
+	return isCustom ? (
+		<span className={`${statusTextStyle} ${statusContainerStyles}`}>{statusText}</span>
+	) : (
 		<div className={`flex ${style.justify}`}>
 			{status === UserTradingStatus.INACTIVE ? (
 				<ConnectionStatus

@@ -121,24 +121,6 @@ export interface IFactoryPaymentProviderDepositResponse {
 	exchangeFeeCurrency?: string;
 }
 
-export interface IPaginationQuery {
-	currentPage?: number;
-	rowsPerPage?: number;
-}
-
-export interface IPaginatedResult<T> {
-	docs: T[];
-	totalDocs: number;
-	limit: number;
-	page: number;
-	nextPage: number;
-	prevPage?: number;
-	totalPages: number;
-	pagingCounter: number;
-	hasNextPage: boolean;
-	hasPrevPage: boolean;
-}
-
 interface IAsset {
 	name: string;
 	symbol: string;
