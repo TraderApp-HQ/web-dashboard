@@ -12,14 +12,16 @@ import { IUserProfile } from "~/apis/handlers/users/interfaces";
 import DisplayChange from "~/components/common/DisplayChange";
 import DisplayItem from "~/components/common/DisplayItem";
 import DisplayTransaction from "~/components/common/DisplayTransaction";
-import ProfitAndLoss, { IProfitAndLoss } from "~/components/common/ProfitAndLoss";
+import ProfitAndLoss, { IProfitAndLossProps } from "~/components/common/ProfitAndLoss";
 import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/types";
 import RankDisplay from "~/components/common/RankDisplay";
 import StatusPill from "~/components/common/StatusPill";
 import TargetPill from "~/components/common/TargetPill";
+import { InvoiceTypeValues } from "~/config/constants";
 import {
 	ColourTheme,
 	HTMLElements,
+	InvoiceType,
 	OperationStatus,
 	TradeSide,
 	TransactionStatus,
@@ -101,6 +103,7 @@ export function renderStatus(
 	bullet?: boolean,
 	toolTipText?: string[],
 	statusTextStyle?: string,
+	isCustom?: boolean,
 ) {
 	let theme: ColourTheme;
 	switch (status) {
@@ -153,6 +156,12 @@ export function renderStatus(
 			theme = ColourTheme.TERTIARY2;
 			break;
 		}
+		case InvoiceTypeValues[InvoiceType.PROFIT_SHARE]:
+			theme = ColourTheme.INVOICE_PROFIT;
+			break;
+		case InvoiceTypeValues[InvoiceType.TRADING_FEE]:
+			theme = ColourTheme.INVOICE_BILLED;
+			break;
 		default:
 			theme = ColourTheme.PRIMARY;
 	}
@@ -163,10 +172,11 @@ export function renderStatus(
 		bullet,
 		toolTipText,
 		statusTextStyle,
+		isCustom,
 	});
 }
 
-export function renderPandL({ price, value, type }: IProfitAndLoss) {
+export function renderPandL({ price, value, type }: IProfitAndLossProps) {
 	return React.createElement(ProfitAndLoss, { price, value, type });
 }
 

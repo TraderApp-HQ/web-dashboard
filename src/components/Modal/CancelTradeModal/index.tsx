@@ -2,15 +2,18 @@ import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
 import Button from "~/components/common/Button";
 import { renderDisplayItem, renderStatus } from "~/helpers";
 import Modal from "..";
+import React from "react";
 
-const CancelTradeModal = ({
-	openModal,
-	handleModalClose,
-	selectedTrade,
-}: {
+interface ICancelTradeModalProps {
 	openModal: boolean;
 	handleModalClose: () => void;
 	selectedTrade: IMasterTrade;
+}
+
+const CancelTradeModal: React.FC<ICancelTradeModalProps> = ({
+	openModal,
+	handleModalClose,
+	selectedTrade,
 }) => {
 	return (
 		<Modal

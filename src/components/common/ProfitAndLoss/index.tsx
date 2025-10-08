@@ -1,12 +1,13 @@
+import React from "react";
 import { ProfitAndLossStatus } from "~/apis/handlers/trading-engine/enums";
 
-export interface IProfitAndLoss {
+export interface IProfitAndLossProps {
 	price: number;
 	value: number;
 	type: ProfitAndLossStatus;
 }
 
-const ProfitAndLoss = ({ price, value, type }: IProfitAndLoss) => {
+const ProfitAndLoss: React.FC<IProfitAndLossProps> = ({ price, value, type }) => {
 	let textColor: string;
 
 	switch (type) {

@@ -6,14 +6,16 @@ import { renderDisplayItem, renderStatus } from "~/helpers";
 import Modal from "..";
 import ConfirmationModal from "../ConfirmationModal";
 
-const CloseTradeModal = ({
-	openModal,
-	handleModalClose,
-	selectedTrade,
-}: {
+interface ICloseTradeModalProps {
 	openModal: boolean;
 	handleModalClose: () => void;
 	selectedTrade: IMasterTrade;
+}
+
+const CloseTradeModal: React.FC<ICloseTradeModalProps> = ({
+	openModal,
+	handleModalClose,
+	selectedTrade,
 }) => {
 	const [selectedPercentage, setSelectedPercentage] = useState<number | null>(null);
 	const [openConfirmationModal, setOpenConfirmationModal] = useState<boolean>(false);

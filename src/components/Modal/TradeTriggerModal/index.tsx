@@ -1,18 +1,20 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
 import Button from "~/components/common/Button";
 import InputField from "~/components/common/InputField";
 import { renderDisplayItem, renderStatus } from "~/helpers";
 import Modal from "..";
 
-const TradeTriggerModal = ({
-	openModal,
-	handleModalClose,
-	selectedTrade,
-}: {
+interface ITradeTriggerModalProps {
 	openModal: boolean;
 	handleModalClose: () => void;
 	selectedTrade: IMasterTrade;
+}
+
+const TradeTriggerModal: React.FC<ITradeTriggerModalProps> = ({
+	openModal,
+	handleModalClose,
+	selectedTrade,
 }) => {
 	const [trade, setTrade] = useState<IMasterTrade>(selectedTrade);
 

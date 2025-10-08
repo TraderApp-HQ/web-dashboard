@@ -1,7 +1,7 @@
 import Button from "~/components/AccountLayout/Button";
 import Modal from "~/components/Modal";
 
-interface ConfirmationModalProps {
+interface IConfirmationModalProps {
 	title?: string;
 	description?: string;
 	btnConfirm: () => void;
@@ -19,7 +19,7 @@ export default function ConfirmationModal({
 	openModal,
 	onClose,
 	isProcessing,
-}: ConfirmationModalProps) {
+}: IConfirmationModalProps) {
 	const handleModalClose = () => {
 		if (onClose) {
 			onClose();

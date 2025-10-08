@@ -15,7 +15,8 @@ export type FeatureFlag =
 	| "release-referral-tracking"
 	| "release-multiple-wallet-balance"
 	| "release-trade-history"
-	| "release-trading-rules";
+	| "release-trading-rules"
+	| "release-invoices";
 
 export const FEATURE_FLAG_CONFIG: FeatureFlagConfig = {
 	"release-send-otp": {
@@ -31,6 +32,9 @@ export const FEATURE_FLAG_CONFIG: FeatureFlagConfig = {
 		level: TrafficType.USER,
 	},
 	"release-trading-rules": {
+		level: TrafficType.USER,
+	},
+	"release-invoices": {
 		level: TrafficType.USER,
 	},
 };
