@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import AggregateIcon from "~/components/icons/AggregateIcon";
+// import AggregateIcon from "~/components/icons/AggregateIcon";
 import DashboardIcon from "~/components/icons/DashboardIcon";
-import FinanceIcon from "~/components/icons/FinanceIcon";
+// import FinanceIcon from "~/components/icons/FinanceIcon";
 import ReferralsIcon from "~/components/icons/ReferralsIcon";
 import SettingIcon from "~/components/icons/SettingIcon";
 import SignalManagementIcon from "~/components/icons/SignalManagementIcon";
@@ -56,15 +56,25 @@ export const NavLinksExtras: SidenavLink[] = [
 ];
 
 export const AdminNavLinks: SidenavLink[] = [
+	// {
+	// 	icon: DashboardIcon,
+	// 	text: "Dashboard",
+	// 	path: LAYOUT_ROUTES.admin + ROUTES.dashboard.homepage,
+	// },
+	// {
+	// 	icon: FinanceIcon,
+	// 	text: "Finance Model",
+	// 	path: LAYOUT_ROUTES.admin + ROUTES.financemodel,
+	// },
 	{
-		icon: DashboardIcon,
-		text: "Dashboard",
-		path: LAYOUT_ROUTES.admin + ROUTES.dashboard.homepage,
+		icon: SystemManagementIcon,
+		text: "Trade Center",
+		path: LAYOUT_ROUTES.admin + ROUTES.adminTradeCenter,
 	},
 	{
-		icon: FinanceIcon,
-		text: "Finance Model",
-		path: LAYOUT_ROUTES.admin + ROUTES.financemodel,
+		icon: TaskCenterIcon,
+		text: "Task Center",
+		path: LAYOUT_ROUTES.admin + ROUTES.taskcenter.home,
 	},
 	{
 		icon: UserIcon,
@@ -76,27 +86,22 @@ export const AdminNavLinks: SidenavLink[] = [
 		text: "Signal Management",
 		path: LAYOUT_ROUTES.admin + ROUTES.signalmanagement,
 	},
-	{
-		icon: TaskCenterIcon,
-		text: "Task Center",
-		path: LAYOUT_ROUTES.admin + ROUTES.taskcenter.home,
-	},
-	{
-		icon: SystemManagementIcon,
-		text: "System Management",
-		path: LAYOUT_ROUTES.admin + ROUTES.systemmanagement,
-	},
-	{
-		icon: AggregateIcon,
-		text: "Aggregate View",
-		path: LAYOUT_ROUTES.admin + ROUTES.aggregateview,
-	},
+	// {
+	// 	icon: SystemManagementIcon,
+	// 	text: "System Management",
+	// 	path: LAYOUT_ROUTES.admin + ROUTES.systemmanagement,
+	// },
+	// {
+	// 	icon: AggregateIcon,
+	// 	text: "Aggregate View",
+	// 	path: LAYOUT_ROUTES.admin + ROUTES.aggregateview,
+	// },
 ];
 
 export const AdminNavLinksExtras: SidenavLink[] = [
-	{
-		icon: SettingIcon,
-		text: "Setting",
-		path: LAYOUT_ROUTES.admin + ROUTES.settings,
-	},
+	// {
+	// 	icon: SettingIcon,
+	// 	text: "Setting",
+	// 	path: LAYOUT_ROUTES.admin + ROUTES.settings,
+	// },
 ];

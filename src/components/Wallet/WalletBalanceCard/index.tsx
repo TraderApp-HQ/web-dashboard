@@ -20,14 +20,14 @@ interface ITotalBalanceSectionProps {
 	showBalanceText?: string;
 	btcBalance?: string;
 	totalBalanceStyle?: string;
-	padding?: string;
+	cardStyle?: string;
 }
 
 export default function WalletBalanceCard({
 	showBalanceText = "Total Balance",
 	// btcBalance,
 	totalBalanceStyle,
-	padding,
+	cardStyle,
 }: ITotalBalanceSectionProps) {
 	// Get wallet balance hook
 	const { data, isError, isLoading, isSuccess, refetch } = useGetUserWalletsBalance(
@@ -44,7 +44,7 @@ export default function WalletBalanceCard({
 	});
 
 	const router = useRouter();
-	const [showBalance, handleShowBalance] = useState<boolean>(true);
+	const [showBalance, setShowBalance] = useState<boolean>(true);
 	const [walletTotalBalance, setWalletTotalBalance] = useState<number>(0);
 	const [walletTotalBalanceOptions, setWalletTotalBalanceOptions] = useState<ISelectBoxOption[]>(
 		[],
@@ -93,7 +93,7 @@ export default function WalletBalanceCard({
 				isSuccess &&
 				data && (
 					<Card
-						className={`flex flex-col sm:flex-row gap-3 sm:items-start sm:justify-between ${padding ? padding : "p-5"}`}
+						className={`flex flex-col sm:flex-row gap-3 sm:items-start sm:justify-between ${cardStyle ? cardStyle : "p-5"}`}
 					>
 						<section className="space-y-5">
 							<section className="flex items-center space-x-2">
@@ -102,7 +102,7 @@ export default function WalletBalanceCard({
 								</h4>
 
 								<span
-									onClick={() => handleShowBalance(!showBalance)}
+									onClick={() => setShowBalance(!showBalance)}
 									className="cursor-pointer"
 								>
 									{showBalance ? <EyesIcon /> : <OpenEyesIcon />}

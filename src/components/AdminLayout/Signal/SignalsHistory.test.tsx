@@ -166,6 +166,6 @@ describe("SignalsHistory Component", () => {
 		expect(screen.queryByTestId("table-data")).not.toBeInTheDocument();
 		const emptySignal = screen.queryByTestId("empty-signal");
 		expect(emptySignal).toBeInTheDocument();
-		expect(emptySignal).toHaveTextContent(/No Signal Available please try later/i);
+		expect(emptySignal).toHaveTextContent(/No Signal Available. Please try later./i);
 	});
 });

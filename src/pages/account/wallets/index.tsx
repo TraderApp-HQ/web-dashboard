@@ -12,7 +12,7 @@ const Wallets = () => {
 	return (
 		<section className="space-y-10">
 			<WalletBalanceCard
-				padding="px-4 py-8 md:px-5 md:py-12 !rounded-2xl"
+				cardStyle="px-4 py-8 md:px-5 md:py-12 !rounded-2xl"
 				totalBalanceStyle="text-2xl text-textGray"
 			/>
 

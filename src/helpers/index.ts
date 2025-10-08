@@ -12,6 +12,7 @@ import { IUserProfile } from "~/apis/handlers/users/interfaces";
 import DisplayChange from "~/components/common/DisplayChange";
 import DisplayItem from "~/components/common/DisplayItem";
 import DisplayTransaction from "~/components/common/DisplayTransaction";
+import ProfitAndLoss, { IProfitAndLossProps } from "~/components/common/ProfitAndLoss";
 import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/types";
 import RankDisplay from "~/components/common/RankDisplay";
 import StatusPill from "~/components/common/StatusPill";
@@ -173,6 +174,10 @@ export function renderStatus(
 		statusTextStyle,
 		isCustom,
 	});
+}
+
+export function renderPandL({ price, value, type }: IProfitAndLossProps) {
+	return React.createElement(ProfitAndLoss, { price, value, type });
 }
 
 export function renderRank(rank: ReferralRankType | null) {

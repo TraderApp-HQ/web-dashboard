@@ -15,7 +15,7 @@ const TableMenuDropdown: React.FC<ITableMenuDropdown> = ({ dataTableMenuItems })
 				className="w-[206px] justify-start"
 				btnClass="z-0"
 				subClass="z-10"
-				trigger={<DottedIcon orientation="horizontal" />}
+				trigger={<DottedIcon orientation="vertical" />}
 				position="left"
 			>
 				{dataTableMenuItems.map((item, index) => {

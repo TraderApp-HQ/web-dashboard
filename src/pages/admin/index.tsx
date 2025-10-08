@@ -5,7 +5,7 @@ import { useEffect } from "react";
 const AdminHome = () => {
 	const router = useRouter();
 	useEffect(() => {
-		router.push(`${LAYOUT_ROUTES.admin}${ROUTES.dashboard.homepage}`);
+		router.push(`${LAYOUT_ROUTES.admin}${ROUTES.adminTradeCenter}`);
 	}, []);
 
 	return null;
