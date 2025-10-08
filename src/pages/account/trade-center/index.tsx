@@ -2,11 +2,13 @@ import { useRouter } from "next/router";
 import React, { useEffect, ReactNode } from "react";
 import PageTab from "~/components/AccountLayout/Tabs";
 import AccountLayout from "~/components/AccountLayout/Layout";
+import useUserProfileData from "~/hooks/useUserProfileData";
+import useFeatureFlag from "~/hooks/useFeatureFlag";
 
 const TradeCenterHome = () => {
 	const router = useRouter();
 	useEffect(() => {
-		router.push(`trade-center/trading-accounts`);
+		router.push(`trade-center/open-trades`);
 	}, []);
 };
 
@@ -15,11 +17,39 @@ interface IProps {
 }
 
 const TradeCenterLayout: React.FC<IProps> = ({ children }) => {
+	// Get User Id
+	const { userId } = useUserProfileData();
+
+	// Feature flag to show trading rules and trade history pages
+	const showTradeHistoryPage = useFeatureFlag({
+		userId,
+		flagName: "release-trade-history",
+	});
+
+	const showTradingRulesPage = useFeatureFlag({
+		userId,
+		flagName: "release-trading-rules",
+	});
+
 	const tabs = [
-		{ title: "Trading Accounts", href: "/account/trade-center/trading-accounts" },
 		{ title: "Open Trades", href: "/account/trade-center/open-trades" },
-		{ title: "Trades History", href: "/account/trade-center/trade-history" },
-		{ title: "Trading Rules", href: "/account/trade-center/trading-rules" },
+		{ title: "Trading Accounts", href: "/account/trade-center/trading-accounts" },
+		...(showTradeHistoryPage
+			? [
+					{
+						title: "Trades History",
+						href: "/account/trade-center/trade-history",
+					},
+				]
+			: []),
+		...(showTradingRulesPage
+			? [
+					{
+						title: "Trading Rules",
+						href: "/account/trade-center/trading-rules",
+					},
+				]
+			: []),
 	];
 
 	return (
