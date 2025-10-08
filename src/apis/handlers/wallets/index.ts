@@ -1,6 +1,5 @@
 import { APIClient } from "~/apis/apiClient";
-import { UsersService } from "~/apis/handlers/users";
-import { IResponse } from "../interfaces";
+import { IPaginatedResult, IPaginationQuery, IResponse } from "../interfaces";
 import { CurrencyCategory, PaymentCategory, PaymentOperation, WalletType } from "./enum";
 import {
 	ICompleteWithdrawalInput,
@@ -9,25 +8,20 @@ import {
 	IInitiateDepositInput,
 	IInitiateWithdrawalInput,
 	IInitiateWithdrawalResponse,
-	IPaginatedResult,
-	IPaginationQuery,
+	IInvoiceListItem,
 	IPaymentOptions,
 	ITransactionsHistory,
 	IUserWalletResponse,
 	IWalletSupportedCurrencies,
 } from "./interface";
+import { createServiceClient } from "../_shared/serviceClient";
 
 export class WalletsService {
 	private apiClient: APIClient;
-	private usersService: UsersService;
 
 	constructor() {
-		this.usersService = new UsersService();
-		// Remove the environment variable check since we're using proxy
-		this.apiClient = new APIClient(
-			"/api/proxy", // This will be overridden in APIClient
-			this.usersService.refreshUserAccessToken.bind(this.usersService),
-		);
+		const { apiClient } = createServiceClient();
+		this.apiClient = apiClient;
 	}
 
 	public async getWalletBalance(wallet: WalletType): Promise<IUserWalletResponse> {
@@ -99,7 +93,9 @@ export class WalletsService {
 		currentPage,
 		rowsPerPage,
 	}: IPaginationQuery): Promise<IPaginatedResult<ITransactionsHistory>> {
-		const response = await this.apiClient.get<IResponse>({
+		const response = await this.apiClient.get<
+			IResponse<IPaginatedResult<ITransactionsHistory>>
+		>({
 			url: `/transactions?page=${currentPage}&limit=${rowsPerPage}`,
 		});
 		if (response.error) {
@@ -108,7 +104,7 @@ export class WalletsService {
 
 		const { data } = response;
 
-		return data as IPaginatedResult<ITransactionsHistory>;
+		return data;
 	}
 
 	public async getWalletTransaction({
@@ -178,6 +174,21 @@ export class WalletsService {
 			throw new Error(response.message || "Failed to send OTP");
 		}
 
+		const { data } = response;
+		return data;
+	}
+
+	public async getOutstandingUserInvoices({
+		currentPage,
+		rowsPerPage,
+	}: IPaginationQuery): Promise<IPaginatedResult<IInvoiceListItem>> {
+		const response = await this.apiClient.get<IResponse<IPaginatedResult<IInvoiceListItem>>>({
+			url: `/invoices?page=${currentPage}&limit=${rowsPerPage}&outstandingOnly=true`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch invoices");
+		}
 		const { data } = response;
 		return data;
 	}

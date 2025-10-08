@@ -407,7 +407,6 @@ const Withdraw = () => {
 				}
 				isSendOtpSuccessProp={isSendWithdrawalOtpSuccess}
 				isResendPending={isSendWithdrawalOtpPending}
-				countDownTime={60}
 			/>
 
 			{isInitiateWithdrawalError && (
