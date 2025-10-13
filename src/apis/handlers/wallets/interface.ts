@@ -71,6 +71,7 @@ export interface ISupportedNetworks {
 	slug: string;
 	name: string;
 	precision: number;
+	fees?: { average?: string; fast?: string; slow?: string };
 }
 
 export interface IInitiateDepositInput {

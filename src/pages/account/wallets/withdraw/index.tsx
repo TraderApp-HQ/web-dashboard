@@ -31,8 +31,8 @@ const Withdraw = () => {
 
 	// TODO: fetch processing fee and network fee from server
 	// and update hardcoded "USDT" currency to use {selectedCurrency?.symbol}
-	const processingFee = 2;
-	const networkFee = 1;
+	// const oldProcessingFee = 2;
+	// const networkFee = 1;
 
 	const [selectedCurrency, setSelectedCurrency] = useState<
 		IWalletSupportedCurrencies | undefined
@@ -61,22 +61,37 @@ const Withdraw = () => {
 		[selectedCurrency, walletBalanceData],
 	);
 
+	const processingFee = useMemo(() => {
+		if (!amount) return 0;
+		const res = Math.max(0.003 * amount, 5);
+		return res;
+	}, [amount]);
+
+	console.log({ processingFee });
+
 	const amountError = useMemo(() => {
 		if (amount === undefined || !selectedCurrency) return "";
 
+		// const totalFees = processingFee + networkFee;
+		const networkFee = Number(selectedNetwork?.fees?.average ?? 0);
 		const totalFees = processingFee + networkFee;
 		const minWithdrawal =
 			WITHDRAWAL_LIMIT.MINIMUM_AMOUNTS[
 				selectedCurrency.symbol as keyof typeof WITHDRAWAL_LIMIT.MINIMUM_AMOUNTS
 			];
 
-		if (amount <= totalFees || amountToReceive <= 0) {
-			return `Amount must be greater than total fees`;
-		}
-
 		if (amount < minWithdrawal) {
 			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
 		}
+
+		if (amount <= totalFees || amountToReceive <= 0) {
+			return `Amount must be greater than total fees`;
+		}
+		console.log({ amount, minWithdrawal });
+
+		// if (amount < minWithdrawal) {
+		// 	return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
+		// }
 
 		if (amount > availableCurrencyBalance) {
 			return "Your balance is insufficient to cover the withdrawal amount and total fees";
@@ -89,7 +104,7 @@ const Withdraw = () => {
 		selectedCurrency,
 		availableCurrencyBalance,
 		processingFee,
-		networkFee,
+		selectedNetwork,
 	]);
 
 	const handleMeClose = () => {
@@ -123,6 +138,8 @@ const Withdraw = () => {
 		operation: PaymentOperation.WITHDRAWAL,
 	});
 
+	console.log({ paymentOptions });
+
 	const {
 		initiateWithdrawal,
 		data: initiateWithdrawalData,
@@ -150,9 +167,10 @@ const Withdraw = () => {
 	} = useSendWithdrawalOtp();
 
 	useEffect(() => {
+		const networkFee = Number(selectedNetwork?.fees?.average ?? 0);
 		const res = Number(Math.max((amount ?? 0) - (processingFee + networkFee), 0));
 		setAmountToReceive(res);
-	}, [amount]);
+	}, [amount, selectedNetwork]);
 
 	useEffect(() => {
 		if (isInitiateWithdrawalSuccess && initiateWithdrawalData) {
@@ -243,7 +261,7 @@ const Withdraw = () => {
 								<InputField
 									type="text"
 									placeholder="Enter Receiving Address"
-									className="pr-16 w-full py-4 bg-[#F5F8FE] rounded-lg"
+									className="w-full py-4 bg-[#F5F8FE] rounded-lg text-[0.9375rem]"
 									onChange={(address) => setReceivingAddress(address)}
 									value={receivingAddress}
 								/>
@@ -308,42 +326,45 @@ const Withdraw = () => {
 							</p>
 						</div>
 
-						<div className="bg-[#F5F8FE] rounded-lg p-4 space-y-3">
-							<div className="flex justify-between items-center">
-								<span className="text-zinc-500 text-sm">Processing Fees</span>
-								<span className="text-slate-900 text-base font-medium">
-									{processingFee.toLocaleString("en-US", {
-										maximumFractionDigits: 2,
-										minimumFractionDigits: 2,
-									})}{" "}
-									USDT
-								</span>
-							</div>
+						{selectedNetwork?.fees?.average && !!processingFee && !amountError && (
+							<div className="bg-[#F5F8FE] rounded-lg p-4 space-y-3">
+								<div className="flex justify-between items-center">
+									<span className="text-zinc-500 text-sm">Processing Fees</span>
+									<span className="text-slate-900 text-base font-medium">
+										{processingFee.toLocaleString("en-US", {
+											maximumFractionDigits: 2,
+											minimumFractionDigits: 2,
+										})}{" "}
+										USDT
+									</span>
+								</div>
+								<div className="flex justify-between items-center">
+									<span className="text-zinc-500 text-sm">Network Fees</span>
+									<span className="text-slate-900 text-base font-medium">
+										{/* {selectedNetwork?.fees.toLocaleString("en-US", {
+											maximumFractionDigits: 2,
+											minimumFractionDigits: 2,
+										})}{" "} */}
+										{selectedNetwork.fees.average} USDT
+									</span>
+								</div>
 
-							<div className="flex justify-between items-center">
-								<span className="text-zinc-500 text-sm">Network Fees</span>
-								<span className="text-slate-900 text-base font-medium">
-									{networkFee.toLocaleString("en-US", {
-										maximumFractionDigits: 2,
-										minimumFractionDigits: 2,
-									})}{" "}
-									USDT
-								</span>
-							</div>
+								<div className="border-t border-[#E5E7EB] pt-3 mt-3"></div>
 
-							<div className="border-t border-[#E5E7EB] pt-3 mt-3"></div>
-
-							<div className="flex justify-between items-center">
-								<span className="text-slate-900 text-sm">Amount To Receive</span>
-								<span className="text-slate-900 text-base font-medium">
-									{amountToReceive.toLocaleString("en-US", {
-										maximumFractionDigits: 2,
-										minimumFractionDigits: 2,
-									})}{" "}
-									USDT
-								</span>
+								<div className="flex justify-between items-center">
+									<span className="text-slate-900 text-sm">
+										Amount To Receive
+									</span>
+									<span className="text-slate-900 text-base font-medium">
+										{amountToReceive.toLocaleString("en-US", {
+											maximumFractionDigits: 2,
+											minimumFractionDigits: 2,
+										})}{" "}
+										USDT
+									</span>
+								</div>
 							</div>
-						</div>
+						)}
 
 						<Button
 							labelText="Withdraw"

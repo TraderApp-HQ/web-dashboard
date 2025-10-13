@@ -36,7 +36,16 @@ jest.mock("~/hooks/useWallets", () => {
 					paymentMethodId: "pm1",
 					providerId: "prov1",
 					logoUrl: "",
-					supportNetworks: [{ name: "TRON", slug: "TRON", precision: 6 }],
+					supportNetworks: [
+						{
+							name: "TRON",
+							slug: "TRON",
+							precision: 6,
+							fees: {
+								average: "8.456253",
+							},
+						},
+					],
 				},
 			],
 		})),
@@ -136,8 +145,14 @@ describe("Withdraw page end‑to‑end validations", () => {
 		const usdtOption = screen.getByTestId("USDT button");
 		fireEvent.click(usdtOption);
 
+		// Select network
+		const networkSelect = screen.getByTestId("Select Network");
+		fireEvent.click(networkSelect);
+		const tronOption = screen.getByTestId("TRON button");
+		fireEvent.click(tronOption);
+
 		const amountInput = screen.getByPlaceholderText("00.00");
-		fireEvent.change(amountInput, { target: { value: "2" } }); // fees = 3
+		fireEvent.change(amountInput, { target: { value: "12" } }); // fees = 3
 		await waitFor(() =>
 			expect(screen.getByText(/Amount must be greater than total fees/i)).toBeInTheDocument(),
 		);
@@ -155,7 +170,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 		fireEvent.change(amountInput, { target: { value: "4" } });
 		await waitFor(() =>
 			expect(
-				screen.getByText(/Amount is below the minimum withdrawal of 5 USDT/i),
+				screen.getByText(/Amount is below the minimum withdrawal of 10 USDT/i),
 			).toBeInTheDocument(),
 		);
 	});
@@ -201,7 +216,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 		const amountInput = screen.getByPlaceholderText("00.00");
 		const btn = screen.getByRole("button", { name: /Withdraw/i });
 		// Valid: amount 10, fees 3 => net 7, within balance 20
-		fireEvent.change(amountInput, { target: { value: "10" } });
+		fireEvent.change(amountInput, { target: { value: "15" } });
 		fireEvent.change(screen.getByPlaceholderText(/Enter Receiving Address/i), {
 			target: { value: "TDqExampleAddr" },
 		});

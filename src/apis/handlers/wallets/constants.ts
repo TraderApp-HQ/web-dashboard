@@ -27,5 +27,5 @@ export const WalletsQueryId = {
 };
 
 export const WITHDRAWAL_LIMIT = {
-	MINIMUM_AMOUNTS: { USDT: 5 },
+	MINIMUM_AMOUNTS: { USDT: 10 },
 };
