@@ -21,12 +21,14 @@ import TradeTargetModal from "~/components/Modal/TradeTargetModal";
 import TradeBreakEvenModal from "~/components/Modal/TradeBreakEvenModal";
 import CancelTradeModal from "~/components/Modal/CancelTradeModal";
 import TradeTriggerModal from "~/components/Modal/TradeTriggerModal";
+import Toast from "~/components/common/Toast";
 
 function OpenTrades() {
 	const router = useRouter();
-	const { action, id } = router.query;
+	const { action, id, trade } = router.query;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [selectedTrade, setSelectedTrade] = useState<IMasterTrade | null>(null);
+	const [showTradeCreationToast, setShowTradeCreationToast] = useState(false);
 
 	const {
 		error,
@@ -53,6 +55,15 @@ function OpenTrades() {
 
 		setOpenModal(true);
 	}, [action, id, trades]);
+
+	useEffect(() => {
+		if (trade && trade === "true") setShowTradeCreationToast(true);
+
+		if (trade === "true") {
+			const url = window.location.pathname; // Get the current pathname
+			window.history.replaceState(null, "", url); // Clears query params
+		}
+	}, [trade]);
 
 	return (
 		<section>
@@ -146,6 +157,28 @@ function OpenTrades() {
 						selectedTrade={selectedTrade}
 					/>
 				)}
+
+			{/* Toast alerts */}
+			{/* {isError && (
+				<Toast
+					type="error"
+					variant="filled"
+					title="Trade update Error"
+					message={error?.message ?? "Something went wrong!"}
+					autoVanish
+					autoVanishTimeout={10}
+				/>
+			)} */}
+			{showTradeCreationToast && (
+				<Toast
+					type="success"
+					variant="filled"
+					title="Success"
+					message={`Trade ${showTradeCreationToast ? "created" : "updated"} successfully.`}
+					autoVanish
+					autoVanishTimeout={10}
+				/>
+			)}
 		</section>
 	);
 }

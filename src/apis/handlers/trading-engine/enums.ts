@@ -34,3 +34,8 @@ export enum OpenTradesActionType {
 	TRIGGER_ORDER_PLACEMENT = "trigger_order_placement",
 	CANCEL_TRADE = "cancel_trade",
 }
+
+export enum OrderPlacementType {
+	MARKET = "MARKET",
+	LIMIT = "LIMIT",
+}

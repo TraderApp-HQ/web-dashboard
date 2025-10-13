@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { TradingEngineService } from "~/apis/handlers/trading-engine";
@@ -9,6 +10,7 @@ import {
 	openTradesDataTableSelector,
 	openTradesMobileDataTableSelector,
 } from "~/selectors/trade-center";
+import { useCreate } from "../useCreate";
 import { useFetch } from "../useFetch";
 
 export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
@@ -24,8 +26,8 @@ export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
 	const { data, error, isLoading, isSuccess, isError } = useFetch({
 		queryKey: [TradingEngineQueryId.openTrades],
 		queryFn: fetchOpenTrades,
-		// refetch: true,
-		// refetchTime: 120000, // Refetches from database every 2 minute
+		refetch: true,
+		refetchTime: 120000, // Refetches from database every 2 minute
 	});
 
 	const handleTradeAction = ({
@@ -78,5 +80,32 @@ export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
 		tradesTableBody,
 		mobileTableData,
 		trades,
+	};
+};
+
+export const useCreateTrade = () => {
+	const tradingEngineService = new TradingEngineService();
+	const queryClient = useQueryClient();
+	const {
+		mutate: createTrade,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
+	} = useCreate({
+		mutationFn: tradingEngineService.createTrade.bind(tradingEngineService),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [TradingEngineQueryId.openTrades] });
+		},
+	});
+
+	return {
+		createTrade,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
 	};
 };

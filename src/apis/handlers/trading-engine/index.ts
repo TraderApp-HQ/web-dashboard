@@ -4,6 +4,7 @@ import { UsersService } from "~/apis/handlers/users";
 import type {
 	IAddFund,
 	IConnectManualInput,
+	ICreateTrade,
 	IDeleteAccountInput,
 	IGetTradingAccountInput,
 	IMasterTrade,
@@ -122,5 +123,19 @@ export class TradingEngineService {
 		const { data } = response;
 
 		return data as IMasterTrade[];
+	}
+
+	public async createTrade(trade: ICreateTrade): Promise<IMasterTrade> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/trade",
+			data: trade,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to create trade");
+		}
+
+		const { data } = response;
+		return data as IMasterTrade;
 	}
 }
