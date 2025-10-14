@@ -170,7 +170,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 		fireEvent.change(amountInput, { target: { value: "4" } });
 		await waitFor(() =>
 			expect(
-				screen.getByText(/Amount is below the minimum withdrawal of 10 USDT/i),
+				screen.getByText(/Amount is below the minimum withdrawal of 12 USDT/i),
 			).toBeInTheDocument(),
 		);
 	});
