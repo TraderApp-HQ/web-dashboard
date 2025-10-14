@@ -3,8 +3,10 @@ import type {
 	AccountConnectionStatus,
 	ConnectionType,
 	MasterTradeStatus,
+	OrderPlacementType,
 	TradingPlatform,
 } from "./enums";
+import { Candlestick, SignalRisk } from "../assets/enums";
 
 export interface IConnectManualInput {
 	userId: string;
@@ -114,6 +116,33 @@ export interface IAddFund {
 	amount: number;
 }
 
+export interface ICreateTrade {
+	signalId?: string;
+	baseAsset: string;
+	baseAssetLogoUrl: string;
+	baseQuantity: number;
+	currentPrice: number;
+	entryPrice: number;
+	stopLossPrice: number;
+	takeProfitPrice: number;
+	ordersTriggerPrice: number;
+	targetOrdersAmountToFill: number;
+	chartUrl?: string;
+	tradeNote?: string;
+	quoteCurrency: string;
+	quoteTotal: number;
+	pair: string;
+	side: TradeSide;
+	estimatedProfit: number;
+	estimatedLoss: number;
+	status: MasterTradeStatus;
+	orderPlacementType?: OrderPlacementType;
+	accountType?: AccountType;
+	supportedTradingPlatforms: TradingPlatform[];
+	candlestick: Candlestick;
+	risk: SignalRisk;
+	category: Category;
+}
 export interface IMasterTrade {
 	id: string;
 	signalId?: string;
@@ -135,6 +164,14 @@ export interface IMasterTrade {
 	pnl: number;
 	pnlPercentage: number;
 	status: MasterTradeStatus;
+	orderPlacementType?: OrderPlacementType;
+	accountType?: AccountType;
+	supportedTradingPlatforms: TradingPlatform[];
+	estimatedProfit: number;
+	estimatedLoss: number;
 	createdAt: Date;
 	updatedAt: Date;
+	candlestick: Candlestick;
+	risk: SignalRisk;
+	category: Category;
 }
