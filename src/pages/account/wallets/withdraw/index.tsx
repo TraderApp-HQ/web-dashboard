@@ -21,6 +21,7 @@ import VerificationModal from "~/components/AuthLayout/Modal/VerificationModal";
 import { NotificationChannel } from "~/apis/handlers/users/enums";
 import Toast from "~/components/common/Toast";
 import SuccessIcon from "~/components/icons/SuccessIcon";
+import { roundTo } from "~/lib/utils";
 
 const Withdraw = () => {
 	const router = useRouter();
@@ -31,7 +32,7 @@ const Withdraw = () => {
 
 	const [selectedCurrency, setSelectedCurrency] = useState<IWalletSupportedCurrencies>();
 	const [selectedNetwork, setSelectedNetwork] = useState<ISupportedNetworks>();
-	const [amount, setAmount] = useState<number | undefined>(undefined);
+	const [amountInput, setAmountInput] = useState("");
 	const [receivingAddress, setReceivingAddress] = useState("");
 	const [currentWithdrawalRequestId, setCurrentWithdrawalRequestId] = useState<string>();
 
@@ -95,14 +96,19 @@ const Withdraw = () => {
 		[selectedCurrency, walletBalanceData],
 	);
 
-	const amountValue = amount ?? 0;
+	const amountValue = useMemo(() => {
+		const parsed = parseFloat(amountInput);
+		return Number.isFinite(parsed) ? parsed : 0;
+	}, [amountInput]);
 
 	const processingFee = useMemo(() => {
-		if (!amountValue) return 0;
-		return Math.max(
+		if (!Number.isFinite(amountValue) || amountValue <= 0) return 0;
+		const fee = Math.max(
 			WITHDRAWAL_FEES.PROCESSING_RATE * amountValue,
 			WITHDRAWAL_FEES.MIN_PROCESSING_FEE,
 		);
+
+		return roundTo(fee);
 	}, [amountValue]);
 
 	const networkFee = useMemo(
@@ -110,10 +116,10 @@ const Withdraw = () => {
 		[selectedNetwork],
 	);
 
-	const amountToReceive = useMemo(
-		() => Math.max(amountValue - (processingFee + networkFee), 0),
-		[amountValue, processingFee, networkFee],
-	);
+	const amountToReceive = useMemo(() => {
+		const value = Math.max(amountValue - (processingFee + networkFee), 0);
+		return roundTo(value);
+	}, [amountValue, processingFee, networkFee]);
 
 	const minWithdrawal = useMemo(() => {
 		if (!selectedCurrency) return 0;
@@ -122,23 +128,24 @@ const Withdraw = () => {
 	}, [selectedCurrency]);
 
 	const amountError = useMemo(() => {
-		if (amount === undefined || !selectedCurrency) return "";
+		if (!selectedCurrency || amountInput.trim() === "") return "";
 
-		if (amount < minWithdrawal) {
+		if (amountValue < minWithdrawal) {
 			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
 		}
 
-		if (amount <= processingFee + networkFee || amountToReceive <= 0) {
+		if (amountValue <= processingFee + networkFee || amountToReceive <= 0) {
 			return "Amount must be greater than total fees";
 		}
 
-		if (amount > availableCurrencyBalance) {
+		if (amountValue > availableCurrencyBalance) {
 			return "Your balance is insufficient to cover the withdrawal amount and total fees";
 		}
 
 		return "";
 	}, [
-		amount,
+		amountInput,
+		amountValue,
 		amountToReceive,
 		minWithdrawal,
 		selectedCurrency,
@@ -171,12 +178,9 @@ const Withdraw = () => {
 	);
 
 	const handleAmountChange = useCallback((value: string) => {
-		if (value === "") {
-			setAmount(undefined);
-			return;
-		}
-		const parsed = Number(value);
-		setAmount(Number.isFinite(parsed) ? Math.abs(parsed) : undefined);
+		// strip leading zeros before digits, but preserve "0" or "0." for decimals
+		const normalizedValue = value.replace(/^0+(?=\d)/, "");
+		setAmountInput(normalizedValue);
 	}, []);
 
 	const handleReceivingAddressChange = useCallback((address: string) => {
@@ -264,6 +268,8 @@ const Withdraw = () => {
 			amount: amountValue,
 			amountToReceive,
 			destinationAddress: receivingAddress,
+			networkFee,
+			processingFee,
 		});
 	}, [
 		userId,
@@ -318,13 +324,10 @@ const Withdraw = () => {
 								Successful
 							</div>
 							<div className="w-80 text-center justify-start text-gray-700 text-sm font-medium">
-								{`You have successfully withdrawn ${
-									amount !== undefined
-										? amount.toLocaleString("en-US", {
-												maximumFractionDigits: 8,
-											})
-										: 0
-								} ${currencySymbol} from your main account.`}
+								{`You have successfully withdrawn ${amountValue.toLocaleString(
+									"en-US",
+									{ maximumFractionDigits: 8 },
+								)} ${currencySymbol} from your main account.`}
 							</div>
 						</div>
 						<Button
@@ -418,7 +421,7 @@ const Withdraw = () => {
 									placeholder="00.00"
 									className="pr-16 no-spin-buttons w-full py-4 bg-[#F5F8FE] rounded-lg"
 									onChange={handleAmountChange}
-									value={amount !== undefined ? String(amount) : ""}
+									value={amountInput}
 								/>
 								<div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-900 font-semibold">
 									{currencySymbol}

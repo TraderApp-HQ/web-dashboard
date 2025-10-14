@@ -92,6 +92,8 @@ export interface IInitiateWithdrawalInput {
 	amount: number;
 	amountToReceive: number;
 	destinationAddress: string;
+	networkFee: number;
+	processingFee: number;
 }
 
 export interface ICompleteWithdrawalInput {
