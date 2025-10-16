@@ -8,6 +8,7 @@ import InputField from "~/components/common/InputField";
 import {
 	useCompleteWithdrawal,
 	useGetUserWalletsBalance,
+	useGetWithdrawalFees,
 	useInitiateWithdrawal,
 	useSendWithdrawalOtp,
 	useWalletDepositOptions,
@@ -15,13 +16,12 @@ import {
 import { PaymentCategory, PaymentOperation, WalletType } from "~/apis/handlers/wallets/enum";
 import { ISupportedNetworks, IWalletSupportedCurrencies } from "~/apis/handlers/wallets/interface";
 import { ISelectBoxOption } from "~/components/interfaces";
-import { WITHDRAWAL_LIMIT, WITHDRAWAL_FEES } from "~/apis/handlers/wallets/constants";
+import { WITHDRAWAL_LIMIT } from "~/apis/handlers/wallets/constants";
 import useUserProfileData from "~/hooks/useUserProfileData";
 import VerificationModal from "~/components/AuthLayout/Modal/VerificationModal";
 import { NotificationChannel } from "~/apis/handlers/users/enums";
 import Toast from "~/components/common/Toast";
 import SuccessIcon from "~/components/icons/SuccessIcon";
-import { roundTo } from "~/lib/utils";
 
 const Withdraw = () => {
 	const router = useRouter();
@@ -35,6 +35,13 @@ const Withdraw = () => {
 	const [amountInput, setAmountInput] = useState("");
 	const [receivingAddress, setReceivingAddress] = useState("");
 	const [currentWithdrawalRequestId, setCurrentWithdrawalRequestId] = useState<string>();
+
+	const amountValue = useMemo(() => {
+		const parsed = parseFloat(amountInput);
+		return Number.isFinite(parsed) ? parsed : 0;
+	}, [amountInput]);
+
+	const [debouncedAmountValue, setDebouncedAmountValue] = useState(amountValue);
 
 	const {
 		data: walletBalanceData,
@@ -96,30 +103,13 @@ const Withdraw = () => {
 		[selectedCurrency, walletBalanceData],
 	);
 
-	const amountValue = useMemo(() => {
-		const parsed = parseFloat(amountInput);
-		return Number.isFinite(parsed) ? parsed : 0;
-	}, [amountInput]);
-
-	const processingFee = useMemo(() => {
-		if (!Number.isFinite(amountValue) || amountValue <= 0) return 0;
-		const fee = Math.max(
-			WITHDRAWAL_FEES.PROCESSING_RATE * amountValue,
-			WITHDRAWAL_FEES.MIN_PROCESSING_FEE,
-		);
-
-		return roundTo(fee);
-	}, [amountValue]);
-
-	const networkFee = useMemo(
-		() => Number(selectedNetwork?.fees?.average ?? 0),
-		[selectedNetwork],
-	);
-
-	const amountToReceive = useMemo(() => {
-		const value = Math.max(amountValue - (processingFee + networkFee), 0);
-		return roundTo(value);
-	}, [amountValue, processingFee, networkFee]);
+	const {
+		getWithdrawalFees,
+		data: withdrawalFees,
+		isPending: isWithdrawalFeesPending,
+		isError: isWithdrawalFeesError,
+		error: withdrawalFeesError,
+	} = useGetWithdrawalFees();
 
 	const minWithdrawal = useMemo(() => {
 		if (!selectedCurrency) return 0;
@@ -134,24 +124,33 @@ const Withdraw = () => {
 			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
 		}
 
-		if (amountValue <= processingFee + networkFee || amountToReceive <= 0) {
-			return "Amount must be greater than total fees";
+		if (
+			withdrawalFees &&
+			(amountValue <=
+				(withdrawalFees.processingFee || 0) + (withdrawalFees.networkFee || 0) ||
+				(withdrawalFees.netAmount || 0) <= 0)
+		) {
+			return "Amount must exceed the withdrawal fees";
 		}
 
 		if (amountValue > availableCurrencyBalance) {
 			return "Your balance is insufficient to cover the withdrawal amount and total fees";
 		}
 
+		if (isWithdrawalFeesError) {
+			return withdrawalFeesError?.message || "Failed to calculate withdrawal fees";
+		}
+
 		return "";
 	}, [
 		amountInput,
 		amountValue,
-		amountToReceive,
 		minWithdrawal,
 		selectedCurrency,
 		availableCurrencyBalance,
-		processingFee,
-		networkFee,
+		withdrawalFees,
+		withdrawalFeesError,
+		isWithdrawalFeesError,
 	]);
 
 	const handleModalClose = () => {
@@ -189,14 +188,13 @@ const Withdraw = () => {
 
 	const currencySymbol = selectedCurrency?.symbol ?? "USDT";
 
-	const shouldShowFees =
-		Boolean(selectedNetwork?.fees?.average) && processingFee > 0 && !amountError;
+	const shouldShowFees = withdrawalFees && Boolean(!amountError) && amountValue;
 
 	const isSubmitDisabled =
 		!selectedCurrency ||
 		!selectedNetwork ||
 		!receivingAddress ||
-		amountToReceive <= 0 ||
+		!withdrawalFees ||
 		Boolean(amountError);
 
 	const {
@@ -244,13 +242,36 @@ const Withdraw = () => {
 		}
 	}, [isCompleteWithdrawalSuccess]);
 
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedAmountValue(amountValue);
+		}, 1000);
+
+		return () => clearTimeout(timer);
+	}, [amountValue]);
+
+	useEffect(() => {
+		if (debouncedAmountValue && selectedNetwork && selectedCurrency && paymentOptions?.length) {
+			const paymentOption = paymentOptions?.find(
+				(option) => option.symbol === selectedCurrency.symbol,
+			);
+
+			getWithdrawalFees({
+				amount: debouncedAmountValue,
+				paymentMethodId: paymentOption?.paymentMethodId ?? "",
+				providerId: paymentOption?.providerId ?? "",
+				network: selectedNetwork.slug,
+			});
+		}
+	}, [debouncedAmountValue, selectedNetwork, selectedCurrency, paymentOptions]);
+
 	const handleWithdraw = useCallback(() => {
 		if (
 			!userId ||
 			!selectedCurrency ||
 			!selectedNetwork ||
 			!receivingAddress ||
-			amountToReceive <= 0
+			!withdrawalFees
 		) {
 			return;
 		}
@@ -266,17 +287,17 @@ const Withdraw = () => {
 			providerId: paymentOption?.providerId ?? "",
 			network: selectedNetwork.slug,
 			amount: amountValue,
-			amountToReceive,
+			amountToReceive: withdrawalFees.netAmount,
 			destinationAddress: receivingAddress,
-			networkFee,
-			processingFee,
+			networkFee: withdrawalFees.networkFee,
+			processingFee: withdrawalFees.processingFee,
 		});
 	}, [
 		userId,
 		selectedCurrency,
 		selectedNetwork,
 		receivingAddress,
-		amountToReceive,
+		withdrawalFees,
 		paymentOptions,
 		initiateWithdrawal,
 		amountValue,
@@ -434,12 +455,27 @@ const Withdraw = () => {
 							</p>
 						</div>
 
-						{shouldShowFees && (
+						{isWithdrawalFeesPending && !amountError ? (
+							<div
+								className="bg-[#F5F8FE] rounded-lg p-4 flex items-center justify-center"
+								aria-live="polite"
+							>
+								<div className="flex items-center gap-2">
+									<span
+										aria-label="Calculating fees"
+										className="inline-block h-5 w-5 rounded-full border-2 border-blue-600 border-t-transparent animate-spin"
+									/>
+									<span className="text-zinc-600 text-sm">
+										Calculating fees...
+									</span>
+								</div>
+							</div>
+						) : shouldShowFees ? (
 							<div className="bg-[#F5F8FE] rounded-lg p-4 space-y-3">
 								<div className="flex justify-between items-center">
 									<span className="text-zinc-500 text-sm">Processing Fees</span>
 									<span className="text-slate-900 text-base font-medium">
-										{processingFee.toLocaleString("en-US", {
+										{withdrawalFees.processingFee.toLocaleString("en-US", {
 											maximumFractionDigits: 2,
 											minimumFractionDigits: 2,
 										})}{" "}
@@ -449,7 +485,7 @@ const Withdraw = () => {
 								<div className="flex justify-between items-center">
 									<span className="text-zinc-500 text-sm">Network Fees</span>
 									<span className="text-slate-900 text-base font-medium">
-										{networkFee.toLocaleString("en-US", {
+										{withdrawalFees.networkFee.toLocaleString("en-US", {
 											maximumFractionDigits: 6,
 											minimumFractionDigits: 2,
 										})}{" "}
@@ -462,7 +498,7 @@ const Withdraw = () => {
 										Amount To Receive
 									</span>
 									<span className="text-slate-900 text-base font-medium">
-										{amountToReceive.toLocaleString("en-US", {
+										{withdrawalFees.netAmount.toLocaleString("en-US", {
 											maximumFractionDigits: 2,
 											minimumFractionDigits: 2,
 										})}{" "}
@@ -470,7 +506,7 @@ const Withdraw = () => {
 									</span>
 								</div>
 							</div>
-						)}
+						) : null}
 
 						<Button
 							labelText="Withdraw"

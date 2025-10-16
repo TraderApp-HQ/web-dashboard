@@ -5,6 +5,7 @@ import {
 	ICompleteWithdrawalInput,
 	ICompleteWithdrawalResponse,
 	IFactoryPaymentProviderDepositResponse,
+	IGetWithdrawalFeesInput,
 	IInitiateDepositInput,
 	IInitiateWithdrawalInput,
 	IInitiateWithdrawalResponse,
@@ -13,6 +14,7 @@ import {
 	ITransactionsHistory,
 	IUserWalletResponse,
 	IWalletSupportedCurrencies,
+	IWithdrawalFees,
 } from "./interface";
 import { createServiceClient } from "../_shared/serviceClient";
 
@@ -191,5 +193,22 @@ export class WalletsService {
 		}
 		const { data } = response;
 		return data;
+	}
+
+	public async getWithdrawalFees({
+		amount,
+		paymentMethodId,
+		providerId,
+		network,
+	}: IGetWithdrawalFeesInput): Promise<IWithdrawalFees> {
+		const response = await this.apiClient.get<IResponse<IWithdrawalFees>>({
+			url: `/wallets/withdrawal-fees?amount=${amount}&paymentMethodId=${paymentMethodId}&providerId=${providerId}&network=${network}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch withdrawal fees");
+		}
+
+		return response.data;
 	}
 }

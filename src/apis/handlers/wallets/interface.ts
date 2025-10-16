@@ -171,3 +171,16 @@ export interface IInvoiceListItem {
 	invoiceType: InvoiceType;
 	createdAt: Date;
 }
+
+export interface IGetWithdrawalFeesInput {
+	amount: number;
+	paymentMethodId: string;
+	providerId: string;
+	network: string;
+}
+
+export interface IWithdrawalFees {
+	networkFee: number;
+	processingFee: number;
+	netAmount: number;
+}

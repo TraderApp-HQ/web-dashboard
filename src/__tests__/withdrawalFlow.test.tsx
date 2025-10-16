@@ -41,9 +41,7 @@ jest.mock("~/hooks/useWallets", () => {
 							name: "TRON",
 							slug: "TRON",
 							precision: 6,
-							fees: {
-								average: "8.456253",
-							},
+							fees: { average: "8.456253" },
 						},
 					],
 				},
@@ -65,12 +63,20 @@ jest.mock("~/hooks/useWallets", () => {
 			isError: false,
 			error: null,
 		})),
-		// Default stub to avoid calling the real hook in tests that don't override it
 		useSendWithdrawalOtp: jest.fn(() => ({
 			sendWithdrawalOtp: jest.fn(),
 			data: null,
 			isPending: false,
 			isSuccess: false,
+			isError: false,
+			error: null,
+		})),
+		// NEW: make withdrawal fees available synchronously to bypass debounce timing in component
+		useGetWithdrawalFees: jest.fn(() => ({
+			getWithdrawalFees: jest.fn(),
+			data: { processingFee: 5, networkFee: 8.456253, netAmount: 12 }, // simple, valid fees
+			isPending: false,
+			isSuccess: true,
 			isError: false,
 			error: null,
 		})),
@@ -154,7 +160,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 		const amountInput = screen.getByPlaceholderText("00.00");
 		fireEvent.change(amountInput, { target: { value: "12" } }); // fees = 3
 		await waitFor(() =>
-			expect(screen.getByText(/Amount must be greater than total fees/i)).toBeInTheDocument(),
+			expect(screen.getByText(/Amount must exceed the withdrawal fees/i)).toBeInTheDocument(),
 		);
 	});
 
@@ -562,5 +568,55 @@ describe("Withdraw page end‑to‑end validations", () => {
 		});
 
 		jest.useRealTimers();
+	});
+
+	it("shows API-provided error when fee calculation fails", async () => {
+		const hooks = require("~/hooks/useWallets") as typeof import("~/hooks/useWallets");
+		(hooks.useGetWithdrawalFees as jest.Mock).mockReturnValue({
+			getWithdrawalFees: jest.fn(),
+			data: undefined,
+			isPending: false,
+			isSuccess: false,
+			isError: true,
+			error: new Error("Fee calculation failed"),
+		});
+
+		renderPage();
+
+		// Must select currency so amountError is evaluated
+		const currencySelect = screen.getByTestId("Select Currency");
+		fireEvent.click(currencySelect);
+		fireEvent.click(screen.getByTestId("USDT button"));
+
+		// Enter amount above minimum and within balance
+		fireEvent.change(screen.getByPlaceholderText("00.00"), { target: { value: "12" } });
+
+		await waitFor(() =>
+			expect(screen.getByText(/Fee calculation failed/i)).toBeInTheDocument(),
+		);
+	});
+
+	it("shows default error message when fee calculation error has no message", async () => {
+		const hooks = require("~/hooks/useWallets") as typeof import("~/hooks/useWallets");
+		(hooks.useGetWithdrawalFees as jest.Mock).mockReturnValue({
+			getWithdrawalFees: jest.fn(),
+			data: undefined,
+			isPending: false,
+			isSuccess: false,
+			isError: true,
+			error: null, // no message -> falls back to default
+		});
+
+		renderPage();
+
+		const currencySelect = screen.getByTestId("Select Currency");
+		fireEvent.click(currencySelect);
+		fireEvent.click(screen.getByTestId("USDT button"));
+
+		fireEvent.change(screen.getByPlaceholderText("00.00"), { target: { value: "12" } });
+
+		await waitFor(() =>
+			expect(screen.getByText(/Failed to calculate withdrawal fees/i)).toBeInTheDocument(),
+		);
 	});
 });
