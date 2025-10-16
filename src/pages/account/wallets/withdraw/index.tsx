@@ -120,20 +120,20 @@ const Withdraw = () => {
 	const amountError = useMemo(() => {
 		if (!selectedCurrency || amountInput.trim() === "") return "";
 
-		if (amountValue < minWithdrawal) {
+		if (debouncedAmountValue < minWithdrawal) {
 			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
 		}
 
 		if (
 			withdrawalFees &&
-			(amountValue <=
+			(debouncedAmountValue <=
 				(withdrawalFees.processingFee || 0) + (withdrawalFees.networkFee || 0) ||
 				(withdrawalFees.netAmount || 0) <= 0)
 		) {
 			return "Amount must exceed the withdrawal fees";
 		}
 
-		if (amountValue > availableCurrencyBalance) {
+		if (debouncedAmountValue > availableCurrencyBalance) {
 			return "Your balance is insufficient to cover the withdrawal amount and total fees";
 		}
 
@@ -144,7 +144,7 @@ const Withdraw = () => {
 		return "";
 	}, [
 		amountInput,
-		amountValue,
+		debouncedAmountValue,
 		minWithdrawal,
 		selectedCurrency,
 		availableCurrencyBalance,

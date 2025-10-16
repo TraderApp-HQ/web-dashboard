@@ -93,7 +93,7 @@ const renderPage = () => {
 	);
 };
 
-describe("Withdraw page end‑to‑end validations", () => {
+describe("Withdraw page end-to-end validations", () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 		jest.useRealTimers();
@@ -144,6 +144,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 	});
 
 	it("shows error when amount <= total fees (processing + network)", async () => {
+		jest.useFakeTimers(); // Enable fake timers for debounce
 		renderPage();
 
 		const currencySelect = screen.getByTestId("Select Currency");
@@ -158,13 +159,21 @@ describe("Withdraw page end‑to‑end validations", () => {
 		fireEvent.click(tronOption);
 
 		const amountInput = screen.getByPlaceholderText("00.00");
-		fireEvent.change(amountInput, { target: { value: "12" } }); // fees = 3
+		fireEvent.change(amountInput, { target: { value: "12" } }); // fees = 5 + 8.456253 = 13.456253, so 12 <= 13.456253 triggers error
+
+		// Advance timers to trigger debounce
+		act(() => {
+			jest.advanceTimersByTime(1000);
+		});
+
 		await waitFor(() =>
 			expect(screen.getByText(/Amount must exceed the withdrawal fees/i)).toBeInTheDocument(),
 		);
+		jest.useRealTimers();
 	});
 
 	it("shows error when amount is below minimum withdrawal", async () => {
+		jest.useFakeTimers(); // Enable fake timers for debounce
 		renderPage();
 
 		const currencySelect = screen.getByTestId("Select Currency");
@@ -173,15 +182,23 @@ describe("Withdraw page end‑to‑end validations", () => {
 		fireEvent.click(usdtOption);
 
 		const amountInput = screen.getByPlaceholderText("00.00");
-		fireEvent.change(amountInput, { target: { value: "4" } });
+		fireEvent.change(amountInput, { target: { value: "4" } }); // Below minimum of 5 USDT
+
+		// Advance timers to trigger debounce
+		act(() => {
+			jest.advanceTimersByTime(1000);
+		});
+
 		await waitFor(() =>
 			expect(
 				screen.getByText(/Amount is below the minimum withdrawal of 12 USDT/i),
 			).toBeInTheDocument(),
 		);
+		jest.useRealTimers();
 	});
 
 	it("shows insufficient balance when amount exceeds available balance", async () => {
+		jest.useFakeTimers(); // Enable fake timers for debounce
 		renderPage();
 
 		const currencySelect = screen.getByTestId("Select Currency");
@@ -191,20 +208,36 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		const amountInput = screen.getByPlaceholderText("00.00");
 		fireEvent.change(amountInput, { target: { value: "25" } }); // balance = 20
+
+		// Advance timers to trigger debounce
+		act(() => {
+			jest.advanceTimersByTime(1000);
+		});
+
 		await waitFor(() =>
 			expect(screen.getByText(/Your balance is insufficient/i)).toBeInTheDocument(),
 		);
+		jest.useRealTimers();
 	});
 
 	it("disables submit button when validation errors exist", async () => {
+		jest.useFakeTimers(); // Enable fake timers for debounce
 		renderPage();
 		const btn = screen.getByRole("button", { name: /Withdraw/i });
 		const amountInput = screen.getByPlaceholderText("00.00");
-		fireEvent.change(amountInput, { target: { value: "2" } });
+		fireEvent.change(amountInput, { target: { value: "2" } }); // Below minimum
+
+		// Advance timers to trigger debounce
+		act(() => {
+			jest.advanceTimersByTime(1000);
+		});
+
 		await waitFor(() => expect(btn).toBeDisabled());
+		jest.useRealTimers();
 	});
 
 	it("enables submit button for valid amount", async () => {
+		jest.useFakeTimers(); // Enable fake timers for debounce
 		renderPage();
 
 		// Select currency
@@ -221,12 +254,19 @@ describe("Withdraw page end‑to‑end validations", () => {
 
 		const amountInput = screen.getByPlaceholderText("00.00");
 		const btn = screen.getByRole("button", { name: /Withdraw/i });
-		// Valid: amount 10, fees 3 => net 7, within balance 20
+		// Valid: amount 15 > fees 13.456253, within balance 20
 		fireEvent.change(amountInput, { target: { value: "15" } });
 		fireEvent.change(screen.getByPlaceholderText(/Enter Receiving Address/i), {
 			target: { value: "TDqExampleAddr" },
 		});
+
+		// Advance timers to trigger debounce
+		act(() => {
+			jest.advanceTimersByTime(1000);
+		});
+
 		await waitFor(() => expect(btn).not.toBeDisabled());
+		jest.useRealTimers();
 	});
 
 	it("opens OTP modal on successful initiation and handles completion", async () => {
@@ -571,6 +611,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 	});
 
 	it("shows API-provided error when fee calculation fails", async () => {
+		jest.useFakeTimers();
 		const hooks = require("~/hooks/useWallets") as typeof import("~/hooks/useWallets");
 		(hooks.useGetWithdrawalFees as jest.Mock).mockReturnValue({
 			getWithdrawalFees: jest.fn(),
@@ -578,7 +619,7 @@ describe("Withdraw page end‑to‑end validations", () => {
 			isPending: false,
 			isSuccess: false,
 			isError: true,
-			error: new Error("Fee calculation failed"),
+			error: new Error("Some withdrawal fee error"),
 		});
 
 		renderPage();
@@ -588,15 +629,26 @@ describe("Withdraw page end‑to‑end validations", () => {
 		fireEvent.click(currencySelect);
 		fireEvent.click(screen.getByTestId("USDT button"));
 
+		const networkSelect = screen.getByTestId("Select Network");
+		fireEvent.click(networkSelect);
+		fireEvent.click(screen.getByTestId("TRON button"));
+
 		// Enter amount above minimum and within balance
 		fireEvent.change(screen.getByPlaceholderText("00.00"), { target: { value: "12" } });
 
+		// Advance timers to trigger debounce
+		act(() => {
+			jest.advanceTimersByTime(1000);
+		});
+
 		await waitFor(() =>
-			expect(screen.getByText(/Fee calculation failed/i)).toBeInTheDocument(),
+			expect(screen.getByText(/Some withdrawal fee error/i)).toBeInTheDocument(),
 		);
+		jest.useRealTimers();
 	});
 
 	it("shows default error message when fee calculation error has no message", async () => {
+		jest.useFakeTimers();
 		const hooks = require("~/hooks/useWallets") as typeof import("~/hooks/useWallets");
 		(hooks.useGetWithdrawalFees as jest.Mock).mockReturnValue({
 			getWithdrawalFees: jest.fn(),
@@ -613,10 +665,20 @@ describe("Withdraw page end‑to‑end validations", () => {
 		fireEvent.click(currencySelect);
 		fireEvent.click(screen.getByTestId("USDT button"));
 
+		const networkSelect = screen.getByTestId("Select Network");
+		fireEvent.click(networkSelect);
+		fireEvent.click(screen.getByTestId("TRON button"));
+
 		fireEvent.change(screen.getByPlaceholderText("00.00"), { target: { value: "12" } });
+
+		// Advance timers to trigger debounce
+		act(() => {
+			jest.advanceTimersByTime(1000);
+		});
 
 		await waitFor(() =>
 			expect(screen.getByText(/Failed to calculate withdrawal fees/i)).toBeInTheDocument(),
 		);
+		jest.useRealTimers();
 	});
 });
