@@ -111,7 +111,7 @@ const TradeTargetModal: React.FC<ITradeTargetModalProps> = ({
 						labelText="Confirm"
 						className="w-full !font-bold text-base"
 						onClick={() => {}}
-						disabled={!trade.takeProfitPrice || !trade.stopLossPrice}
+						disabled={!trade.stopLossPrice}
 					/>
 				</section>
 			</div>

@@ -57,14 +57,14 @@ export function openTradesDataTableSelector({
 				{
 					displayItem: renderPandL({
 						price: trade.takeProfitPrice,
-						value: 80,
+						value: trade.estimatedProfit,
 						type: ProfitAndLossStatus.PROFIT,
 					}),
 				},
 				{
 					displayItem: renderPandL({
 						price: trade.stopLossPrice,
-						value: 15,
+						value: trade.estimatedLoss,
 						type: ProfitAndLossStatus.LOSS,
 					}),
 				},
@@ -245,7 +245,7 @@ export function openTradesMobileDataTableSelector({
 				displayItemTitle: "TP / Est. PnL",
 				displayItemValue: renderPandL({
 					price: trade.takeProfitPrice,
-					value: 80,
+					value: trade.estimatedProfit,
 					type: ProfitAndLossStatus.PROFIT,
 				}),
 			},
@@ -253,7 +253,7 @@ export function openTradesMobileDataTableSelector({
 				displayItemTitle: "SL / Est. PnL",
 				displayItemValue: renderPandL({
 					price: trade.stopLossPrice,
-					value: 15,
+					value: trade.estimatedLoss,
 					type: ProfitAndLossStatus.LOSS,
 				}),
 			},
