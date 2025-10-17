@@ -27,5 +27,10 @@ export const WalletsQueryId = {
 };
 
 export const WITHDRAWAL_LIMIT = {
-	MINIMUM_AMOUNTS: { USDT: 5 },
+	MINIMUM_AMOUNTS: { USDT: 12 },
+};
+
+export const WITHDRAWAL_FEES = {
+	PROCESSING_RATE: 0.03, // 3%
+	MIN_PROCESSING_FEE: 5,
 };

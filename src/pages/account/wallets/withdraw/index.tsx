@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import Modal from "~/components/Modal";
 import AccountLayout from "~/components/AccountLayout/Layout";
@@ -8,6 +8,7 @@ import InputField from "~/components/common/InputField";
 import {
 	useCompleteWithdrawal,
 	useGetUserWalletsBalance,
+	useGetWithdrawalFees,
 	useInitiateWithdrawal,
 	useSendWithdrawalOtp,
 	useWalletDepositOptions,
@@ -29,90 +30,23 @@ const Withdraw = () => {
 
 	const { userId } = useUserProfileData();
 
-	// TODO: fetch processing fee and network fee from server
-	// and update hardcoded "USDT" currency to use {selectedCurrency?.symbol}
-	const processingFee = 2;
-	const networkFee = 1;
-
-	const [selectedCurrency, setSelectedCurrency] = useState<
-		IWalletSupportedCurrencies | undefined
-	>(undefined);
-	const [networks, setNetworks] = useState<ISupportedNetworks[] | undefined>([]);
-	const [selectedNetwork, setSelectedNetwork] = useState<ISupportedNetworks | undefined>(
-		undefined,
-	);
-	const [amount, setAmount] = useState<number | undefined>(undefined);
-	const [amountToReceive, setAmountToReceive] = useState<number>(0);
+	const [selectedCurrency, setSelectedCurrency] = useState<IWalletSupportedCurrencies>();
+	const [selectedNetwork, setSelectedNetwork] = useState<ISupportedNetworks>();
+	const [amountInput, setAmountInput] = useState("");
 	const [receivingAddress, setReceivingAddress] = useState("");
-	const [currentWithdrawalRequestId, setCurrentWithdrawalRequestId] = useState<
-		string | undefined
-	>(undefined);
+	const [currentWithdrawalRequestId, setCurrentWithdrawalRequestId] = useState<string>();
+
+	const amountValue = useMemo(() => {
+		const parsed = parseFloat(amountInput);
+		return Number.isFinite(parsed) ? parsed : 0;
+	}, [amountInput]);
+
+	const [debouncedAmountValue, setDebouncedAmountValue] = useState(amountValue);
 
 	const {
 		data: walletBalanceData,
 		// isError, isLoading, isSuccess, refetch
 	} = useGetUserWalletsBalance(WalletType.MAIN);
-
-	const availableCurrencyBalance = useMemo(
-		() =>
-			walletBalanceData?.wallets.find(
-				(wallet) => wallet.currencySymbol === selectedCurrency?.symbol,
-			)?.availableBalance ?? 0,
-		[selectedCurrency, walletBalanceData],
-	);
-
-	const amountError = useMemo(() => {
-		if (amount === undefined || !selectedCurrency) return "";
-
-		const totalFees = processingFee + networkFee;
-		const minWithdrawal =
-			WITHDRAWAL_LIMIT.MINIMUM_AMOUNTS[
-				selectedCurrency.symbol as keyof typeof WITHDRAWAL_LIMIT.MINIMUM_AMOUNTS
-			];
-
-		if (amount <= totalFees || amountToReceive <= 0) {
-			return `Amount must be greater than total fees`;
-		}
-
-		if (amount < minWithdrawal) {
-			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
-		}
-
-		if (amount > availableCurrencyBalance) {
-			return "Your balance is insufficient to cover the withdrawal amount and total fees";
-		}
-
-		return "";
-	}, [
-		amount,
-		amountToReceive,
-		selectedCurrency,
-		availableCurrencyBalance,
-		processingFee,
-		networkFee,
-	]);
-
-	const handleMeClose = () => {
-		setOpenModal(false);
-		router.back();
-	};
-
-	const handleSelectCurrency = (currency: ISelectBoxOption) => {
-		const newCurrency = supportedCurrencies?.find(
-			(supportedCurrency) => supportedCurrency.id === currency.value,
-		);
-
-		const paymentOption = paymentOptions?.find(
-			(paymentOption) => paymentOption.symbol === newCurrency?.symbol,
-		);
-		setSelectedCurrency(newCurrency);
-		setNetworks(paymentOption?.supportNetworks);
-	};
-
-	const handleSelectNetwork = (option: ISelectBoxOption) => {
-		const result = networks?.find((network) => network.name === option.value);
-		setSelectedNetwork(result);
-	};
 
 	const {
 		supportedCurrencies,
@@ -123,10 +57,150 @@ const Withdraw = () => {
 		operation: PaymentOperation.WITHDRAWAL,
 	});
 
+	const currencyOptions = useMemo(
+		() =>
+			(supportedCurrencies ?? []).map((currency) => ({
+				displayText: currency.symbol,
+				value: currency.id,
+				imgUrl: currency.logoUrl,
+			})),
+		[supportedCurrencies],
+	);
+
+	const networks = useMemo(() => {
+		if (!selectedCurrency) return [];
+		const option = paymentOptions?.find(
+			(paymentOption) => paymentOption.symbol === selectedCurrency.symbol,
+		);
+		return option?.supportNetworks ?? [];
+	}, [paymentOptions, selectedCurrency]);
+
+	useEffect(() => {
+		if (!networks.length) {
+			setSelectedNetwork(undefined);
+			return;
+		}
+
+		if (selectedNetwork && !networks.some((network) => network.name === selectedNetwork.name)) {
+			setSelectedNetwork(undefined);
+		}
+	}, [networks, selectedNetwork]);
+
+	const networkOptions = useMemo(
+		() =>
+			networks.map((network) => ({
+				displayText: network.name,
+				value: network.name,
+			})),
+		[networks],
+	);
+
+	const availableCurrencyBalance = useMemo(
+		() =>
+			walletBalanceData?.wallets.find(
+				(wallet) => wallet.currencySymbol === selectedCurrency?.symbol,
+			)?.availableBalance ?? 0,
+		[selectedCurrency, walletBalanceData],
+	);
+
+	const {
+		getWithdrawalFees,
+		data: withdrawalFees,
+		isPending: isWithdrawalFeesPending,
+		isError: isWithdrawalFeesError,
+		error: withdrawalFeesError,
+	} = useGetWithdrawalFees();
+
+	const minWithdrawal = useMemo(() => {
+		if (!selectedCurrency) return 0;
+		const symbol = selectedCurrency.symbol as keyof typeof WITHDRAWAL_LIMIT.MINIMUM_AMOUNTS;
+		return WITHDRAWAL_LIMIT.MINIMUM_AMOUNTS[symbol] ?? 0;
+	}, [selectedCurrency]);
+
+	const amountError = useMemo(() => {
+		if (!selectedCurrency || amountInput.trim() === "") return "";
+
+		if (debouncedAmountValue < minWithdrawal) {
+			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
+		}
+
+		if (
+			withdrawalFees &&
+			(debouncedAmountValue <=
+				(withdrawalFees.processingFee || 0) + (withdrawalFees.networkFee || 0) ||
+				(withdrawalFees.netAmount || 0) <= 0)
+		) {
+			return "Amount must exceed the withdrawal fees";
+		}
+
+		if (debouncedAmountValue > availableCurrencyBalance) {
+			return "Your balance is insufficient to cover the withdrawal amount and total fees";
+		}
+
+		if (isWithdrawalFeesError) {
+			return withdrawalFeesError?.message || "Failed to calculate withdrawal fees";
+		}
+
+		return "";
+	}, [
+		amountInput,
+		debouncedAmountValue,
+		minWithdrawal,
+		selectedCurrency,
+		availableCurrencyBalance,
+		withdrawalFees,
+		withdrawalFeesError,
+		isWithdrawalFeesError,
+	]);
+
+	const handleModalClose = () => {
+		setOpenModal(false);
+		router.back();
+	};
+
+	const handleSelectCurrency = useCallback(
+		(option: ISelectBoxOption) => {
+			const newCurrency = supportedCurrencies?.find(
+				(supportedCurrency) => supportedCurrency.id === option.value,
+			);
+			setSelectedCurrency(newCurrency);
+		},
+		[supportedCurrencies],
+	);
+
+	const handleSelectNetwork = useCallback(
+		(option: ISelectBoxOption) => {
+			const result = networks.find((network) => network.name === option.value);
+			setSelectedNetwork(result);
+		},
+		[networks],
+	);
+
+	const handleAmountChange = useCallback((value: string) => {
+		// strip leading zeros before digits, but preserve "0" or "0." for decimals
+		const normalizedValue = value.replace(/^0+(?=\d)/, "");
+		setAmountInput(normalizedValue);
+	}, []);
+
+	const handleReceivingAddressChange = useCallback((address: string) => {
+		setReceivingAddress(address);
+	}, []);
+
+	const currencySymbol = selectedCurrency?.symbol ?? "USDT";
+
+	const shouldShowFees = withdrawalFees && Boolean(!amountError) && amountValue;
+
+	const isSubmitDisabled =
+		!selectedCurrency ||
+		!selectedNetwork ||
+		!receivingAddress ||
+		!withdrawalFees ||
+		Boolean(amountError);
+
 	const {
 		initiateWithdrawal,
 		data: initiateWithdrawalData,
-		isPending,
+		isPending: isInitiateWithdrawalPending,
 		isSuccess: isInitiateWithdrawalSuccess,
 		isError: isInitiateWithdrawalError,
 		error: initiateWithdrawalError,
@@ -150,11 +224,6 @@ const Withdraw = () => {
 	} = useSendWithdrawalOtp();
 
 	useEffect(() => {
-		const res = Number(Math.max((amount ?? 0) - (processingFee + networkFee), 0));
-		setAmountToReceive(res);
-	}, [amount]);
-
-	useEffect(() => {
 		if (isInitiateWithdrawalSuccess && initiateWithdrawalData) {
 			setOpenOTPModal(true);
 			setCurrentWithdrawalRequestId(initiateWithdrawalData.withdrawalRequestId);
@@ -173,12 +242,96 @@ const Withdraw = () => {
 		}
 	}, [isCompleteWithdrawalSuccess]);
 
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedAmountValue(amountValue);
+		}, 1000);
+
+		return () => clearTimeout(timer);
+	}, [amountValue]);
+
+	useEffect(() => {
+		if (debouncedAmountValue && selectedNetwork && selectedCurrency && paymentOptions?.length) {
+			const paymentOption = paymentOptions?.find(
+				(option) => option.symbol === selectedCurrency.symbol,
+			);
+
+			getWithdrawalFees({
+				amount: debouncedAmountValue,
+				paymentMethodId: paymentOption?.paymentMethodId ?? "",
+				providerId: paymentOption?.providerId ?? "",
+				network: selectedNetwork.slug,
+			});
+		}
+	}, [debouncedAmountValue, selectedNetwork, selectedCurrency, paymentOptions]);
+
+	const handleWithdraw = useCallback(() => {
+		if (
+			!userId ||
+			!selectedCurrency ||
+			!selectedNetwork ||
+			!receivingAddress ||
+			!withdrawalFees
+		) {
+			return;
+		}
+
+		const paymentOption = paymentOptions?.find(
+			(option) => option.symbol === selectedCurrency.symbol,
+		);
+
+		initiateWithdrawal({
+			userId,
+			currencyId: selectedCurrency.id,
+			paymentMethodId: paymentOption?.paymentMethodId ?? "",
+			providerId: paymentOption?.providerId ?? "",
+			network: selectedNetwork.slug,
+			amount: amountValue,
+			amountToReceive: withdrawalFees.netAmount,
+			destinationAddress: receivingAddress,
+			networkFee: withdrawalFees.networkFee,
+			processingFee: withdrawalFees.processingFee,
+		});
+	}, [
+		userId,
+		selectedCurrency,
+		selectedNetwork,
+		receivingAddress,
+		withdrawalFees,
+		paymentOptions,
+		initiateWithdrawal,
+		amountValue,
+	]);
+
+	const handleCompleteWithdrawal = useCallback(
+		(otp: string) => {
+			if (!userId || !currentWithdrawalRequestId) return;
+
+			completeWithdrawal({
+				userId,
+				otp,
+				withdrawalRequestId: currentWithdrawalRequestId,
+			});
+		},
+		[completeWithdrawal, currentWithdrawalRequestId, userId],
+	);
+
+	const handleResendOtp = useCallback(() => {
+		if (!userId || !currentWithdrawalRequestId) return;
+
+		sendWithdrawalOtp({
+			userId,
+			withdrawalRequestId: currentWithdrawalRequestId,
+		});
+	}, [currentWithdrawalRequestId, sendWithdrawalOtp, userId]);
+
+	const shouldShowSuccessModal = isCompleteWithdrawalSuccess && !openOTPModal;
+
 	return (
 		<>
-			{/* Conditional Modal: Show success modal if withdrawal is successful, otherwise show withdrawal form */}
-			{isCompleteWithdrawalSuccess && !openOTPModal ? (
+			{shouldShowSuccessModal ? (
 				<Modal
-					openModal={true}
+					openModal
 					onClose={() => {
 						setOpenModal(false);
 						router.back();
@@ -192,7 +345,10 @@ const Withdraw = () => {
 								Successful
 							</div>
 							<div className="w-80 text-center justify-start text-gray-700 text-sm font-medium">
-								{`You have successfully withdrawn ${amount} ${selectedCurrency?.symbol} from your main account.`}
+								{`You have successfully withdrawn ${amountValue.toLocaleString(
+									"en-US",
+									{ maximumFractionDigits: 8 },
+								)} ${currencySymbol} from your main account.`}
 							</div>
 						</div>
 						<Button
@@ -210,7 +366,7 @@ const Withdraw = () => {
 					openModal={openModal}
 					width="md:w-[525px]"
 					title="Withdraw crypto"
-					onClose={handleMeClose}
+					onClose={handleModalClose}
 					closeOnOutsideClick={!openOTPModal}
 				>
 					<section className="space-y-5 px-1">
@@ -218,14 +374,10 @@ const Withdraw = () => {
 							labelText="Currency"
 							placeholder="Select Currency"
 							isSearchable={false}
-							options={(supportedCurrencies ?? [])?.map((currency) => ({
-								displayText: currency.symbol,
-								value: currency.id,
-								imgUrl: currency.logoUrl,
-							}))}
+							options={currencyOptions}
 							option={{
-								displayText: selectedCurrency?.symbol || "",
-								value: selectedCurrency?.id || "",
+								displayText: selectedCurrency?.symbol ?? "",
+								value: selectedCurrency?.id ?? "",
 								imgUrl: selectedCurrency?.logoUrl,
 							}}
 							setOption={handleSelectCurrency}
@@ -243,8 +395,8 @@ const Withdraw = () => {
 								<InputField
 									type="text"
 									placeholder="Enter Receiving Address"
-									className="pr-16 w-full py-4 bg-[#F5F8FE] rounded-lg"
-									onChange={(address) => setReceivingAddress(address)}
+									className="w-full py-4 bg-[#F5F8FE] rounded-lg text-[0.9375rem]"
+									onChange={handleReceivingAddressChange}
 									value={receivingAddress}
 								/>
 							</div>
@@ -254,10 +406,7 @@ const Withdraw = () => {
 							labelText="Network"
 							placeholder="Select Network"
 							isSearchable={false}
-							options={(networks ?? []).map((network) => ({
-								displayText: network.name,
-								value: network.name,
-							}))}
+							options={networkOptions}
 							option={{
 								displayText: selectedNetwork?.name ?? "",
 								value: selectedNetwork?.name ?? "",
@@ -292,13 +441,11 @@ const Withdraw = () => {
 									id="amount"
 									placeholder="00.00"
 									className="pr-16 no-spin-buttons w-full py-4 bg-[#F5F8FE] rounded-lg"
-									onChange={(amount) => {
-										setAmount(Math.abs(+amount));
-									}}
-									value={amount?.toString()}
+									onChange={handleAmountChange}
+									value={amountInput}
 								/>
 								<div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-900 font-semibold">
-									USDT
+									{currencySymbol}
 								</div>
 							</div>
 							<p
@@ -308,78 +455,65 @@ const Withdraw = () => {
 							</p>
 						</div>
 
-						<div className="bg-[#F5F8FE] rounded-lg p-4 space-y-3">
-							<div className="flex justify-between items-center">
-								<span className="text-zinc-500 text-sm">Processing Fees</span>
-								<span className="text-slate-900 text-base font-medium">
-									{processingFee.toLocaleString("en-US", {
-										maximumFractionDigits: 2,
-										minimumFractionDigits: 2,
-									})}{" "}
-									USDT
-								</span>
+						{isWithdrawalFeesPending && !amountError ? (
+							<div
+								className="bg-[#F5F8FE] rounded-lg p-4 flex items-center justify-center"
+								aria-live="polite"
+							>
+								<div className="flex items-center gap-2">
+									<span
+										aria-label="Calculating fees"
+										className="inline-block h-5 w-5 rounded-full border-2 border-blue-600 border-t-transparent animate-spin"
+									/>
+									<span className="text-zinc-600 text-sm">
+										Calculating fees...
+									</span>
+								</div>
 							</div>
-
-							<div className="flex justify-between items-center">
-								<span className="text-zinc-500 text-sm">Network Fees</span>
-								<span className="text-slate-900 text-base font-medium">
-									{networkFee.toLocaleString("en-US", {
-										maximumFractionDigits: 2,
-										minimumFractionDigits: 2,
-									})}{" "}
-									USDT
-								</span>
+						) : shouldShowFees ? (
+							<div className="bg-[#F5F8FE] rounded-lg p-4 space-y-3">
+								<div className="flex justify-between items-center">
+									<span className="text-zinc-500 text-sm">Processing Fees</span>
+									<span className="text-slate-900 text-base font-medium">
+										{withdrawalFees.processingFee.toLocaleString("en-US", {
+											maximumFractionDigits: 2,
+											minimumFractionDigits: 2,
+										})}{" "}
+										{currencySymbol}
+									</span>
+								</div>
+								<div className="flex justify-between items-center">
+									<span className="text-zinc-500 text-sm">Network Fees</span>
+									<span className="text-slate-900 text-base font-medium">
+										{withdrawalFees.networkFee.toLocaleString("en-US", {
+											maximumFractionDigits: 6,
+											minimumFractionDigits: 2,
+										})}{" "}
+										{currencySymbol}
+									</span>
+								</div>
+								<div className="border-t border-[#E5E7EB] pt-3 mt-3"></div>
+								<div className="flex justify-between items-center">
+									<span className="text-slate-900 text-sm">
+										Amount To Receive
+									</span>
+									<span className="text-slate-900 text-base font-medium">
+										{withdrawalFees.netAmount.toLocaleString("en-US", {
+											maximumFractionDigits: 2,
+											minimumFractionDigits: 2,
+										})}{" "}
+										{currencySymbol}
+									</span>
+								</div>
 							</div>
-
-							<div className="border-t border-[#E5E7EB] pt-3 mt-3"></div>
-
-							<div className="flex justify-between items-center">
-								<span className="text-slate-900 text-sm">Amount To Receive</span>
-								<span className="text-slate-900 text-base font-medium">
-									{amountToReceive.toLocaleString("en-US", {
-										maximumFractionDigits: 2,
-										minimumFractionDigits: 2,
-									})}{" "}
-									USDT
-								</span>
-							</div>
-						</div>
+						) : null}
 
 						<Button
 							labelText="Withdraw"
 							className="w-full tracking-widest"
-							isProcessing={isPending}
-							onClick={() => {
-								if (
-									!selectedCurrency ||
-									!selectedNetwork ||
-									!receivingAddress ||
-									!paymentOptions
-								) {
-									return;
-								}
-								const paymentOption = paymentOptions.find(
-									(paymentOption) =>
-										paymentOption.symbol === selectedCurrency.symbol,
-								);
-								initiateWithdrawal({
-									userId,
-									currencyId: selectedCurrency.id,
-									paymentMethodId: paymentOption?.paymentMethodId ?? "",
-									providerId: paymentOption?.providerId ?? "",
-									network: selectedNetwork.slug,
-									amount: amount ?? 0,
-									amountToReceive,
-									destinationAddress: receivingAddress,
-								});
-							}}
-							disabled={
-								!selectedCurrency ||
-								!selectedNetwork ||
-								!receivingAddress ||
-								amountToReceive <= 0 ||
-								!!amountError
-							}
+							isProcessing={isInitiateWithdrawalPending}
+							onClick={handleWithdraw}
+							disabled={isSubmitDisabled}
 						/>
 					</section>
 				</Modal>
@@ -389,22 +523,11 @@ const Withdraw = () => {
 				setOpenModal={setOpenOTPModal}
 				notificationChannel={NotificationChannel.EMAIL}
 				verificationType={[]}
-				verificationFn={(otp) => {
-					completeWithdrawal({
-						userId,
-						otp,
-						withdrawalRequestId: currentWithdrawalRequestId ?? "",
-					});
-				}}
+				verificationFn={handleCompleteWithdrawal}
 				width="480px"
 				title="Verification code"
 				isProcessing={isCompleteWithdrawalPending}
-				resendOtpFn={() =>
-					sendWithdrawalOtp({
-						userId,
-						withdrawalRequestId: currentWithdrawalRequestId ?? "",
-					})
-				}
+				resendOtpFn={handleResendOtp}
 				isSendOtpSuccessProp={isSendWithdrawalOtpSuccess}
 				isResendPending={isSendWithdrawalOtpPending}
 			/>

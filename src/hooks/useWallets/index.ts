@@ -187,3 +187,12 @@ export const useSendWithdrawalOtp = () => {
 
 	return { sendWithdrawalOtp: mutate, data, isPending, isSuccess, isError, error };
 };
+
+export const useGetWithdrawalFees = () => {
+	const walletsService = new WalletsService();
+	const { mutate, data, isPending, isSuccess, isError, error } = useCreate({
+		mutationFn: walletsService.getWithdrawalFees.bind(walletsService),
+	});
+
+	return { getWithdrawalFees: mutate, data, isPending, isSuccess, isError, error };
+};

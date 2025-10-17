@@ -71,6 +71,7 @@ export interface ISupportedNetworks {
 	slug: string;
 	name: string;
 	precision: number;
+	fees?: { average?: string; fast?: string; slow?: string };
 }
 
 export interface IInitiateDepositInput {
@@ -91,6 +92,8 @@ export interface IInitiateWithdrawalInput {
 	amount: number;
 	amountToReceive: number;
 	destinationAddress: string;
+	networkFee: number;
+	processingFee: number;
 }
 
 export interface ICompleteWithdrawalInput {
@@ -167,4 +170,17 @@ export interface IInvoiceListItem {
 	logoUrl: string;
 	invoiceType: InvoiceType;
 	createdAt: Date;
+}
+
+export interface IGetWithdrawalFeesInput {
+	amount: number;
+	paymentMethodId: string;
+	providerId: string;
+	network: string;
+}
+
+export interface IWithdrawalFees {
+	networkFee: number;
+	processingFee: number;
+	netAmount: number;
 }
