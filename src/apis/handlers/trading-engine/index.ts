@@ -10,6 +10,7 @@ import type {
 	IMasterTrade,
 	ITradingAccountInfo,
 	IUpdateAccountInput,
+	IUserTrade,
 } from "./interfaces";
 
 export class TradingEngineService {
@@ -112,9 +113,13 @@ export class TradingEngineService {
 		return response.message;
 	}
 
-	public async getOpenTrades(): Promise<IMasterTrade[]> {
+	public async getOpenTrades({
+		isAdmin,
+	}: {
+		isAdmin: boolean;
+	}): Promise<IMasterTrade[] | IUserTrade[]> {
 		const response = await this.apiClient.get<IResponse>({
-			url: `/trade`,
+			url: isAdmin ? `/trade/master-trade` : `/trade/user-trade`,
 		});
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch current open trades.");
@@ -122,17 +127,32 @@ export class TradingEngineService {
 
 		const { data } = response;
 
-		return data as IMasterTrade[];
+		const openTrades = isAdmin ? (data as IMasterTrade[]) : (data as IUserTrade[]);
+
+		return openTrades;
 	}
 
 	public async createTrade(trade: ICreateTrade): Promise<IMasterTrade> {
 		const response = await this.apiClient.post<IResponse>({
-			url: "/trade",
+			url: "/trade/master-trade",
 			data: trade,
 		});
 
 		if (response.error) {
 			throw new Error(response.message || "Failed to create trade");
+		}
+
+		const { data } = response;
+		return data as IMasterTrade;
+	}
+
+	public async getTrade(tradeId: string): Promise<IMasterTrade> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/trade/master-trade/${tradeId}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to fetch trade");
 		}
 
 		const { data } = response;

@@ -24,6 +24,10 @@ export enum MasterTradeStatus {
 	ACTIVE = "ACTIVE",
 	CLOSED = "CLOSED",
 	PENDING = "PENDING",
+	PROCESSING = "PROCESSING",
+	PROCESSED = "PROCESSED",
+	FAILED = "FAILED",
+	CANCELED = "CANCELED",
 }
 
 export enum OpenTradesActionType {

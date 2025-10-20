@@ -7,10 +7,10 @@ import {
 	OpenTradesActionType,
 	ProfitAndLossStatus,
 } from "~/apis/handlers/trading-engine/enums";
-import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
+import { IMasterTrade, IUserTrade } from "~/apis/handlers/trading-engine/interfaces";
 
 interface IOpenTradesDataTableSelector {
-	openTrades: IMasterTrade[];
+	openTrades: IMasterTrade[] | IUserTrade[];
 	isAdmin: boolean;
 	handleTradeAction: (params: { tradeId: string; action: OpenTradesActionType }) => void;
 }
@@ -84,7 +84,7 @@ export function openTradesDataTableSelector({
 			actions: [
 				{
 					label: "View Analysis",
-					url: `open-trades/${trade.id}?action=${OpenTradesActionType.VIEW_ANALYSIS}`,
+					url: `open-trades/${isAdmin ? trade.id : (trade as IUserTrade).masterTradeId}/screenshot_chat`,
 				},
 				isAdmin && trade.status === MasterTradeStatus.ACTIVE
 					? {
@@ -170,7 +170,7 @@ export function openTradesMobileDataTableSelector({
 		actions: [
 			{
 				label: "View Analysis",
-				url: `open-trades/${trade.id}?action=${OpenTradesActionType.VIEW_ANALYSIS}`,
+				url: `open-trades/${isAdmin ? trade.id : (trade as IUserTrade).masterTradeId}/screenshot_chat`,
 			},
 			isAdmin && trade.status === MasterTradeStatus.ACTIVE
 				? {

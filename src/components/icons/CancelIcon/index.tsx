@@ -1,10 +1,11 @@
 import React from "react";
 
-const CancelIcon = () => {
+const CancelIcon = ({ onClick }: { onClick?: () => void }) => {
 	return (
 		<button
 			type="button"
 			className="absolute top-7 end-4 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+			onClick={onClick}
 		>
 			<svg
 				viewBox="0 0 25 25"

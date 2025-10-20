@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { OpenTradesActionType } from "~/apis/handlers/trading-engine/enums";
-import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
+import { IMasterTrade, IUserTrade } from "~/apis/handlers/trading-engine/interfaces";
 import Card from "~/components/AccountLayout/Card";
 import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
@@ -27,7 +27,7 @@ function OpenTrades() {
 	const router = useRouter();
 	const { action, id, trade } = router.query;
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [selectedTrade, setSelectedTrade] = useState<IMasterTrade | null>(null);
+	const [selectedTrade, setSelectedTrade] = useState<IMasterTrade | IUserTrade | null>(null);
 	const [showTradeCreationToast, setShowTradeCreationToast] = useState(false);
 
 	const {
@@ -120,7 +120,7 @@ function OpenTrades() {
 				<CloseTradeModal
 					openModal
 					handleModalClose={handleModalClose}
-					selectedTrade={selectedTrade}
+					selectedTrade={selectedTrade as IMasterTrade}
 				/>
 			)}
 
@@ -128,7 +128,7 @@ function OpenTrades() {
 				<TradeTargetModal
 					openModal
 					handleModalClose={handleModalClose}
-					selectedTrade={selectedTrade}
+					selectedTrade={selectedTrade as IMasterTrade}
 				/>
 			)}
 
@@ -136,7 +136,7 @@ function OpenTrades() {
 				<TradeBreakEvenModal
 					openModal
 					handleModalClose={handleModalClose}
-					selectedTrade={selectedTrade}
+					selectedTrade={selectedTrade as IMasterTrade}
 				/>
 			)}
 
@@ -144,7 +144,7 @@ function OpenTrades() {
 				<CancelTradeModal
 					openModal
 					handleModalClose={handleModalClose}
-					selectedTrade={selectedTrade}
+					selectedTrade={selectedTrade as IMasterTrade}
 				/>
 			)}
 
@@ -154,7 +154,7 @@ function OpenTrades() {
 					<TradeTriggerModal
 						openModal
 						handleModalClose={handleModalClose}
-						selectedTrade={selectedTrade}
+						selectedTrade={selectedTrade as IMasterTrade}
 					/>
 				)}
 

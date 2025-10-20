@@ -25,7 +25,9 @@ const LiveChart = () => {
 			{!isLoading && isSuccess && selectedSignal && (
 				<div className="sm:w-[100%] grid gap-y-8">
 					<div className="flex justify-center rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:rounded-2xl">
-						<TradingViewWidget signal={selectedSignal} />
+						<TradingViewWidget
+							signalSymbol={`${selectedSignal.baseAsset.symbol}${selectedSignal.quoteCurrency.symbol}`}
+						/>
 					</div>
 				</div>
 			)}
