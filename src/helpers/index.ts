@@ -214,11 +214,7 @@ export const renderActionStatement = (action: PlatformAction | TaskCategory) => 
 	}
 };
 
-export const isTierCompleted = (tier: Tier): boolean => {
-	return tier.milestones.length
-		? tier.milestones.every((milestone) => milestone.completed)
-		: !!tier.completed;
-};
+export const isTierCompleted = (tier: Tier): boolean => tier.completed ?? false;
 
 export const getUserStatusToolTipText = (user: IUserProfile): string[] => {
 	const statusToolTipTextArray: string[] = [];

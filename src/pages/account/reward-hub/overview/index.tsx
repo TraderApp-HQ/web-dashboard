@@ -22,7 +22,7 @@ const ReferralsOverview = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const { data: stats, isLoading, isError: isReferralError } = useReferralOverview();
 
-	const { rankRequirements } = useReferralRank(stats?.rankData);
+	const { rankRequirements } = useReferralRank(stats);
 
 	const { isAdmin } = useUserProfileData();
 

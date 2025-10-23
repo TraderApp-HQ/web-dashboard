@@ -1,7 +1,8 @@
 import { IRankData, ReferralRankType } from "~/components/common/ProgressTracker/types";
 import { RANK_REQUIREMENTS, ReferralRank } from "~/config/constants";
+import { IReferralCommunityStats, IReferralStats } from "~/apis/handlers/users/interfaces";
 
-type RankRequirements = Record<
+export type RankRequirements = Record<
 	ReferralRankType,
 	{
 		title: ReferralRankType | string;
@@ -18,8 +19,11 @@ type RankRequirements = Record<
 
 const rankOrder = Object.values(ReferralRank);
 
-export const useReferralRank = (rankData: IRankData | undefined) => {
-	if (!rankData) return { rankRequirements: {} };
+export const useReferralRank = (
+	referralStats: (IReferralStats & IReferralCommunityStats) | undefined,
+) => {
+	if (!referralStats) return { rankRequirements: {} };
+	const { rankData, isFirstDepositMade } = referralStats;
 	const generateRankRequirements = (rankData: IRankData): RankRequirements => {
 		const sortedEntries = Object.entries(rankData).sort(
 			([a], [b]) =>
@@ -72,7 +76,8 @@ export const useReferralRank = (rankData: IRankData | undefined) => {
 					rankData[rank].personalATC.completed &&
 					rankData[rank].communityATC.completed &&
 					rankData[rank].communitySize.completed &&
-					rankData[rank].hasRequiredRankReferrals.completed,
+					rankData[rank].hasRequiredRankReferrals.completed &&
+					isFirstDepositMade,
 			};
 			return acc;
 		}, {} as RankRequirements);
