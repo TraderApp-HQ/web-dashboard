@@ -22,13 +22,15 @@ const OpenTrades = () => {
 
 	return (
 		<div className="space-y-5">
-			<TradingAccountSummaryCard
-				isLoading={isLoading}
-				isSuccess={isSuccess}
-				isError={isError}
-				totalBalanceStyle="text-4xl text-textGray"
-				cardStyle="p-4 md:px-5 md:py-8 !rounded-2xl mb-10"
-			/>
+			{!isLoading && trades && trades.length >= 1 && (
+				<TradingAccountSummaryCard
+					isLoading={isLoading}
+					isSuccess={isSuccess}
+					isError={isError}
+					totalBalanceStyle="text-4xl text-textGray"
+					cardStyle="p-4 md:px-5 md:py-8 !rounded-2xl mb-10"
+				/>
+			)}
 			{isLoading ? (
 				<>
 					<div className="hidden md:block">
@@ -43,7 +45,7 @@ const OpenTrades = () => {
 					<ComponentError errorMessage={error?.message} />
 				</section>
 			) : !isLoading && trades && trades.length === 0 ? (
-				<SignalsEmptyState />
+				<SignalsEmptyState message="Trade" />
 			) : (
 				<div className="pt-2 pb-8">
 					<h2 className="text-slate-900 font-bold text-base mb-2">

@@ -9,7 +9,7 @@ import { Category } from "~/config/enum";
 import { TradeStatus } from "~/apis/handlers/assets/enums";
 import useGetTradingPlatforms from "~/hooks/useGetTradingPlatforms";
 import AccountConnection from "~/components/AccountLayout/TradeCenter/AccountConnection";
-import { TradingPlatform } from "~/apis/handlers/trading-engine/enums";
+import { ConnectionType, TradingPlatform } from "~/apis/handlers/trading-engine/enums";
 import { useGetUserTradingAccount } from "~/hooks/useGetUserTradingAccount";
 import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
 import useUserProfileData from "~/hooks/useUserProfileData";
@@ -232,7 +232,12 @@ const ConnectTradingAccount = () => {
 					isUpdateMode={platformName ? true : false}
 					isRefreshMode={refresh === "true"}
 					userTradingAccount={userTradingAccount}
-					connectionTypes={selectedPlatform?.data?.connectionTypes ?? []}
+					connectionTypes={
+						selectedPlatform?.data?.connectionTypes.filter(
+							// The attached filter chain helps to block out the fast connection option temporarily.
+							(connection) => connection === ConnectionType.MANUAL,
+						) ?? []
+					}
 					isIpAddressWhitelistRequired={
 						selectedPlatform?.data?.isIpAddressWhitelistRequired ?? false
 					}
