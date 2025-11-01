@@ -10,6 +10,7 @@ import { useConnectManualTradingAccount } from "~/hooks/useConnectManualTradingA
 import { ConnectionType, TradingPlatform } from "~/apis/handlers/trading-engine/enums";
 import BackBtnIcon from "~/components/icons/BackBtnIcon";
 import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
+import useFeatureFlag from "~/hooks/useFeatureFlag";
 
 interface IAccountConnection {
 	userId: string;
@@ -91,16 +92,26 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 		}
 	}, [isAddSuccess, addData]);
 
-	useEffect(() => {
-		const isFastConnectionSupported = connectionTypes?.includes(ConnectionType.FAST);
-		setIsFastConnectionSupported(isFastConnectionSupported);
+	// Feature flag to show account fast connection option
+	const showAccountFastConnectionOption = useFeatureFlag({
+		userId,
+		flagName: "release-trading-account-fast-connection",
+	});
 
-		if (isFastConnectionSupported) {
-			setTabs([{ label: "Manual Connection" }, { label: "Fast Connection" }]);
+	useEffect(() => {
+		if (showAccountFastConnectionOption) {
+			const isFastConnectionSupported = connectionTypes?.includes(ConnectionType.FAST);
+			setIsFastConnectionSupported(isFastConnectionSupported);
+
+			if (isFastConnectionSupported) {
+				setTabs([{ label: "Manual Connection" }, { label: "Fast Connection" }]);
+			} else {
+				setTabs([{ label: "Manual Connection" }]);
+			}
 		} else {
 			setTabs([{ label: "Manual Connection" }]);
 		}
-	}, [connectionTypes]);
+	}, [connectionTypes, showAccountFastConnectionOption]);
 
 	useEffect(() => {
 		if (isPassphraseRequired) {
