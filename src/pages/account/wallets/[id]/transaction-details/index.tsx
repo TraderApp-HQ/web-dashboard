@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import AccountLayout from "~/components/AccountLayout/Layout";
 import ComponentError from "~/components/Error/ComponentError";
 import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
@@ -12,6 +11,7 @@ import {
 	WithdrawalTransactionsRecord,
 } from "~/components/Wallet/RecentTransactions/TransactionsRecord";
 import { useGetUserWalletsTransaction } from "~/hooks/useWallets";
+import { NestedWalletLayout } from "../..";
 
 function TransactionDetails() {
 	const [openModal, setOpenModal] = useState(true);
@@ -75,5 +75,7 @@ function TransactionDetails() {
 	);
 }
 
-TransactionDetails.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
+TransactionDetails.getLayout = (page: React.ReactElement) => (
+	<NestedWalletLayout>{page}</NestedWalletLayout>
+);
 export default TransactionDetails;

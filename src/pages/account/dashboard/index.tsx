@@ -336,7 +336,7 @@ const Dashbaord = () => {
 								</h3>
 								<div className="flex items-center gap-2">
 									<button className=" p-2 text-sm border border-gray-300 rounded-lg">
-										WELCOME90
+										WELCOME80
 									</button>
 									<CheckIcon />
 								</div>
@@ -344,12 +344,12 @@ const Dashbaord = () => {
 							<section className="flex items-center justify-center border-green-400 border gap-2 px-2 py-4 rounded-lg bg-green-50">
 								<CompleteIcon />
 								<p className=" text-[#08123B] text-base ">
-									A 90% discount has been auto applied to your activation fees.
+									A 80% discount has been auto applied to your activation fees.
 								</p>
 							</section>
 							<section className="flex items-center justify-between gap-3">
 								<h3 className="text-textBlack text-sm font-medium">Total</h3>
-								<p className="text-[#373F50] font-bold text-3xl">$10.00</p>
+								<p className="text-[#373F50] font-bold text-3xl">$20.00</p>
 							</section>
 							<section className="space-y-3 pb-5">
 								<h3 className="text-textBlack text-base font-bold">
@@ -364,7 +364,7 @@ const Dashbaord = () => {
 								className="tracking-widest h-12"
 								fluid={true}
 								onClick={() => {
-									redirectTo(`${ROUTES.wallet.deposit}?first_deposit=true`);
+									redirectTo(`${ROUTES.wallet.deposit}`);
 									handleFirstDepositModalDisplay();
 								}}
 							>
