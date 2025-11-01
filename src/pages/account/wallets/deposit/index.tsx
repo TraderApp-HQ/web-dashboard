@@ -15,7 +15,6 @@ import {
 	ISupportedNetworks,
 	IWalletSupportedCurrencies,
 } from "~/apis/handlers/wallets/interface";
-import AccountLayout from "~/components/AccountLayout/Layout";
 import ComponentError from "~/components/Error/ComponentError";
 import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
@@ -30,6 +29,7 @@ import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import useUserProfileData from "~/hooks/useUserProfileData";
 import useWalletTransactionCountDownTimer from "~/hooks/useWalletTransactionCountDownTimer";
 import { useInitiateDeposit, useWalletDepositOptions } from "~/hooks/useWallets";
+import { NestedWalletLayout } from "..";
 
 const Deposit = () => {
 	const router = useRouter();
@@ -541,5 +541,5 @@ const Deposit = () => {
 	);
 };
 
-Deposit.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
+Deposit.getLayout = (page: React.ReactElement) => <NestedWalletLayout>{page}</NestedWalletLayout>;
 export default Deposit;
