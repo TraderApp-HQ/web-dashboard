@@ -118,23 +118,24 @@ const Withdraw = () => {
 	}, [selectedCurrency]);
 
 	const amountError = useMemo(() => {
-		if (!selectedCurrency || amountInput.trim() === "") return "";
+		if (
+			!selectedCurrency ||
+			amountInput.trim() === "" ||
+			debouncedAmountValue === null ||
+			debouncedAmountValue === undefined
+		)
+			return "";
 
 		if (debouncedAmountValue < minWithdrawal) {
 			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
 		}
 
-		if (
-			withdrawalFees &&
-			(debouncedAmountValue <=
-				(withdrawalFees.processingFee || 0) + (withdrawalFees.networkFee || 0) ||
-				(withdrawalFees.netAmount || 0) <= 0)
-		) {
-			return "Amount must exceed the withdrawal fees";
-		}
-
 		if (debouncedAmountValue > availableCurrencyBalance) {
 			return "Your balance is insufficient to cover the withdrawal amount and total fees";
+		}
+
+		if (withdrawalFees && !withdrawalFees.isValid) {
+			return withdrawalFees.reason;
 		}
 
 		if (isWithdrawalFeesError) {
@@ -188,14 +189,15 @@ const Withdraw = () => {
 
 	const currencySymbol = selectedCurrency?.symbol ?? "USDT";
 
-	const shouldShowFees = withdrawalFees && Boolean(!amountError) && amountValue;
+	const shouldShowFees = withdrawalFees && debouncedAmountValue >= minWithdrawal;
 
 	const isSubmitDisabled =
 		!selectedCurrency ||
 		!selectedNetwork ||
 		!receivingAddress ||
 		!withdrawalFees ||
-		Boolean(amountError);
+		Boolean(amountError) ||
+		!amountInput;
 
 	const {
 		initiateWithdrawal,
@@ -251,7 +253,13 @@ const Withdraw = () => {
 	}, [amountValue]);
 
 	useEffect(() => {
-		if (debouncedAmountValue && selectedNetwork && selectedCurrency && paymentOptions?.length) {
+		if (
+			debouncedAmountValue &&
+			selectedNetwork &&
+			selectedCurrency &&
+			paymentOptions?.length &&
+			debouncedAmountValue >= minWithdrawal
+		) {
 			const paymentOption = paymentOptions?.find(
 				(option) => option.symbol === selectedCurrency.symbol,
 			);

@@ -179,8 +179,19 @@ export interface IGetWithdrawalFeesInput {
 	network: string;
 }
 
-export interface IWithdrawalFees {
+export interface IWithdrawalFeesValid {
 	networkFee: number;
 	processingFee: number;
 	netAmount: number;
+	isValid: true;
 }
+
+export interface IWithdrawalFeesInvalid {
+	networkFee: number;
+	processingFee: number;
+	netAmount: number;
+	isValid: false;
+	reason: string;
+}
+
+export type IWithdrawalFees = IWithdrawalFeesValid | IWithdrawalFeesInvalid;
