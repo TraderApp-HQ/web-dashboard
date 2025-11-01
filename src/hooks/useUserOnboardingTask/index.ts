@@ -303,7 +303,7 @@ export const useGetUserOnboardingFlowData = ({
 			actionButton: true as const,
 			action: [
 				{
-					text: "To finalise your registration and unlock the full access of your account. A $10 activation fee will be deducted from your first payment.",
+					text: "To finalise your registration and unlock the full access of your account. A $20 activation fee will be deducted from your first payment.",
 					buttonText: "Make First Deposit",
 					buttonAction: () => handleFirstDepositModalDisplay(),
 					disableActionButton: isFirstDepositMade,

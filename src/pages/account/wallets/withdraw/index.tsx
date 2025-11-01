@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import Modal from "~/components/Modal";
-import AccountLayout from "~/components/AccountLayout/Layout";
 import SelectBox from "~/components/common/SelectBox";
 import Button from "~/components/common/Button";
 import InputField from "~/components/common/InputField";
@@ -22,6 +21,7 @@ import VerificationModal from "~/components/AuthLayout/Modal/VerificationModal";
 import { NotificationChannel } from "~/apis/handlers/users/enums";
 import Toast from "~/components/common/Toast";
 import SuccessIcon from "~/components/icons/SuccessIcon";
+import { NestedWalletLayout } from "..";
 
 const Withdraw = () => {
 	const router = useRouter();
@@ -576,5 +576,5 @@ const Withdraw = () => {
 	);
 };
 
-Withdraw.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
+Withdraw.getLayout = (page: React.ReactElement) => <NestedWalletLayout>{page}</NestedWalletLayout>;
 export default Withdraw;
