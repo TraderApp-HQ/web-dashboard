@@ -93,25 +93,24 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 	}, [isAddSuccess, addData]);
 
 	// Feature flag to show account fast connection option
-	const showAccountFastConnectionOption = useFeatureFlag({
+	const isFastConnectionEnabled = useFeatureFlag({
 		userId,
 		flagName: "release-trading-account-fast-connection",
 	});
 
 	useEffect(() => {
-		if (showAccountFastConnectionOption) {
-			const isFastConnectionSupported = connectionTypes?.includes(ConnectionType.FAST);
-			setIsFastConnectionSupported(isFastConnectionSupported);
+		const isFastConnectionSupported = connectionTypes?.includes(ConnectionType.FAST);
 
-			if (isFastConnectionSupported) {
-				setTabs([{ label: "Manual Connection" }, { label: "Fast Connection" }]);
-			} else {
-				setTabs([{ label: "Manual Connection" }]);
-			}
+		const isFastConnectionAllowed = isFastConnectionEnabled && isFastConnectionSupported;
+
+		setIsFastConnectionSupported(isFastConnectionAllowed);
+
+		if (isFastConnectionAllowed) {
+			setTabs([{ label: "Manual Connection" }, { label: "Fast Connection" }]);
 		} else {
 			setTabs([{ label: "Manual Connection" }]);
 		}
-	}, [connectionTypes, showAccountFastConnectionOption]);
+	}, [connectionTypes, isFastConnectionEnabled]);
 
 	useEffect(() => {
 		if (isPassphraseRequired) {
