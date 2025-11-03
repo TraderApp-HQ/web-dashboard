@@ -1,10 +1,11 @@
-import { ReactElement } from "react";
+import React, { ReactElement, ReactNode } from "react";
 import AccountLayout from "~/components/AccountLayout/Layout";
 import WalletBalanceCard from "~/components/Wallet/WalletBalanceCard";
 import RecentTransactions from "~/components/Wallet/RecentTransactions";
 import UserInvoices from "~/components/Invoices/UserInvoices";
 import useFeatureFlag from "~/hooks/useFeatureFlag";
 import useUserProfileData from "~/hooks/useUserProfileData";
+import PageTab from "~/components/AccountLayout/Tabs";
 
 const Wallets = () => {
 	const { userId } = useUserProfileData();
@@ -12,8 +13,8 @@ const Wallets = () => {
 	return (
 		<section className="space-y-10">
 			<WalletBalanceCard
-				cardStyle="px-4 py-8 md:px-5 md:py-12 !rounded-2xl"
-				totalBalanceStyle="text-2xl text-textGray"
+				cardStyle="px-4 py-8 md:px-5 md:py-8 !rounded-2xl"
+				totalBalanceStyle="text-4xl text-textGray"
 			/>
 
 			{showInvoices && <UserInvoices />}
@@ -23,5 +24,27 @@ const Wallets = () => {
 	);
 };
 
-Wallets.getLayout = (page: ReactElement) => <AccountLayout>{page}</AccountLayout>;
+type IProps = {
+	children: ReactNode;
+};
+
+const WalletLayout: React.FC<IProps> = ({ children }) => {
+	const tabs = [{ title: "Main", href: "/account/wallets" }];
+
+	return (
+		<div>
+			<PageTab tabs={tabs} />
+
+			<div className="">{children}</div>
+		</div>
+	);
+};
+
+export const NestedWalletLayout: React.FC<IProps> = ({ children }) => (
+	<AccountLayout>
+		<WalletLayout>{children}</WalletLayout>
+	</AccountLayout>
+);
+
+Wallets.getLayout = (page: ReactElement) => <NestedWalletLayout>{page}</NestedWalletLayout>;
 export default Wallets;

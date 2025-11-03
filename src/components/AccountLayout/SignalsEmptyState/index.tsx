@@ -1,7 +1,7 @@
 import Card from "~/components/AccountLayout/Card";
 import NoSignalAvailableIcon from "~/components/icons/NoSignalAvailableIcon";
 
-export default function EmptySignal() {
+export default function EmptySignal({ message = "Signal" }: { message?: string }) {
 	return (
 		<Card className="w-full sm:h-[634px] h-[509px] md:px-4 lg:px-96 px-12 justify-center items-center flex">
 			<div
@@ -12,10 +12,10 @@ export default function EmptySignal() {
 					<NoSignalAvailableIcon />
 				</div>
 				<div className="sm:text-lg text-base sm:font-extrabold font-bold sm:leading-normal leading-tight text-center">
-					No Signal Available. Please try later.
+					{`No ${message} Available. Please try later.`}
 				</div>
 				<div className="text-sm sm:font-normal font-bold leading-none">
-					All signal will be displayed here{" "}
+					{`All ${message.toLocaleLowerCase()} will be displayed here.`}
 				</div>
 			</div>
 		</Card>

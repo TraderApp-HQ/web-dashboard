@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import Modal from "~/components/Modal";
-import AccountLayout from "~/components/AccountLayout/Layout";
 import SelectBox from "~/components/common/SelectBox";
 import Button from "~/components/common/Button";
 import InputField from "~/components/common/InputField";
@@ -22,6 +21,7 @@ import VerificationModal from "~/components/AuthLayout/Modal/VerificationModal";
 import { NotificationChannel } from "~/apis/handlers/users/enums";
 import Toast from "~/components/common/Toast";
 import SuccessIcon from "~/components/icons/SuccessIcon";
+import { NestedWalletLayout } from "..";
 
 const Withdraw = () => {
 	const router = useRouter();
@@ -118,23 +118,24 @@ const Withdraw = () => {
 	}, [selectedCurrency]);
 
 	const amountError = useMemo(() => {
-		if (!selectedCurrency || amountInput.trim() === "") return "";
+		if (
+			!selectedCurrency ||
+			amountInput.trim() === "" ||
+			debouncedAmountValue === null ||
+			debouncedAmountValue === undefined
+		)
+			return "";
 
 		if (debouncedAmountValue < minWithdrawal) {
 			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
 		}
 
-		if (
-			withdrawalFees &&
-			(debouncedAmountValue <=
-				(withdrawalFees.processingFee || 0) + (withdrawalFees.networkFee || 0) ||
-				(withdrawalFees.netAmount || 0) <= 0)
-		) {
-			return "Amount must exceed the withdrawal fees";
-		}
-
 		if (debouncedAmountValue > availableCurrencyBalance) {
 			return "Your balance is insufficient to cover the withdrawal amount and total fees";
+		}
+
+		if (withdrawalFees && !withdrawalFees.isValid) {
+			return withdrawalFees.reason;
 		}
 
 		if (isWithdrawalFeesError) {
@@ -188,14 +189,15 @@ const Withdraw = () => {
 
 	const currencySymbol = selectedCurrency?.symbol ?? "USDT";
 
-	const shouldShowFees = withdrawalFees && Boolean(!amountError) && amountValue;
+	const shouldShowFees = withdrawalFees && debouncedAmountValue >= minWithdrawal;
 
 	const isSubmitDisabled =
 		!selectedCurrency ||
 		!selectedNetwork ||
 		!receivingAddress ||
 		!withdrawalFees ||
-		Boolean(amountError);
+		Boolean(amountError) ||
+		!amountInput;
 
 	const {
 		initiateWithdrawal,
@@ -251,7 +253,13 @@ const Withdraw = () => {
 	}, [amountValue]);
 
 	useEffect(() => {
-		if (debouncedAmountValue && selectedNetwork && selectedCurrency && paymentOptions?.length) {
+		if (
+			debouncedAmountValue &&
+			selectedNetwork &&
+			selectedCurrency &&
+			paymentOptions?.length &&
+			debouncedAmountValue >= minWithdrawal
+		) {
 			const paymentOption = paymentOptions?.find(
 				(option) => option.symbol === selectedCurrency.symbol,
 			);
@@ -568,5 +576,5 @@ const Withdraw = () => {
 	);
 };
 
-Withdraw.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
+Withdraw.getLayout = (page: React.ReactElement) => <NestedWalletLayout>{page}</NestedWalletLayout>;
 export default Withdraw;

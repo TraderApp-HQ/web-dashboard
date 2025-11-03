@@ -143,35 +143,6 @@ describe("Withdraw page end-to-end validations", () => {
 		expect(screen.getByLabelText("Amount")).toBeInTheDocument();
 	});
 
-	it("shows error when amount <= total fees (processing + network)", async () => {
-		jest.useFakeTimers(); // Enable fake timers for debounce
-		renderPage();
-
-		const currencySelect = screen.getByTestId("Select Currency");
-		fireEvent.click(currencySelect);
-		const usdtOption = screen.getByTestId("USDT button");
-		fireEvent.click(usdtOption);
-
-		// Select network
-		const networkSelect = screen.getByTestId("Select Network");
-		fireEvent.click(networkSelect);
-		const tronOption = screen.getByTestId("TRON button");
-		fireEvent.click(tronOption);
-
-		const amountInput = screen.getByPlaceholderText("00.00");
-		fireEvent.change(amountInput, { target: { value: "12" } }); // fees = 5 + 8.456253 = 13.456253, so 12 <= 13.456253 triggers error
-
-		// Advance timers to trigger debounce
-		act(() => {
-			jest.advanceTimersByTime(1000);
-		});
-
-		await waitFor(() =>
-			expect(screen.getByText(/Amount must exceed the withdrawal fees/i)).toBeInTheDocument(),
-		);
-		jest.useRealTimers();
-	});
-
 	it("shows error when amount is below minimum withdrawal", async () => {
 		jest.useFakeTimers(); // Enable fake timers for debounce
 		renderPage();
@@ -191,7 +162,7 @@ describe("Withdraw page end-to-end validations", () => {
 
 		await waitFor(() =>
 			expect(
-				screen.getByText(/Amount is below the minimum withdrawal of 12 USDT/i),
+				screen.getByText(/Amount is below the minimum withdrawal of 6 USDT/i),
 			).toBeInTheDocument(),
 		);
 		jest.useRealTimers();

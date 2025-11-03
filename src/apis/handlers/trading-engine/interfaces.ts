@@ -175,3 +175,27 @@ export interface IMasterTrade {
 	risk: SignalRisk;
 	category: Category;
 }
+
+export interface IUserTrade {
+	id: string;
+	userId: string;
+	masterTradeId: string;
+	baseAsset: string;
+	quoteCurrency: string;
+	baseQuantity: number;
+	quoteTotal: number;
+	entryPrice: number;
+	stopLossPrice: number;
+	takeProfitPrice: number;
+	pair: string;
+	side: TradeSide;
+	pnl: number;
+	pnlPercentage: number;
+	estimatedProfit: number;
+	estimatedLoss: number;
+	status: MasterTradeStatus;
+	createdAt: Date;
+	updatedAt: Date;
+	baseAssetLogoUrl: string;
+	currentPrice: number;
+}

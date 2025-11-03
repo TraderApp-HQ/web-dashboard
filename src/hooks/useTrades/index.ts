@@ -1,10 +1,10 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TradingEngineService } from "~/apis/handlers/trading-engine";
 import { TradingEngineQueryId } from "~/apis/handlers/trading-engine/constants";
 import { OpenTradesActionType } from "~/apis/handlers/trading-engine/enums";
-import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
+import { IMasterTrade, IUserTrade } from "~/apis/handlers/trading-engine/interfaces";
 import { ITableMobile, ITBody, ITHead } from "~/components/common/DataTable/config";
 import {
 	openTradesDataTableSelector,
@@ -19,9 +19,9 @@ export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
 	const [tradesTableHead, setTradesTableHead] = useState<ITHead[]>([]);
 	const [tradesTableBody, setTradesTableBody] = useState<ITBody>();
 	const [mobileTableData, setMobileTableData] = useState<ITableMobile[]>([]);
-	const [trades, setTrades] = useState<IMasterTrade[]>();
+	const [trades, setTrades] = useState<IMasterTrade[] | IUserTrade[]>();
 
-	const fetchOpenTrades = () => tradingEngineService.getOpenTrades();
+	const fetchOpenTrades = () => tradingEngineService.getOpenTrades({ isAdmin });
 
 	const { data, error, isLoading, isSuccess, isError } = useFetch({
 		queryKey: [TradingEngineQueryId.openTrades],
@@ -80,6 +80,35 @@ export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
 		tradesTableBody,
 		mobileTableData,
 		trades,
+	};
+};
+
+export const useFetchTrade = ({ tradeId }: { tradeId: string }) => {
+	const tradingEngineService = new TradingEngineService();
+	const [trade, setTrade] = useState<IMasterTrade>();
+
+	const fetchTrade = useCallback(
+		() => tradingEngineService.getTrade(tradeId),
+		[tradeId, tradingEngineService],
+	);
+
+	const { data, error, isLoading, isSuccess, isError } = useFetch({
+		queryKey: [TradingEngineQueryId.trade],
+		queryFn: fetchTrade,
+	});
+
+	useEffect(() => {
+		if (!isLoading && !isSuccess) return;
+
+		setTrade(data);
+	}, [data, isSuccess, isLoading]);
+
+	return {
+		error,
+		isLoading,
+		isSuccess,
+		isError,
+		trade,
 	};
 };
 

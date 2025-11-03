@@ -20,7 +20,7 @@ const ProfitAndLoss: React.FC<IProfitAndLossProps> = ({ price, value, type }) =>
 			break;
 		}
 		case ProfitAndLossStatus.PnL: {
-			textColor = price >= 0 ? "text-[#08875D]" : "text-[#E02D3C]";
+			textColor = value >= 0 ? "text-[#08875D]" : "text-[#E02D3C]";
 			break;
 		}
 		default: {
