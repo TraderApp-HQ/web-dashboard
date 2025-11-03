@@ -12,6 +12,7 @@ export enum ConnectionType {
 export enum TradingPlatform {
 	BINANCE = "BINANCE",
 	KUCOIN = "KUCOIN",
+	BYBIT = "BYBIT",
 }
 
 export enum ProfitAndLossStatus {

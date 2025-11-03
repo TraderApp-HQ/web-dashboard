@@ -51,7 +51,7 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 	const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false);
 
 	const ipAddress = ["34.246.94.230", "54.170.191.53"];
-	const ipString = ipAddress.join(" ");
+	const ipString = ipAddress.join(",");
 
 	const handleModalClose = () => {
 		router.push("/account/trade-center/trading-accounts");

@@ -87,6 +87,7 @@ export const AccountTypeValues: Record<AccountType, string> = {
 export const TradingPlatformValues: Record<TradingPlatform, string> = {
 	[TradingPlatform.BINANCE]: "Binance",
 	[TradingPlatform.KUCOIN]: "Kucoin",
+	[TradingPlatform.BYBIT]: "Bybit",
 };
 
 export const ReferralRank = {

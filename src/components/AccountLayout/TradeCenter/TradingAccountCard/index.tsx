@@ -196,7 +196,7 @@ const TradingAccountDropdownMenu: React.FC<ITradingAccountDropdownMenu> = ({
 	};
 
 	return (
-		<>
+		<div>
 			<DropdownMenu
 				trigger={<DottedIcon />}
 				position="left"
@@ -254,7 +254,7 @@ const TradingAccountDropdownMenu: React.FC<ITradingAccountDropdownMenu> = ({
 				onClose={handleDeleteModalClose}
 				isDeleting={isPending}
 			/>
-		</>
+		</div>
 	);
 };
 
