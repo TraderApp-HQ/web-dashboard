@@ -168,6 +168,7 @@ export interface IReferralStats {
 	personalATC: number;
 	rankData: IRankData;
 	isTestReferralTrackingInProgress: boolean;
+	isFirstDepositMade: boolean;
 }
 
 export interface IReferralCommunityStats {
