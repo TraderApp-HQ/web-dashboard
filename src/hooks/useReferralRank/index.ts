@@ -1,5 +1,5 @@
 import { IRankData, ReferralRankType } from "~/components/common/ProgressTracker/types";
-import { RANK_REQUIREMENTS, ReferralRank } from "~/config/constants";
+import { FIRST_DEPOSIT_AMOUNT, RANK_REQUIREMENTS, ReferralRank } from "~/config/constants";
 import { IReferralCommunityStats, IReferralStats } from "~/apis/handlers/users/interfaces";
 
 export type RankRequirements = Record<
@@ -42,6 +42,16 @@ export const useReferralRank = (
 						hoverText: "Minimum Active Trading Capital in your account",
 						completed: value.personalATC.completed,
 					},
+
+					...(rank === ReferralRank.TA_RECRUIT
+						? [
+								{
+									title: `First Deposit ($${FIRST_DEPOSIT_AMOUNT}+)`,
+									hoverText: "Minimum amount for first deposit",
+									completed: isFirstDepositMade,
+								},
+							]
+						: []),
 					...(value.communityATC.minValue > 0
 						? [
 								{
@@ -77,7 +87,7 @@ export const useReferralRank = (
 					rankData[rank].communityATC.completed &&
 					rankData[rank].communitySize.completed &&
 					rankData[rank].hasRequiredRankReferrals.completed &&
-					isFirstDepositMade,
+					(rank === ReferralRank.TA_RECRUIT ? isFirstDepositMade : true),
 			};
 			return acc;
 		}, {} as RankRequirements);

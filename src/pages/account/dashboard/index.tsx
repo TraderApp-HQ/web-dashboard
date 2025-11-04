@@ -27,7 +27,7 @@ import OpenEyesIcon from "~/components/icons/OpenEyesIcon";
 import TaskIcon from "~/components/icons/TaskIcon";
 import { TaskIconLarge } from "~/components/icons/TaskIconLarge";
 import TiltedCircledDownRightArrowIcon from "~/components/icons/TiltedCircledDownRightArrowIcon";
-import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
+import { FIRST_DEPOSIT_AMOUNT, LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { useGetAllPendingTasks, useGetOnboardingTasks } from "~/hooks/useTask";
 import { useGetUserOnboardingFlowData } from "~/hooks/useUserOnboardingTask";
 import useUserProfileData from "~/hooks/useUserProfileData";
@@ -349,7 +349,9 @@ const Dashbaord = () => {
 							</section>
 							<section className="flex items-center justify-between gap-3">
 								<h3 className="text-textBlack text-sm font-medium">Total</h3>
-								<p className="text-[#373F50] font-bold text-3xl">$20.00</p>
+								<p className="text-[#373F50] font-bold text-3xl">
+									${Number(FIRST_DEPOSIT_AMOUNT).toFixed(2)}
+								</p>
 							</section>
 							<section className="space-y-3 pb-5">
 								<h3 className="text-textBlack text-base font-bold">

@@ -4,7 +4,7 @@ import { UsersService } from "~/apis/handlers/users";
 import { UserOnboardingChecklist, UserTaskStatus } from "~/apis/handlers/users/enums";
 import { IFetchOnboardingTasks, IUserProfile } from "~/apis/handlers/users/interfaces";
 import { Tier } from "~/components/common/ProgressTracker/types";
-import { LAYOUT_ROUTES, ROUTES } from "~/config/constants";
+import { FIRST_DEPOSIT_AMOUNT, LAYOUT_ROUTES, ROUTES } from "~/config/constants";
 import { redirectTo } from "~/utils/RedirectTo";
 import { useCreate } from "../useCreate";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
@@ -303,7 +303,7 @@ export const useGetUserOnboardingFlowData = ({
 			actionButton: true as const,
 			action: [
 				{
-					text: "To finalise your registration and unlock the full access of your account. A $20 activation fee will be deducted from your first payment.",
+					text: `To finalise your registration and unlock the full access of your account. A $${FIRST_DEPOSIT_AMOUNT} activation fee will be deducted from your first payment.`,
 					buttonText: "Make First Deposit",
 					buttonAction: () => handleFirstDepositModalDisplay(),
 					disableActionButton: isFirstDepositMade,

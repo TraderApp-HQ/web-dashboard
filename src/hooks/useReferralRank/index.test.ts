@@ -24,12 +24,23 @@ describe("useReferralRank", () => {
 		expect(rankRequirements).toEqual({});
 	});
 
-	it("does not gate milestone checkboxes by isFirstDepositMade", () => {
+	it("gates only the First Deposit milestone by isFirstDepositMade", () => {
 		const { rankRequirements } = useReferralRank(makeStats(false));
 		const recruit = (rankRequirements as RankRequirements)[ReferralRank.TA_RECRUIT];
 		expect(recruit).toBeDefined();
 		expect(recruit.milestones.length).toBeGreaterThan(0);
-		expect(recruit.milestones.every((m) => m.completed)).toBe(true);
+
+		// Find the First Deposit milestone
+		const firstDepositMilestone = recruit.milestones.find((m) =>
+			m.title.includes("First Deposit"),
+		);
+		expect(firstDepositMilestone).toBeDefined();
+		expect(firstDepositMilestone?.completed).toBe(false);
+
+		const otherMilestones = recruit.milestones.filter(
+			(m) => !m.title.includes("First Deposit"),
+		);
+		expect(otherMilestones.every((m) => m.completed)).toBe(true);
 	});
 
 	it("marks rank as incomplete if deposit is not made even when milestones are done", () => {
