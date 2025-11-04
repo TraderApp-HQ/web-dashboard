@@ -128,3 +128,5 @@ export const InvoiceTypeValues: Record<InvoiceType, string> = {
 	[InvoiceType.PROFIT_SHARE]: "Profit Share",
 	[InvoiceType.TRADING_FEE]: "Trading Fee",
 };
+
+export const FIRST_DEPOSIT_AMOUNT = 20;
