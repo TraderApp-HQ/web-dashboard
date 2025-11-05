@@ -5,6 +5,7 @@ import type {
 	MasterTradeStatus,
 	OrderPlacementType,
 	TradingPlatform,
+	TradingPlatformStatus,
 } from "./enums";
 import { Candlestick, SignalRisk } from "../assets/enums";
 
@@ -198,4 +199,72 @@ export interface IUserTrade {
 	updatedAt: Date;
 	baseAssetLogoUrl: string;
 	currentPrice: number;
+}
+
+export interface IGetTradeAssets {
+	page: number;
+	rowsPerPage: number;
+	orderBy: "asc" | "desc";
+	sortBy: string;
+	category: Category;
+}
+
+export interface ITradeAsset {
+	id: string;
+	name: string;
+	symbol: string;
+	logo: string;
+	marketCap?: number;
+}
+
+export interface IGetTradingPlatform {
+	baseAssetId: number;
+	quoteCurrencyId: number;
+}
+
+export interface ISupportedTradingPlatform {
+	_id: string;
+	name: string;
+	logo: string;
+}
+
+export interface IAssetPrice {
+	asset: string;
+	quote: string;
+	fetch: boolean;
+}
+
+export interface IUseGetAccountConnectionTradingPlatforms {
+	page?: number;
+	rowsPerPage?: number;
+	orderBy?: "asc" | "desc";
+	status?: TradingPlatformStatus;
+	enabled?: boolean;
+}
+
+export interface IGetAccountConnectionTradingPlatformsInput {
+	page?: number;
+	rowsPerPage?: number;
+	orderBy?: "asc" | "desc";
+	status?: TradingPlatformStatus;
+}
+
+export interface IFetchAccountConnectionTradingPlatform {
+	_id: string;
+	name: string;
+	logo: string;
+	isIpAddressWhitelistRequired: boolean;
+	connectionTypes: ConnectionType[];
+	category: Category[];
+	slug: string;
+	description?: string;
+	status: TradingPlatformStatus;
+	urls: string;
+	makerFee: number;
+	takerFee: number;
+	dateLaunched: Date;
+	isSpotTradingSupported: boolean;
+	isFuturesTradingSupported: boolean;
+	isMarginTradingSupported: boolean;
+	isPassphraseRequired?: boolean;
 }

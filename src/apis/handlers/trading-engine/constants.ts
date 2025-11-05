@@ -3,4 +3,5 @@ export const TradingEngineQueryId = {
 	tradingAccount: "user-trading-account",
 	openTrades: "open-trades",
 	trade: "trade",
+	currencies: "currencies",
 };

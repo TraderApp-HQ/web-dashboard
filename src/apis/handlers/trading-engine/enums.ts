@@ -44,3 +44,8 @@ export enum OrderPlacementType {
 	MARKET = "MARKET",
 	LIMIT = "LIMIT",
 }
+
+export enum TradingPlatformStatus {
+	ACTIVE = "ACTIVE",
+	INACTIVE = "INACTIVE",
+}

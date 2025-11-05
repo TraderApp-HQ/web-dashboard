@@ -16,13 +16,15 @@ import BackBtnIcon from "~/components/icons/BackBtnIcon";
 import type { ICheckedBoxOption, ISelectBoxOption } from "~/components/interfaces";
 import { AccountType, Category, TradeSide, TradeSignalModalScreen, TradeType } from "~/config/enum";
 import { getSignalPriceInputValidationMessage, renderDisplayItem, renderStatus } from "~/helpers";
-import useGetAssetCurrentPrice from "~/hooks/useAssetCurrentPrice";
-import useGetAssets from "~/hooks/useAssets";
-import useCurrencies from "~/hooks/useCurrencies";
-import useSupportedTradingPlatforms from "~/hooks/useSupportedTradingPlatforms";
 import { convertEnumToOptions, handleKeyDown } from "~/lib/utils";
 import { AdminNestedTradeCenterLayout } from "..";
-import { useCreateTrade } from "~/hooks/useTrades";
+import {
+	useCreateTrade,
+	useGetTradeAssets,
+	useGetTradeSupportedCurrencies,
+	useGetSupportedTradingPlatforms,
+	useGetTradeCurrentPrice,
+} from "~/hooks/useTrades";
 import {
 	MasterTradeStatus,
 	OrderPlacementType,
@@ -129,7 +131,7 @@ function CreateTrade() {
 		data: tradingPlatforms,
 		isSuccess: isTradingPlatformsSuccess,
 		isLoading: isTradingPlatformsLoading,
-	} = useSupportedTradingPlatforms({
+	} = useGetSupportedTradingPlatforms({
 		baseAssetId: Number(selectedBaseAsset?.id),
 		quoteCurrencyId: Number(selectedQuoteCurrency?.id),
 	});
@@ -140,7 +142,7 @@ function CreateTrade() {
 		isError: isAssetError,
 		error: assetError,
 		isLoading: isAssetLoading,
-	} = useGetAssets({
+	} = useGetTradeAssets({
 		category: assetCategory?.value as Category,
 		page: 1,
 		rowsPerPage: 100,
@@ -154,7 +156,7 @@ function CreateTrade() {
 		isError: isCurrencyError,
 		error: currencyError,
 		isLoading: isCurrencyLoading,
-	} = useCurrencies();
+	} = useGetTradeSupportedCurrencies();
 
 	useEffect(() => {
 		if (isCurrencySuccess && currencies) {
@@ -192,7 +194,7 @@ function CreateTrade() {
 		refetch: refetchCurrentPrice,
 		isFetching: isCurrentPriceFetching,
 		isRefetchError: isCurrentPriceRefetchError,
-	} = useGetAssetCurrentPrice({
+	} = useGetTradeCurrentPrice({
 		asset: selectedBaseAsset?.id as string,
 		quote: selectedQuoteCurrency?.symbol as string,
 		fetch: fetchAssetCurrentPriceFlag,

@@ -4,7 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { TradingEngineService } from "~/apis/handlers/trading-engine";
 import { TradingEngineQueryId } from "~/apis/handlers/trading-engine/constants";
 import { OpenTradesActionType } from "~/apis/handlers/trading-engine/enums";
-import { IMasterTrade, IUserTrade } from "~/apis/handlers/trading-engine/interfaces";
+import {
+	IGetTradingPlatform,
+	IMasterTrade,
+	IUserTrade,
+	IGetTradeAssets,
+	IAssetPrice,
+	IUseGetAccountConnectionTradingPlatforms,
+} from "~/apis/handlers/trading-engine/interfaces";
 import { ITableMobile, ITBody, ITHead } from "~/components/common/DataTable/config";
 import {
 	openTradesDataTableSelector,
@@ -136,5 +143,128 @@ export const useCreateTrade = () => {
 		error,
 		isSuccess,
 		data,
+	};
+};
+
+export const useGetTradeAssets = ({
+	page,
+	rowsPerPage,
+	orderBy,
+	sortBy,
+	category,
+}: IGetTradeAssets) => {
+	const tradingEngineService = new TradingEngineService();
+
+	// Memoized function to fetch users
+	const fetchAssets = useCallback(() => {
+		return tradingEngineService.getAllTradeAssets({
+			page,
+			rowsPerPage,
+			orderBy,
+			sortBy,
+			category,
+		});
+	}, [page, rowsPerPage, orderBy, sortBy, category]);
+
+	// Using custom useFetch hook to fetch data
+	return useFetch({
+		queryKey: [rowsPerPage, orderBy, sortBy, category],
+		queryFn: fetchAssets,
+		enabled: !!category, // Ensures query only runs when category is defined
+	});
+};
+
+// Custom hook to fetch currencies data
+export const useGetTradeSupportedCurrencies = () => {
+	const tradingEngineService = new TradingEngineService();
+
+	// Memoized function to fetch users
+	const fetchCurrencies = useCallback(() => {
+		return tradingEngineService.getAllCurrencies();
+	}, []);
+
+	// Using custom useFetch hook to fetch data
+	return useFetch({
+		queryKey: [TradingEngineQueryId.currencies],
+		queryFn: fetchCurrencies,
+	});
+};
+
+// Custom hook to fetch Supported Trading Platforms data based on baseAssetId and quoteCurrencyId
+export const useGetSupportedTradingPlatforms = ({
+	baseAssetId,
+	quoteCurrencyId,
+}: IGetTradingPlatform) => {
+	const tradingEngineService = new TradingEngineService();
+
+	// Memoized function to fetch Supported Trading Platforms
+	const fetchSupportedTradingPlatforms = useCallback(() => {
+		return tradingEngineService.getSupportedTradingPlatforms({ baseAssetId, quoteCurrencyId });
+	}, [baseAssetId, quoteCurrencyId]);
+
+	// Using custom useFetch hook to fetch data
+	return useFetch({
+		queryKey: [baseAssetId, quoteCurrencyId],
+		queryFn: fetchSupportedTradingPlatforms,
+		enabled: !!(baseAssetId && quoteCurrencyId),
+	});
+};
+
+// Custom hook to fetch trade/assets current price
+export const useGetTradeCurrentPrice = ({ asset, quote, fetch }: IAssetPrice) => {
+	const tradingEngineService = new TradingEngineService();
+
+	// Memoized function to fetch asset price
+	const fetchAssetCurrentPrice = useCallback(() => {
+		return tradingEngineService.getTradeCurrentPrice({ asset, quote });
+	}, [asset, quote]);
+
+	// Using custom useFetch hook to fetch data
+	return useFetch({
+		queryKey: [`${asset}/${quote}`],
+		queryFn: fetchAssetCurrentPrice,
+		enabled: fetch, // Ensures query only runs when fetch is true
+	});
+};
+
+// Custom hook to fetch users data based on search keyword, current page, and rows per page
+export const useGetAccountConnectionTradingPlatforms = ({
+	page,
+	rowsPerPage,
+	orderBy,
+	status,
+	enabled,
+}: IUseGetAccountConnectionTradingPlatforms) => {
+	const tradingEngineService = new TradingEngineService();
+
+	// Memoized function to fetch users
+	const fetchExchanges = useCallback(() => {
+		return tradingEngineService.getAllAccountsTradingPlatforms({
+			page,
+			rowsPerPage,
+			orderBy,
+			status,
+		});
+	}, [page, rowsPerPage, orderBy, status]);
+
+	// Using custom useFetch hook to fetch data
+	const {
+		data: tradingPlatforms,
+		isSuccess: isTradingPlatformsSuccess,
+		isError: isTradingPlatformsError,
+		error: tradingPlatformsError,
+		isLoading: isTradingPlatformsLoading,
+	} = useFetch({
+		queryKey: [rowsPerPage, orderBy, status],
+		queryFn: fetchExchanges,
+		enabled,
+	});
+
+	return {
+		tradingPlatforms,
+		isTradingPlatformsSuccess,
+		isTradingPlatformsError,
+		isTradingPlatformsLoading,
+		tradingPlatformsError,
 	};
 };
