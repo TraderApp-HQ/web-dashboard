@@ -127,7 +127,7 @@ const Withdraw = () => {
 			return "";
 
 		if (debouncedAmountValue < minWithdrawal) {
-			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
+			return `Amount to receive is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
 		}
 
 		if (debouncedAmountValue > availableCurrencyBalance) {

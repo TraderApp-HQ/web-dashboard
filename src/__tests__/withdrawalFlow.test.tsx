@@ -162,7 +162,7 @@ describe("Withdraw page end-to-end validations", () => {
 
 		await waitFor(() =>
 			expect(
-				screen.getByText(/Amount is below the minimum withdrawal of 6 USDT/i),
+				screen.getByText(/Amount to receive is below the minimum withdrawal of 6 USDT/i),
 			).toBeInTheDocument(),
 		);
 		jest.useRealTimers();
