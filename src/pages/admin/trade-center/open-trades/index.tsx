@@ -1,7 +1,11 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { OpenTradesActionType } from "~/apis/handlers/trading-engine/enums";
-import { IMasterTrade, IUserTrade } from "~/apis/handlers/trading-engine/interfaces";
+import {
+	IMasterTrade,
+	ITradeAggregate,
+	IUserTrade,
+} from "~/apis/handlers/trading-engine/interfaces";
 import Card from "~/components/AccountLayout/Card";
 import SignalsEmptyState from "~/components/AccountLayout/SignalsEmptyState";
 import { DataTable, DataTableMobile } from "~/components/common/DataTable";
@@ -39,6 +43,7 @@ function OpenTrades() {
 		tradesTableHead,
 		mobileTableData,
 		trades,
+		tradesAggregate,
 	} = useFetchOpenTrades({ isAdmin: true });
 	const openTradesCount = trades && trades.length > 0 && trades.length;
 
@@ -67,30 +72,33 @@ function OpenTrades() {
 
 	return (
 		<section>
-			<div className="space-y-5">
-				<TradingAccountSummaryCard
-					isLoading={isLoading}
-					isSuccess={isSuccess}
-					isError={isError}
-					totalBalanceStyle="text-4xl text-textGray"
-					cardStyle="p-4 md:px-5 md:py-8 !rounded-2xl mb-10"
-				/>
-				{isLoading ? (
-					<>
-						<div className="hidden md:block">
-							<TableLoader />
-						</div>
-						<div className="md:hidden">
-							<MobileTableLoader />
-						</div>
-					</>
-				) : !isLoading && isError ? (
-					<section className="pb-3 rounded-2xl">
-						<ComponentError errorMessage={error?.message} />
-					</section>
-				) : !isLoading && trades && trades.length === 0 ? (
-					<SignalsEmptyState />
-				) : (
+			{isLoading ? (
+				<>
+					<div className="hidden md:block">
+						<TableLoader />
+					</div>
+					<div className="md:hidden">
+						<MobileTableLoader />
+					</div>
+				</>
+			) : !isLoading && isError ? (
+				<section className="pb-3 rounded-2xl">
+					<ComponentError errorMessage={error?.message} />
+				</section>
+			) : !isLoading && trades && trades.length === 0 ? (
+				<SignalsEmptyState />
+			) : (
+				<div>
+					{tradesAggregate && (
+						<TradingAccountSummaryCard
+							isLoading={isLoading}
+							isSuccess={isSuccess}
+							isError={isError}
+							totalBalanceStyle="text-4xl text-textGray"
+							cardStyle="p-4 md:px-5 md:py-8 !rounded-2xl mb-10"
+							tradesAggregate={tradesAggregate}
+						/>
+					)}
 					<div className="pt-2 pb-8">
 						<p className="font-bold text-base text-textColor mb-2">
 							Open Trades ({openTradesCount})
@@ -112,8 +120,8 @@ function OpenTrades() {
 							</div>
 						</div>
 					</div>
-				)}
-			</div>
+				</div>
+			)}
 
 			{/* /////////////////////////// Modals ///////////////////////////// */}
 			{openModal && action === OpenTradesActionType.CLOSE_TRADE && selectedTrade && (
@@ -189,6 +197,7 @@ interface ITradingAccountSummaryCardProps {
 	isLoading: boolean;
 	isError: boolean;
 	isSuccess: boolean;
+	tradesAggregate: ITradeAggregate;
 }
 
 export const TradingAccountSummaryCard: React.FC<ITradingAccountSummaryCardProps> = ({
@@ -197,11 +206,12 @@ export const TradingAccountSummaryCard: React.FC<ITradingAccountSummaryCardProps
 	isSuccess,
 	totalBalanceStyle,
 	cardStyle,
+	tradesAggregate,
 }) => {
-	const [tradingAccountBalance, setTradingAccountBalance] = useState<number>(0);
 	const [showBalance, setShowBalance] = useState<boolean>(true);
 
-	const percentageValue = 36;
+	const pnlValue = tradesAggregate.accummulatedUnrealisedPnL;
+	const pnlPercentage = tradesAggregate.accummulatedUnrealisedPnLPercentage;
 
 	return (
 		<>
@@ -237,19 +247,26 @@ export const TradingAccountSummaryCard: React.FC<ITradingAccountSummaryCardProps
 											<h2
 												className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"}`}
 											>
-												{formatCurrency(tradingAccountBalance)}
+												{formatCurrency(
+													tradesAggregate.accummulatedTotalBalance,
+												)}
 											</h2>
 
 											<SelectBox
 												isSearchable={false}
 												options={[
-													{ displayText: "USDT", value: "230000" },
-													{ displayText: "BTC", value: "230" },
+													{
+														displayText: "USDT",
+														value: tradesAggregate.accummulatedTotalBalance.toString(),
+													},
 												]}
-												option={{ displayText: "USDT", value: "230000" }}
-												setOption={(opt) =>
-													setTradingAccountBalance(parseFloat(opt.value))
-												}
+												option={{
+													displayText: "USDT",
+													value: tradesAggregate.accummulatedTotalBalance.toString(),
+												}}
+												// setOption={(opt) =>
+												// 	setTradingAccountBalance(parseFloat(opt.value))
+												// }
 												bgColor="transparent"
 												buttonClassName="!p-0 !space-x-1"
 												fontStyles="text-base font-semibold text-textGray"
@@ -261,7 +278,7 @@ export const TradingAccountSummaryCard: React.FC<ITradingAccountSummaryCardProps
 											<section className="flex items-baseline gap-2">
 												<h4 className="font-bold text-sm">Total Risk</h4>
 												<span className="font-medium text-xs">
-													32432.84{" "}
+													{tradesAggregate.accummulatedTotalRisk}{" "}
 													<span className="font-normal text-[10px]">
 														USDT
 													</span>
@@ -272,12 +289,12 @@ export const TradingAccountSummaryCard: React.FC<ITradingAccountSummaryCardProps
 													Unrealized P&L
 												</h4>
 												<span
-													className={`font-medium text-xs flex items-baseline ${percentageValue >= 0 ? "text-[#08875D]" : "text-[#E02D3C]"}`}
+													className={`font-medium text-xs flex items-baseline ${pnlPercentage >= 0 ? "text-[#08875D]" : "text-[#E02D3C]"}`}
 												>
-													{percentageValue >= 0
-														? `+${percentageValue}`
-														: percentageValue}
-													%<span>(102.34 USDT)</span>
+													{pnlPercentage > 0
+														? `+${pnlPercentage}`
+														: pnlPercentage}
+													%<span>({pnlValue} USDT)</span>
 												</span>
 											</section>
 										</section>
