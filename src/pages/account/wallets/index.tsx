@@ -35,7 +35,7 @@ const WalletLayout: React.FC<IProps> = ({ children }) => {
 		<div>
 			<PageTab tabs={tabs} />
 
-			<div className="">{children}</div>
+			<div className="pt-3">{children}</div>
 		</div>
 	);
 };

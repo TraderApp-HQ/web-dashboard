@@ -199,3 +199,10 @@ export interface IUserTrade {
 	baseAssetLogoUrl: string;
 	currentPrice: number;
 }
+
+export interface ITradeAggregate {
+	accummulatedTotalBalance: number;
+	accummulatedTotalRisk: number;
+	accummulatedUnrealisedPnL: number;
+	accummulatedUnrealisedPnLPercentage: number;
+}
