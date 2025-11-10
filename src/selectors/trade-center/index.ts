@@ -1,4 +1,3 @@
-import { formatDistanceToNowStrict } from "date-fns";
 import { ITableActions, ITableMobile, ITBody } from "~/components/common/DataTable/config";
 import { renderDisplayItem, renderPandL, renderStatus } from "~/helpers";
 import { OpenTradesTableHeadItems } from "./constants";
@@ -8,6 +7,7 @@ import {
 	ProfitAndLossStatus,
 } from "~/apis/handlers/trading-engine/enums";
 import { IMasterTrade, IUserTrade } from "~/apis/handlers/trading-engine/interfaces";
+import { uniqueDateFormat } from "~/lib/utils";
 
 interface IOpenTradesDataTableSelector {
 	openTrades: IMasterTrade[] | IUserTrade[];
@@ -69,9 +69,7 @@ export function openTradesDataTableSelector({
 					}),
 				},
 				{
-					displayItem: formatDistanceToNowStrict(new Date(trade.createdAt), {
-						addSuffix: true,
-					}),
+					displayItem: uniqueDateFormat(trade.createdAt),
 				},
 				{
 					displayItem: renderStatus(
@@ -259,9 +257,7 @@ export function openTradesMobileDataTableSelector({
 			},
 			{
 				displayItemTitle: "Date",
-				displayItemValue: formatDistanceToNowStrict(new Date(trade.createdAt), {
-					addSuffix: true,
-				}),
+				displayItemValue: uniqueDateFormat(trade.createdAt),
 			},
 			{
 				displayItemTitle: "Status",
