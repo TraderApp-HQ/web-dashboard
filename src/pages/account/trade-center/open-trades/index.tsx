@@ -45,7 +45,7 @@ const OpenTrades = () => {
 							isLoading={isLoading}
 							isSuccess={isSuccess}
 							isError={isError}
-							totalBalanceStyle="text-4xl text-textGray"
+							totalBalanceStyle="text-4xl"
 							cardStyle="p-4 md:px-5 md:py-8 !rounded-2xl mb-10"
 							tradesAggregate={tradesAggregate}
 						/>

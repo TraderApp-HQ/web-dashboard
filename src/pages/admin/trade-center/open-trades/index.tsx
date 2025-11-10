@@ -94,7 +94,7 @@ function OpenTrades() {
 							isLoading={isLoading}
 							isSuccess={isSuccess}
 							isError={isError}
-							totalBalanceStyle="text-4xl text-textGray"
+							totalBalanceStyle="text-4xl"
 							cardStyle="p-4 md:px-5 md:py-8 !rounded-2xl mb-10"
 							tradesAggregate={tradesAggregate}
 						/>
@@ -245,10 +245,12 @@ export const TradingAccountSummaryCard: React.FC<ITradingAccountSummaryCardProps
 									<section className="space-y-3">
 										<section className="flex items-center gap-2 text">
 											<h2
-												className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"}`}
+												className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"} ${tradesAggregate.accummulatedTotalBalance >= 0 ? "text-[#08875D]" : "text-[#E02D3C]"}`}
 											>
 												{formatCurrency(
-													tradesAggregate.accummulatedTotalBalance,
+													Math.abs(
+														tradesAggregate.accummulatedTotalBalance,
+													),
 												)}
 											</h2>
 
@@ -277,7 +279,7 @@ export const TradingAccountSummaryCard: React.FC<ITradingAccountSummaryCardProps
 										<section className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-4 text-textColor">
 											<section className="flex items-baseline gap-2">
 												<h4 className="font-bold text-sm">Total Risk</h4>
-												<span className="font-medium text-xs">
+												<span className="font-medium text-xs text-[#E02D3C]">
 													{tradesAggregate.accummulatedTotalRisk}{" "}
 													<span className="font-normal text-[10px]">
 														USDT
