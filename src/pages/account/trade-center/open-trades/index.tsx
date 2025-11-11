@@ -17,20 +17,12 @@ const OpenTrades = () => {
 		tradesTableHead,
 		mobileTableData,
 		trades,
+		tradesAggregate,
 	} = useFetchOpenTrades({ isAdmin: false });
 	const openTradesCount = trades && trades.length > 0 && trades.length;
 
 	return (
-		<div className="space-y-5">
-			{!isLoading && trades && trades.length >= 1 && (
-				<TradingAccountSummaryCard
-					isLoading={isLoading}
-					isSuccess={isSuccess}
-					isError={isError}
-					totalBalanceStyle="text-4xl text-textGray"
-					cardStyle="p-4 md:px-5 md:py-8 !rounded-2xl mb-10"
-				/>
-			)}
+		<div>
 			{isLoading ? (
 				<>
 					<div className="hidden md:block">
@@ -47,25 +39,37 @@ const OpenTrades = () => {
 			) : !isLoading && trades && trades.length === 0 ? (
 				<SignalsEmptyState message="Trade" />
 			) : (
-				<div className="pt-2 pb-8">
-					<h2 className="text-slate-900 font-bold text-base mb-2">
-						Open Trades ({openTradesCount})
-					</h2>
+				<div>
+					{tradesAggregate && (
+						<TradingAccountSummaryCard
+							isLoading={isLoading}
+							isSuccess={isSuccess}
+							isError={isError}
+							totalBalanceStyle="text-4xl"
+							cardStyle="p-4 md:px-5 md:py-8 !rounded-2xl mb-10"
+							tradesAggregate={tradesAggregate}
+						/>
+					)}
+					<div className="pt-2 pb-8">
+						<h2 className="text-slate-900 font-bold text-base mb-2">
+							Open Trades ({openTradesCount})
+						</h2>
 
-					<div className="rounded-2xl bg-[#F3F4F6]">
-						<div className="hidden md:block overflow-x-auto">
-							{isSuccess && tradesTableBody && (
-								<DataTable
-									tHead={tradesTableHead}
-									tBody={tradesTableBody}
-									tableStyles="bg-white px-10"
-									tableHeadStyles="bg-[#F3F4F6]"
-									tableHeadItemStyles="text-center"
-								/>
-							)}
-						</div>
-						<div className="md:hidden relative">
-							{isSuccess && <DataTableMobile data={mobileTableData} />}
+						<div className="rounded-2xl bg-[#F3F4F6]">
+							<div className="hidden md:block overflow-x-auto">
+								{isSuccess && tradesTableBody && (
+									<DataTable
+										tHead={tradesTableHead}
+										tBody={tradesTableBody}
+										tableStyles="bg-white px-10"
+										tableHeadStyles="bg-[#F3F4F6]"
+										tableHeadItemStyles="text-center"
+									/>
+								)}
+							</div>
+							<div className="md:hidden relative">
+								{isSuccess && <DataTableMobile data={mobileTableData} />}
+							</div>
 						</div>
 					</div>
 				</div>

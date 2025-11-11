@@ -127,7 +127,7 @@ const Withdraw = () => {
 			return "";
 
 		if (debouncedAmountValue < minWithdrawal) {
-			return `Amount is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
+			return `Amount to receive is below the minimum withdrawal of ${minWithdrawal} ${selectedCurrency.symbol}`;
 		}
 
 		if (debouncedAmountValue > availableCurrencyBalance) {
@@ -506,10 +506,13 @@ const Withdraw = () => {
 										Amount To Receive
 									</span>
 									<span className="text-slate-900 text-base font-medium">
-										{withdrawalFees.netAmount.toLocaleString("en-US", {
-											maximumFractionDigits: 2,
-											minimumFractionDigits: 2,
-										})}{" "}
+										{Math.max(0, withdrawalFees.netAmount).toLocaleString(
+											"en-US",
+											{
+												maximumFractionDigits: 2,
+												minimumFractionDigits: 2,
+											},
+										)}{" "}
 										{currencySymbol}
 									</span>
 								</div>

@@ -7,6 +7,7 @@ import { OpenTradesActionType } from "~/apis/handlers/trading-engine/enums";
 import {
 	IGetTradingPlatform,
 	IMasterTrade,
+	ITradeAggregate,
 	IUserTrade,
 	IGetTradeAssets,
 	IAssetPrice,
@@ -27,6 +28,7 @@ export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
 	const [tradesTableBody, setTradesTableBody] = useState<ITBody>();
 	const [mobileTableData, setMobileTableData] = useState<ITableMobile[]>([]);
 	const [trades, setTrades] = useState<IMasterTrade[] | IUserTrade[]>();
+	const [tradesAggregate, setTradesAggregate] = useState<ITradeAggregate>();
 
 	const fetchOpenTrades = () => tradingEngineService.getOpenTrades({ isAdmin });
 
@@ -63,16 +65,17 @@ export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
 
 		const { tableHead, tableBody } = openTradesDataTableSelector({
 			isAdmin,
-			openTrades: data,
+			openTrades: data.trades,
 			handleTradeAction,
 		});
 		const mobileData = openTradesMobileDataTableSelector({
 			isAdmin,
-			openTrades: data,
+			openTrades: data.trades,
 			handleTradeAction,
 		});
 
-		setTrades(data);
+		setTrades(data.trades);
+		setTradesAggregate(data.tradesAggregate);
 		setTradesTableHead(tableHead);
 		setTradesTableBody(tableBody);
 		setMobileTableData(mobileData);
@@ -87,6 +90,7 @@ export const useFetchOpenTrades = ({ isAdmin }: { isAdmin: boolean }) => {
 		tradesTableBody,
 		mobileTableData,
 		trades,
+		tradesAggregate,
 	};
 };
 

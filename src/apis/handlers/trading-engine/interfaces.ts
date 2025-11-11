@@ -268,3 +268,9 @@ export interface IFetchAccountConnectionTradingPlatform {
 	isMarginTradingSupported: boolean;
 	isPassphraseRequired?: boolean;
 }
+export interface ITradeAggregate {
+	accummulatedTotalBalance: number;
+	accummulatedTotalRisk: number;
+	accummulatedUnrealisedPnL: number;
+	accummulatedUnrealisedPnLPercentage: number;
+}

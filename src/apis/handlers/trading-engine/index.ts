@@ -9,6 +9,7 @@ import type {
 	IGetTradingAccountInput,
 	IMasterTrade,
 	ITradeAsset,
+	ITradeAggregate,
 	ITradingAccountInfo,
 	IUpdateAccountInput,
 	IUserTrade,
@@ -123,7 +124,7 @@ export class TradingEngineService {
 		isAdmin,
 	}: {
 		isAdmin: boolean;
-	}): Promise<IMasterTrade[] | IUserTrade[]> {
+	}): Promise<{ trades: IMasterTrade[] | IUserTrade[]; tradesAggregate: ITradeAggregate }> {
 		const response = await this.apiClient.get<IResponse>({
 			url: isAdmin ? `/trade/master-trade` : `/trade/user-trade`,
 		});
@@ -133,7 +134,15 @@ export class TradingEngineService {
 
 		const { data } = response;
 
-		const openTrades = isAdmin ? (data as IMasterTrade[]) : (data as IUserTrade[]);
+		const openTrades = isAdmin
+			? {
+					trades: data.trades as IMasterTrade[],
+					tradesAggregate: data.tradesAggregate as ITradeAggregate,
+				}
+			: {
+					trades: data.trades as IUserTrade[],
+					tradesAggregate: data.tradesAggregate as ITradeAggregate,
+				};
 
 		return openTrades;
 	}
