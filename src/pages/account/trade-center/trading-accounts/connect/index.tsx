@@ -6,15 +6,16 @@ import SelectBox from "~/components/common/SelectBox";
 import { ISelectBoxOption } from "~/components/interfaces";
 import { NestedTradeCenterLayout } from "../..";
 import { Category } from "~/config/enum";
-import { TradeStatus } from "~/apis/handlers/assets/enums";
-import useGetTradingPlatforms from "~/hooks/useGetTradingPlatforms";
 import AccountConnection from "~/components/AccountLayout/TradeCenter/AccountConnection";
-import { TradingPlatform } from "~/apis/handlers/trading-engine/enums";
+import { TradingPlatform, TradingPlatformStatus } from "~/apis/handlers/trading-engine/enums";
 import { useGetUserTradingAccount } from "~/hooks/useGetUserTradingAccount";
-import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
+import {
+	IFetchAccountConnectionTradingPlatform,
+	ITradingAccountInfo,
+} from "~/apis/handlers/trading-engine/interfaces";
 import useUserProfileData from "~/hooks/useUserProfileData";
-import { IFetchTradingPlatform } from "~/apis/handlers/assets/interfaces";
 import { useUserTradingAccounts } from "~/contexts/UserTradingAccountsContext";
+import { useGetAccountConnectionTradingPlatforms } from "~/hooks/useTrades";
 
 const ConnectTradingAccount = () => {
 	const router = useRouter();
@@ -23,9 +24,9 @@ const ConnectTradingAccount = () => {
 	const [selectedCategory, setSelectedCategory] = useState<ISelectBoxOption>();
 	const [categoryOptions, setCategoryOptions] = useState<ISelectBoxOption[]>([]);
 	const [selectedPlatform, setSelectedPlatform] =
-		useState<ISelectBoxOption<IFetchTradingPlatform>>();
+		useState<ISelectBoxOption<IFetchAccountConnectionTradingPlatform>>();
 	const [platformOptions, setPlatformOptions] = useState<
-		ISelectBoxOption<IFetchTradingPlatform>[]
+		ISelectBoxOption<IFetchAccountConnectionTradingPlatform>[]
 	>([]);
 	const [resetSelectedPlatform, setResetSelectedPlatform] = useState(false);
 	const [isConnectTradingAccount, setIsConnectTradingAccount] = useState(true);
@@ -72,8 +73,8 @@ const ConnectTradingAccount = () => {
 		isTradingPlatformsError,
 		isTradingPlatformsLoading,
 		tradingPlatformsError,
-	} = useGetTradingPlatforms({
-		status: TradeStatus.active,
+	} = useGetAccountConnectionTradingPlatforms({
+		status: TradingPlatformStatus.ACTIVE,
 		enabled: !!selectedCategory || !!validatedPlatformName,
 	});
 
@@ -146,7 +147,7 @@ const ConnectTradingAccount = () => {
 	// helper function to set platform
 	const handleSetSelectedPlatform = (
 		validatedPlatformName: TradingPlatform,
-		tradingPlatforms: IFetchTradingPlatform[],
+		tradingPlatforms: IFetchAccountConnectionTradingPlatform[],
 	) => {
 		const activePlatform = tradingPlatforms.find(
 			(platform) => platform.name.toLowerCase() === validatedPlatformName.toLowerCase(),
