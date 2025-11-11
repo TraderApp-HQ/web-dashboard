@@ -506,10 +506,13 @@ const Withdraw = () => {
 										Amount To Receive
 									</span>
 									<span className="text-slate-900 text-base font-medium">
-										{withdrawalFees.netAmount.toLocaleString("en-US", {
-											maximumFractionDigits: 2,
-											minimumFractionDigits: 2,
-										})}{" "}
+										{Math.max(0, withdrawalFees.netAmount).toLocaleString(
+											"en-US",
+											{
+												maximumFractionDigits: 2,
+												minimumFractionDigits: 2,
+											},
+										)}{" "}
 										{currencySymbol}
 									</span>
 								</div>
