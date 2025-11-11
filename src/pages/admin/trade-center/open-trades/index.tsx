@@ -248,9 +248,7 @@ export const TradingAccountSummaryCard: React.FC<ITradingAccountSummaryCardProps
 												className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"} ${tradesAggregate.accummulatedTotalBalance >= 0 ? "text-[#08875D]" : "text-[#E02D3C]"}`}
 											>
 												{formatCurrency(
-													Math.abs(
-														tradesAggregate.accummulatedTotalBalance,
-													),
+													tradesAggregate.accummulatedTotalBalance,
 												)}
 											</h2>
 
@@ -279,7 +277,7 @@ export const TradingAccountSummaryCard: React.FC<ITradingAccountSummaryCardProps
 										<section className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-4 text-textColor">
 											<section className="flex items-baseline gap-2">
 												<h4 className="font-bold text-sm">Total Risk</h4>
-												<span className="font-medium text-xs text-[#E02D3C]">
+												<span className="font-medium text-xs">
 													{tradesAggregate.accummulatedTotalRisk}{" "}
 													<span className="font-normal text-[10px]">
 														USDT
