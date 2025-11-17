@@ -4,8 +4,8 @@ import DashboardIcon from "~/components/icons/DashboardIcon";
 // import FinanceIcon from "~/components/icons/FinanceIcon";
 import ReferralsIcon from "~/components/icons/ReferralsIcon";
 import SettingIcon from "~/components/icons/SettingIcon";
-import SignalManagementIcon from "~/components/icons/SignalManagementIcon";
-import SignalsIcon from "~/components/icons/SignalsIcon";
+// import SignalManagementIcon from "~/components/icons/SignalManagementIcon";
+// import SignalsIcon from "~/components/icons/SignalsIcon";
 import SystemManagementIcon from "~/components/icons/SystemManagementIcon";
 import TaskCenterIcon from "~/components/icons/taskCenterIcon";
 import TradeCenterIcon from "~/components/icons/TradeCenterIcon";
@@ -25,11 +25,11 @@ export const NavLinks: SidenavLink[] = [
 		text: "Dashboard",
 		path: LAYOUT_ROUTES.account + ROUTES.dashboard.homepage,
 	},
-	{
-		icon: SignalsIcon,
-		text: "Signals",
-		path: LAYOUT_ROUTES.account + ROUTES.signals,
-	},
+	// {
+	// 	icon: SignalsIcon,
+	// 	text: "Signals",
+	// 	path: LAYOUT_ROUTES.account + ROUTES.signals,
+	// },
 	{
 		icon: TradeCenterIcon,
 		text: "Trade Center",
@@ -81,11 +81,11 @@ export const AdminNavLinks: SidenavLink[] = [
 		text: "User Management",
 		path: LAYOUT_ROUTES.admin + ROUTES.usermanagement.homepage,
 	},
-	{
-		icon: SignalManagementIcon,
-		text: "Signal Management",
-		path: LAYOUT_ROUTES.admin + ROUTES.signalmanagement,
-	},
+	// {
+	// 	icon: SignalManagementIcon,
+	// 	text: "Signal Management",
+	// 	path: LAYOUT_ROUTES.admin + ROUTES.signalmanagement,
+	// },
 	// {
 	// 	icon: SystemManagementIcon,
 	// 	text: "System Management",
