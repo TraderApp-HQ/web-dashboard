@@ -22,8 +22,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	// Route to different services based on path - using NEXT_PUBLIC_ prefix
 	const usersServicePaths = ["auth", "users", "countries", "task", "notifications"];
-	const walletsServicePaths = ["wallets", "transactions"];
-	const tradingServicePaths = ["account"];
+	const tradingServicePaths = ["account", "trade"];
+	const walletsServicePaths = ["wallets", "transactions", "invoices"];
 	const assetsServicePaths = ["signals", "exchanges", "coins", "currencies"];
 
 	let baseUrl: string;

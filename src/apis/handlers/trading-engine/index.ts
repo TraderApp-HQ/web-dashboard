@@ -4,10 +4,20 @@ import { UsersService } from "~/apis/handlers/users";
 import type {
 	IAddFund,
 	IConnectManualInput,
+	ICreateTrade,
 	IDeleteAccountInput,
 	IGetTradingAccountInput,
+	IMasterTrade,
+	ITradeAsset,
+	ITradeAggregate,
 	ITradingAccountInfo,
 	IUpdateAccountInput,
+	IUserTrade,
+	IGetTradeAssets,
+	IGetTradingPlatform,
+	ISupportedTradingPlatform,
+	IGetAccountConnectionTradingPlatformsInput,
+	IFetchAccountConnectionTradingPlatform,
 } from "./interfaces";
 
 export class TradingEngineService {
@@ -108,5 +118,169 @@ export class TradingEngineService {
 		}
 
 		return response.message;
+	}
+
+	public async getOpenTrades({
+		isAdmin,
+	}: {
+		isAdmin: boolean;
+	}): Promise<{ trades: IMasterTrade[] | IUserTrade[]; tradesAggregate: ITradeAggregate }> {
+		const response = await this.apiClient.get<IResponse>({
+			url: isAdmin ? `/trade/master-trade` : `/trade/user-trade`,
+		});
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch current open trades.");
+		}
+
+		const { data } = response;
+
+		const openTrades = isAdmin
+			? {
+					trades: data.trades as IMasterTrade[],
+					tradesAggregate: data.tradesAggregate as ITradeAggregate,
+				}
+			: {
+					trades: data.trades as IUserTrade[],
+					tradesAggregate: data.tradesAggregate as ITradeAggregate,
+				};
+
+		return openTrades;
+	}
+
+	public async createTrade(trade: ICreateTrade): Promise<IMasterTrade> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/trade/master-trade",
+			data: trade,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to create trade");
+		}
+
+		const { data } = response;
+		return data as IMasterTrade;
+	}
+
+	public async getTrade(tradeId: string): Promise<IMasterTrade> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/trade/master-trade/${tradeId}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to fetch trade");
+		}
+
+		const { data } = response;
+		return data as IMasterTrade;
+	}
+
+	public async getAllTradeAssets({
+		page,
+		rowsPerPage,
+		orderBy,
+		sortBy,
+		category,
+	}: IGetTradeAssets): Promise<ITradeAsset[]> {
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `/trade/trade-assets?category=${category}&page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&sortBy=${sortBy}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch trade assets records");
+		}
+
+		const { data } = response;
+		return data.assets as ITradeAsset[];
+	}
+
+	public async getAllCurrencies(): Promise<ITradeAsset[]> {
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `/trade/supported-currencies`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch currencies records");
+		}
+
+		const { data } = response;
+		return data as ITradeAsset[];
+	}
+
+	public async getSupportedTradingPlatforms({
+		baseAssetId,
+		quoteCurrencyId,
+	}: IGetTradingPlatform): Promise<ISupportedTradingPlatform[]> {
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `/trade/supported-trading-platforms?baseAssetId=${baseAssetId}&quoteCurrencyId=${quoteCurrencyId}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch supported Exchanges records");
+		}
+
+		const { data } = response;
+		return data as ISupportedTradingPlatform[];
+	}
+
+	public async getTradeCurrentPrice({
+		asset,
+		quote,
+	}: {
+		asset: string;
+		quote: string;
+	}): Promise<{ price: number }> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/trade/trade-current-price?asset=${asset}&quote=${quote}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch trade current price.");
+		}
+
+		const { data } = response;
+		return data as { price: number };
+	}
+
+	public async getAllAccountsTradingPlatforms({
+		page,
+		rowsPerPage,
+		orderBy,
+		status,
+	}: IGetAccountConnectionTradingPlatformsInput): Promise<
+		IFetchAccountConnectionTradingPlatform[]
+	> {
+		// Construct query parameters
+		const queryParams = new URLSearchParams();
+
+		if (page !== undefined) {
+			queryParams.set("page", page.toString());
+		}
+
+		if (rowsPerPage !== undefined) {
+			queryParams.set("rowsPerPage", rowsPerPage.toString());
+		}
+
+		if (orderBy !== undefined) {
+			queryParams.set("orderBy", orderBy);
+		}
+
+		if (status !== undefined) {
+			queryParams.append("status", status);
+		}
+
+		// Fetch data from API
+		const response = await this.apiClient.get<IResponse>({
+			url: `/trade/account-trading-platforms?${queryParams.toString()}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch trading platform records");
+		}
+
+		const { data } = response;
+		return data as IFetchAccountConnectionTradingPlatform[];
 	}
 }

@@ -15,7 +15,6 @@ import {
 	ISupportedNetworks,
 	IWalletSupportedCurrencies,
 } from "~/apis/handlers/wallets/interface";
-import AccountLayout from "~/components/AccountLayout/Layout";
 import ComponentError from "~/components/Error/ComponentError";
 import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
@@ -30,11 +29,10 @@ import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import useUserProfileData from "~/hooks/useUserProfileData";
 import useWalletTransactionCountDownTimer from "~/hooks/useWalletTransactionCountDownTimer";
 import { useInitiateDeposit, useWalletDepositOptions } from "~/hooks/useWallets";
+import { NestedWalletLayout } from "..";
 
 const Deposit = () => {
 	const router = useRouter();
-	const { first_deposit } = router.query;
-	const firstDeposit = first_deposit === "true";
 	const [openModal, setOpenModal] = useState(true);
 	const [depositUrlModal, setDepositUrlModal] = useState(false);
 	const [depositExpiredModal, setDepositExpiredModal] = useState(false);
@@ -50,7 +48,7 @@ const Deposit = () => {
 	const [selectedNetwork, setSelectedNetwork] = useState<ISupportedNetworks | undefined>(
 		undefined,
 	);
-	const [amount, setAmount] = useState<number | undefined>(firstDeposit ? 95 : undefined);
+	const [amount, setAmount] = useState<number | undefined>(undefined);
 	const [depositWalletInfo, setDepositWalletInfo] = useState<
 		IFactoryPaymentProviderDepositResponse | undefined
 	>(undefined);
@@ -277,21 +275,19 @@ const Deposit = () => {
 									fontStyles={`${!selectedNetwork?.name && "text-textGray"}`}
 								/>
 
-								{(firstDeposit ||
-									(selectedCurrency &&
-										selectedPaymentOption &&
-										selectedCurrency?.symbol !==
-											selectedPaymentOption?.symbol)) && (
-									<InputField
-										type="number"
-										labelText="Amount in USDT"
-										props={{ name: "amount" }}
-										placeholder="Enter Amount you wish to deposit in USDT"
-										className="no-spin-buttons"
-										value={amount !== undefined ? amount.toString() : ""}
-										onChange={handleChangeAmount}
-									/>
-								)}
+								{selectedCurrency &&
+									selectedPaymentOption &&
+									selectedCurrency?.symbol !== selectedPaymentOption?.symbol && (
+										<InputField
+											type="number"
+											labelText="Amount in USDT"
+											props={{ name: "amount" }}
+											placeholder="Enter Amount you wish to deposit in USDT"
+											className="no-spin-buttons"
+											value={amount !== undefined ? amount.toString() : ""}
+											onChange={handleChangeAmount}
+										/>
+									)}
 
 								<Button
 									labelText="Continue"
@@ -541,5 +537,5 @@ const Deposit = () => {
 	);
 };
 
-Deposit.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
+Deposit.getLayout = (page: React.ReactElement) => <NestedWalletLayout>{page}</NestedWalletLayout>;
 export default Deposit;

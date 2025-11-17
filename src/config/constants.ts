@@ -1,5 +1,5 @@
 import { TradingPlatform } from "~/apis/handlers/trading-engine/enums";
-import { AccountType, Category } from "./enum";
+import { AccountType, Category, InvoiceType } from "./enum";
 
 export const LAYOUT_ROUTES = {
 	account: "/account",
@@ -50,7 +50,6 @@ export const ROUTES = {
 		details: "/details",
 		create: "create-user",
 	},
-
 	financemodel: "/finance-model",
 	signalmanagement: "/signal-management",
 	systemmanagement: "/system-management",
@@ -62,6 +61,7 @@ export const ROUTES = {
 		edit: "/edit",
 		updateData: "/update-data",
 	},
+	adminTradeCenter: "/trade-center",
 };
 
 export const ENDPOINTS = {
@@ -87,6 +87,7 @@ export const AccountTypeValues: Record<AccountType, string> = {
 export const TradingPlatformValues: Record<TradingPlatform, string> = {
 	[TradingPlatform.BINANCE]: "Binance",
 	[TradingPlatform.KUCOIN]: "Kucoin",
+	[TradingPlatform.BYBIT]: "Bybit",
 };
 
 export const ReferralRank = {
@@ -122,3 +123,10 @@ export const RANK_REQUIREMENTS = {
 		text: "Reach the pinnacle of leadership and community growth, leading a vast trading empire.",
 	},
 } as const;
+
+export const InvoiceTypeValues: Record<InvoiceType, string> = {
+	[InvoiceType.PROFIT_SHARE]: "Profit Share",
+	[InvoiceType.TRADING_FEE]: "Trading Fee",
+};
+
+export const FIRST_DEPOSIT_AMOUNT = 20;

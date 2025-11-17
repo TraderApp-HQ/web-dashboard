@@ -61,7 +61,7 @@ export default function DropdownMenu({
 	}, [setIsOpen]);
 
 	return (
-		<div ref={ref} className={`relative ${containerClassName || "ml-3 w-fit"}`}>
+		<div ref={ref} className={`relative ${containerClassName || "mx-auto w-fit"}`}>
 			<button
 				type="button"
 				onClick={() => {

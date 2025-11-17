@@ -11,7 +11,7 @@ import { formatCurrency } from "~/lib/utils";
 import HidenBalance from "../HidenBalance";
 import ComponentError from "~/components/Error/ComponentError";
 import { useGetUserWalletsBalance } from "~/hooks/useWallets";
-import { WalletType } from "~/apis/handlers/wallets/enum";
+import { SupportedCurrency, WalletType } from "~/apis/handlers/wallets/enum";
 import WalletBalanceCardLoader from "~/components/Loaders/WalletBalanceCardLoader";
 import useFeatureFlag from "~/hooks/useFeatureFlag";
 import useUserProfileData from "~/hooks/useUserProfileData";
@@ -20,14 +20,14 @@ interface ITotalBalanceSectionProps {
 	showBalanceText?: string;
 	btcBalance?: string;
 	totalBalanceStyle?: string;
-	padding?: string;
+	cardStyle?: string;
 }
 
 export default function WalletBalanceCard({
 	showBalanceText = "Total Balance",
 	// btcBalance,
 	totalBalanceStyle,
-	padding,
+	cardStyle,
 }: ITotalBalanceSectionProps) {
 	// Get wallet balance hook
 	const { data, isError, isLoading, isSuccess, refetch } = useGetUserWalletsBalance(
@@ -44,8 +44,12 @@ export default function WalletBalanceCard({
 	});
 
 	const router = useRouter();
-	const [showBalance, handleShowBalance] = useState<boolean>(true);
+	const [showBalance, setShowBalance] = useState<boolean>(true);
 	const [walletTotalBalance, setWalletTotalBalance] = useState<number>(0);
+	const [walletLockedBalance, setWalletLockedBalance] = useState<number>(0);
+	const [selectedWalletCurrency, setSelectedWalletCurrency] = useState<string | undefined>(
+		undefined,
+	);
 	const [walletTotalBalanceOptions, setWalletTotalBalanceOptions] = useState<ISelectBoxOption[]>(
 		[],
 	);
@@ -55,12 +59,11 @@ export default function WalletBalanceCard({
 
 	useEffect(() => {
 		if (isSuccess && data) {
-			setWalletTotalBalanceOptions(
-				data.exchangeRateTotalBalances.map((bal) => ({
-					displayText: bal.currency,
-					value: bal.balance.toString(),
-				})),
-			);
+			const totalBalanceOptions = data.exchangeRateTotalBalances.map((bal) => ({
+				displayText: bal.currency,
+				value: bal.balance.toString(),
+			}));
+			setWalletTotalBalanceOptions(totalBalanceOptions);
 
 			setIndividualWalletBalanceOptions(
 				data.wallets.map((bal) => ({
@@ -69,8 +72,27 @@ export default function WalletBalanceCard({
 					imgUrl: bal.currency.logoUrl,
 				})),
 			);
+
+			setSelectedWalletCurrency((prev) => prev ?? totalBalanceOptions[0]?.displayText);
 		}
 	}, [data, isSuccess]);
+
+	// Handles locked balance conversion to selected wallet currency
+	useEffect(() => {
+		if (!isSuccess || !data || !selectedWalletCurrency) return;
+		// Convert locked balance from USDT to selected wallet currency
+		const rate =
+			data.exchangeRates.find((rate) => rate.pair.endsWith(selectedWalletCurrency))?.rate ??
+			0;
+		const lockedBalance =
+			data.wallets.find(
+				(wallet) =>
+					wallet.walletTypeName === WalletType.MAIN &&
+					wallet.currencySymbol === SupportedCurrency.USDT,
+			)?.lockedBalance ?? 0;
+
+		setWalletLockedBalance(lockedBalance * rate);
+	}, [data, isSuccess, selectedWalletCurrency]);
 
 	// Refetch wallet balance every 2 minutes
 	useEffect(() => {
@@ -93,7 +115,7 @@ export default function WalletBalanceCard({
 				isSuccess &&
 				data && (
 					<Card
-						className={`flex flex-col sm:flex-row gap-3 sm:items-start sm:justify-between ${padding ? padding : "p-5"}`}
+						className={`flex flex-col sm:flex-row gap-3 sm:items-start sm:justify-between ${cardStyle ? cardStyle : "p-5"}`}
 					>
 						<section className="space-y-5">
 							<section className="flex items-center space-x-2">
@@ -102,7 +124,7 @@ export default function WalletBalanceCard({
 								</h4>
 
 								<span
-									onClick={() => handleShowBalance(!showBalance)}
+									onClick={() => setShowBalance(!showBalance)}
 									className="cursor-pointer"
 								>
 									{showBalance ? <EyesIcon /> : <OpenEyesIcon />}
@@ -112,26 +134,34 @@ export default function WalletBalanceCard({
 							<section className="min-h-8 flex items-center justify-start">
 								{showBalance ? (
 									<section className="space-y-5 mb-5 sm:mb-0">
-										<section className="flex items-baseline gap-2 text">
-											<SelectBox
-												isSearchable={false}
-												options={walletTotalBalanceOptions}
-												option={walletTotalBalanceOptions[0]}
-												setOption={(opt) =>
-													setWalletTotalBalance(parseFloat(opt.value))
-												}
-												bgColor="bg-[#F1F5FF]"
-												buttonClassName="px-3 py-2"
-												fontStyles="text-base capitalize font-semibold text-textGray"
-												optionsClass="!p-1"
-											/>
-
+										<section className="flex items-center gap-3">
 											<h2
 												className={`font-bold ${totalBalanceStyle ? totalBalanceStyle : "text-xl"}`}
 											>
 												{formatCurrency(walletTotalBalance)}
 											</h2>
+
+											<SelectBox
+												isSearchable={false}
+												options={walletTotalBalanceOptions}
+												option={walletTotalBalanceOptions[0]}
+												setOption={(opt) => {
+													setWalletTotalBalance(parseFloat(opt.value));
+													setSelectedWalletCurrency(opt.displayText);
+												}}
+												bgColor="bg-[#F1F5FF]"
+												buttonClassName="px-1.5 py-2 !space-x-1"
+												fontStyles="text-xs capitalize font-medium text-textGray"
+												optionsClass="!p-1"
+											/>
 										</section>
+
+										<h4 className={`font-medium text-sm text-textGray`}>
+											Locked balance:{" "}
+											<span className="font-semibold">
+												{formatCurrency(walletLockedBalance)}
+											</span>
+										</h4>
 
 										{showMultipleWalletBalance && (
 											<section className="flex items-center">

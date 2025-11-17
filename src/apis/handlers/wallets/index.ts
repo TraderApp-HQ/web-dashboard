@@ -1,33 +1,29 @@
 import { APIClient } from "~/apis/apiClient";
-import { UsersService } from "~/apis/handlers/users";
-import { IResponse } from "../interfaces";
+import { IPaginatedResult, IPaginationQuery, IResponse } from "../interfaces";
 import { CurrencyCategory, PaymentCategory, PaymentOperation, WalletType } from "./enum";
 import {
 	ICompleteWithdrawalInput,
 	ICompleteWithdrawalResponse,
 	IFactoryPaymentProviderDepositResponse,
+	IGetWithdrawalFeesInput,
 	IInitiateDepositInput,
 	IInitiateWithdrawalInput,
 	IInitiateWithdrawalResponse,
-	IPaginatedResult,
-	IPaginationQuery,
+	IInvoiceListItem,
 	IPaymentOptions,
 	ITransactionsHistory,
 	IUserWalletResponse,
 	IWalletSupportedCurrencies,
+	IWithdrawalFees,
 } from "./interface";
+import { createServiceClient } from "../_shared/serviceClient";
 
 export class WalletsService {
 	private apiClient: APIClient;
-	private usersService: UsersService;
 
 	constructor() {
-		this.usersService = new UsersService();
-		// Remove the environment variable check since we're using proxy
-		this.apiClient = new APIClient(
-			"/api/proxy", // This will be overridden in APIClient
-			this.usersService.refreshUserAccessToken.bind(this.usersService),
-		);
+		const { apiClient } = createServiceClient();
+		this.apiClient = apiClient;
 	}
 
 	public async getWalletBalance(wallet: WalletType): Promise<IUserWalletResponse> {
@@ -99,7 +95,9 @@ export class WalletsService {
 		currentPage,
 		rowsPerPage,
 	}: IPaginationQuery): Promise<IPaginatedResult<ITransactionsHistory>> {
-		const response = await this.apiClient.get<IResponse>({
+		const response = await this.apiClient.get<
+			IResponse<IPaginatedResult<ITransactionsHistory>>
+		>({
 			url: `/transactions?page=${currentPage}&limit=${rowsPerPage}`,
 		});
 		if (response.error) {
@@ -108,7 +106,7 @@ export class WalletsService {
 
 		const { data } = response;
 
-		return data as IPaginatedResult<ITransactionsHistory>;
+		return data;
 	}
 
 	public async getWalletTransaction({
@@ -180,5 +178,37 @@ export class WalletsService {
 
 		const { data } = response;
 		return data;
+	}
+
+	public async getOutstandingUserInvoices({
+		currentPage,
+		rowsPerPage,
+	}: IPaginationQuery): Promise<IPaginatedResult<IInvoiceListItem>> {
+		const response = await this.apiClient.get<IResponse<IPaginatedResult<IInvoiceListItem>>>({
+			url: `/invoices?page=${currentPage}&limit=${rowsPerPage}&outstandingOnly=true`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch invoices");
+		}
+		const { data } = response;
+		return data;
+	}
+
+	public async getWithdrawalFees({
+		amount,
+		paymentMethodId,
+		providerId,
+		network,
+	}: IGetWithdrawalFeesInput): Promise<IWithdrawalFees> {
+		const response = await this.apiClient.get<IResponse<IWithdrawalFees>>({
+			url: `/wallets/withdrawal-fees?amount=${amount}&paymentMethodId=${paymentMethodId}&providerId=${providerId}&network=${network}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch withdrawal fees");
+		}
+
+		return response.data;
 	}
 }

@@ -106,7 +106,7 @@ const InputField: React.FC<IInputFieldProps> = ({
 				{icon && (
 					<div
 						onClick={icon.onClick}
-						className="absolute -top-1.5 -right-2 h-full flex items-center cursor-pointer"
+						className="absolute top-0 right-2 h-full flex items-center cursor-pointer"
 					>
 						{icon.name}
 					</div>

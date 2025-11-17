@@ -10,7 +10,7 @@ import {
 } from "~/apis/handlers/wallets/enum";
 import { useFetch } from "../useFetch";
 import { useCreate } from "../useCreate";
-import { IPaginationQuery } from "~/apis/handlers/wallets/interface";
+import { IPaginationQuery } from "~/apis/handlers/interfaces";
 
 export const useGetUserWalletsBalance = (walletType: WalletType) => {
 	const walletsService = new WalletsService();
@@ -186,4 +186,13 @@ export const useSendWithdrawalOtp = () => {
 	});
 
 	return { sendWithdrawalOtp: mutate, data, isPending, isSuccess, isError, error };
+};
+
+export const useGetWithdrawalFees = () => {
+	const walletsService = new WalletsService();
+	const { mutate, data, isPending, isSuccess, isError, error } = useCreate({
+		mutationFn: walletsService.getWithdrawalFees.bind(walletsService),
+	});
+
+	return { getWithdrawalFees: mutate, data, isPending, isSuccess, isError, error };
 };

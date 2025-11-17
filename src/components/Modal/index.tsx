@@ -93,7 +93,7 @@ const Modal: React.FC<ModalOptions> = ({
 				openModal ? "" : "hidden",
 			)}
 		>
-			<div ref={ref} className={clsx("w-full relative max-w-2xl p-2 md:p-4", width)}>
+			<div ref={ref} className={clsx("w-full relative p-2 md:p-4", width || "max-w-2xl")}>
 				<div className="bg-white relative rounded-xl py-8 md:px-8 px-4 shadow max-h-[72vh] flex flex-col">
 					<div
 						className={`flex items-start justify-between w-full pb-2 ${headerDivider && "border-b-2 border-[#D1D7F0]"}`}
@@ -103,7 +103,7 @@ const Modal: React.FC<ModalOptions> = ({
 								{showBackButton && backBtnIcon && backBtnIcon}
 								{title}
 							</h1>
-							<p className="text-[12px] text-[#BEBFC1]">{description}</p>
+							<p className="text-[14px] text-[#BEBFC1]">{description}</p>
 						</div>
 						<div className="cursor-pointer ml-4" onClick={close} aria-label="close">
 							<CancelIcon />

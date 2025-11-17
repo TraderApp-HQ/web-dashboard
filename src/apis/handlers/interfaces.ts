@@ -8,3 +8,21 @@ export interface IResponse<T = any> {
 	};
 	message: string;
 }
+
+export interface IPaginationQuery {
+	currentPage?: number;
+	rowsPerPage?: number;
+}
+
+export interface IPaginatedResult<T> {
+	docs: T[];
+	totalDocs: number;
+	limit: number;
+	page: number;
+	nextPage: number;
+	prevPage?: number;
+	totalPages: number;
+	pagingCounter: number;
+	hasNextPage: boolean;
+	hasPrevPage: boolean;
+}

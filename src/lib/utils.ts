@@ -43,3 +43,8 @@ export const formatCurrency = (value: number) =>
 
 export const uniqueDateFormat = (dateString: string | number | Date, includeTime: boolean = true) =>
 	format(new Date(dateString), includeTime ? "do MMM, yyyy, h:mma" : "do MMMM, yyyy");
+
+export const roundTo = (n: number, decimals = 2): number => {
+	const factor = 10 ** decimals;
+	return Math.round(n * factor) / factor;
+};

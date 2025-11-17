@@ -1,7 +1,13 @@
 import { JSXElementConstructor } from "react";
 import { WalletType } from "./enum";
 import { IconProps } from "~/components/AccountLayout/IconButton";
-import { TransactionStatus, TransactionType } from "~/config/enum";
+import {
+	Currency,
+	InvoiceType,
+	TradeSide,
+	TransactionStatus,
+	TransactionType,
+} from "~/config/enum";
 
 export interface ITotalBalanceItems {
 	label: string;
@@ -65,6 +71,7 @@ export interface ISupportedNetworks {
 	slug: string;
 	name: string;
 	precision: number;
+	fees?: { average?: string; fast?: string; slow?: string };
 }
 
 export interface IInitiateDepositInput {
@@ -85,6 +92,8 @@ export interface IInitiateWithdrawalInput {
 	amount: number;
 	amountToReceive: number;
 	destinationAddress: string;
+	networkFee: number;
+	processingFee: number;
 }
 
 export interface ICompleteWithdrawalInput {
@@ -121,24 +130,6 @@ export interface IFactoryPaymentProviderDepositResponse {
 	exchangeFeeCurrency?: string;
 }
 
-export interface IPaginationQuery {
-	currentPage?: number;
-	rowsPerPage?: number;
-}
-
-export interface IPaginatedResult<T> {
-	docs: T[];
-	totalDocs: number;
-	limit: number;
-	page: number;
-	nextPage: number;
-	prevPage?: number;
-	totalPages: number;
-	pagingCounter: number;
-	hasNextPage: boolean;
-	hasPrevPage: boolean;
-}
-
 interface IAsset {
 	name: string;
 	symbol: string;
@@ -166,3 +157,41 @@ export interface ICompleteWithdrawalResponse {
 	status: TransactionStatus;
 	externalTransactionId: string;
 }
+
+export interface IInvoiceListItem {
+	id: string;
+	userId: string;
+	amountDue: number;
+	amountPaid: number;
+	amountOutstanding: number;
+	currency: Currency;
+	tradeSide: TradeSide;
+	tradePair: string;
+	logoUrl: string;
+	invoiceType: InvoiceType;
+	createdAt: Date;
+}
+
+export interface IGetWithdrawalFeesInput {
+	amount: number;
+	paymentMethodId: string;
+	providerId: string;
+	network: string;
+}
+
+export interface IWithdrawalFeesValid {
+	networkFee: number;
+	processingFee: number;
+	netAmount: number;
+	isValid: true;
+}
+
+export interface IWithdrawalFeesInvalid {
+	networkFee: number;
+	processingFee: number;
+	netAmount: number;
+	isValid: false;
+	reason: string;
+}
+
+export type IWithdrawalFees = IWithdrawalFeesValid | IWithdrawalFeesInvalid;
