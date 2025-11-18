@@ -104,7 +104,7 @@ function OpenTrades() {
 							Open Trades ({openTradesCount})
 						</p>
 						<div className="rounded-2xl bg-[#F3F4F6]">
-							<div className="hidden md:block overflow-x-auto">
+							<div className="hidden xl:block overflow-x-auto">
 								{isSuccess && tradesTableBody && (
 									<DataTable
 										tHead={tradesTableHead}
@@ -115,7 +115,7 @@ function OpenTrades() {
 									/>
 								)}
 							</div>
-							<div className="md:hidden relative">
+							<div className="xl:hidden relative">
 								{isSuccess && <DataTableMobile data={mobileTableData} />}
 							</div>
 						</div>

@@ -115,7 +115,7 @@ export default function WalletBalanceCard({
 				isSuccess &&
 				data && (
 					<Card
-						className={`flex flex-col sm:flex-row gap-3 sm:items-start sm:justify-between ${cardStyle ? cardStyle : "p-5"}`}
+						className={`flex flex-col lg:flex-row gap-6 lg:items-start lg:justify-between ${cardStyle ? cardStyle : "p-5"}`}
 					>
 						<section className="space-y-5">
 							<section className="flex items-center space-x-2">
@@ -183,12 +183,12 @@ export default function WalletBalanceCard({
 							</section>
 						</section>
 
-						<section className="flex flex-col sm:flex-row gap-3 items-center">
+						<section className="flex flex-col sm:flex-row gap-5 items-center">
 							{supportedOperations.map((item) => (
 								<IconButton
 									key={item.label}
 									Icon={item.Icon}
-									btnClass={`px-4 gap-2 border border-buttonColor font-semibold rounded-lg w-full sm:w-32 lg:w-48 h-12 ${item.label.toLowerCase() === "deposit" ? "bg-buttonColor text-white hover:opacity-80 hover:transition-colors" : "bg-white text-buttonColor"}`}
+									btnClass={`px-4 gap-2 border border-buttonColor font-semibold rounded-lg w-full md:w-44 h-12 ${item.label.toLowerCase() === "deposit" ? "bg-buttonColor text-white hover:opacity-80 hover:transition-colors" : "bg-white text-buttonColor"}`}
 									onClick={() => router.push(item.url)}
 									disabled={false}
 								>

@@ -9,6 +9,7 @@ import { redirectTo } from "~/utils/RedirectTo";
 import { useCreate } from "../useCreate";
 import { UsersQueryId } from "~/apis/handlers/users/constants";
 import { useRouter } from "next/router";
+import useFeatureFlag from "../useFeatureFlag";
 
 interface IGetUserOnboardingData {
 	userProfile: IUserProfile;
@@ -33,6 +34,7 @@ interface IReturnUserOnboardingData {
 	showVerifyEmailOtpModal: boolean;
 	handleEmailOtpModalDisplay: (value: boolean) => void;
 	toastData: IToastData;
+	showOptionalOnboardingActions: boolean;
 }
 interface ISocialAccounts {
 	facebookUsername: string;
@@ -82,6 +84,12 @@ export const useGetUserOnboardingFlowData = ({
 		id,
 		email,
 	} = userProfile || {};
+
+	// Feature Flag to show Optional Onboarding Actions
+	const showOptionalOnboardingActions = useFeatureFlag({
+		userId: id,
+		flagName: "release-optional-onboarding-actions",
+	});
 
 	const { updateUserOnboardingStatus, isSuccess: isUpdateUserOnboardingStatusSuccess } =
 		useUpdateUserOnboardingStatus();
@@ -179,20 +187,16 @@ export const useGetUserOnboardingFlowData = ({
 			showOnboardingSteps &&
 			isEmailVerified &&
 			isFirstDepositMade &&
-			isTradingAccountConnected &&
-			isSocialAccountConnected &&
-			isOnboardingTaskDone
+			isTradingAccountConnected
 		) {
-			updateUserOnboardingStatus({ field: UserOnboardingChecklist.SHOW_ONBOARDING_STEPS });
+			handleOnboardingPanelDisplay();
 		}
 	}, [
 		showOnboardingSteps,
 		isEmailVerified,
 		isFirstDepositMade,
 		isTradingAccountConnected,
-		isSocialAccountConnected,
-		isOnboardingTaskDone,
-		updateUserOnboardingStatus,
+		handleOnboardingPanelDisplay,
 	]);
 
 	// Handle onboarding task completion
@@ -379,6 +383,7 @@ export const useGetUserOnboardingFlowData = ({
 		showVerifyEmailOtpModal,
 		handleEmailOtpModalDisplay,
 		toastData,
+		showOptionalOnboardingActions,
 	};
 };
 
