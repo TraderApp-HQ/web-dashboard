@@ -38,7 +38,7 @@ function TransactionDetails() {
 		switch (transactionData?.transactionType.toLowerCase()) {
 			case "deposit":
 				return <DepositTransactionsRecord transaction={transactionData} />;
-			case "withdraw":
+			case "withdrawal":
 				return <WithdrawalTransactionsRecord transaction={transactionData} />;
 			case "transfer":
 				return <TransferTransactionsRecord transaction={transactionData} />;
