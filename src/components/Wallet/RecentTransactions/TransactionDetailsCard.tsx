@@ -1,4 +1,4 @@
-import Image from "next/image";
+// import Image from "next/image";
 import Card from "~/components/AccountLayout/Card";
 import { renderStatus } from "~/helpers";
 import type { ITransaction } from "~/lib/types";
@@ -14,7 +14,7 @@ export default function TransactionDetailsCard({ transaction }: ITransactionDeta
 			<div className="flex flex-col gap-y-2">
 				<div className="flex justify-between w-full">
 					<div className="flex flex-col gap-y-2">
-						<div className="flex gap-2">
+						{/* <div className="flex gap-2">
 							<Image
 								src={transaction.assetLogo?.logoUrl ?? ""}
 								width={25}
@@ -22,7 +22,7 @@ export default function TransactionDetailsCard({ transaction }: ITransactionDeta
 								alt={transaction.assetLogo?.symbol ?? ""}
 							/>
 							<p>{transaction.assetLogo?.name}</p>
-						</div>
+						</div> */}
 						<div className="flex gap-2">
 							<p className="text-slate-900 text-3xl font-bold">
 								{transaction.fromAmount ?? transaction.amount}

@@ -28,9 +28,13 @@ const TransactionInfoItem: React.FC<TransactionInfoItemProps> = ({ label, value 
 
 // Component to display withdrawal transactions record
 export function WithdrawalTransactionsRecord({ transaction }: ITransactionsRecordProps) {
+	const withdrawnAmount =
+		Number(transaction.amount) +
+		Number(transaction.processingFee) +
+		Number(transaction.networkFee);
 	return (
 		<Card className="p-3.5 !bg-slate-50 mb-4">
-			<TransactionInfoItem label="Address" value={transaction.fromWalletAddress ?? ""} />
+			<TransactionInfoItem label="Address" value={transaction.toWalletAddress ?? ""} />
 			{/* <TransactionInfoItem label="Wallet" value={transaction.wallet} /> */}
 			<TransactionInfoItem label="Transaction ID" value={transaction.transactionHash ?? ""} />
 			{/* <TransactionInfoItem label="Transaction Fee" value={`$${transaction.fee}`} /> */}
@@ -38,7 +42,20 @@ export function WithdrawalTransactionsRecord({ transaction }: ITransactionsRecor
 				label="Network"
 				value={transaction.transactionNetwork?.replaceAll("_", " ") ?? ""}
 			/>
-			<TransactionInfoItem label="Withdrawn Amount" value={`${transaction.amount} USDT`} />
+
+			{/* <TransactionInfoItem label="Withdrawn Amount" value={`${transaction.amount} USDT`} /> */}
+			<TransactionInfoItem
+				label="Withdrawn Amount"
+				value={`${withdrawnAmount.toLocaleString("en-US", {
+					maximumFractionDigits: 2,
+					minimumFractionDigits: 2,
+				})} USDT`}
+			/>
+			<TransactionInfoItem label="Network Fee" value={`${transaction.networkFee} USDT`} />
+			<TransactionInfoItem
+				label="Processing Fee"
+				value={`${transaction.processingFee} USDT`}
+			/>
 		</Card>
 	);
 }
@@ -54,10 +71,8 @@ export function DepositTransactionsRecord({ transaction }: ITransactionsRecordPr
 				label="Network"
 				value={transaction.transactionNetwork?.replaceAll("_", " ") ?? ""}
 			/>
-			<TransactionInfoItem
-				label="Deposit Amount"
-				value={`${transaction.fromAmount ?? transaction.amount} USDT`}
-			/>
+			<TransactionInfoItem label="Deposit Amount" value={`${transaction.amount} USDT`} />
+			<TransactionInfoItem label="Provider Fee" value={`${transaction.providerFee} USDT`} />
 		</Card>
 	);
 }
