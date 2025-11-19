@@ -64,7 +64,7 @@ const TradingAccountCard: React.FC<ITradingAccountCardProps> = ({
 	}, []);
 
 	return (
-		<Card className="relative !p-4 !min-w-[324px]">
+		<Card className="relative !p-4 !min-w-[280px]">
 			<div className="flex justify-between w-full">
 				<div className="flex gap-x-2 items-center">
 					<Image

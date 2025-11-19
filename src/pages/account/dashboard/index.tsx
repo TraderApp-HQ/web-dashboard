@@ -93,6 +93,7 @@ const Dashbaord = () => {
 		showVerifyEmailOtpModal,
 		handleEmailOtpModalDisplay,
 		toastData,
+		showOptionalOnboardingActions,
 	} = useGetUserOnboardingFlowData({
 		userProfile: userProfile as IUserProfile,
 		onboardingTasks: onboardingTasks as IFetchOnboardingTasks,
@@ -192,7 +193,7 @@ const Dashbaord = () => {
 						title="Finish setting up your account"
 						body="Complete the following onboarding steps below to complete your account setup."
 						tiers={tasks}
-						hasOptionalTiers={true}
+						hasOptionalTiers={showOptionalOnboardingActions}
 						optionalTiersTitle="Optional Task"
 						optionalTiers={optionalTasks}
 						isLoading={isUserProfileLoading || isOnboardingTasksLoading}

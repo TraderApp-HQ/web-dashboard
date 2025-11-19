@@ -29,13 +29,15 @@ const ProfitAndLoss: React.FC<IProfitAndLossProps> = ({ price, value, type }) =>
 	}
 
 	return (
-		<div className="space-y-1 text-right md:text-center">
+		<div className="space-y-1 text-right xl:text-center">
 			<p
-				className={`font-medium text-sm ${type === ProfitAndLossStatus.PnL ? textColor : "text-gray-500"}`}
+				className={`font-medium text-sm md:font-semibold md:text-base xl:font-medium xl:text-sm ${type === ProfitAndLossStatus.PnL ? textColor : "text-gray-500"}`}
 			>
 				{price}
 			</p>
-			<p className={`${textColor} font-normal text-xs`}>
+			<p
+				className={`${textColor} font-normal text-xs md:font-medium md:text-base xl:font-normal xl:text-xs`}
+			>
 				{value}
 				{type === ProfitAndLossStatus.PnL ? "%" : " USDT"}
 			</p>

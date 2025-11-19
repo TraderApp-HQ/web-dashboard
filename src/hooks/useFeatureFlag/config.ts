@@ -17,7 +17,8 @@ export type FeatureFlag =
 	| "release-trade-history"
 	| "release-trading-rules"
 	| "release-invoices"
-	| "release-trading-account-fast-connection";
+	| "release-trading-account-fast-connection"
+	| "release-optional-onboarding-actions";
 
 export const FEATURE_FLAG_CONFIG: FeatureFlagConfig = {
 	"release-send-otp": {
@@ -39,6 +40,9 @@ export const FEATURE_FLAG_CONFIG: FeatureFlagConfig = {
 		level: TrafficType.USER,
 	},
 	"release-trading-account-fast-connection": {
+		level: TrafficType.USER,
+	},
+	"release-optional-onboarding-actions": {
 		level: TrafficType.USER,
 	},
 };

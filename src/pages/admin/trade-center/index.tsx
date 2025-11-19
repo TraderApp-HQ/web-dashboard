@@ -29,12 +29,12 @@ const TradeCenterLayout = ({ children }: IProps) => {
 
 	return (
 		<div>
-			<div className="flex mb-8 justify-between items-center">
+			<div className="flex flex-col mb-8 gap-5 md:items-start lg:flex-row lg:items-center lg:justify-between">
 				<PageTab tabs={tabs} />
 				<Button
 					onClick={handleCreateTrade}
 					labelText="Create Trade"
-					className="w-32 h-9 !p-0 text-center"
+					className="w-full md:w-32 h-12 lg:h-9 !p-0 text-center ml-auto"
 				/>
 			</div>
 
