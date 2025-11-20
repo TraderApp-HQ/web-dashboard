@@ -11,6 +11,7 @@ const DisplayTransaction: React.FC<{
 			case TransactionType.DEPOSIT:
 				return "/images/depositIcon.svg";
 			case TransactionType.WITHDRAWAL:
+			case TransactionType.ACTIVATION:
 				return "/images/withdrawalIcon.svg";
 			default:
 				return "";
