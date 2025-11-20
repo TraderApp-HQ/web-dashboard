@@ -87,6 +87,30 @@ export function TransferTransactionsRecord({ transaction }: ITransactionsRecordP
 	);
 }
 
+// Component to display activation transactions record
+export function ActivationTransactionsRecord({ transaction }: ITransactionsRecordProps) {
+	return (
+		<Card className="p-3.5 !bg-slate-50 mb-4">
+			<TransactionInfoItem label="Wallet" value={transaction.fromWallet!} />
+			<TransactionInfoItem
+				label="Transaction Source"
+				value={transaction.transactionSource!}
+			/>
+			<TransactionInfoItem
+				label="Network"
+				value={transaction.transactionNetwork?.replaceAll("_", " ") ?? ""}
+			/>
+			<TransactionInfoItem
+				label="Fee Amount"
+				value={`${transaction.amount.toLocaleString("en-US", {
+					maximumFractionDigits: 2,
+					minimumFractionDigits: 2,
+				})} USDT`}
+			/>
+		</Card>
+	);
+}
+
 // Component to display conversion transactions record
 export function ConvertTransactionsRecord({ transaction }: ITransactionsRecordProps) {
 	return (

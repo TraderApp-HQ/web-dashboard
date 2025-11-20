@@ -5,6 +5,7 @@ import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
 import TransactionDetailsCard from "~/components/Wallet/RecentTransactions/TransactionDetailsCard";
 import {
+	ActivationTransactionsRecord,
 	ConvertTransactionsRecord,
 	DepositTransactionsRecord,
 	TransferTransactionsRecord,
@@ -42,6 +43,8 @@ function TransactionDetails() {
 				return <WithdrawalTransactionsRecord transaction={transactionData} />;
 			case "transfer":
 				return <TransferTransactionsRecord transaction={transactionData} />;
+			case "activation":
+				return <ActivationTransactionsRecord transaction={transactionData} />;
 			default:
 				return transactionData ? (
 					<ConvertTransactionsRecord transaction={transactionData} />
