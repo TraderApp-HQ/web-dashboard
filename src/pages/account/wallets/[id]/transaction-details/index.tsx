@@ -57,7 +57,7 @@ function TransactionDetails() {
 			openModal={openModal}
 			width="lg:w-[807px]"
 			onClose={onClose}
-			title={`${transactionData?.transactionType.toLowerCase()} Transaction Details`}
+			title="Transaction Details"
 		>
 			{isLoading ? (
 				/////// Loading State ////////////
