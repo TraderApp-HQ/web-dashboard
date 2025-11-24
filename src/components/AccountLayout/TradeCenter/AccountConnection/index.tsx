@@ -50,7 +50,10 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 	const [tabs, setTabs] = useState<{ label: string }[]>([{ label: "Manual Connection" }]);
 	const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false);
 
-	const ipAddress = ["34.246.94.230", "54.170.191.53"];
+	const ipAddress =
+		process.env.NEXT_PUBLIC_APP_ENV !== "production"
+			? ["34.246.94.230", "54.170.191.53"]
+			: ["99.81.163.2", "34.246.9.138"];
 	const ipString = ipAddress.join(",");
 
 	const handleModalClose = () => {
