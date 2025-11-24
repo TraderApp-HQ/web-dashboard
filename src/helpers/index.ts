@@ -1,32 +1,46 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from "react";
 import { GetServerSidePropsResult } from "next";
-import StatusPill from "~/components/common/StatusPill";
-import {
-	ColourTheme,
-	HTMLElements,
-	OperationStatus,
-	TransactionStatus,
-	TransactionType,
-	UserStatus,
-} from "~/config/enum";
-import TargetPill from "~/components/common/TargetPill";
-import type { IDisplayItem, TartgetProfit } from "~/lib/types";
-import DisplayItem from "~/components/common/DisplayItem";
+import React from "react";
+import { SignalStatus } from "~/apis/handlers/assets/enums";
 import {
 	PlatformAction,
 	TaskCategory,
 	TaskStatus,
 	UserTaskStatus,
 } from "~/apis/handlers/users/enums";
-import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/types";
+import { IUserProfile } from "~/apis/handlers/users/interfaces";
 import DisplayChange from "~/components/common/DisplayChange";
-import RankDisplay from "~/components/common/RankDisplay";
+import DisplayItem from "~/components/common/DisplayItem";
 import DisplayTransaction from "~/components/common/DisplayTransaction";
+import ProfitAndLoss, { IProfitAndLossProps } from "~/components/common/ProfitAndLoss";
+import { ReferralRankType, Tier } from "~/components/common/ProgressTracker/types";
+import RankDisplay from "~/components/common/RankDisplay";
+import StatusPill from "~/components/common/StatusPill";
+import TargetPill from "~/components/common/TargetPill";
+import { InvoiceTypeValues } from "~/config/constants";
+import {
+	ColourTheme,
+	HTMLElements,
+	InvoiceType,
+	OperationStatus,
+	TradeSide,
+	TransactionStatus,
+	TransactionType,
+	UserStatus,
+	UserTradingStatus,
+} from "~/config/enum";
+import type { IDisplayItem, TartgetProfit } from "~/lib/types";
 
 export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
 }
+
+// Converts an unknown value to a finite number.
+// Returns 0 for non-finite values (NaN, null, undefined, etc.).
+export const toFiniteNumber = (v: unknown) => {
+	const n = Number(v);
+	return Number.isFinite(n) ? n : 0;
+};
 
 export function renderDisplayItem({
 	itemText,
@@ -36,6 +50,8 @@ export function renderDisplayItem({
 	isAssetItem,
 	useAvatar,
 	avatarInitials,
+	assetTradeSide,
+	assetleverage,
 }: IDisplayItem) {
 	return React.createElement(DisplayItem, {
 		itemText,
@@ -45,6 +61,8 @@ export function renderDisplayItem({
 		isAssetItem,
 		useAvatar,
 		avatarInitials,
+		assetTradeSide,
+		assetleverage,
 	});
 }
 
@@ -86,14 +104,23 @@ export function renderTransactionType(transaction: TransactionType) {
 	});
 }
 
-export function renderStatus(status: string, style?: { justify?: string }, bullet?: boolean) {
+export function renderStatus(
+	status: string,
+	style?: { justify?: string },
+	bullet?: boolean,
+	toolTipText?: string[],
+	statusTextStyle?: string,
+	isCustom?: boolean,
+) {
 	let theme: ColourTheme;
 	switch (status) {
+		case TradeSide.LONG:
 		case TransactionStatus.SUCCESS:
 		case TaskCategory.REFERRAL:
 		case UserTaskStatus.DONE:
 		case TaskStatus.STARTED:
 		case OperationStatus.ACTIVE:
+		case SignalStatus.ACTIVE:
 		case OperationStatus.COMPLETED: {
 			theme = ColourTheme.SUCCESS;
 			break;
@@ -101,16 +128,23 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 		case TransactionStatus.PENDING:
 		case UserTaskStatus.PENDING:
 		case TaskStatus.NOT_STARTED:
-		case OperationStatus.PAUSED:
+		case SignalStatus.PENDING:
 		case OperationStatus.PROCESSING: {
 			theme = ColourTheme.WARNING;
 			break;
 		}
+		case OperationStatus.PAUSED:
+		case SignalStatus.PAUSED: {
+			theme = ColourTheme.PAUSED;
+			break;
+		}
+		case SignalStatus.INACTIVE:
 		case TaskStatus.COMPLETED:
 		case UserTaskStatus.IN_REVIEW: {
 			theme = ColourTheme.REVIEW;
 			break;
 		}
+		case TradeSide.SHORT:
 		case TransactionStatus.FAILED:
 		case OperationStatus.FAILED: {
 			theme = ColourTheme.DANGER;
@@ -129,10 +163,28 @@ export function renderStatus(status: string, style?: { justify?: string }, bulle
 			theme = ColourTheme.TERTIARY2;
 			break;
 		}
+		case InvoiceTypeValues[InvoiceType.PROFIT_SHARE]:
+			theme = ColourTheme.INVOICE_PROFIT;
+			break;
+		case InvoiceTypeValues[InvoiceType.TRADING_FEE]:
+			theme = ColourTheme.INVOICE_BILLED;
+			break;
 		default:
 			theme = ColourTheme.PRIMARY;
 	}
-	return React.createElement(StatusPill, { status, theme, style, bullet });
+	return React.createElement(StatusPill, {
+		status,
+		theme,
+		style,
+		bullet,
+		toolTipText,
+		statusTextStyle,
+		isCustom,
+	});
+}
+
+export function renderPandL({ price, value, type }: IProfitAndLossProps) {
+	return React.createElement(ProfitAndLoss, { price, value, type });
 }
 
 export function renderRank(rank: ReferralRankType | null) {
@@ -169,8 +221,53 @@ export const renderActionStatement = (action: PlatformAction | TaskCategory) => 
 	}
 };
 
-export const isTierCompleted = (tier: Tier): boolean => {
-	return tier.milestones.length
-		? tier.milestones.every((milestone) => milestone.completed)
-		: !!tier.completed;
+export const isTierCompleted = (tier: Tier): boolean => tier.completed ?? false;
+
+export const getUserStatusToolTipText = (user: IUserProfile): string[] => {
+	const statusToolTipTextArray: string[] = [];
+
+	if (user.tradingStatus === UserTradingStatus.INACTIVE) {
+		if (!user.isEmailVerified) {
+			statusToolTipTextArray.push("Email not verified.");
+		}
+		if (!user.isFirstDepositMade) {
+			statusToolTipTextArray.push("First Deposit not made.");
+		}
+		if (!user.isTradingAccountConnected) {
+			statusToolTipTextArray.push("Trading account not connected.");
+		}
+		if (!user.isPersonalATCFunded) {
+			statusToolTipTextArray.push("Trading account not funded/below minimum balance.");
+		}
+	}
+
+	return statusToolTipTextArray;
+};
+
+export const getSignalPriceInputValidationMessage = ({
+	tradeSide,
+	entryPrice,
+	comparePrice,
+	boundary,
+}: {
+	tradeSide: TradeSide;
+	entryPrice: number;
+	comparePrice: number;
+	boundary: "up" | "low";
+}) => {
+	let message = "";
+
+	if (boundary === "up") {
+		if (tradeSide === TradeSide.LONG && comparePrice < entryPrice)
+			message = "Price must be above entry price";
+		if (tradeSide === TradeSide.SHORT && comparePrice > entryPrice)
+			message = "Price must be below entry price";
+	} else if (boundary === "low") {
+		if (tradeSide === TradeSide.LONG && comparePrice > entryPrice)
+			message = "Price must be below entry price";
+		if (tradeSide === TradeSide.SHORT && comparePrice < entryPrice)
+			message = "Price must be above entry price";
+	}
+
+	return message;
 };

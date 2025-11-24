@@ -2,11 +2,14 @@ export enum ColourTheme {
 	SUCCESS = "SUCCESS",
 	DANGER = "DANGER",
 	WARNING = "WARNING",
+	PAUSED = "PAUSED",
 	PRIMARY = "PRIMARY",
 	SECONDARY = "SECONDARY",
 	REVIEW = "REVIEW",
 	TERTIARY = "TERTIARY",
 	TERTIARY2 = "TERTIARY2",
+	INVOICE_PROFIT = "INVOICE_PROFIT",
+	INVOICE_BILLED = "INVOICE_BILLED",
 }
 
 export enum OperationStatus {
@@ -31,6 +34,11 @@ export enum HTMLElements {
 }
 
 export enum UserStatus {
+	ACTIVE = "ACTIVE",
+	INACTIVE = "INACTIVE",
+}
+
+export enum UserTradingStatus {
 	ACTIVE = "ACTIVE",
 	INACTIVE = "INACTIVE",
 }
@@ -78,4 +86,16 @@ export enum TransactionType {
 	WITHDRAWAL = "WITHDRAWAL",
 	TRANSFER = "TRANSFER",
 	CONVERT = "CONVERT",
+	ACTIVATION = "ACTIVATION",
+}
+
+export enum InvoiceStatus {
+	PENDING = "PENDING",
+	PAID = "PAID",
+	FAILED = "FAILED",
+}
+
+export enum InvoiceType {
+	TRADING_FEE = "TRADING_FEE",
+	PROFIT_SHARE = "PROFIT_SHARE",
 }

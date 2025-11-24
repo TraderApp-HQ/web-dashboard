@@ -3,15 +3,15 @@ import type { IResponse } from "~/apis/handlers/interfaces";
 import { UsersService } from "~/apis/handlers/users";
 import type {
 	ICreateSignalInput,
-	IExchange,
 	IFetchTradingPlatform,
 	IFetchSignals,
 	IGetAssetsInput,
-	IGetExchangesInput,
 	ISignal,
 	ISignalAsset,
 	ISignalUpdateInput,
-	ISupportedExchangeInput,
+	IGetTradingPlatformsInput,
+	ISupportedTradingPlatformsInput,
+	ITradingPlatform,
 } from "./interfaces";
 // import { SignalStatus } from "./enums";
 
@@ -21,10 +21,9 @@ export class AssetsService {
 
 	constructor() {
 		this.usersService = new UsersService();
-		if (!process.env.NEXT_PUBLIC_ASSETS_SERVICE_API_URL)
-			throw Error("Assets service backend url not found");
+		// Remove the environment variable check since we're using proxy
 		this.apiClient = new APIClient(
-			process.env.NEXT_PUBLIC_ASSETS_SERVICE_API_URL,
+			"/api/proxy", // This will be overridden in APIClient
 			this.usersService.refreshUserAccessToken.bind(this.usersService),
 		);
 	}
@@ -69,7 +68,6 @@ export class AssetsService {
 	public async getAllSignals(): Promise<IFetchSignals> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/signals`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -83,11 +81,23 @@ export class AssetsService {
 	public async getActiveSignals(): Promise<IFetchSignals> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/signals/active`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch signal records");
+		}
+
+		const { data } = response;
+		return data as IFetchSignals;
+	}
+
+	public async getPendingSignals(): Promise<IFetchSignals> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/signals/pending`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch pending signal records");
 		}
 
 		const { data } = response;
@@ -97,7 +107,6 @@ export class AssetsService {
 	public async getSignalsHistory(): Promise<IFetchSignals> {
 		const response = await this.apiClient.get<IResponse>({
 			url: `/signals/history`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -108,13 +117,32 @@ export class AssetsService {
 		return data as IFetchSignals;
 	}
 
+	public async getAssetCurrentPrice({
+		asset,
+		quote,
+	}: {
+		asset: string;
+		quote: string;
+	}): Promise<{ price: number }> {
+		const response = await this.apiClient.get<IResponse>({
+			url: `/signals/asset-current-price?asset=${asset}&quote=${quote}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch signal current price.");
+		}
+
+		const { data } = response;
+		return data as { price: number };
+	}
+
 	//Exchanges
 	public async getAllTradingPlatforms({
 		page,
 		rowsPerPage,
 		orderBy,
 		status,
-	}: IGetExchangesInput): Promise<IFetchTradingPlatform[]> {
+	}: IGetTradingPlatformsInput): Promise<IFetchTradingPlatform[]> {
 		// Construct query parameters
 		const queryParams = new URLSearchParams();
 
@@ -137,7 +165,6 @@ export class AssetsService {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
 			url: `/exchanges?${queryParams.toString()}`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -159,7 +186,6 @@ export class AssetsService {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
 			url: `/coins?category=${category}&page=${page}&rowsPerPage=${rowsPerPage}&orderBy=${orderBy}&sortBy=${sortBy}`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -167,7 +193,7 @@ export class AssetsService {
 		}
 
 		const { data } = response;
-		return data.coins as ISignalAsset[];
+		return data.assets as ISignalAsset[];
 	}
 
 	//Currencies
@@ -175,7 +201,6 @@ export class AssetsService {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
 			url: `/currencies`,
-			options: { credentials: "include" },
 		});
 
 		if (response.error) {
@@ -186,14 +211,13 @@ export class AssetsService {
 		return data as ISignalAsset[];
 	}
 
-	public async getSupportedExchanges({
-		coinId,
-		currencyId,
-	}: ISupportedExchangeInput): Promise<IExchange[]> {
+	public async getSupportedTradingPlatforms({
+		baseAssetId,
+		quoteCurrencyId,
+	}: ISupportedTradingPlatformsInput): Promise<ITradingPlatform[]> {
 		// Fetch data from API
 		const response = await this.apiClient.get<IResponse>({
-			url: `exchanges/supported/exchanges?coinId=${coinId}&currencyId=${currencyId}`,
-			options: { credentials: "include" },
+			url: `/exchanges/supported-trading-platforms?baseAssetId=${baseAssetId}&quoteCurrencyId=${quoteCurrencyId}`,
 		});
 
 		if (response.error) {
@@ -201,7 +225,7 @@ export class AssetsService {
 		}
 
 		const { data } = response;
-		return data as IExchange[];
+		return data as ITradingPlatform[];
 	}
 }
 

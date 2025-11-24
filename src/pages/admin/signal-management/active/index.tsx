@@ -25,6 +25,7 @@ import { useCreate } from "~/hooks/useCreate";
 import signalsData from "~/pages/account/signals/data.json";
 import { AdminNestedSignalsLayout } from "..";
 import PerformanceSummaryCardLoader from "~/components/Loaders/PerformanceSummaryCardLoader";
+import ComponentError from "~/components/Error/ComponentError";
 
 function ActiveSignals() {
 	const signalsService = new AssetsService();
@@ -116,18 +117,35 @@ function ActiveSignals() {
 		console.log("searchterm::::::::::::::::::", searchterm);
 	};
 
+	//  Paginaion configurations
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+	const totalRecord = activeSignals.length; // Example total rows
+	const totalPages = Math.ceil(totalRecord / rowsPerPage);
+
+	useEffect(() => {
+		// Reset to the first page when rowsPerPage changes
+		setCurrentPage(1);
+	}, [rowsPerPage]);
+
 	if (isPending) {
 		return <div>updating signals status.....</div>;
 	}
 
 	return (
 		<>
-			<ActiveSignalCard
-				summary={performanceSummary}
-				isLoading={isLoading}
-				isSuccess={isSuccess}
-				isError={isFetchError}
-			/>
+			{activeSignals.filter(
+				(signal) =>
+					signal.status === SignalStatus.ACTIVE ||
+					(signal.status === SignalStatus.PAUSED && signal.isSignalTriggered),
+			).length >= 2 && (
+				<ActiveSignalCard
+					summary={performanceSummary}
+					isLoading={isLoading}
+					isSuccess={isSuccess}
+					isError={isFetchError}
+				/>
+			)}
 			<div className={clsx("flex justify-between", activeSignals.length === 0 ? "mt-0" : "")}>
 				<SearchForm
 					onChange={(e) => setSearchTerm(e.target.value)}
@@ -196,26 +214,48 @@ function ActiveSignals() {
 				</DropdownMenu>
 			</div>
 
-			{!isLoading && activeSignals.length === 0 ? (
+			{isLoading ? (
+				<>
+					<div className="hidden md:block">
+						<TableLoader />
+					</div>
+					<div className="md:hidden">
+						<MobileTableLoader />
+					</div>
+				</>
+			) : !isLoading && isError ? (
+				<section className="pb-3 rounded-2xl">
+					<ComponentError />
+				</section>
+			) : !isLoading && activeSignals.length === 0 ? (
 				<SignalsEmptyState />
 			) : (
-				<div className="pb-8 rounded-2xl">
-					<h3 className="font-bold text-base text-[#08123B]">
-						All Active Signal ({activeSignals.length})
-					</h3>
-					<div className="mt-2 mb-8">
-						<div className="hidden md:block p-10 bg-white rounded-2xl relative overflow-x-auto">
-							{isLoading && <TableLoader />}
-							{isSuccess && signalsTableBody && (
-								<DataTable tHead={signalsTableHead} tBody={signalsTableBody} />
-							)}
-						</div>
-						<div className="md:hidden relative">
-							{isLoading && <MobileTableLoader />}
-							{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
-						</div>
+				<div className="mt-2 mb-8 rounded-2xl bg-[#F3F4F6]">
+					<div className="hidden md:block overflow-x-auto">
+						{isSuccess && signalsTableBody && (
+							<DataTable
+								tHead={signalsTableHead}
+								tBody={signalsTableBody}
+								tableStyles="bg-white px-10"
+								tableHeadStyles="bg-[#F3F4F6]"
+								tableHeadItemStyles="text-center"
+								showPagination={true}
+								paginationProps={{
+									currentPage,
+									totalPages,
+									rowsPerPage,
+									totalRecord,
+									setRowsPerPage,
+									onNext: () => setCurrentPage((prev) => prev + 1),
+									onPrev: () => setCurrentPage((prev) => prev - 1),
+								}}
+								paginationStyles="p-4"
+							/>
+						)}
 					</div>
-					<div className="border w-[30%] ml-auto">pagination component goes here</div>
+					<div className="md:hidden relative">
+						{isSuccess && <DataTableMobile data={signalsMobileTableBody} />}
+					</div>
 				</div>
 			)}
 

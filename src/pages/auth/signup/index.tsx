@@ -197,35 +197,39 @@ const Signup = () => {
 
 	return (
 		<>
-			<section className="h-full md:px-[20px] items-center flex justify-center max-[768px]:pt-[0px]">
+			<section className="pt-[200px] pb-[100px] min-h-svh md:px-[20px] items-center flex justify-center">
 				<div className="max-w-[419px] w-full">
-					<header className="text-center mb-[40px]">
-						<p
-							className="text-[32px] text-[#102477] font-extrabold"
-							data-testid="heading"
-						>
+					<header className="mb-[20px]">
+						<p className="text-xl text-slate-950 font-bold" data-testid="heading">
 							Let's get started
 						</p>
+						<span className="text-sm text-gray-500">
+							Please enter your details to get started
+						</span>
 					</header>
 					<form className="space-y-[16px]">
 						{/* first name */}
 						<div className="flex flex-col gap-y-[8px]">
 							<InputField
 								type={"text"}
-								placeholder="Enter your First name"
+								placeholder="Enter your first name"
 								labelText={"First Name"}
 								onChange={handleFirstNameChange}
 								value={firstName}
+								className="text-sm"
+								labelClassName="text-slate-900 text-sm"
 							/>
 						</div>
 						{/* last name */}
 						<div className="flex flex-col gap-y-[8px]">
 							<InputField
 								type={"text"}
-								placeholder="Enter your Last name"
+								placeholder="Enter your last name"
 								labelText={"Last Name"}
 								onChange={handleLastNameChange}
 								value={lastName}
+								className="text-sm"
+								labelClassName="text-slate-900"
 							/>
 						</div>
 						{/* email address */}
@@ -237,6 +241,8 @@ const Signup = () => {
 								type={"text"}
 								placeholder={"Enter your email address"}
 								labelText={"Email address"}
+								className="text-sm"
+								labelClassName="text-slate-900"
 							/>
 						</div>
 						{/* country */}
@@ -247,6 +253,7 @@ const Signup = () => {
 								options={countryOptions}
 								placeholder={isCountryLoading ? "Loading..." : "Select country"}
 								setOption={handleCountryChange}
+								placeholderClassName="text-gray-400 text-sm"
 							/>
 						</div>
 						{/* referral code */}
@@ -257,6 +264,8 @@ const Signup = () => {
 								labelText={"Referral Code"}
 								onChange={handleReferralCodeChange}
 								value={referralCode}
+								className="text-sm"
+								labelClassName="text-slate-900"
 							/>
 						</div>
 						{/* password */}
@@ -267,6 +276,8 @@ const Signup = () => {
 								placeholder="-------------"
 								labelText={"Password"}
 								value={password}
+								className="text-sm"
+								labelClassName="text-slate-900"
 							/>
 						</div>
 						{/* password hints */}
@@ -303,7 +314,7 @@ const Signup = () => {
 						<div className="py-[16px] space-y-[16px]">
 							<button
 								type="button"
-								className="transition-opacity duration-300 bg-[#1836B2] rounded-md px-[10px] py-4 font-semibold w-full text-white disabled:opacity-60"
+								className="transition-opacity duration-300 bg-[#1836B2] rounded-2xl px-[10px] py-4 font-semibold w-full text-white disabled:opacity-60"
 								onClick={handleSignUp}
 								disabled={!validCredentials || isPending}
 							>
@@ -317,7 +328,7 @@ const Signup = () => {
 										router.push(LAYOUT_ROUTES.auth + ROUTES.login);
 									}}
 								>
-									Sign in
+									Log in
 								</strong>
 							</div>
 						</div>

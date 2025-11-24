@@ -1,4 +1,5 @@
 import { Candlestick, SignalRisk, SignalStatus } from "~/apis/handlers/assets/enums";
+import { TradeSide } from "~/config/enum";
 
 export const signalData = [
 	{
@@ -25,31 +26,34 @@ export const signalData = [
 		candlestick: Candlestick.oneHour,
 		risk: SignalRisk.low,
 		isSignalTradable: true,
+		isSignalTriggered: false,
 		chartUrl:
 			"https://aws-s3-dev-assets-service.s3.eu-west-1.amazonaws.com/charts/f9b98a21-d47a-45e2-9c19-6c9ab48c1c0a.png",
 		status: SignalStatus.INACTIVE,
 		createdAt: "2024-08-13T14:44:05.376Z",
 		endedAt: "2024-08-13T14:44:05.376Z",
 		maxGain: 0,
-		asset: {
+		baseAsset: {
 			id: "52",
 			name: "XRP",
 			symbol: "XRP",
 			logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png",
 		},
-		baseCurrency: {
+		quoteCurrency: {
 			id: "52",
 			name: "XRP",
 			symbol: "XRP",
 			logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png",
 		},
-		supportedExchanges: [
+		supportedTradingPlatforms: [
 			{
 				_id: "270",
 				name: "Binance",
 				logo: "https://s2.coinmarketcap.com/static/img/exchanges/64x64/270.png",
 			},
 		],
+		leverage: 15,
+		tradeSide: TradeSide.SHORT,
 	},
 	{
 		id: "66bb7135e59f0544faca48fb",
@@ -75,30 +79,33 @@ export const signalData = [
 		candlestick: Candlestick.oneHour,
 		risk: SignalRisk.low,
 		isSignalTradable: true,
+		isSignalTriggered: false,
 		chartUrl:
 			"https://aws-s3-dev-assets-service.s3.eu-west-1.amazonaws.com/charts/f9b98a21-d47a-45e2-9c19-6c9ab48c1c0a.png",
 		status: SignalStatus.INACTIVE,
 		createdAt: "2024-08-13T14:44:05.376Z",
 		endedAt: "2024-08-13T14:44:05.376Z",
 		maxGain: 0,
-		asset: {
+		baseAsset: {
 			id: "52",
 			name: "BTC",
 			symbol: "BTC",
 			logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png",
 		},
-		baseCurrency: {
+		quoteCurrency: {
 			id: "52",
 			name: "BTC",
 			symbol: "BTC",
 			logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/52.png",
 		},
-		supportedExchanges: [
+		supportedTradingPlatforms: [
 			{
 				_id: "270",
 				name: "Binance",
 				logo: "https://s2.coinmarketcap.com/static/img/exchanges/64x64/270.png",
 			},
 		],
+		leverage: 10,
+		tradeSide: TradeSide.SHORT,
 	},
 ];

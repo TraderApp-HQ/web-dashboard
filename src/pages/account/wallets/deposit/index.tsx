@@ -15,7 +15,6 @@ import {
 	ISupportedNetworks,
 	IWalletSupportedCurrencies,
 } from "~/apis/handlers/wallets/interface";
-import AccountLayout from "~/components/AccountLayout/Layout";
 import ComponentError from "~/components/Error/ComponentError";
 import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
@@ -30,6 +29,7 @@ import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import useUserProfileData from "~/hooks/useUserProfileData";
 import useWalletTransactionCountDownTimer from "~/hooks/useWalletTransactionCountDownTimer";
 import { useInitiateDeposit, useWalletDepositOptions } from "~/hooks/useWallets";
+import { NestedWalletLayout } from "..";
 
 const Deposit = () => {
 	const router = useRouter();
@@ -221,79 +221,83 @@ const Deposit = () => {
 					) : !isLoading && isError ? (
 						<ComponentError errorMessage={error?.message} />
 					) : (
-						<section className="space-y-5 px-1">
-							<SelectBox
-								labelText="Currency"
-								placeholder="Select a currency"
-								isSearchable={false}
-								options={(supportedCurrencies ?? [])?.map((currency) => ({
-									displayText: currency.symbol,
-									value: currency.id,
-									imgUrl: currency.logoUrl,
-								}))}
-								option={{
-									displayText: selectedCurrency?.symbol || "",
-									value: selectedCurrency?.id || "",
-									imgUrl: selectedCurrency?.logoUrl || "",
-								}}
-								setOption={handleSelectCurrency}
-							/>
-							<SelectBox
-								labelText="Payment Options"
-								placeholder="Select a payment option"
-								isSearchable={false}
-								options={(paymentOptions ?? [])?.map((option) => ({
-									displayText: option.symbol,
-									value: option.paymentMethodId,
-									imgUrl: option.logoUrl,
-								}))}
-								option={{
-									displayText: selectedPaymentOption?.symbol || "",
-									value: selectedPaymentOption?.paymentMethodId || "",
-									imgUrl: selectedPaymentOption?.logoUrl || "",
-								}}
-								setOption={handleSelectPaymentOption}
-							/>
-							<SelectBox
-								labelText="Network"
-								placeholder="Select network"
-								isSearchable={false}
-								options={(selectedPaymentOption?.supportNetworks ?? [])?.map(
-									(network) => ({
-										displayText: network.name,
-										value: network.name,
-									}),
-								)}
-								option={{
-									displayText: selectedNetwork?.name ?? "Select network",
-									value: selectedNetwork?.name ?? "",
-								}}
-								setOption={handleSelectNetwork}
-								fontStyles={`${!selectedNetwork?.name && "text-textGray"}`}
-							/>
+						isFetchSuccess &&
+						selectedCurrency &&
+						selectedPaymentOption && (
+							<section className="space-y-5 px-1">
+								<SelectBox
+									labelText="Currency"
+									placeholder="Select a currency"
+									isSearchable={false}
+									options={(supportedCurrencies ?? [])?.map((currency) => ({
+										displayText: currency.symbol,
+										value: currency.id,
+										imgUrl: currency.logoUrl,
+									}))}
+									option={{
+										displayText: selectedCurrency?.symbol || "",
+										value: selectedCurrency?.id || "",
+										imgUrl: selectedCurrency?.logoUrl || "",
+									}}
+									setOption={handleSelectCurrency}
+								/>
+								<SelectBox
+									labelText="Payment Options"
+									placeholder="Select a payment option"
+									isSearchable={false}
+									options={(paymentOptions ?? [])?.map((option) => ({
+										displayText: option.symbol,
+										value: option.paymentMethodId,
+										imgUrl: option.logoUrl,
+									}))}
+									option={{
+										displayText: selectedPaymentOption?.symbol || "",
+										value: selectedPaymentOption?.paymentMethodId || "",
+										imgUrl: selectedPaymentOption?.logoUrl || "",
+									}}
+									setOption={handleSelectPaymentOption}
+								/>
+								<SelectBox
+									labelText="Network"
+									placeholder="Select network"
+									isSearchable={false}
+									options={(selectedPaymentOption?.supportNetworks ?? [])?.map(
+										(network) => ({
+											displayText: network.name,
+											value: network.name,
+										}),
+									)}
+									option={{
+										displayText: selectedNetwork?.name ?? "Select network",
+										value: selectedNetwork?.name ?? "",
+									}}
+									setOption={handleSelectNetwork}
+									fontStyles={`${!selectedNetwork?.name && "text-textGray"}`}
+								/>
 
-							{selectedCurrency &&
-								selectedPaymentOption &&
-								selectedCurrency?.symbol !== selectedPaymentOption?.symbol && (
-									<InputField
-										type="number"
-										labelText="Amount in USDT"
-										props={{ name: "amount" }}
-										placeholder="Enter Amount you wish to deposit in USDT"
-										className="no-spin-buttons"
-										value={amount !== undefined ? amount.toString() : ""}
-										onChange={handleChangeAmount}
-									/>
-								)}
+								{selectedCurrency &&
+									selectedPaymentOption &&
+									selectedCurrency?.symbol !== selectedPaymentOption?.symbol && (
+										<InputField
+											type="number"
+											labelText="Amount in USDT"
+											props={{ name: "amount" }}
+											placeholder="Enter Amount you wish to deposit in USDT"
+											className="no-spin-buttons"
+											value={amount !== undefined ? amount.toString() : ""}
+											onChange={handleChangeAmount}
+										/>
+									)}
 
-							<Button
-								labelText="Continue"
-								className="w-full tracking-widest"
-								isProcessing={isPending}
-								onClick={handleDepositTransaction}
-								disabled={disableButton || isPending}
-							/>
-						</section>
+								<Button
+									labelText="Continue"
+									className="w-full tracking-widest"
+									isProcessing={isPending}
+									onClick={handleDepositTransaction}
+									disabled={disableButton || isPending}
+								/>
+							</section>
+						)
 					)}
 				</Modal>
 			)}
@@ -331,6 +335,13 @@ const Deposit = () => {
 									</p>
 								</section>
 							)}
+						</section>
+
+						<section className="bg-[#FFF6EB] rounded-md p-3 font-medium">
+							<p className="text-[#595B60] text-sm">
+								Please note that this deposit method attracts a 1% processing fee of
+								the deposited amount.
+							</p>
 						</section>
 
 						<section className="rounded-xl bg-[#f8f9fc] px-4 py-2">
@@ -385,7 +396,9 @@ const Deposit = () => {
 							</section>
 
 							<section className="space-y-2 py-4">
-								<p className="text-[#808080] font-normal text-xs">Deposit ddress</p>
+								<p className="text-[#808080] font-normal text-xs">
+									Deposit Address
+								</p>
 								<section className="flex items-start justify-between">
 									<p className="break-all text-textColor text-sm sm:text-base font-semibold">
 										{depositWalletInfo?.walletAddress}
@@ -531,5 +544,5 @@ const Deposit = () => {
 	);
 };
 
-Deposit.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
+Deposit.getLayout = (page: React.ReactElement) => <NestedWalletLayout>{page}</NestedWalletLayout>;
 export default Deposit;

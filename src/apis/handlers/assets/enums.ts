@@ -1,4 +1,7 @@
 export enum Candlestick {
+	fiveMin = "5m",
+	fifteenMin = "15m",
+	thirtyMin = "30m",
 	oneHour = "1HR",
 	twoHours = "2HRS",
 	fourHours = "4HRS",
@@ -16,6 +19,7 @@ export enum SignalRisk {
 }
 
 export enum SignalStatus {
+	PENDING = "PENDING",
 	ACTIVE = "ACTIVE",
 	PAUSED = "PAUSED",
 	INACTIVE = "INACTIVE",
@@ -26,7 +30,7 @@ export enum TradeStatus {
 	inactive = "INACTIVE",
 }
 
-export enum Exchange {
+export enum TradingPlatform {
 	binance = "binance",
 	kucoin = "kucoin",
 }

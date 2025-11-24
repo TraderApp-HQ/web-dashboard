@@ -10,6 +10,7 @@ import { useConnectManualTradingAccount } from "~/hooks/useConnectManualTradingA
 import { ConnectionType, TradingPlatform } from "~/apis/handlers/trading-engine/enums";
 import BackBtnIcon from "~/components/icons/BackBtnIcon";
 import { ITradingAccountInfo } from "~/apis/handlers/trading-engine/interfaces";
+import useFeatureFlag from "~/hooks/useFeatureFlag";
 
 interface IAccountConnection {
 	userId: string;
@@ -49,8 +50,8 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 	const [tabs, setTabs] = useState<{ label: string }[]>([{ label: "Manual Connection" }]);
 	const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(false);
 
-	const ipAddress = ["34.246.94.230"];
-	const ipString = ipAddress.join(" ");
+	const ipAddress = ["34.246.94.230", "54.170.191.53"];
+	const ipString = ipAddress.join(",");
 
 	const handleModalClose = () => {
 		router.push("/account/trade-center/trading-accounts");
@@ -91,16 +92,25 @@ const AccountConnection: React.FC<IAccountConnection> = ({
 		}
 	}, [isAddSuccess, addData]);
 
+	// Feature flag to show account fast connection option
+	const isFastConnectionEnabled = useFeatureFlag({
+		userId,
+		flagName: "release-trading-account-fast-connection",
+	});
+
 	useEffect(() => {
 		const isFastConnectionSupported = connectionTypes?.includes(ConnectionType.FAST);
-		setIsFastConnectionSupported(isFastConnectionSupported);
 
-		if (isFastConnectionSupported) {
+		const isFastConnectionAllowed = isFastConnectionEnabled && isFastConnectionSupported;
+
+		setIsFastConnectionSupported(isFastConnectionAllowed);
+
+		if (isFastConnectionAllowed) {
 			setTabs([{ label: "Manual Connection" }, { label: "Fast Connection" }]);
 		} else {
 			setTabs([{ label: "Manual Connection" }]);
 		}
-	}, [connectionTypes]);
+	}, [connectionTypes, isFastConnectionEnabled]);
 
 	useEffect(() => {
 		if (isPassphraseRequired) {

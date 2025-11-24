@@ -2,10 +2,15 @@ import { useQueries } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { WalletsService } from "~/apis/handlers/wallets";
 import { WalletsQueryId } from "~/apis/handlers/wallets/constants";
-import { PaymentCategory, PaymentOperation, WalletType } from "~/apis/handlers/wallets/enum";
+import {
+	CurrencyCategory,
+	PaymentCategory,
+	PaymentOperation,
+	WalletType,
+} from "~/apis/handlers/wallets/enum";
 import { useFetch } from "../useFetch";
 import { useCreate } from "../useCreate";
-import { IPaginationQuery } from "~/apis/handlers/wallets/interface";
+import { IPaginationQuery } from "~/apis/handlers/interfaces";
 
 export const useGetUserWalletsBalance = (walletType: WalletType) => {
 	const walletsService = new WalletsService();
@@ -13,7 +18,7 @@ export const useGetUserWalletsBalance = (walletType: WalletType) => {
 		() => walletsService.getWalletBalance(walletType),
 		[walletsService],
 	);
-	const { data, error, isLoading, isSuccess, isError } = useFetch({
+	const { data, error, isLoading, isSuccess, isError, refetch } = useFetch({
 		queryKey: [WalletsQueryId.walletsBalance, walletType],
 		queryFn: walletBalance,
 	});
@@ -24,6 +29,7 @@ export const useGetUserWalletsBalance = (walletType: WalletType) => {
 		isLoading,
 		isSuccess,
 		isError,
+		refetch,
 	};
 };
 
@@ -41,7 +47,10 @@ export const useWalletDepositOptions = ({
 		queries: [
 			{
 				queryKey: [WalletsQueryId.supportedCurrencies],
-				queryFn: () => walletsService.getSupportedCurrencies(),
+				queryFn: () =>
+					walletsService.getSupportedCurrencies({
+						category: category as unknown as CurrencyCategory,
+					}),
 			},
 			{
 				queryKey: [WalletsQueryId.paymentOptions, category, operation],
@@ -96,7 +105,7 @@ export const useGetUserWalletsRecentTransactions = ({
 		() => walletsService.getWalletRecentTransactions({ currentPage, rowsPerPage }),
 		[walletsService, currentPage, rowsPerPage],
 	);
-	const { data, error, isLoading, isSuccess, isError } = useFetch({
+	const { data, error, isLoading, isSuccess, isError, refetch } = useFetch({
 		queryKey: [WalletsQueryId.walletTransactions, currentPage, rowsPerPage],
 		queryFn: recentTransactions,
 	});
@@ -107,6 +116,7 @@ export const useGetUserWalletsRecentTransactions = ({
 		isLoading,
 		isSuccess,
 		isError,
+		refetch,
 	};
 };
 
@@ -135,4 +145,54 @@ export const useGetUserWalletsTransaction = ({
 		isSuccess,
 		isError,
 	};
+};
+
+export const useInitiateWithdrawal = () => {
+	const walletsService = new WalletsService();
+	const { mutate, data, isPending, isError, isSuccess, error } = useCreate({
+		mutationFn: walletsService.initiateWithdrawal.bind(walletsService),
+	});
+
+	return {
+		initiateWithdrawal: mutate,
+		isError,
+		data,
+		isPending,
+		isSuccess,
+		error,
+	};
+};
+
+export const useCompleteWithdrawal = () => {
+	const walletsService = new WalletsService();
+	const { mutate, data, isPending, isSuccess, isError, error } = useCreate({
+		mutationFn: walletsService.completeWithdrawal.bind(walletsService),
+	});
+
+	return {
+		completeWithdrawal: mutate,
+		isError,
+		isPending,
+		data,
+		isSuccess,
+		error,
+	};
+};
+
+export const useSendWithdrawalOtp = () => {
+	const walletsService = new WalletsService();
+	const { mutate, isPending, isSuccess, isError, error, data } = useCreate({
+		mutationFn: walletsService.sendOtp.bind(walletsService),
+	});
+
+	return { sendWithdrawalOtp: mutate, data, isPending, isSuccess, isError, error };
+};
+
+export const useGetWithdrawalFees = () => {
+	const walletsService = new WalletsService();
+	const { mutate, data, isPending, isSuccess, isError, error } = useCreate({
+		mutationFn: walletsService.getWithdrawalFees.bind(walletsService),
+	});
+
+	return { getWithdrawalFees: mutate, data, isPending, isSuccess, isError, error };
 };

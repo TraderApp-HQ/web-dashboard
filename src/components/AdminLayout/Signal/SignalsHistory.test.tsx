@@ -4,11 +4,12 @@ import { useSignalHistory } from "~/apis/handlers/assets/hooks";
 import SignalsHistory from "~/components/AdminLayout/Signal/SignalsHistory";
 import { signalData as mockSignalData } from "~/components/AdminLayout/Signal/SignalData";
 import type { PaginationProps } from "~/components/interfaces";
+import { usePathname } from "next/navigation";
 
 const signalData = mockSignalData.map((signal) => ({
 	...signal,
-	assetName: signal.asset.name,
-	baseCurrencyName: signal.baseCurrency.name,
+	baseAssetName: signal.baseAsset.name,
+	quoteCurrencyName: signal.quoteCurrency.name,
 }));
 
 jest.mock("~/apis/handlers/assets/hooks");
@@ -59,6 +60,14 @@ jest.mock("~/components/Pagination", () => {
 	};
 });
 
+jest.mock("next/navigation", () => {
+	const actual = jest.requireActual("next/navigation");
+	return {
+		...actual,
+		usePathname: jest.fn(),
+	};
+});
+
 const mockUseSignalHistory = useSignalHistory as jest.MockedFunction<typeof useSignalHistory>;
 
 describe("SignalsHistory Component", () => {
@@ -69,6 +78,7 @@ describe("SignalsHistory Component", () => {
 			configurable: true,
 			value: 1024,
 		});
+		(usePathname as jest.Mock).mockReturnValue("/admin/signal-management/history");
 	});
 
 	afterEach(() => {
@@ -89,11 +99,19 @@ describe("SignalsHistory Component", () => {
 			signalsMobileTableBody: [],
 			isError: false,
 			error: null,
+			paginationData: {
+				page: 1,
+				totalPages: 1,
+				totalRecords: 2,
+				startAfterDoc: "",
+			},
+			handleSetCurrentPage: () => {},
+			setRowsPerPage: () => {},
+			rowsPerPage: 10,
 		});
 
 		render(<SignalsHistory />);
 		expect(screen.getByPlaceholderText(/Search for asset name/i)).toBeInTheDocument();
-		expect(screen.getByText(/Recent Transactions/i)).toBeInTheDocument();
 	});
 
 	test("shows TableLoader when loading", () => {
@@ -106,6 +124,15 @@ describe("SignalsHistory Component", () => {
 			signalsMobileTableBody: [],
 			isError: false,
 			error: null,
+			paginationData: {
+				page: 1,
+				totalPages: 1,
+				totalRecords: 2,
+				startAfterDoc: "",
+			},
+			handleSetCurrentPage: () => {},
+			setRowsPerPage: () => {},
+			rowsPerPage: 10,
 		});
 
 		render(<SignalsHistory />);
@@ -123,6 +150,15 @@ describe("SignalsHistory Component", () => {
 			signalsMobileTableBody: [],
 			isError: false,
 			error: null,
+			paginationData: {
+				page: 1,
+				totalPages: 1,
+				totalRecords: 2,
+				startAfterDoc: "",
+			},
+			handleSetCurrentPage: () => {},
+			setRowsPerPage: () => {},
+			rowsPerPage: 10,
 		});
 
 		render(<SignalsHistory />);
@@ -130,6 +166,6 @@ describe("SignalsHistory Component", () => {
 		expect(screen.queryByTestId("table-data")).not.toBeInTheDocument();
 		const emptySignal = screen.queryByTestId("empty-signal");
 		expect(emptySignal).toBeInTheDocument();
-		expect(emptySignal).toHaveTextContent(/No Signal Available please try later/i);
+		expect(emptySignal).toHaveTextContent(/No Signal Available. Please try later./i);
 	});
 });

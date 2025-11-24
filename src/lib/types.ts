@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface Signal {
 	id: string;
 	asset: string;
@@ -124,6 +126,10 @@ export interface ITransaction {
 	paymentProviderName?: string;
 	createdAt: string;
 	assetLogo?: AssetLogo;
+	transactionHash?: string;
+	providerFee?: number;
+	processingFee?: number;
+	networkFee?: number;
 }
 
 export interface Wallet {
@@ -151,6 +157,8 @@ export interface IDisplayItem {
 	isAssetItem?: boolean;
 	useAvatar?: boolean;
 	avatarInitials?: string;
+	assetTradeSide?: JSX.Element | ReactNode;
+	assetleverage?: JSX.Element | ReactNode;
 }
 export type Asset = AssetItem | null;
 

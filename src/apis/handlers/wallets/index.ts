@@ -1,30 +1,29 @@
 import { APIClient } from "~/apis/apiClient";
-import { UsersService } from "~/apis/handlers/users";
-import { IResponse } from "../interfaces";
-import { PaymentCategory, PaymentOperation, WalletType } from "./enum";
+import { IPaginatedResult, IPaginationQuery, IResponse } from "../interfaces";
+import { CurrencyCategory, PaymentCategory, PaymentOperation, WalletType } from "./enum";
 import {
+	ICompleteWithdrawalInput,
+	ICompleteWithdrawalResponse,
 	IFactoryPaymentProviderDepositResponse,
+	IGetWithdrawalFeesInput,
 	IInitiateDepositInput,
-	IPaginatedResult,
-	IPaginationQuery,
+	IInitiateWithdrawalInput,
+	IInitiateWithdrawalResponse,
+	IInvoiceListItem,
 	IPaymentOptions,
 	ITransactionsHistory,
 	IUserWalletResponse,
 	IWalletSupportedCurrencies,
+	IWithdrawalFees,
 } from "./interface";
+import { createServiceClient } from "../_shared/serviceClient";
 
 export class WalletsService {
 	private apiClient: APIClient;
-	private usersService: UsersService;
 
 	constructor() {
-		this.usersService = new UsersService();
-		if (!process.env.NEXT_PUBLIC_WALLETS_SERVICE_API_URL)
-			throw Error("Wallets service backend url not found");
-		this.apiClient = new APIClient(
-			process.env.NEXT_PUBLIC_WALLETS_SERVICE_API_URL,
-			this.usersService.refreshUserAccessToken.bind(this.usersService),
-		);
+		const { apiClient } = createServiceClient();
+		this.apiClient = apiClient;
 	}
 
 	public async getWalletBalance(wallet: WalletType): Promise<IUserWalletResponse> {
@@ -40,9 +39,13 @@ export class WalletsService {
 		return data as IUserWalletResponse;
 	}
 
-	public async getSupportedCurrencies(): Promise<IWalletSupportedCurrencies[]> {
+	public async getSupportedCurrencies({
+		category,
+	}: {
+		category: CurrencyCategory;
+	}): Promise<IWalletSupportedCurrencies[]> {
 		const response = await this.apiClient.get<IResponse>({
-			url: `/wallets/supported-currencies`,
+			url: `/wallets/supported-currencies?category=${category}`,
 		});
 		if (response.error) {
 			throw new Error(response.message ?? "Failed to fetch supported currencies.");
@@ -92,7 +95,9 @@ export class WalletsService {
 		currentPage,
 		rowsPerPage,
 	}: IPaginationQuery): Promise<IPaginatedResult<ITransactionsHistory>> {
-		const response = await this.apiClient.get<IResponse>({
+		const response = await this.apiClient.get<
+			IResponse<IPaginatedResult<ITransactionsHistory>>
+		>({
 			url: `/transactions?page=${currentPage}&limit=${rowsPerPage}`,
 		});
 		if (response.error) {
@@ -101,7 +106,7 @@ export class WalletsService {
 
 		const { data } = response;
 
-		return data as IPaginatedResult<ITransactionsHistory>;
+		return data;
 	}
 
 	public async getWalletTransaction({
@@ -121,5 +126,89 @@ export class WalletsService {
 		const { data } = response;
 
 		return data as ITransactionsHistory;
+	}
+
+	public async initiateWithdrawal(
+		withdrawalData: IInitiateWithdrawalInput,
+	): Promise<IInitiateWithdrawalResponse> {
+		const response = await this.apiClient.post<IResponse<IInitiateWithdrawalResponse>>({
+			url: "/wallets/initiate-withdrawal",
+			data: withdrawalData,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to initiate withdrawal");
+		}
+
+		const { data } = response;
+		return data;
+	}
+
+	public async completeWithdrawal(
+		withdrawalData: ICompleteWithdrawalInput,
+	): Promise<ICompleteWithdrawalResponse> {
+		const response = await this.apiClient.post<IResponse<ICompleteWithdrawalResponse>>({
+			url: "/wallets/complete-withdrawal",
+			data: withdrawalData,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to complete withdrawal");
+		}
+
+		const { data } = response;
+		return data;
+	}
+
+	public async sendOtp({
+		userId,
+		withdrawalRequestId,
+	}: {
+		userId: string;
+		withdrawalRequestId: string;
+	}): Promise<IInitiateWithdrawalResponse> {
+		const response = await this.apiClient.post<IResponse<IInitiateWithdrawalResponse>>({
+			url: "/wallets/resend-withdrawal-otp",
+			data: { userId, withdrawalRequestId },
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Failed to send OTP");
+		}
+
+		const { data } = response;
+		return data;
+	}
+
+	public async getOutstandingUserInvoices({
+		currentPage,
+		rowsPerPage,
+	}: IPaginationQuery): Promise<IPaginatedResult<IInvoiceListItem>> {
+		const response = await this.apiClient.get<IResponse<IPaginatedResult<IInvoiceListItem>>>({
+			url: `/invoices?page=${currentPage}&limit=${rowsPerPage}&outstandingOnly=true`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch invoices");
+		}
+		const { data } = response;
+		return data;
+	}
+
+	public async getWithdrawalFees({
+		amount,
+		paymentMethodId,
+		providerId,
+		network,
+	}: IGetWithdrawalFeesInput): Promise<IWithdrawalFees> {
+		const response = await this.apiClient.get<IResponse<IWithdrawalFees>>({
+			url: `/wallets/withdrawal-fees?amount=${amount}&paymentMethodId=${paymentMethodId}&providerId=${providerId}&network=${network}`,
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to fetch withdrawal fees");
+		}
+
+		return response.data;
 	}
 }

@@ -1,17 +1,18 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import AccountLayout from "~/components/AccountLayout/Layout";
 import ComponentError from "~/components/Error/ComponentError";
 import TaskViewLoader from "~/components/Loaders/TaskViewLoader";
 import Modal from "~/components/Modal";
 import TransactionDetailsCard from "~/components/Wallet/RecentTransactions/TransactionDetailsCard";
 import {
+	ActivationTransactionsRecord,
 	ConvertTransactionsRecord,
 	DepositTransactionsRecord,
 	TransferTransactionsRecord,
 	WithdrawalTransactionsRecord,
 } from "~/components/Wallet/RecentTransactions/TransactionsRecord";
 import { useGetUserWalletsTransaction } from "~/hooks/useWallets";
+import { NestedWalletLayout } from "../..";
 
 function TransactionDetails() {
 	const [openModal, setOpenModal] = useState(true);
@@ -38,10 +39,12 @@ function TransactionDetails() {
 		switch (transactionData?.transactionType.toLowerCase()) {
 			case "deposit":
 				return <DepositTransactionsRecord transaction={transactionData} />;
-			case "withdraw":
+			case "withdrawal":
 				return <WithdrawalTransactionsRecord transaction={transactionData} />;
 			case "transfer":
 				return <TransferTransactionsRecord transaction={transactionData} />;
+			case "activation":
+				return <ActivationTransactionsRecord transaction={transactionData} />;
 			default:
 				return transactionData ? (
 					<ConvertTransactionsRecord transaction={transactionData} />
@@ -54,7 +57,7 @@ function TransactionDetails() {
 			openModal={openModal}
 			width="lg:w-[807px]"
 			onClose={onClose}
-			title={`${transactionData?.transactionType.toLowerCase()} Transaction Details`}
+			title="Transaction Details"
 		>
 			{isLoading ? (
 				/////// Loading State ////////////
@@ -75,5 +78,7 @@ function TransactionDetails() {
 	);
 }
 
-TransactionDetails.getLayout = (page: React.ReactElement) => <AccountLayout>{page}</AccountLayout>;
+TransactionDetails.getLayout = (page: React.ReactElement) => (
+	<NestedWalletLayout>{page}</NestedWalletLayout>
+);
 export default TransactionDetails;

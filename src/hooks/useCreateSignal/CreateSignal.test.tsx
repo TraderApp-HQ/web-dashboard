@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import useAssets from "~/hooks/useAssets";
 import { useCreateSignal } from "~/hooks/useCreateSignal";
 import useCurrencies from "~/hooks/useCurrencies";
-import useSupportedExchanges from "~/hooks/useSupportedExchanges";
+import useSupportedTradingPlatforms from "~/hooks/useSupportedTradingPlatforms";
 import CreateSignal from "~/pages/admin/signal-management/create-signal";
+import useGetAssetCurrentPrice from "~/hooks/useAssetCurrentPrice";
 // import { signalData } from "../../components/AdminLayout/Signal/SignalData";
 
 // Mocking hooks and dependencies
@@ -14,7 +15,8 @@ jest.mock("next/router", () => ({
 jest.mock("~/hooks/useCreateSignal");
 jest.mock("~/hooks/useAssets");
 jest.mock("~/hooks/useCurrencies");
-jest.mock("~/hooks/useSupportedExchanges");
+jest.mock("~/hooks/useSupportedTradingPlatforms");
+jest.mock("~/hooks/useAssetCurrentPrice");
 
 describe("CreateSignal Component", () => {
 	const mockPush = jest.fn();
@@ -46,10 +48,18 @@ describe("CreateSignal Component", () => {
 			isSuccess: true,
 			isLoading: false,
 		});
-		(useSupportedExchanges as jest.Mock).mockReturnValue({
+		(useSupportedTradingPlatforms as jest.Mock).mockReturnValue({
 			data: [{ _id: 3, name: "Binance", logo: "/logo3.png" }],
 			isSuccess: true,
 			isLoading: false,
+		});
+		(useGetAssetCurrentPrice as jest.Mock).mockReturnValue({
+			data: { price: 1234.5678 },
+			isLoading: false,
+			isSuccess: true,
+			isError: false,
+			error: null,
+			refetch: jest.fn(),
 		});
 	});
 
@@ -68,8 +78,8 @@ describe("CreateSignal Component", () => {
 		// Check that the form fields are rendered
 		expect(screen.getByText("Select Asset Pair")).toBeInTheDocument();
 		expect(screen.getByLabelText(/category/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/Quote Asset/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/Base Currency/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/Base Asset/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/Quote Currency/i)).toBeInTheDocument();
 		// expect(screen.getByLabelText(/Timeframe\/ Candles/i)).toBeInTheDocument();
 		// expect(screen.getByLabelText(/Risk Level/i)).toBeInTheDocument();
 		// expect(screen.getByLabelText(/Entry Price/i)).toBeInTheDocument();

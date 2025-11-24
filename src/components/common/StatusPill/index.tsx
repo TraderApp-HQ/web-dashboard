@@ -1,5 +1,6 @@
 import React from "react";
-import { ColourTheme } from "~/config/enum";
+import { ConnectionStatus } from "~/components/AccountLayout/TradeCenter/TradingAccountCard";
+import { ColourTheme, UserTradingStatus } from "~/config/enum";
 import { capitalizeFirstLetter } from "~/helpers";
 
 interface IOperationStatus {
@@ -9,6 +10,9 @@ interface IOperationStatus {
 		justify?: string;
 	};
 	bullet?: boolean;
+	toolTipText?: string[];
+	statusTextStyle?: string;
+	isCustom?: boolean;
 }
 
 const OperationStatus: React.FC<IOperationStatus> = ({
@@ -16,10 +20,13 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 	theme,
 	style = { justify: "justify-end sm:justify-center" },
 	bullet = true, // defaults to true to display bullet
+	toolTipText,
+	statusTextStyle = "capitalize",
+	isCustom = false,
 }) => {
-	const statusText = capitalizeFirstLetter(status);
-	let roundedIconStyles: string;
-	let statusContainerStyles: string;
+	const statusText = !isCustom ? capitalizeFirstLetter(status) : status;
+	let roundedIconStyles: string = "";
+	let statusContainerStyles: string = "";
 
 	switch (theme) {
 		case ColourTheme.SUCCESS: {
@@ -27,9 +34,15 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 			statusContainerStyles = "bg-[#EDFDF8] text-[#08875D]";
 			break;
 		}
-		case ColourTheme.WARNING: {
+		case ColourTheme.PAUSED: {
 			roundedIconStyles = "bg-[#B25E09]";
 			statusContainerStyles = "bg-[#FCE7CC] text-[#B25E09]";
+			break;
+		}
+		case ColourTheme.PRIMARY:
+		case ColourTheme.WARNING: {
+			roundedIconStyles = "bg-[#808080]";
+			statusContainerStyles = "bg-[#F7F7F7] text-[#808080]";
 			break;
 		}
 		case ColourTheme.DANGER: {
@@ -52,20 +65,39 @@ const OperationStatus: React.FC<IOperationStatus> = ({
 			statusContainerStyles = "bg-[#F2FCFF] text-[#234475]";
 			break;
 		}
+		case ColourTheme.INVOICE_PROFIT: {
+			statusContainerStyles = "bg-[#EDF0FD] text-[#312589]";
+			break;
+		}
+		case ColourTheme.INVOICE_BILLED: {
+			statusContainerStyles = "bg-[#FFF3F1] text-[#AF625A]";
+			break;
+		}
 		default: {
 			roundedIconStyles = "";
 			statusContainerStyles = "";
 		}
 	}
 
-	return (
+	return isCustom ? (
+		<span className={`${statusTextStyle} ${statusContainerStyles}`}>{statusText}</span>
+	) : (
 		<div className={`flex ${style.justify}`}>
-			<div
-				className={`flex px-3 py-1.5 font-black rounded-lg justify-center items-center gap-2 ${statusContainerStyles}`}
-			>
-				{bullet && <div className={`p-1 rounded-full ${roundedIconStyles}`}></div>}
-				<div className="capitalize">{statusText}</div>
-			</div>
+			{status === UserTradingStatus.INACTIVE ? (
+				<ConnectionStatus
+					errorMessages={toolTipText || []}
+					isConnected={false}
+					connectionText={statusText}
+					connectionHeadingText="trading status"
+				/>
+			) : (
+				<div
+					className={`flex px-3 py-1.5 font-black rounded-lg justify-center items-center gap-2 ${statusContainerStyles}`}
+				>
+					{bullet && <div className={`p-1 rounded-full ${roundedIconStyles}`}></div>}
+					<div className={`${statusTextStyle}`}>{statusText}</div>
+				</div>
+			)}
 		</div>
 	);
 };

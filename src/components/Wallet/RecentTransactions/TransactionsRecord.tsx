@@ -1,5 +1,6 @@
 import Card from "~/components/AccountLayout/Card";
 import TransferIcon from "~/components/icons/TransferIcon";
+import { capitalizeFirstLetter, toFiniteNumber } from "~/helpers";
 import type { ITransaction } from "~/lib/types";
 
 interface ITransactionsRecordProps {
@@ -15,23 +16,55 @@ interface TransactionInfoItemProps {
 const TransactionInfoItem: React.FC<TransactionInfoItemProps> = ({ label, value }) => {
 	const isAddress = label === "Address";
 	return (
-		<div className="flex gap-x-6 justify-between items-center w-full px-3.5 py-5 border-b border-gray-200 last:border-0">
-			<h4 className="text-neutral-700 text-sm font-bold">{label}</h4>
-			<p className={`text-gray-500 text-sm font-bold ${isAddress && "truncate"}`}>{value}</p>
+		<div className="flex gap-x-6 lg:gap-x-10 justify-between items-start w-full px-3.5 py-5 border-b border-gray-200 last:border-0">
+			<h4 className="text-neutral-700 text-sm font-bold text-nowrap">{label}</h4>
+			<p className={`text-gray-500 text-sm font-bold break-all ${isAddress && "truncate"}`}>
+				{value}
+			</p>
 		</div>
 	);
 };
 
 // Component to display withdrawal transactions record
 export function WithdrawalTransactionsRecord({ transaction }: ITransactionsRecordProps) {
+	const withdrawnAmount =
+		toFiniteNumber(transaction.amount) +
+		toFiniteNumber(transaction.processingFee) +
+		toFiniteNumber(transaction.networkFee);
+
 	return (
 		<Card className="p-3.5 !bg-slate-50 mb-4">
-			<TransactionInfoItem label="Address" value={transaction.fromWalletAddress ?? ""} />
+			<TransactionInfoItem
+				label="Transaction Type"
+				value={capitalizeFirstLetter(transaction.transactionType ?? "")}
+			/>
+			<TransactionInfoItem label="Address" value={transaction.toWalletAddress ?? ""} />
 			{/* <TransactionInfoItem label="Wallet" value={transaction.wallet} /> */}
-			<TransactionInfoItem label="Transaction ID" value={transaction._id ?? ""} />
+			<TransactionInfoItem label="Transaction ID" value={transaction.transactionHash ?? ""} />
 			{/* <TransactionInfoItem label="Transaction Fee" value={`$${transaction.fee}`} /> */}
-			<TransactionInfoItem label="Network" value={transaction.transactionNetwork ?? ""} />
-			<TransactionInfoItem label="Withdrawn Amount" value={`${transaction.amount} USDT`} />
+			<TransactionInfoItem
+				label="Network"
+				value={transaction.transactionNetwork?.replaceAll("_", " ") ?? ""}
+			/>
+
+			{/* <TransactionInfoItem label="Withdrawn Amount" value={`${transaction.amount} USDT`} /> */}
+			<TransactionInfoItem
+				label="Withdrawn Amount"
+				value={`${withdrawnAmount.toLocaleString("en-US", {
+					maximumFractionDigits: 2,
+					minimumFractionDigits: 2,
+				})} USDT`}
+			/>
+			{transaction.networkFee !== undefined && (
+				<TransactionInfoItem label="Network Fee" value={`${transaction.networkFee} USDT`} />
+			)}
+
+			{transaction.processingFee !== undefined && (
+				<TransactionInfoItem
+					label="Processing Fee"
+					value={`${transaction.processingFee} USDT`}
+				/>
+			)}
 		</Card>
 	);
 }
@@ -40,14 +73,24 @@ export function WithdrawalTransactionsRecord({ transaction }: ITransactionsRecor
 export function DepositTransactionsRecord({ transaction }: ITransactionsRecordProps) {
 	return (
 		<Card className="p-3.5 !bg-slate-50 mb-4">
-			<TransactionInfoItem label="Address" value={transaction.fromWalletAddress ?? ""} />
-			<TransactionInfoItem label="Transaction ID" value={transaction._id ?? ""} />
-			{/* <TransactionInfoItem label="Wallet" value={transaction.wallet} /> */}
-			<TransactionInfoItem label="Network" value={transaction.transactionNetwork ?? ""} />
 			<TransactionInfoItem
-				label="Deposit Amount"
-				value={`${transaction.fromAmount ?? transaction.amount} USDT`}
+				label="Transaction Type"
+				value={capitalizeFirstLetter(transaction.transactionType ?? "")}
 			/>
+			<TransactionInfoItem label="Address" value={transaction.fromWalletAddress ?? ""} />
+			<TransactionInfoItem label="Transaction ID" value={transaction.transactionHash ?? ""} />
+			{/* <TransactionInfoItem label="Wallet" value={transaction.wallet} /> */}
+			<TransactionInfoItem
+				label="Network"
+				value={transaction.transactionNetwork?.replaceAll("_", " ") ?? ""}
+			/>
+			<TransactionInfoItem label="Deposit Amount" value={`${transaction.amount} USDT`} />
+			{transaction.providerFee !== undefined && (
+				<TransactionInfoItem
+					label="Provider Fee"
+					value={`${transaction.providerFee} USDT`}
+				/>
+			)}
 		</Card>
 	);
 }
@@ -58,6 +101,30 @@ export function TransferTransactionsRecord({ transaction }: ITransactionsRecordP
 		<Card className="p-3.5 !bg-slate-50 mb-4">
 			<TransactionInfoItem label="From" value={transaction.fromWalletAddress ?? ""} />
 			<TransactionInfoItem label="To" value={transaction.toWalletAddress ?? ""} />
+		</Card>
+	);
+}
+
+// Component to display activation transactions record
+export function ActivationTransactionsRecord({ transaction }: ITransactionsRecordProps) {
+	return (
+		<Card className="p-3.5 !bg-slate-50 mb-4">
+			<TransactionInfoItem label="Wallet" value={transaction.fromWallet!} />
+			<TransactionInfoItem
+				label="Transaction Source"
+				value={transaction.transactionSource!}
+			/>
+			<TransactionInfoItem
+				label="Network"
+				value={transaction.transactionNetwork?.replaceAll("_", " ") ?? ""}
+			/>
+			<TransactionInfoItem
+				label="Fee Amount"
+				value={`${transaction.amount.toLocaleString("en-US", {
+					maximumFractionDigits: 2,
+					minimumFractionDigits: 2,
+				})} USDT`}
+			/>
 		</Card>
 	);
 }

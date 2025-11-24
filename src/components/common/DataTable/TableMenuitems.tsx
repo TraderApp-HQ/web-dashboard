@@ -18,11 +18,11 @@ const TableMenuItems: React.FC<tableMenuItemsProps> = ({
 
 	return (
 		<div className={`flex gap-x-3 text-xs ${justifyMenueItem}`}>
-			{dataTableMenuItems.map((item) =>
+			{dataTableMenuItems.map((item, i) =>
 				menueItemType === "button" ? (
 					<Button
 						size="small"
-						key={item.label}
+						key={`${i}-${item.label}`}
 						bgColor="bg-stone-50"
 						innerClassName="px-4 text-zinc-500 gap-2 normal-case"
 						onClick={() => router.push(item.url ? item.url : "#")}
@@ -31,7 +31,7 @@ const TableMenuItems: React.FC<tableMenuItemsProps> = ({
 					</Button>
 				) : (
 					<IconButton
-						key={item.url}
+						key={`${i}-${item.url}`}
 						Icon={item.icon}
 						onClick={
 							item.deleteAction

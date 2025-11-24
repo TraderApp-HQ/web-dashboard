@@ -22,7 +22,7 @@ jest.mock("~/apis/handlers/assets", () => ({
 
 describe("SignalDetail component", () => {
 	const mockSignal = {
-		asset: { name: "Bitcoin", symbol: "BTC", logo: "/btc-logo.png", marketCap: 5000000 },
+		baseAsset: { name: "Bitcoin", symbol: "BTC", logo: "/btc-logo.png", marketCap: 5000000 },
 		status: "active",
 		currentChange: 5,
 		targetProfits: [{ id: "1", value: 0.1 }],

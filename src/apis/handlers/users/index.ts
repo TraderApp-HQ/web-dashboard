@@ -23,22 +23,18 @@ import type {
 	ITaskWithPopulate,
 	IFetchAllActiveTasks,
 	ICreateUserTask,
-	IFetchAllPendingTasksCount,
+	IFetchAllPendingTasks,
 	ITaskData,
 	IReferrals,
 	ITaskPlatformData,
+	IFetchOnboardingTasks,
 } from "./interfaces";
 import type { IResponse } from "../interfaces";
 export class UsersService {
 	private apiClient: APIClient;
 
 	constructor() {
-		if (!process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL)
-			throw Error("Users service backend url not found");
-		this.apiClient = new APIClient(
-			process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL,
-			this.refreshUserAccessToken.bind(this),
-		);
+		this.apiClient = new APIClient("/api/proxy", this.refreshUserAccessToken.bind(this));
 	}
 
 	public async loginUser({ email, password }: IUserLoginInput): Promise<IUserProfile> {
@@ -59,17 +55,34 @@ export class UsersService {
 	}
 
 	public async logoutUser() {
-		const response = await this.apiClient.delete<IResponse>({
-			url: "/auth/logout",
-			options: { credentials: "include" },
-		});
+		try {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL}/auth/logout`,
+				{
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials: "include", // This ensures cookies are sent
+				},
+			);
 
-		// if (response.error && response.error.statusCode === 500) {
-		// 	throw new Error(response.message || "Logout failed");
-		// }
-		removeAccessToken();
-		window.location.href = "/auth/login";
-		return response.data;
+			const data = await response.json();
+
+			if (!response.ok) {
+				console.error("Logout failed:", data);
+				// Don't throw error on logout failure, just proceed with cleanup
+			}
+
+			removeAccessToken();
+			window.location.href = "/auth/login";
+			return data;
+		} catch (error) {
+			console.error("Logout error:", error);
+			// Still cleanup even if request fails
+			removeAccessToken();
+			window.location.href = "/auth/login";
+		}
 	}
 
 	public async signupUser(userData: IUserSignupInput): Promise<IUserProfile> {
@@ -138,20 +151,39 @@ export class UsersService {
 
 	public async refreshUserAccessToken(): Promise<string | null> {
 		try {
-			const response = await this.apiClient.post<IResponse>({
-				url: "/auth/refresh-token",
-				data: {},
-				options: { credentials: "include" },
-			});
+			console.log("Attempting to refresh token...");
 
-			if (response.error) {
-				throw new Error(response.message || "Token refresh failed");
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL}/auth/refresh-token`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials: "include", // This ensures cookies are sent
+					body: JSON.stringify({}),
+				},
+			);
+
+			console.log("Refresh response status:", response.status);
+
+			const data = await response.json();
+			console.log("Refresh response data:", data);
+
+			if (!response.ok || data.error) {
+				throw new Error(data.message || "Token refresh failed");
 			}
 
-			const { data } = response;
-			setAccessToken(data?.accessToken);
-			return data?.accessToken || null;
+			if (data.data?.accessToken) {
+				setAccessToken(data.data.accessToken);
+				console.log("Token refreshed successfully");
+				return data.data.accessToken;
+			} else {
+				console.log("No access token in response");
+				return null;
+			}
 		} catch (error: any) {
+			console.error("Token refresh failed:", error);
 			removeAccessToken();
 			const params = new URLSearchParams();
 			const redirectTo = new URLSearchParams(window.location.search).get("redirect_to");
@@ -166,24 +198,36 @@ export class UsersService {
 		data,
 		verificationType,
 	}: IVerifyOtp): Promise<IUserAuth | void> {
-		const response = await this.apiClient.put<IResponse>({
-			url: "/auth/verify-otp",
-			data: {
-				userId,
-				data,
-				verificationType,
-			},
-			options: { credentials: "include" },
-		});
+		try {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_USERS_SERVICE_API_URL}/auth/verify-otp`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials: "include", // This ensures cookies are received and stored
+					body: JSON.stringify({
+						userId,
+						data,
+						verificationType,
+					}),
+				},
+			);
 
-		if (response.error) {
-			throw new Error(response.message || "Otp validation failed");
-		}
+			const responseData = await response.json();
 
-		const { data: resData } = response;
-		if (verificationType?.includes(VerificationType.AUTHENTICATE)) {
-			setAccessToken(resData.accessToken);
-			return resData as IUserAuth;
+			if (!response.ok || responseData.error) {
+				throw new Error(responseData.message || "Otp validation failed");
+			}
+
+			const { data: resData } = responseData;
+			if (verificationType?.includes(VerificationType.AUTHENTICATE)) {
+				setAccessToken(resData.accessToken);
+				return resData as IUserAuth;
+			}
+		} catch (error: any) {
+			throw new Error(error.message || "Otp validation failed");
 		}
 	}
 
@@ -287,17 +331,42 @@ export class UsersService {
 		return data as IFetchAllActiveTasks;
 	}
 
-	public async getAllPendingTasksCount(): Promise<IFetchAllPendingTasksCount> {
+	public async getAllPendingTasks(): Promise<IFetchAllPendingTasks> {
 		const response = await this.apiClient.get<IResponse>({
-			url: "/task/pending-tasks-count",
+			url: "/task/pending-tasks",
 		});
 
-		if (response.error)
-			throw new Error(response.message || "Error fetching pending tasks count.");
+		if (response.error) throw new Error(response.message || "Error fetching pending tasks.");
 
 		const { data } = response;
 
-		return data as IFetchAllPendingTasksCount;
+		return data as IFetchAllPendingTasks;
+	}
+
+	public async getOnboardingTasks(): Promise<IFetchOnboardingTasks> {
+		const response = await this.apiClient.get<IResponse>({
+			url: "/task/onboarding-tasks",
+		});
+
+		if (response.error) throw new Error(response.message || "Error fetching onboarding tasks.");
+
+		const { data } = response;
+
+		return data as IFetchOnboardingTasks;
+	}
+
+	public async updateUserOnboadingStatus(data: { field: string }): Promise<string> {
+		const response = await this.apiClient.patch<IResponse>({
+			url: "/users/toggle-user-onboarding-status",
+			data,
+		});
+
+		if (response.error) {
+			throw new Error(response.message || "Update User Onboarding Status Failed");
+		}
+
+		const { message } = response;
+		return message;
 	}
 
 	public async createTask(data: ITaskData): Promise<string> {
@@ -488,5 +557,27 @@ export class UsersService {
 		if (response.error) {
 			throw new Error(response.message || "Referral tracking failed");
 		}
+	}
+
+	public async savePushSubscription(subscription: PushSubscription): Promise<void> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/notifications/subscribe-to-push-notifications",
+			data: subscription,
+		});
+		if (response.error) {
+			throw new Error(response.message || "Failed to save push subscription");
+		}
+		console.log("subscription", subscription);
+	}
+
+	public async removePushSubscription(subscription: PushSubscription): Promise<void> {
+		const response = await this.apiClient.post<IResponse>({
+			url: "/notifications/unsubscribe-from-push-notifications",
+			data: subscription,
+		});
+		if (response.error) {
+			throw new Error(response.message || "Failed to remove push subscription");
+		}
+		console.log("subscription", subscription);
 	}
 }

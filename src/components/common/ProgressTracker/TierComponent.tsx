@@ -3,19 +3,21 @@ import CheckMarkIcon from "~/components/icons/CheckMarkIcon";
 import { Tier } from "./types";
 import DropdownIcon from "~/components/icons/DropdownIcon";
 import { useMemo, useState } from "react";
-import { isTierCompleted } from "~/helpers";
+import { isTierCompleted, renderStatus } from "~/helpers";
 import TierIcon from "~/components/icons/TierIcon";
 
 export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const isCompleted = useMemo(() => isTierCompleted(tier), [tier]);
 	return (
-		<div className="h-full p-4 bg-white rounded-lg border border-[#e1e6ef] flex flex-col w-full my-4">
+		<div
+			className={`h-full p-4 bg-white rounded-lg border-2 flex flex-col w-full my-4 ${isCompleted ? "border-[#08875D]" : "border-[#e1e6ef]"}`}
+		>
 			<div className="flex flex-col gap-5 my-4">
 				<div className="flex items-center justify-between">
-					<div className="flex items-center gap-4">
+					<div className="flex items-center gap-2 md:gap-4">
 						<div className="w-[30px] h-[30px] bg-[#eff4ff] rounded-full flex items-center justify-center">
-							<TierIcon tier={tier.title} />
+							<TierIcon tier={tier.icon} />
 						</div>
 						<div className="text-[#08123b] text-sm font-bold">{tier.title}</div>
 					</div>
@@ -35,20 +37,40 @@ export const TierComponent: React.FC<{ tier: Tier }> = ({ tier }) => {
 
 				{isExpanded && (
 					<div className="space-y-5">
-						<div className="flex items-center justify-between w-full">
-							<div className="text-[#414141] text-sm">{tier.text}</div>
-							{tier.actionButton && (
-								<button
-									type="button"
-									className="bg-[#465ec1] flex gap-0.5 items-center justify-center px-3 py-1 text-nowrap text-white rounded-md self-start disabled:opacity-50 disabled:cursor-not-allowed"
-									onClick={() => {}}
-								>
-									{tier.buttonText}
-								</button>
+						<div className="w-full space-y-5">
+							{tier.actionButton ? (
+								tier.action?.map((action, i) => (
+									<div
+										key={`${i}-${action.text}`}
+										className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 w-full"
+									>
+										<div className="text-[#414141] text-sm">{action.text}</div>
+
+										<div className="flex flex-row-reverse lg:flex-row items-center justify-between gap-2.5 lg:gap-5">
+											{action.taskPill && (
+												<section className="text-textLight text-sm md:text-base font-medium capitalize text-nowrap">
+													{renderStatus(action.taskPill)}
+												</section>
+											)}
+											<button
+												type="button"
+												className="bg-buttonColor px-3 py-1 text-nowrap text-white rounded-md self-start disabled:opacity-50 disabled:cursor-not-allowed min-w-40 h-12 lg:font-semibold text-base"
+												onClick={action.buttonAction}
+												disabled={action.disableActionButton}
+											>
+												{action.buttonActionLoading
+													? "Processing..."
+													: action.buttonText}
+											</button>
+										</div>
+									</div>
+								))
+							) : (
+								<div className="text-[#414141] text-sm">{tier.text}</div>
 							)}
 						</div>
 
-						<div className="flex flex-col md:flex-row gap-4 md:gap-2">
+						<div className="flex flex-col lg:flex-row gap-4 lg:gap-2">
 							{tier.milestones.map((milestone, index) => (
 								<label
 									key={index}

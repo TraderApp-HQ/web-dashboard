@@ -30,6 +30,8 @@ import DeleteModal from "~/components/Modal/DeleteModal";
 interface IConnectionStatus {
 	isConnected: boolean;
 	errorMessages: string[];
+	connectionHeadingText?: string;
+	connectionText?: string;
 }
 
 interface ITradingAccountCardProps {
@@ -62,7 +64,7 @@ const TradingAccountCard: React.FC<ITradingAccountCardProps> = ({
 	}, []);
 
 	return (
-		<Card className="relative !p-4 !min-w-[324px]">
+		<Card className="relative !p-4 !min-w-[280px]">
 			<div className="flex justify-between w-full">
 				<div className="flex gap-x-2 items-center">
 					<Image
@@ -116,7 +118,12 @@ const TradingAccountCard: React.FC<ITradingAccountCardProps> = ({
 	);
 };
 
-const ConnectionStatus: React.FC<IConnectionStatus> = ({ isConnected, errorMessages }) => {
+export const ConnectionStatus: React.FC<IConnectionStatus> = ({
+	isConnected,
+	errorMessages,
+	connectionText,
+	connectionHeadingText = "Connection Status",
+}) => {
 	const [showTooltip, setShowTooltip] = useState(false);
 
 	const toggleTooltip = useCallback(() => setShowTooltip((prev) => !prev), []);
@@ -125,31 +132,31 @@ const ConnectionStatus: React.FC<IConnectionStatus> = ({ isConnected, errorMessa
 		<div
 			onMouseEnter={toggleTooltip}
 			onMouseLeave={toggleTooltip}
-			className={`flex px-2.5 py-2 rounded-lg justify-center items-center gap-2 ${
+			className={`relative flex px-2.5 py-2 rounded-lg justify-center items-center gap-2 ${
 				isConnected ? "bg-[#F7FFFC]" : "bg-[#FFF7F8]"
 			}`}
 		>
-			<div className="relative flex items-center">
-				{isConnected ? <ConnectedIcon /> : <FailedIcon />}
-				{!isConnected && showTooltip && errorMessages.length > 0 && (
-					<div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-60 bg-white text-gray-800 text-sm rounded-lg shadow-lg p-3 z-10 border border-gray-200">
-						<p className="font-bold text-red-600 mb-2">Connection Issues:</p>
-						<ul className="list-disc list-inside space-y-1">
-							{errorMessages.map((message, index) => (
-								<li key={index} className="text-xs text-gray-700">
-									{message}
-								</li>
-							))}
-						</ul>
-					</div>
-				)}
-			</div>
+			{isConnected ? <ConnectedIcon /> : <FailedIcon />}
+			{!isConnected && showTooltip && errorMessages.length > 0 && (
+				<div className="absolute top-full right-0 mt-2 w-60 bg-white text-gray-800 text-sm rounded-lg shadow-lg p-3 z-10 border border-gray-200 text-left">
+					<p className="font-bold text-red-600 mb-2 capitalize">
+						{connectionHeadingText}:
+					</p>
+					<ul className="list-disc list-inside space-y-1">
+						{errorMessages.map((message, index) => (
+							<li key={index} className="text-xs text-gray-700 text-wrap">
+								{message}
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
 			<p
 				className={`text-sm font-bold leading-none ${
 					isConnected ? "text-emerald-700" : "text-rose-600"
 				}`}
 			>
-				{isConnected ? "Connected" : "Failed"}
+				{isConnected ? (connectionText ?? "Connected") : (connectionText ?? "Failed")}
 			</p>
 		</div>
 	);
@@ -189,7 +196,7 @@ const TradingAccountDropdownMenu: React.FC<ITradingAccountDropdownMenu> = ({
 	};
 
 	return (
-		<>
+		<div>
 			<DropdownMenu
 				trigger={<DottedIcon />}
 				position="left"
@@ -247,7 +254,7 @@ const TradingAccountDropdownMenu: React.FC<ITradingAccountDropdownMenu> = ({
 				onClose={handleDeleteModalClose}
 				isDeleting={isPending}
 			/>
-		</>
+		</div>
 	);
 };
 

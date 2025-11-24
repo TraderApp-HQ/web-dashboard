@@ -120,14 +120,14 @@ const Toast: React.FC<ToastProps> = ({
 	}, [autoVanish, autoVanishTimeout]);
 
 	const styles = clsx(
-		`bg-white flex items-start p-4 rounded-md shadow-md ${!show || autoVanish ? "hidden" : ""}`,
+		`bg-white flex items-start p-4 rounded-md shadow-md ${!show ? "hidden" : ""}`,
 		variant === "outlined" ? `border ${typeClasses[type].outlined}` : typeClasses[type].filled,
 	);
 
 	return (
 		<div
 			data-testid="toast-message"
-			className={`fixed z-50 right-1 top-1 min-w-[400px] ${styles} ${type === "success" && "bg-[#F7FFFC]"}`}
+			className={`fixed z-[5000] right-1 top-1 min-w-[400px] ${styles} ${type === "success" && "bg-[#F7FFFC]"}`}
 		>
 			<div className="flex-shrink-0 self-baseline">{typeClasses[type].icon}</div>
 			<div className="ml-3 w-full">
