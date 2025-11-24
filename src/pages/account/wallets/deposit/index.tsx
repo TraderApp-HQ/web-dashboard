@@ -337,6 +337,13 @@ const Deposit = () => {
 							)}
 						</section>
 
+						<section className="bg-[#FFF6EB] rounded-md p-3 font-medium">
+							<p className="text-[#595B60] text-sm">
+								Please note that this deposit method attracts a 1% processing fee of
+								the deposited amount.
+							</p>
+						</section>
+
 						<section className="rounded-xl bg-[#f8f9fc] px-4 py-2">
 							{depositWalletInfo?.payAmount && depositWalletInfo.payCurrency && (
 								<section className="space-y-2 py-4 border-b border-[#808080]">

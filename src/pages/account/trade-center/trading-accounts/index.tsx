@@ -68,7 +68,7 @@ const TradeCenterExchanges = () => {
 							Connect new Account
 						</Button>
 					</div>
-					<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-5 gap-y-8">
+					<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,350px))] gap-x-5 gap-y-8">
 						{userTradingAccounts.map((account) => (
 							<TradingAccountCard
 								key={account.accountId}

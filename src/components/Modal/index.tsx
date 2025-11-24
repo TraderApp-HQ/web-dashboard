@@ -94,7 +94,7 @@ const Modal: React.FC<ModalOptions> = ({
 			)}
 		>
 			<div ref={ref} className={clsx("w-full relative p-2 md:p-4", width || "max-w-2xl")}>
-				<div className="bg-white relative rounded-xl py-8 md:px-8 px-4 shadow max-h-[72vh] flex flex-col">
+				<div className="bg-white relative rounded-xl py-8 md:px-8 px-4 shadow max-h-[90vh] flex flex-col">
 					<div
 						className={`flex items-start justify-between w-full pb-2 ${headerDivider && "border-b-2 border-[#D1D7F0]"}`}
 					>

@@ -35,6 +35,13 @@ export function capitalizeFirstLetter(str: string) {
 	return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
 }
 
+// Converts an unknown value to a finite number.
+// Returns 0 for non-finite values (NaN, null, undefined, etc.).
+export const toFiniteNumber = (v: unknown) => {
+	const n = Number(v);
+	return Number.isFinite(n) ? n : 0;
+};
+
 export function renderDisplayItem({
 	itemText,
 	itemSubText,

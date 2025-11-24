@@ -74,7 +74,7 @@ export function openTradesDataTableSelector({
 				{
 					displayItem: renderStatus(
 						trade.status,
-						{ justify: "justify-end sm:justify-center" },
+						{ justify: "justify-end xl:justify-center" },
 						false,
 					),
 				},
@@ -154,6 +154,7 @@ export function openTradesMobileDataTableSelector({
 					text: `${trade.baseAsset} / ${trade.quoteCurrency}`,
 					style: "font-bold",
 				},
+				styles: "!w-full",
 				isAssetItem: true,
 				assetTradeSide: renderStatus(
 					trade.side,
@@ -263,7 +264,7 @@ export function openTradesMobileDataTableSelector({
 				displayItemTitle: "Status",
 				displayItemValue: renderStatus(
 					trade.status,
-					{ justify: "justify-end sm:justify-center" },
+					{ justify: "justify-end xl:justify-center" },
 					false,
 				),
 			},
