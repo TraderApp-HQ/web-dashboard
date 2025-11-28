@@ -310,4 +310,88 @@ export class TradingEngineService {
 
 		return response.message;
 	}
+
+	public async closeActiveMasterTrade({
+		masterTradeId,
+		percentage,
+	}: {
+		masterTradeId: string;
+		percentage?: number;
+	}): Promise<string> {
+		// Construct query parameters
+		const queryParams = new URLSearchParams();
+
+		if (percentage !== undefined && percentage > 0) {
+			queryParams.set("percentage", percentage.toString());
+		}
+
+		// Fetch data from API
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/trade/master-trade/close-active-trade/${masterTradeId}?${queryParams.toString()}`,
+			data: {},
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? `Failed to close trade with id: ${masterTradeId}`);
+		}
+
+		return response.message;
+	}
+
+	public async breakEvenActiveMasterTrade({
+		masterTradeId,
+	}: {
+		masterTradeId: string;
+	}): Promise<string> {
+		// Fetch data from API
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/trade/master-trade/break-even/${masterTradeId}`,
+			data: {},
+		});
+
+		if (response.error) {
+			throw new Error(
+				response.message ?? `Failed to break even for master trade id: ${masterTradeId}`,
+			);
+		}
+
+		return response.message;
+	}
+
+	public async cancelMasterTrade({ masterTradeId }: { masterTradeId: string }): Promise<string> {
+		// Fetch data from API
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/trade/master-trade/cancel-trade/${masterTradeId}`,
+			data: {},
+		});
+
+		if (response.error) {
+			throw new Error(
+				response.message ?? `Failed to cancel master trade with id: ${masterTradeId}`,
+			);
+		}
+
+		return response.message;
+	}
+
+	public async triggerMasterTradeOrderPlacement({
+		masterTradeId,
+	}: {
+		masterTradeId: string;
+	}): Promise<string> {
+		// Fetch data from API
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/trade/master-trade/trigger-order-placement/${masterTradeId}`,
+			data: {},
+		});
+
+		if (response.error) {
+			throw new Error(
+				response.message ??
+					`Failed to trigger order placement for master trade with id: ${masterTradeId}`,
+			);
+		}
+
+		return response.message;
+	}
 }

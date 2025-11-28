@@ -18,7 +18,7 @@ import TableLoader from "~/components/Loaders/TableLoader";
 import WalletBalanceCardLoader from "~/components/Loaders/WalletBalanceCardLoader";
 import CloseTradeModal from "~/components/Modal/CloseTradeModal";
 import HiddenBalances from "~/components/Wallet/HidenBalance";
-import { useFetchOpenTrades, useUpdateMasterTradeTpAndSl } from "~/hooks/useTrades";
+import { useFetchOpenTrades } from "~/hooks/useTrades";
 import { formatCurrency } from "~/lib/utils";
 import { AdminNestedTradeCenterLayout } from "..";
 import TradeTargetModal from "~/components/Modal/TradeTargetModal";
@@ -50,17 +50,6 @@ function OpenTrades() {
 	} = useFetchOpenTrades({ isAdmin: true });
 	const openTradesCount = trades && trades.length > 0 && trades.length;
 
-	// Update trades TP & SL
-	const {
-		data: updateTpAndSlMessage,
-		error: updateTpAndSlError,
-		isError: isUpdateTpAndSlError,
-		isPending: isUpdateTpAndSlPending,
-		isSuccess: isUpdateTpAndSlSuccess,
-		updateMasterTradeTpAndSl,
-		reset: resetUpdateTpAndSL,
-	} = useUpdateMasterTradeTpAndSl();
-
 	const handleModalClose = () => {
 		const url = window.location.pathname; // Get the current pathname
 		window.history.replaceState(null, "", url); // Clears query params
@@ -90,28 +79,10 @@ function OpenTrades() {
 		}
 	}, [trade]);
 
-	// Handle update success and error
-	useEffect(() => {
-		if (isUpdateTpAndSlSuccess && updateTpAndSlMessage) {
-			setShowToast(true);
-			setToastType("success");
-			setToastMessage(updateTpAndSlMessage);
-			handleModalClose();
-			return;
-		}
-
-		if (isUpdateTpAndSlError && updateTpAndSlError) {
-			setShowToast(true);
-			setToastType("error");
-			setToastMessage(updateTpAndSlError.message);
-		}
-	}, [isUpdateTpAndSlSuccess, updateTpAndSlMessage, isUpdateTpAndSlError, updateTpAndSlError]);
-
 	const handleToastClose = () => {
 		setShowToast(false);
 		setToastType(undefined);
 		setToastMessage("");
-		resetUpdateTpAndSL();
 	};
 
 	return (
@@ -173,6 +144,9 @@ function OpenTrades() {
 					openModal
 					handleModalClose={handleModalClose}
 					selectedTrade={selectedTrade as IMasterTrade}
+					setShowToast={setShowToast}
+					setToastType={setToastType}
+					setToastMessage={setToastMessage}
 				/>
 			)}
 
@@ -182,8 +156,9 @@ function OpenTrades() {
 					handleModalClose={handleModalClose}
 					trade={selectedTrade as IMasterTrade}
 					setSelectedTrade={setSelectedTrade}
-					isUpdatePending={isUpdateTpAndSlPending}
-					updateTpAndSl={updateMasterTradeTpAndSl}
+					setShowToast={setShowToast}
+					setToastType={setToastType}
+					setToastMessage={setToastMessage}
 				/>
 			)}
 
@@ -192,6 +167,9 @@ function OpenTrades() {
 					openModal
 					handleModalClose={handleModalClose}
 					selectedTrade={selectedTrade as IMasterTrade}
+					setShowToast={setShowToast}
+					setToastType={setToastType}
+					setToastMessage={setToastMessage}
 				/>
 			)}
 
@@ -200,6 +178,9 @@ function OpenTrades() {
 					openModal
 					handleModalClose={handleModalClose}
 					selectedTrade={selectedTrade as IMasterTrade}
+					setShowToast={setShowToast}
+					setToastType={setToastType}
+					setToastMessage={setToastMessage}
 				/>
 			)}
 
@@ -209,7 +190,11 @@ function OpenTrades() {
 					<TradeTriggerModal
 						openModal
 						handleModalClose={handleModalClose}
-						selectedTrade={selectedTrade as IMasterTrade}
+						trade={selectedTrade as IMasterTrade}
+						setSelectedTrade={setSelectedTrade}
+						setShowToast={setShowToast}
+						setToastType={setToastType}
+						setToastMessage={setToastMessage}
 					/>
 				)}
 

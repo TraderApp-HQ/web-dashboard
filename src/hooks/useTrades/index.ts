@@ -290,7 +290,6 @@ export const useUpdateMasterTradeTpAndSl = () => {
 		error,
 		isSuccess,
 		data,
-		reset,
 	} = useCreate({
 		mutationFn: updateMasterTradeTpAndSLFunction,
 		onSuccess: () => {
@@ -305,6 +304,141 @@ export const useUpdateMasterTradeTpAndSl = () => {
 		error,
 		isSuccess,
 		data,
-		reset,
+	};
+};
+
+export const useCloseActiveMasterTrade = () => {
+	const tradingEngineService = new TradingEngineService();
+
+	const closeActiveMasterTradeFunction = useCallback(
+		({ masterTradeId, percentage }: { masterTradeId: string; percentage?: number }) =>
+			tradingEngineService.closeActiveMasterTrade({ masterTradeId, percentage }),
+		[tradingEngineService],
+	);
+
+	const queryClient = useQueryClient();
+	const {
+		mutate: closeActiveMasterTrade,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
+	} = useCreate({
+		mutationFn: closeActiveMasterTradeFunction,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [TradingEngineQueryId.openTrades] });
+		},
+	});
+
+	return {
+		closeActiveMasterTrade,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
+	};
+};
+
+export const useBreakEvenActiveMasterTrade = () => {
+	const tradingEngineService = new TradingEngineService();
+
+	const breakEvenActiveMasterTradeFunction = useCallback(
+		({ masterTradeId }: { masterTradeId: string }) =>
+			tradingEngineService.breakEvenActiveMasterTrade({ masterTradeId }),
+		[tradingEngineService],
+	);
+
+	const queryClient = useQueryClient();
+	const {
+		mutate: breakEvenActiveMasterTrade,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
+	} = useCreate({
+		mutationFn: breakEvenActiveMasterTradeFunction,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [TradingEngineQueryId.openTrades] });
+		},
+	});
+
+	return {
+		breakEvenActiveMasterTrade,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
+	};
+};
+
+export const useCancelMasterTrade = () => {
+	const tradingEngineService = new TradingEngineService();
+
+	const cancelMasterTradeFunction = useCallback(
+		({ masterTradeId }: { masterTradeId: string }) =>
+			tradingEngineService.cancelMasterTrade({ masterTradeId }),
+		[tradingEngineService],
+	);
+
+	const queryClient = useQueryClient();
+	const {
+		mutate: cancelMasterTrade,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
+	} = useCreate({
+		mutationFn: cancelMasterTradeFunction,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [TradingEngineQueryId.openTrades] });
+		},
+	});
+
+	return {
+		cancelMasterTrade,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
+	};
+};
+
+export const useTriggerMasterTradeOrder = () => {
+	const tradingEngineService = new TradingEngineService();
+
+	const triggerMasterTradeOrderFunction = useCallback(
+		({ masterTradeId }: { masterTradeId: string }) =>
+			tradingEngineService.triggerMasterTradeOrderPlacement({ masterTradeId }),
+		[tradingEngineService],
+	);
+
+	const queryClient = useQueryClient();
+	const {
+		mutate: triggerMasterTradeOrder,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
+	} = useCreate({
+		mutationFn: triggerMasterTradeOrderFunction,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [TradingEngineQueryId.openTrades] });
+		},
+	});
+
+	return {
+		triggerMasterTradeOrder,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
 	};
 };

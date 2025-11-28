@@ -1,24 +1,54 @@
-import React, { useState } from "react";
+import React, { SetStateAction, useEffect } from "react";
 import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
 import Button from "~/components/common/Button";
 import InputField from "~/components/common/InputField";
 import { renderDisplayItem, renderStatus } from "~/helpers";
 import Modal from "..";
+import { useTriggerMasterTradeOrder } from "~/hooks/useTrades";
 
 interface ITradeTriggerModalProps {
 	openModal: boolean;
 	handleModalClose: () => void;
-	selectedTrade: IMasterTrade;
+	trade: IMasterTrade;
+	setSelectedTrade: (data: IMasterTrade) => void;
+	setShowToast: (value: SetStateAction<boolean>) => void;
+	setToastType: (value: SetStateAction<"success" | "error" | undefined>) => void;
+	setToastMessage: (value: SetStateAction<string>) => void;
 }
 
 const TradeTriggerModal: React.FC<ITradeTriggerModalProps> = ({
 	openModal,
 	handleModalClose,
-	selectedTrade,
+	trade,
+	setSelectedTrade,
+	setShowToast,
+	setToastMessage,
+	setToastType,
 }) => {
-	const [trade, setTrade] = useState<IMasterTrade>(selectedTrade);
+	const { triggerMasterTradeOrder, data, error, isError, isPending, isSuccess } =
+		useTriggerMasterTradeOrder();
 
-	console.log("Trade", trade);
+	const handleTriggerMasterTrade = () =>
+		triggerMasterTradeOrder({
+			masterTradeId: trade.id,
+		});
+
+	// Handle update success and error
+	useEffect(() => {
+		if (isSuccess && data) {
+			setShowToast(true);
+			setToastType("success");
+			setToastMessage(data);
+			handleModalClose();
+			return;
+		}
+
+		if (isError && error) {
+			setShowToast(true);
+			setToastType("error");
+			setToastMessage(error.message);
+		}
+	}, [isSuccess, data, isError, error]);
 
 	return (
 		<Modal
@@ -32,7 +62,7 @@ const TradeTriggerModal: React.FC<ITradeTriggerModalProps> = ({
 				</p>
 			}
 			headerDivider={true}
-			onClose={handleModalClose}
+			onClose={isPending ? undefined : handleModalClose}
 		>
 			<div className="pt-5 px-2 space-y-5">
 				{trade &&
@@ -62,10 +92,10 @@ const TradeTriggerModal: React.FC<ITradeTriggerModalProps> = ({
 						placeholder="Entry price"
 						value={String(trade.entryPrice) ?? ""}
 						onChange={(value: string) => {
-							setTrade((prev) => ({
-								...prev,
+							setSelectedTrade({
+								...trade,
 								entryPrice: Number(value),
-							}));
+							});
 						}}
 						className="no-spin-buttons !font-semibold !text-base"
 					/>
@@ -79,10 +109,10 @@ const TradeTriggerModal: React.FC<ITradeTriggerModalProps> = ({
 							placeholder="Take profit price"
 							value={String(trade.takeProfitPrice) ?? ""}
 							onChange={(value: string) => {
-								setTrade((prev) => ({
-									...prev,
+								setSelectedTrade({
+									...trade,
 									takeProfitPrice: Number(value),
-								}));
+								});
 							}}
 							className="no-spin-buttons !font-semibold !text-base"
 						/>
@@ -100,10 +130,10 @@ const TradeTriggerModal: React.FC<ITradeTriggerModalProps> = ({
 							placeholder="Stop loss price"
 							value={String(trade.stopLossPrice) ?? ""}
 							onChange={(value: string) => {
-								setTrade((prev) => ({
-									...prev,
+								setSelectedTrade({
+									...trade,
 									stopLossPrice: Number(value),
-								}));
+								});
 							}}
 							className="no-spin-buttons !font-semibold !text-base"
 						/>
@@ -122,12 +152,10 @@ const TradeTriggerModal: React.FC<ITradeTriggerModalProps> = ({
 
 				<section className="pt-6">
 					<Button
-						labelText="Confirm"
+						labelText={isPending ? "Placing trades ..." : "Trigger Trade"}
 						className="w-full !font-bold text-base"
-						onClick={() => {}}
-						disabled={
-							!trade.takeProfitPrice || !trade.stopLossPrice || !trade.entryPrice
-						}
+						onClick={handleTriggerMasterTrade}
+						disabled={isPending}
 					/>
 				</section>
 			</div>

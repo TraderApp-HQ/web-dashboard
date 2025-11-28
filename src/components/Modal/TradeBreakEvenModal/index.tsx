@@ -2,19 +2,51 @@ import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
 import Button from "~/components/common/Button";
 import { renderDisplayItem, renderStatus } from "~/helpers";
 import Modal from "..";
-import React from "react";
+import React, { SetStateAction, useEffect } from "react";
+import { useBreakEvenActiveMasterTrade } from "~/hooks/useTrades";
 
 interface ITradeBrealEvenModalProps {
 	openModal: boolean;
 	handleModalClose: () => void;
 	selectedTrade: IMasterTrade;
+	setShowToast: (value: SetStateAction<boolean>) => void;
+	setToastType: (value: SetStateAction<"success" | "error" | undefined>) => void;
+	setToastMessage: (value: SetStateAction<string>) => void;
 }
 
 const TradeBreakEvenModal: React.FC<ITradeBrealEvenModalProps> = ({
 	openModal,
 	handleModalClose,
 	selectedTrade,
+	setShowToast,
+	setToastType,
+	setToastMessage,
 }) => {
+	const { breakEvenActiveMasterTrade, data, error, isError, isPending, isSuccess } =
+		useBreakEvenActiveMasterTrade();
+
+	const handleActiveTradeBreakEven = () =>
+		breakEvenActiveMasterTrade({
+			masterTradeId: selectedTrade.id,
+		});
+
+	// Handle update success and error
+	useEffect(() => {
+		if (isSuccess && data) {
+			setShowToast(true);
+			setToastType("success");
+			setToastMessage(data);
+			handleModalClose();
+			return;
+		}
+
+		if (isError && error) {
+			setShowToast(true);
+			setToastType("error");
+			setToastMessage(error.message);
+		}
+	}, [isSuccess, data, isError, error]);
+
 	return (
 		<Modal
 			openModal={openModal}
@@ -27,7 +59,7 @@ const TradeBreakEvenModal: React.FC<ITradeBrealEvenModalProps> = ({
 				</p>
 			}
 			headerDivider={true}
-			onClose={handleModalClose}
+			onClose={isPending ? undefined : handleModalClose}
 		>
 			<div className="pt-5 px-2 space-y-5">
 				{selectedTrade &&
@@ -69,9 +101,10 @@ const TradeBreakEvenModal: React.FC<ITradeBrealEvenModalProps> = ({
 				</section>
 				<section className="pt-6">
 					<Button
-						labelText="Confirm"
+						labelText={isPending ? "Updating ..." : "Confirm"}
 						className="w-full !font-bold text-base"
-						onClick={() => {}}
+						onClick={handleActiveTradeBreakEven}
+						disabled={isPending}
 					/>
 				</section>
 			</div>
