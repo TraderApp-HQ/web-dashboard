@@ -12,6 +12,7 @@ import {
 	IGetTradeAssets,
 	IAssetPrice,
 	IUseGetAccountConnectionTradingPlatforms,
+	IMasterTradeTpAndSlOptions,
 } from "~/apis/handlers/trading-engine/interfaces";
 import { ITableMobile, ITBody, ITHead } from "~/components/common/DataTable/config";
 import {
@@ -270,5 +271,40 @@ export const useGetAccountConnectionTradingPlatforms = ({
 		isTradingPlatformsError,
 		isTradingPlatformsLoading,
 		tradingPlatformsError,
+	};
+};
+
+export const useUpdateMasterTradeTpAndSl = () => {
+	const tradingEngineService = new TradingEngineService();
+
+	const updateMasterTradeTpAndSLFunction = useCallback(
+		(data: IMasterTradeTpAndSlOptions) => tradingEngineService.updateMasterTradeTpAndSl(data),
+		[tradingEngineService],
+	);
+
+	const queryClient = useQueryClient();
+	const {
+		mutate: updateMasterTradeTpAndSl,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
+		reset,
+	} = useCreate({
+		mutationFn: updateMasterTradeTpAndSLFunction,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [TradingEngineQueryId.openTrades] });
+		},
+	});
+
+	return {
+		updateMasterTradeTpAndSl,
+		isError,
+		isPending,
+		error,
+		isSuccess,
+		data,
+		reset,
 	};
 };

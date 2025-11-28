@@ -18,7 +18,7 @@ import TableLoader from "~/components/Loaders/TableLoader";
 import WalletBalanceCardLoader from "~/components/Loaders/WalletBalanceCardLoader";
 import CloseTradeModal from "~/components/Modal/CloseTradeModal";
 import HiddenBalances from "~/components/Wallet/HidenBalance";
-import { useFetchOpenTrades } from "~/hooks/useTrades";
+import { useFetchOpenTrades, useUpdateMasterTradeTpAndSl } from "~/hooks/useTrades";
 import { formatCurrency } from "~/lib/utils";
 import { AdminNestedTradeCenterLayout } from "..";
 import TradeTargetModal from "~/components/Modal/TradeTargetModal";
@@ -32,8 +32,11 @@ function OpenTrades() {
 	const { action, id, trade } = router.query;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [selectedTrade, setSelectedTrade] = useState<IMasterTrade | IUserTrade | null>(null);
-	const [showTradeCreationToast, setShowTradeCreationToast] = useState(false);
+	const [showToast, setShowToast] = useState(false);
+	const [toastMessage, setToastMessage] = useState<string>("");
+	const [toastType, setToastType] = useState<"success" | "error">();
 
+	// Fetch active trades
 	const {
 		error,
 		isError,
@@ -47,9 +50,22 @@ function OpenTrades() {
 	} = useFetchOpenTrades({ isAdmin: true });
 	const openTradesCount = trades && trades.length > 0 && trades.length;
 
+	// Update trades TP & SL
+	const {
+		data: updateTpAndSlMessage,
+		error: updateTpAndSlError,
+		isError: isUpdateTpAndSlError,
+		isPending: isUpdateTpAndSlPending,
+		isSuccess: isUpdateTpAndSlSuccess,
+		updateMasterTradeTpAndSl,
+		reset: resetUpdateTpAndSL,
+	} = useUpdateMasterTradeTpAndSl();
+
 	const handleModalClose = () => {
-		router.replace(`${router.pathname}`, undefined, { shallow: true });
-		setOpenModal(!openModal);
+		const url = window.location.pathname; // Get the current pathname
+		window.history.replaceState(null, "", url); // Clears query params
+		setOpenModal(false);
+		setSelectedTrade(null);
 	};
 
 	useEffect(() => {
@@ -62,13 +78,41 @@ function OpenTrades() {
 	}, [action, id, trades]);
 
 	useEffect(() => {
-		if (trade && trade === "true") setShowTradeCreationToast(true);
+		if (trade && trade === "true") {
+			setShowToast(true);
+			setToastType("success");
+			setToastMessage("Trade created successfully.");
+		}
 
 		if (trade === "true") {
 			const url = window.location.pathname; // Get the current pathname
 			window.history.replaceState(null, "", url); // Clears query params
 		}
 	}, [trade]);
+
+	// Handle update success and error
+	useEffect(() => {
+		if (isUpdateTpAndSlSuccess && updateTpAndSlMessage) {
+			setShowToast(true);
+			setToastType("success");
+			setToastMessage(updateTpAndSlMessage);
+			handleModalClose();
+			return;
+		}
+
+		if (isUpdateTpAndSlError && updateTpAndSlError) {
+			setShowToast(true);
+			setToastType("error");
+			setToastMessage(updateTpAndSlError.message);
+		}
+	}, [isUpdateTpAndSlSuccess, updateTpAndSlMessage, isUpdateTpAndSlError, updateTpAndSlError]);
+
+	const handleToastClose = () => {
+		setShowToast(false);
+		setToastType(undefined);
+		setToastMessage("");
+		resetUpdateTpAndSL();
+	};
 
 	return (
 		<section>
@@ -136,7 +180,10 @@ function OpenTrades() {
 				<TradeTargetModal
 					openModal
 					handleModalClose={handleModalClose}
-					selectedTrade={selectedTrade as IMasterTrade}
+					trade={selectedTrade as IMasterTrade}
+					setSelectedTrade={setSelectedTrade}
+					isUpdatePending={isUpdateTpAndSlPending}
+					updateTpAndSl={updateMasterTradeTpAndSl}
 				/>
 			)}
 
@@ -166,25 +213,16 @@ function OpenTrades() {
 					/>
 				)}
 
-			{/* Toast alerts */}
-			{/* {isError && (
+			{showToast && (
 				<Toast
-					type="error"
+					type={toastType}
 					variant="filled"
-					title="Trade update Error"
-					message={error?.message ?? "Something went wrong!"}
+					title={toastType === "success" ? "Success" : "Error"}
+					message={toastMessage}
 					autoVanish
 					autoVanishTimeout={10}
-				/>
-			)} */}
-			{showTradeCreationToast && (
-				<Toast
-					type="success"
-					variant="filled"
-					title="Success"
-					message={`Trade ${showTradeCreationToast ? "created" : "updated"} successfully.`}
-					autoVanish
-					autoVanishTimeout={10}
+					onToastClose={handleToastClose}
+					showToast={showToast}
 				/>
 			)}
 		</section>

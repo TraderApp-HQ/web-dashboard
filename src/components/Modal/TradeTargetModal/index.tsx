@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
+import {
+	IMasterTrade,
+	IMasterTradeTpAndSlOptions,
+} from "~/apis/handlers/trading-engine/interfaces";
 import Button from "~/components/common/Button";
 import InputField from "~/components/common/InputField";
 import { renderDisplayItem, renderStatus } from "~/helpers";
@@ -8,15 +10,26 @@ import Modal from "..";
 interface ITradeTargetModalProps {
 	openModal: boolean;
 	handleModalClose: () => void;
-	selectedTrade: IMasterTrade;
+	trade: IMasterTrade;
+	setSelectedTrade: (data: IMasterTrade) => void;
+	isUpdatePending: boolean;
+	updateTpAndSl: (data: IMasterTradeTpAndSlOptions) => void;
 }
 
 const TradeTargetModal: React.FC<ITradeTargetModalProps> = ({
 	openModal,
 	handleModalClose,
-	selectedTrade,
+	trade,
+	setSelectedTrade,
+	isUpdatePending,
+	updateTpAndSl,
 }) => {
-	const [trade, setTrade] = useState<IMasterTrade>(selectedTrade);
+	const handleUpdateTradeTpAndSl = () =>
+		updateTpAndSl({
+			masterTradeId: trade.id,
+			stopLossPrice: trade.stopLossPrice,
+			takeProfitPrice: trade.takeProfitPrice,
+		});
 
 	return (
 		<Modal
@@ -72,10 +85,10 @@ const TradeTargetModal: React.FC<ITradeTargetModalProps> = ({
 							placeholder="Take profit price"
 							value={String(trade.takeProfitPrice) ?? ""}
 							onChange={(value: string) => {
-								setTrade((prev) => ({
-									...prev,
+								setSelectedTrade({
+									...trade,
 									takeProfitPrice: Number(value),
-								}));
+								});
 							}}
 							className="no-spin-buttons !font-semibold !text-base"
 						/>
@@ -93,10 +106,10 @@ const TradeTargetModal: React.FC<ITradeTargetModalProps> = ({
 							placeholder="Stop loss price"
 							value={String(trade.stopLossPrice) ?? ""}
 							onChange={(value: string) => {
-								setTrade((prev) => ({
-									...prev,
+								setSelectedTrade({
+									...trade,
 									stopLossPrice: Number(value),
-								}));
+								});
 							}}
 							className="no-spin-buttons !font-semibold !text-base"
 						/>
@@ -108,10 +121,10 @@ const TradeTargetModal: React.FC<ITradeTargetModalProps> = ({
 
 				<section className="pt-6">
 					<Button
-						labelText="Confirm"
+						labelText={isUpdatePending ? "Updating..." : "Confirm"}
 						className="w-full !font-bold text-base"
-						onClick={() => {}}
-						disabled={!trade.stopLossPrice}
+						onClick={handleUpdateTradeTpAndSl}
+						disabled={!trade.stopLossPrice || isUpdatePending}
 					/>
 				</section>
 			</div>
