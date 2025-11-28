@@ -2,19 +2,51 @@ import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
 import Button from "~/components/common/Button";
 import { renderDisplayItem, renderStatus } from "~/helpers";
 import Modal from "..";
-import React from "react";
+import { SetStateAction, useEffect } from "react";
+import { useCancelMasterTrade } from "~/hooks/useTrades";
 
 interface ICancelTradeModalProps {
 	openModal: boolean;
 	handleModalClose: () => void;
 	selectedTrade: IMasterTrade;
+	setShowToast: (value: SetStateAction<boolean>) => void;
+	setToastType: (value: SetStateAction<"success" | "error" | undefined>) => void;
+	setToastMessage: (value: SetStateAction<string>) => void;
 }
 
 const CancelTradeModal: React.FC<ICancelTradeModalProps> = ({
 	openModal,
 	handleModalClose,
 	selectedTrade,
+	setShowToast,
+	setToastMessage,
+	setToastType,
 }) => {
+	const { cancelMasterTrade, data, error, isError, isPending, isSuccess } =
+		useCancelMasterTrade();
+
+	const handleCancelTrade = () =>
+		cancelMasterTrade({
+			masterTradeId: selectedTrade.id,
+		});
+
+	// Handle update success and error
+	useEffect(() => {
+		if (isSuccess && data) {
+			setShowToast(true);
+			setToastType("success");
+			setToastMessage(data);
+			handleModalClose();
+			return;
+		}
+
+		if (isError && error) {
+			setShowToast(true);
+			setToastType("error");
+			setToastMessage(error.message);
+		}
+	}, [isSuccess, data, isError, error]);
+
 	return (
 		<Modal
 			openModal={openModal}
@@ -27,7 +59,7 @@ const CancelTradeModal: React.FC<ICancelTradeModalProps> = ({
 				</p>
 			}
 			headerDivider={true}
-			onClose={handleModalClose}
+			onClose={isPending ? undefined : handleModalClose}
 		>
 			<div className="pt-5 px-2 space-y-5">
 				{selectedTrade &&
@@ -55,9 +87,10 @@ const CancelTradeModal: React.FC<ICancelTradeModalProps> = ({
 				</section>
 				<section className="pt-6">
 					<Button
-						labelText="Confirm"
+						labelText={isPending ? "Cancelling ..." : "Cancel"}
 						className="w-full !font-bold text-base"
-						onClick={() => {}}
+						onClick={handleCancelTrade}
+						disabled={isPending}
 					/>
 				</section>
 			</div>

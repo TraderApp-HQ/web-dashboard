@@ -18,6 +18,7 @@ import type {
 	ISupportedTradingPlatform,
 	IGetAccountConnectionTradingPlatformsInput,
 	IFetchAccountConnectionTradingPlatform,
+	IMasterTradeTpAndSlOptions,
 } from "./interfaces";
 
 export class TradingEngineService {
@@ -282,5 +283,115 @@ export class TradingEngineService {
 
 		const { data } = response;
 		return data as IFetchAccountConnectionTradingPlatform[];
+	}
+
+	public async updateMasterTradeTpAndSl({
+		masterTradeId,
+		stopLossPrice,
+		takeProfitPrice,
+	}: IMasterTradeTpAndSlOptions): Promise<string> {
+		// Construct query parameters
+		const queryParams = new URLSearchParams();
+		queryParams.set("stopLoss", stopLossPrice.toString());
+
+		if (takeProfitPrice !== undefined && takeProfitPrice > 0) {
+			queryParams.set("takeProfit", takeProfitPrice.toString());
+		}
+
+		// Fetch data from API
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/trade/master-trade/set-tp-sl/${masterTradeId}?${queryParams.toString()}`,
+			data: {},
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? "Failed to update TP/SL for master trade");
+		}
+
+		return response.message;
+	}
+
+	public async closeActiveMasterTrade({
+		masterTradeId,
+		percentage,
+	}: {
+		masterTradeId: string;
+		percentage?: number;
+	}): Promise<string> {
+		// Construct query parameters
+		const queryParams = new URLSearchParams();
+
+		if (percentage !== undefined && percentage > 0) {
+			queryParams.set("percentage", percentage.toString());
+		}
+
+		// Fetch data from API
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/trade/master-trade/close-active-trade/${masterTradeId}?${queryParams.toString()}`,
+			data: {},
+		});
+
+		if (response.error) {
+			throw new Error(response.message ?? `Failed to close trade with id: ${masterTradeId}`);
+		}
+
+		return response.message;
+	}
+
+	public async breakEvenActiveMasterTrade({
+		masterTradeId,
+	}: {
+		masterTradeId: string;
+	}): Promise<string> {
+		// Fetch data from API
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/trade/master-trade/break-even/${masterTradeId}`,
+			data: {},
+		});
+
+		if (response.error) {
+			throw new Error(
+				response.message ?? `Failed to break even for master trade id: ${masterTradeId}`,
+			);
+		}
+
+		return response.message;
+	}
+
+	public async cancelMasterTrade({ masterTradeId }: { masterTradeId: string }): Promise<string> {
+		// Fetch data from API
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/trade/master-trade/cancel-trade/${masterTradeId}`,
+			data: {},
+		});
+
+		if (response.error) {
+			throw new Error(
+				response.message ?? `Failed to cancel master trade with id: ${masterTradeId}`,
+			);
+		}
+
+		return response.message;
+	}
+
+	public async triggerMasterTradeOrderPlacement({
+		masterTradeId,
+	}: {
+		masterTradeId: string;
+	}): Promise<string> {
+		// Fetch data from API
+		const response = await this.apiClient.patch<IResponse>({
+			url: `/trade/master-trade/trigger-order-placement/${masterTradeId}`,
+			data: {},
+		});
+
+		if (response.error) {
+			throw new Error(
+				response.message ??
+					`Failed to trigger order placement for master trade with id: ${masterTradeId}`,
+			);
+		}
+
+		return response.message;
 	}
 }

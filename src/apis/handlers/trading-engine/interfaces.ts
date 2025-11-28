@@ -274,3 +274,9 @@ export interface ITradeAggregate {
 	accummulatedUnrealisedPnL: number;
 	accummulatedUnrealisedPnLPercentage: number;
 }
+
+export interface IMasterTradeTpAndSlOptions {
+	masterTradeId: string;
+	stopLossPrice: number;
+	takeProfitPrice?: number;
+}

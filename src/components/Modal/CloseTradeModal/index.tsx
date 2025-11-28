@@ -1,21 +1,28 @@
-import { useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { IMasterTrade } from "~/apis/handlers/trading-engine/interfaces";
 import Button from "~/components/common/Button";
 import InputField from "~/components/common/InputField";
 import { renderDisplayItem, renderStatus } from "~/helpers";
 import Modal from "..";
 import ConfirmationModal from "../ConfirmationModal";
+import { useCloseActiveMasterTrade } from "~/hooks/useTrades";
 
 interface ICloseTradeModalProps {
 	openModal: boolean;
 	handleModalClose: () => void;
 	selectedTrade: IMasterTrade;
+	setShowToast: (value: SetStateAction<boolean>) => void;
+	setToastType: (value: SetStateAction<"success" | "error" | undefined>) => void;
+	setToastMessage: (value: SetStateAction<string>) => void;
 }
 
 const CloseTradeModal: React.FC<ICloseTradeModalProps> = ({
 	openModal,
 	handleModalClose,
 	selectedTrade,
+	setShowToast,
+	setToastMessage,
+	setToastType,
 }) => {
 	const [selectedPercentage, setSelectedPercentage] = useState<number | null>(null);
 	const [openConfirmationModal, setOpenConfirmationModal] = useState<boolean>(false);
@@ -24,6 +31,36 @@ const CloseTradeModal: React.FC<ICloseTradeModalProps> = ({
 	const handleConfirmationModalClose = () => {
 		setOpenConfirmationModal(false);
 	};
+
+	const { closeActiveMasterTrade, data, error, isError, isPending, isSuccess } =
+		useCloseActiveMasterTrade();
+
+	const handleCloseActiveMasterTrade = () =>
+		closeActiveMasterTrade({
+			masterTradeId: selectedTrade.id,
+			// percentage: selectedPercentage === null ? undefined : selectedPercentage, // handles partial close
+		});
+
+	// Handle update success and error
+	useEffect(() => {
+		if (isSuccess && data) {
+			setShowToast(true);
+			setToastType("success");
+			setToastMessage(data);
+			handleModalClose();
+			return;
+		}
+
+		if (isError && error) {
+			setShowToast(true);
+			setToastType("error");
+			setToastMessage(error.message);
+		}
+
+		if (isSuccess || isError) {
+			handleConfirmationModalClose(); // Closes the confirmation modal
+		}
+	}, [isSuccess, data, isError, error]);
 
 	return (
 		<Modal
@@ -37,7 +74,7 @@ const CloseTradeModal: React.FC<ICloseTradeModalProps> = ({
 				</p>
 			}
 			headerDivider={true}
-			onClose={handleModalClose}
+			onClose={isPending ? undefined : handleModalClose}
 		>
 			<div className="pt-5 space-y-5">
 				{selectedTrade &&
@@ -106,20 +143,23 @@ const CloseTradeModal: React.FC<ICloseTradeModalProps> = ({
 							labelText="Confirm"
 							className="w-full !font-bold text-base"
 							onClick={() => setOpenConfirmationModal(true)}
-							disabled={!selectedPercentage}
+							// disabled={isPending}
 						/>
 					</section>
 				</section>
 			</div>
 
-			<ConfirmationModal
-				title="Close Trade"
-				description={`You are about to close ${selectedPercentage}% of ${selectedTrade.pair} trade.`}
-				openModal={openConfirmationModal}
-				btnCancle={handleConfirmationModalClose}
-				onClose={handleConfirmationModalClose}
-				btnConfirm={() => {}}
-			/>
+			{openConfirmationModal && (
+				<ConfirmationModal
+					title="Close Trade"
+					description={`You are about to close ${selectedPercentage ? `${selectedPercentage}% of ` : ""}${selectedTrade.pair} trade.`}
+					openModal={openConfirmationModal}
+					btnCancle={handleConfirmationModalClose}
+					onClose={handleConfirmationModalClose}
+					btnConfirm={handleCloseActiveMasterTrade}
+					isProcessing={isPending}
+				/>
+			)}
 		</Modal>
 	);
 };

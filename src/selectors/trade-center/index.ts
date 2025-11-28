@@ -74,7 +74,7 @@ export function openTradesDataTableSelector({
 				{
 					displayItem: renderStatus(
 						trade.status,
-						{ justify: "justify-end xl:justify-center" },
+						{ justify: "justify-end sm:justify-center" },
 						false,
 					),
 				},
@@ -124,7 +124,9 @@ export function openTradesDataTableSelector({
 								}),
 						}
 					: undefined,
-				isAdmin && trade.status === MasterTradeStatus.PENDING
+				isAdmin &&
+				(trade.status === MasterTradeStatus.PENDING ||
+					trade.status === MasterTradeStatus.PROCESSED)
 					? {
 							label: "Cancel trade",
 							onClick: () =>
@@ -212,7 +214,9 @@ export function openTradesMobileDataTableSelector({
 						styles: "text-nowrap",
 					}
 				: undefined,
-			isAdmin && trade.status === MasterTradeStatus.PENDING
+			isAdmin &&
+			(trade.status === MasterTradeStatus.PENDING ||
+				trade.status === MasterTradeStatus.PROCESSED)
 				? {
 						label: "Cancel trade",
 						onClick: () =>

@@ -32,8 +32,11 @@ function OpenTrades() {
 	const { action, id, trade } = router.query;
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [selectedTrade, setSelectedTrade] = useState<IMasterTrade | IUserTrade | null>(null);
-	const [showTradeCreationToast, setShowTradeCreationToast] = useState(false);
+	const [showToast, setShowToast] = useState(false);
+	const [toastMessage, setToastMessage] = useState<string>("");
+	const [toastType, setToastType] = useState<"success" | "error">();
 
+	// Fetch active trades
 	const {
 		error,
 		isError,
@@ -48,8 +51,10 @@ function OpenTrades() {
 	const openTradesCount = trades && trades.length > 0 && trades.length;
 
 	const handleModalClose = () => {
-		router.replace(`${router.pathname}`, undefined, { shallow: true });
-		setOpenModal(!openModal);
+		const url = window.location.pathname; // Get the current pathname
+		window.history.replaceState(null, "", url); // Clears query params
+		setOpenModal(false);
+		setSelectedTrade(null);
 	};
 
 	useEffect(() => {
@@ -62,13 +67,23 @@ function OpenTrades() {
 	}, [action, id, trades]);
 
 	useEffect(() => {
-		if (trade && trade === "true") setShowTradeCreationToast(true);
+		if (trade && trade === "true") {
+			setShowToast(true);
+			setToastType("success");
+			setToastMessage("Trade created successfully.");
+		}
 
 		if (trade === "true") {
 			const url = window.location.pathname; // Get the current pathname
 			window.history.replaceState(null, "", url); // Clears query params
 		}
 	}, [trade]);
+
+	const handleToastClose = () => {
+		setShowToast(false);
+		setToastType(undefined);
+		setToastMessage("");
+	};
 
 	return (
 		<section>
@@ -129,6 +144,9 @@ function OpenTrades() {
 					openModal
 					handleModalClose={handleModalClose}
 					selectedTrade={selectedTrade as IMasterTrade}
+					setShowToast={setShowToast}
+					setToastType={setToastType}
+					setToastMessage={setToastMessage}
 				/>
 			)}
 
@@ -136,7 +154,11 @@ function OpenTrades() {
 				<TradeTargetModal
 					openModal
 					handleModalClose={handleModalClose}
-					selectedTrade={selectedTrade as IMasterTrade}
+					trade={selectedTrade as IMasterTrade}
+					setSelectedTrade={setSelectedTrade}
+					setShowToast={setShowToast}
+					setToastType={setToastType}
+					setToastMessage={setToastMessage}
 				/>
 			)}
 
@@ -145,6 +167,9 @@ function OpenTrades() {
 					openModal
 					handleModalClose={handleModalClose}
 					selectedTrade={selectedTrade as IMasterTrade}
+					setShowToast={setShowToast}
+					setToastType={setToastType}
+					setToastMessage={setToastMessage}
 				/>
 			)}
 
@@ -153,6 +178,9 @@ function OpenTrades() {
 					openModal
 					handleModalClose={handleModalClose}
 					selectedTrade={selectedTrade as IMasterTrade}
+					setShowToast={setShowToast}
+					setToastType={setToastType}
+					setToastMessage={setToastMessage}
 				/>
 			)}
 
@@ -162,29 +190,24 @@ function OpenTrades() {
 					<TradeTriggerModal
 						openModal
 						handleModalClose={handleModalClose}
-						selectedTrade={selectedTrade as IMasterTrade}
+						trade={selectedTrade as IMasterTrade}
+						setSelectedTrade={setSelectedTrade}
+						setShowToast={setShowToast}
+						setToastType={setToastType}
+						setToastMessage={setToastMessage}
 					/>
 				)}
 
-			{/* Toast alerts */}
-			{/* {isError && (
+			{showToast && (
 				<Toast
-					type="error"
+					type={toastType}
 					variant="filled"
-					title="Trade update Error"
-					message={error?.message ?? "Something went wrong!"}
+					title={toastType === "success" ? "Success" : "Error"}
+					message={toastMessage}
 					autoVanish
 					autoVanishTimeout={10}
-				/>
-			)} */}
-			{showTradeCreationToast && (
-				<Toast
-					type="success"
-					variant="filled"
-					title="Success"
-					message={`Trade ${showTradeCreationToast ? "created" : "updated"} successfully.`}
-					autoVanish
-					autoVanishTimeout={10}
+					onToastClose={handleToastClose}
+					showToast={showToast}
 				/>
 			)}
 		</section>

@@ -32,7 +32,7 @@ export default function ConfirmationModal({
 			description={description}
 			openModal={openModal}
 			width="md:w-[445px]"
-			onClose={handleModalClose}
+			onClose={isProcessing ? undefined : handleModalClose}
 		>
 			<div className="flex gap-3 justify-center mt-5">
 				<Button
@@ -42,7 +42,11 @@ export default function ConfirmationModal({
 				>
 					{isProcessing ? "Processing..." : "Confirm"}
 				</Button>
-				<Button onClick={btnCancle} innerClassName="bg-gray-300 text-zinc-500">
+				<Button
+					onClick={btnCancle}
+					innerClassName="bg-gray-300 text-zinc-500"
+					disabled={isProcessing}
+				>
 					Cancel
 				</Button>
 			</div>
